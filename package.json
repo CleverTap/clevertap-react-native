@@ -1,10 +1,13 @@
 {
   "name": "clevertap-react-native",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "CleverTap React Native SDK.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node install.js",
+    "lint": "./node_modules/.bin/eslint index.js */**.js",
+    "lint-fix": "./node_modules/.bin/eslint --fix index.js */**.js"
   },
   "repository": {
     "type": "git",
@@ -28,6 +31,9 @@
     "react-native",
     "segmentation"
   ],
+  "dependencies": {
+    "extract-zip": "^1.6.0"
+  },
   "devDependencies": {
     "eslint": "^3.4.0",
     "eslint-config-standard": "^6.0.0",
@@ -37,9 +43,5 @@
     "eslint-plugin-react": "^6.2.0",
     "eslint-plugin-standard": "^2.0.0",
     "i": "^0.3.5"
-  },
-  "scripts": {
-    "lint": "./node_modules/.bin/eslint index.js */**.js",
-    "lint-fix": "./node_modules/.bin/eslint --fix index.js */**.js"
   }
 }
