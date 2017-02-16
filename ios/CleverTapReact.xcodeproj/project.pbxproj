@@ -1,0 +1,332 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		52344FBE1E4CE7F000661762 /* CleverTapReact.m in Sources */ = {isa = PBXBuildFile; fileRef = 52344FBA1E4CE7F000661762 /* CleverTapReact.m */; };
+		52344FBF1E4CE7F000661762 /* CleverTapReactManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 52344FBC1E4CE7F000661762 /* CleverTapReactManager.m */; };
+		52344FC21E4CEC3200661762 /* CleverTapReactManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 52344FBB1E4CE7F000661762 /* CleverTapReactManager.h */; };
+		52344FC31E4CED7700661762 /* CleverTapReactManager.h in Copy Headers */ = {isa = PBXBuildFile; fileRef = 52344FBB1E4CE7F000661762 /* CleverTapReactManager.h */; };
+		52344FE01E4D0F3700661762 /* CleverTapReactEventEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = 52344FDE1E4D0F3700661762 /* CleverTapReactEventEmitter.h */; };
+		52344FE11E4D0F3700661762 /* CleverTapReactEventEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 52344FDF1E4D0F3700661762 /* CleverTapReactEventEmitter.m */; };
+		5266DAB81E4B9C0F000008F5 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DFC6851E4B991000EDC368 /* CoreTelephony.framework */; };
+		5266DAB91E4B9C16000008F5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5266DAB61E4B9B8C000008F5 /* UIKit.framework */; };
+		5266DABA1E4B9C20000008F5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DFC6831E4B990A00EDC368 /* SystemConfiguration.framework */; };
+		5266DADB1E4BB5BD000008F5 /* CleverTapSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5266DAD91E4BB598000008F5 /* CleverTapSDK.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5D72D2E61C16249000E22EC1 /* Copy Headers */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				52344FC31E4CED7700661762 /* CleverTapReactManager.h in Copy Headers */,
+			);
+			name = "Copy Headers";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		52344FB91E4CE7F000661762 /* CleverTapReact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CleverTapReact.h; sourceTree = "<group>"; };
+		52344FBA1E4CE7F000661762 /* CleverTapReact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CleverTapReact.m; sourceTree = "<group>"; };
+		52344FBB1E4CE7F000661762 /* CleverTapReactManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CleverTapReactManager.h; sourceTree = "<group>"; };
+		52344FBC1E4CE7F000661762 /* CleverTapReactManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CleverTapReactManager.m; sourceTree = "<group>"; };
+		52344FDE1E4D0F3700661762 /* CleverTapReactEventEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CleverTapReactEventEmitter.h; sourceTree = "<group>"; };
+		52344FDF1E4D0F3700661762 /* CleverTapReactEventEmitter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CleverTapReactEventEmitter.m; sourceTree = "<group>"; };
+		5266DAB61E4B9B8C000008F5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		5266DAD91E4BB598000008F5 /* CleverTapSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CleverTapSDK.framework; path = CleverTapReact/CleverTapSDK.framework; sourceTree = "<group>"; };
+		52DFC6831E4B990A00EDC368 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		52DFC6851E4B991000EDC368 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		5D72D2E81C16249000E22EC1 /* libCleverTapReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCleverTapReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5D72D2E51C16249000E22EC1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5266DABA1E4B9C20000008F5 /* SystemConfiguration.framework in Frameworks */,
+				5266DAB91E4B9C16000008F5 /* UIKit.framework in Frameworks */,
+				5266DAB81E4B9C0F000008F5 /* CoreTelephony.framework in Frameworks */,
+				5266DADB1E4BB5BD000008F5 /* CleverTapSDK.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		52344FB81E4CE7F000661762 /* CleverTapReact */ = {
+			isa = PBXGroup;
+			children = (
+				52344FB91E4CE7F000661762 /* CleverTapReact.h */,
+				52344FBA1E4CE7F000661762 /* CleverTapReact.m */,
+				52344FBB1E4CE7F000661762 /* CleverTapReactManager.h */,
+				52344FBC1E4CE7F000661762 /* CleverTapReactManager.m */,
+				52344FDE1E4D0F3700661762 /* CleverTapReactEventEmitter.h */,
+				52344FDF1E4D0F3700661762 /* CleverTapReactEventEmitter.m */,
+			);
+			path = CleverTapReact;
+			sourceTree = "<group>";
+		};
+		52E5B61A1E4B92F000215071 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5266DAD91E4BB598000008F5 /* CleverTapSDK.framework */,
+				5266DAB61E4B9B8C000008F5 /* UIKit.framework */,
+				52DFC6851E4B991000EDC368 /* CoreTelephony.framework */,
+				52DFC6831E4B990A00EDC368 /* SystemConfiguration.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5D72D2DF1C16249000E22EC1 = {
+			isa = PBXGroup;
+			children = (
+				52344FB81E4CE7F000661762 /* CleverTapReact */,
+				5D72D2E91C16249000E22EC1 /* Products */,
+				52E5B61A1E4B92F000215071 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		5D72D2E91C16249000E22EC1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5D72D2E81C16249000E22EC1 /* libCleverTapReact.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		52344FC11E4CEC2600661762 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				52344FC21E4CEC3200661762 /* CleverTapReactManager.h in Headers */,
+				52344FE01E4D0F3700661762 /* CleverTapReactEventEmitter.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		5D72D2E71C16249000E22EC1 /* CleverTapReact */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5D72D2F11C16249000E22EC1 /* Build configuration list for PBXNativeTarget "CleverTapReact" */;
+			buildPhases = (
+				5D72D2E41C16249000E22EC1 /* Sources */,
+				5D72D2E51C16249000E22EC1 /* Frameworks */,
+				5D72D2E61C16249000E22EC1 /* Copy Headers */,
+				52344FC11E4CEC2600661762 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CleverTapReact;
+			productName = RCTCleverTap;
+			productReference = 5D72D2E81C16249000E22EC1 /* libCleverTapReact.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5D72D2E01C16249000E22EC1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = "";
+				TargetAttributes = {
+					5D72D2E71C16249000E22EC1 = {
+						CreatedOnToolsVersion = 7.1.1;
+					};
+				};
+			};
+			buildConfigurationList = 5D72D2E31C16249000E22EC1 /* Build configuration list for PBXProject "CleverTapReact" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 5D72D2DF1C16249000E22EC1;
+			productRefGroup = 5D72D2E91C16249000E22EC1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5D72D2E71C16249000E22EC1 /* CleverTapReact */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5D72D2E41C16249000E22EC1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				52344FBF1E4CE7F000661762 /* CleverTapReactManager.m in Sources */,
+				52344FE11E4D0F3700661762 /* CleverTapReactEventEmitter.m in Sources */,
+				52344FBE1E4CE7F000661762 /* CleverTapReact.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		5D72D2EF1C16249000E22EC1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		5D72D2F01C16249000E22EC1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5D72D2F21C16249000E22EC1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/CleverTapReact";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../react-native/React/**",
+					"$(SRCROOT)/node_modules/react-native/React",
+					"$(SRCROOT)/../../React/**",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		5D72D2F31C16249000E22EC1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/CleverTapReact";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../React/**",
+					"$(SRCROOT)/../../react-native/React/**",
+					"$(SRCROOT)/node_modules/react-native/React/**",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5D72D2E31C16249000E22EC1 /* Build configuration list for PBXProject "CleverTapReact" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5D72D2EF1C16249000E22EC1 /* Debug */,
+				5D72D2F01C16249000E22EC1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5D72D2F11C16249000E22EC1 /* Build configuration list for PBXNativeTarget "CleverTapReact" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5D72D2F21C16249000E22EC1 /* Debug */,
+				5D72D2F31C16249000E22EC1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5D72D2E01C16249000E22EC1 /* Project object */;
+}
