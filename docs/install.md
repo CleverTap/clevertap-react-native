@@ -14,6 +14,7 @@
 dependencies {
 	...
     compile 'com.clevertap.android:clevertap-android-sdk:3.1.2'
+    compile 'com.google.firebase:firebase-core:9.0.2'
     compile 'com.google.firebase:firebase-messaging:9.0.2'
 }:
 ```
