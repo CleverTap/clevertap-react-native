@@ -102,6 +102,14 @@ var CleverTap = {
     },
 
     /**
+    * Record a Screen View; iOS only
+    * @param {string} screenName - the name of the screen
+    */
+    recordScreenView: function(screenName) {
+        CleverTapReact.recordScreenView(screenName);
+    },
+
+    /**
     * Record an event with optional event properties
     * @param {string} eventName - the name of the event
     * @param {object} props - the key-value properties of the event.

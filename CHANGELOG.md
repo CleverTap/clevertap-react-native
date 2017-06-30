@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 0.1.3 *(30 June 2017)*
+-------------------------------------------
+*(Supports CleverTap 3.1.4 and React Native v0.41.2)*
+
+Adds recordSreenView api for iOS
+
 Version 0.1.2 *(16 February, 2017)*
 -------------------------------------------
 *(Supports CleverTap 3.1.2 and React Native v0.41.2)*

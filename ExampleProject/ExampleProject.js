@@ -27,6 +27,9 @@ class ExampleProject extends Component {
         // for iOS only: register for push notifications
         CleverTap.registerForPush();
 
+        // for iOS only; record a Screen View
+        CleverTap.recordScreenView('HomeView');
+
         // Listener to handle incoming deep links
         Linking.addEventListener('url', this._handleOpenUrl);
 

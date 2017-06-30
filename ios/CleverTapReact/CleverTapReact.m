@@ -80,6 +80,10 @@ RCT_EXPORT_METHOD(disablePersonalization) {
 
 #pragma mark Event API
 
+RCT_EXPORT_METHOD(recordScreenView:(NSString*)screenName) {
+    RCTLogInfo(@"[CleverTap recordScreenView]");
+    [[CleverTap sharedInstance] recordScreenView:screenName];
+}
 
 RCT_EXPORT_METHOD(recordEvent:(NSString*)eventName withProps:(NSDictionary*)props) {
     RCTLogInfo(@"[CleverTap recordEvent:withProps]");

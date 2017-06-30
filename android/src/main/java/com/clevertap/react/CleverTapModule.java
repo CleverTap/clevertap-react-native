@@ -151,6 +151,12 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     // Event API
 
     @ReactMethod
+    public void recordScreenView(String screenName) {
+        // no-op in Android
+        Log.i(TAG, "CleverTap.recordScreenView is a no-op in Android");
+    }
+
+    @ReactMethod
     public void recordEvent(String eventName, ReadableMap props) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) return;
