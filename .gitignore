@@ -31,3 +31,4 @@ node_modules
 
 # CocoaPods
 Pods
+Podfile.lock

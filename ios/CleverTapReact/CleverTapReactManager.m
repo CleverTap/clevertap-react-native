@@ -43,7 +43,7 @@
     NSDictionary *notification = [options valueForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
     if (notification && notification[@"wzrk_dl"]) {
         self.launchDeepLink = notification[@"wzrk_dl"];
-        RCTLogInfo(@"CleverTapReact: setting launch deeplink: %s", self.launchDeepLink);
+        RCTLogInfo(@"CleverTapReact: setting launch deeplink: %@", self.launchDeepLink);
     }
 }
 
