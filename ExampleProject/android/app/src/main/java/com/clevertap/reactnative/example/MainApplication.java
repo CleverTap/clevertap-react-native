@@ -3,6 +3,7 @@ package com.clevertap.reactnative.example;
 import android.app.Application;
 
 import com.clevertap.android.sdk.ActivityLifecycleCallback;
+import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.react.CleverTapPackage;
 
 import com.facebook.react.ReactApplication;
@@ -38,8 +39,10 @@ public class MainApplication extends Application implements ReactApplication {
 
   @Override
   public void onCreate() {
+    CleverTapAPI.setDebugLevel(CleverTapAPI.LogLevel.DEBUG);
     // Register the CleverTap ActivityLifecycleCallback
     ActivityLifecycleCallback.register(this);
+
 
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
