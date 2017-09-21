@@ -13,7 +13,7 @@ buildscript {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '23.0.3'
 
     defaultConfig {
         minSdkVersion 16
@@ -34,7 +34,7 @@ dependencies {
         jcenter()
     }
 
-    provided 'com.clevertap.android:clevertap-android-sdk:3.1.4'
+    provided 'com.clevertap.android:clevertap-android-sdk:3.1.6'
     provided 'com.android.support:appcompat-v7:23.0.1'
     provided 'com.facebook.react:react-native:+'
 }

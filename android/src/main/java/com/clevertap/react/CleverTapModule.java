@@ -686,6 +686,13 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                         }
                     }
                 }
+                else if (readableType == ReadableType.Array) {
+                    try {
+                        profile.put(key, arrayListStringFromReadableArray(profileMap.getArray(key)));
+                    } catch (Throwable t) {
+                        Log.e(TAG, "Unhandled ReadableType.Array from ReadableMap");
+                    }
+                }
                 else {
                     Log.e(TAG, "Unhandled profile property ReadableType");
                 }
