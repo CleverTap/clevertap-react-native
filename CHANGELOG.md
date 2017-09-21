@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Version 0.1.4 *(21 September 2017)*
+-------------------------------------------
+*(Supports CleverTap 3.1.5/3.1.6 and React Native v0.41.2)*
+
 Version 0.1.3 *(30 June 2017)*
 -------------------------------------------
 *(Supports CleverTap 3.1.4 and React Native v0.41.2)*
