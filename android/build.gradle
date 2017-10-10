@@ -18,8 +18,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode 15
+        versionName "0.1.5"
     }
     buildTypes {
         release {
@@ -34,7 +34,7 @@ dependencies {
         jcenter()
     }
 
-    provided 'com.clevertap.android:clevertap-android-sdk:3.1.6'
-    provided 'com.android.support:appcompat-v7:23.4.0'
+    provided 'com.clevertap.android:clevertap-android-sdk:3.1.7'
+    provided 'com.android.support:appcompat-v7:23.0.1'
     provided 'com.facebook.react:react-native:+'
 }
