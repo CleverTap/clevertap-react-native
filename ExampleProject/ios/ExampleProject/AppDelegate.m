@@ -37,6 +37,9 @@
   [self.window makeKeyAndVisible];
   
   // initialize CleverTap
+#ifdef DEBUG
+  [CleverTap setDebugLevel:CleverTapLogDebug];
+#endif
   [CleverTap autoIntegrate];
   [[CleverTapReactManager sharedInstance] applicationDidLaunchWithOptions:launchOptions];
   

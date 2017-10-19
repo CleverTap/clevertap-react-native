@@ -15,6 +15,9 @@ static NSDateFormatter *dateFormatter;
 
 RCT_EXPORT_MODULE();
 
++ (BOOL)requiresMainQueueSetup {
+    return NO;
+}
 
 - (NSDictionary *)constantsToExport {
     return @{
@@ -48,8 +51,13 @@ RCT_EXPORT_METHOD(registerForPush) {
         UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
         [center requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound | UNAuthorizationOptionBadge)
                               completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                                  if (granted) {
+                                      dispatch_async(dispatch_get_main_queue(), ^(void) {
+                                          [[UIApplication sharedApplication] registerForRemoteNotifications];
+                                      });
+                                  }
                               }];
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
+        
     }
     else {
         UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeBadge | UIUserNotificationTypeAlert | UIUserNotificationTypeSound) categories:nil];

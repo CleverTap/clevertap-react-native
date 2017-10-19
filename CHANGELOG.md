@@ -4,6 +4,7 @@ Change Log
 Version 0.1.7 *(19 October 2017)*
 -------------------------------------------
 fix for breaking change in RN v0.47 Android
+update iOS for RM 0.49
 
 Version 0.1.6 *(13 October 2017)*
 -------------------------------------------
