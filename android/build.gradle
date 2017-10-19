@@ -12,14 +12,14 @@ buildscript {
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.3'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 23
-        versionCode 15
-        versionName "0.1.5"
+        targetSdkVersion 26
+        versionCode 17
+        versionName "0.1.7"
     }
     buildTypes {
         release {
@@ -30,11 +30,13 @@ android {
 
 dependencies {
     repositories {
-        mavenCentral()
+        mavenLocal()
         jcenter()
+        maven { url "https://maven.google.com" }
+        maven { url "$rootDir/../node_modules/react-native/android" }
     }
 
     provided 'com.clevertap.android:clevertap-android-sdk:3.1.7'
-    provided 'com.android.support:appcompat-v7:23.0.1'
+    provided 'com.android.support:appcompat-v7:26.0.1'
     provided 'com.facebook.react:react-native:+'
 }

@@ -1,6 +1,6 @@
 {
   "name": "clevertap-react-native",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "CleverTap React Native SDK.",
   "main": "index.js",
   "scripts": {
@@ -32,7 +32,8 @@
     "segmentation"
   ],
   "dependencies": {
-    "extract-zip": "^1.6.0"
+    "extract-zip": "^1.6.0",
+    "react-native": "^0.49.3"
   },
   "devDependencies": {
     "eslint": "^3.4.0",
