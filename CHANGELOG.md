@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Version 0.1.8 *(26 October 2017)*
+-------------------------------------------
+- fix react-native dependency 
+
 Version 0.1.7 *(19 October 2017)*
 -------------------------------------------
 - fix for breaking change in RN v0.47 Android
