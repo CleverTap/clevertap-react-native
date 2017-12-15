@@ -88,6 +88,56 @@ var CleverTap = {
     },
 
     /**
+    * Method to create Notification Channels in Android O
+    * @param {string} channelId - A String for setting the id of the notification channel
+    * @param {string} channelName - A String for setting the name of the notification channel
+    * @param {string} channelDescription - A String for setting the description of the notification channel
+    * @param {int} importance - An Integer value setting the importance of the notifications sent in this channel 
+    * @param {boolean} showBadge - A boolean value as to whether this channel shows a badge
+    */
+    createNotificationChannel: function(channelId, channelName, channelDescription, importance, showBadge){
+        CleverTapReact.createNotificationChannel(channelId,channelName,channelDescription,importance,showBadge);
+    },
+
+    /**
+    * Method to create Notification Channels in Android O
+    * @param {string} channelId - A String for setting the id of the notification channel
+    * @param {string} channelName - A String for setting the name of the notification channel
+    * @param {string} channelDescription - A String for setting the description of the notification channel
+    * @param {int} importance - An Integer value setting the importance of the notifications sent in this channel 
+    * @param {string} groupId - A String for setting the notification channel as a part of a notification group
+    * @param {boolean} showBadge - A boolean value as to whether this channel shows a badge
+    */
+    createNotificationChannelwithGroupId: function(channelId, channelName, channelDescription, importance, groupId, showBadge){
+        CleverTapReact.createNotificationChannelwithGroupId(channelId,channelName,channelDescription,importance,groupId,showBadge);
+    },
+
+    /**
+    * Method to create Notification Channel Groups in Android O
+    * @param {string} groupId - A String for setting the id of the notification channel group
+    * @param {string} groupName - A String for setting the name of the notification channel group
+    */
+    createNotificationChannelGroup: function(groupId, groupName){
+        CleverTapReact.createNotificationChannelGroup(groupId,groupName);
+    },
+
+    /**
+    * Method to delete Notification Channels in Android O
+    * @param {string} channelId - A String for setting the id of the notification channel
+    */
+    deleteNotificationChannel: function(channelId){
+        CleverTapReact.deleteNotificationChannel(channelId);
+    },
+
+    /**
+    * Method to delete Notification Channel Groups in Android O
+    * @param {string} groupId - A String for setting the id of the notification channel group
+    */
+    deleteNotificationChannelGroup: function(groupId){
+        CleverTapReact.deleteNotificationChannelGroup(groupId);
+    },
+
+    /**
     * Enables the personalization API.  Call this prior to using the profile/event API getters
     */
     enablePersonalization: function() {

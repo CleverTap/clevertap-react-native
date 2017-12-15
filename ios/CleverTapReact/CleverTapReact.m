@@ -72,6 +72,29 @@ RCT_EXPORT_METHOD(setPushTokenAsString:(NSString*)token withType:(NSString *)typ
     [[CleverTap sharedInstance] setPushTokenAsString:token];
 }
 
+//no-op Android O methods
+
+RCT_EXPORT_METHOD(createNotificationChannel:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(int*)importance withShowBadge:(BOOL*)showBadge){
+    RCTLogInfo(@"[no-op in iOS]");
+}
+
+RCT_EXPORT_METHOD(createNotificationChannelwithGroupId:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(int*)importance withGroupId:(NSString*)groupId withShowBadge:(BOOL*)showBadge){
+    RCTLogInfo(@"[no-op in iOS]");
+}
+
+RCT_EXPORT_METHOD(createNotificationChannelGroup:(NSString*)groupId withGroupName:(NSString*)groupName){
+    RCTLogInfo(@"[no-op in iOS]");
+}
+
+RCT_EXPORT_METHOD(deleteNotificationChannel:(NSString*)channelId){
+    RCTLogInfo(@"[no-op in iOS]");
+}
+
+RCT_EXPORT_METHOD(deleteNotificationChannelGroup:(NSString*)groupId){
+    RCTLogInfo(@"[no-op in iOS]");
+}
+
+
 
 #pragma mark Personalization
 
