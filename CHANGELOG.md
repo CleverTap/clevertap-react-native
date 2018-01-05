@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 0.1.9 *(05 January 2018)*
+-------------------------------------------
+- Update to CleverTap Android SDK v 3.1.8
+- Support for Android O Notification Channels
+
+
 Version 0.1.8 *(26 October 2017)*
 -------------------------------------------
 - fix react-native dependency 

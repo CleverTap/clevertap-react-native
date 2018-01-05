@@ -36,7 +36,7 @@ dependencies {
         maven { url "$rootDir/../node_modules/react-native/android" }
     }
 
-    provided 'com.clevertap.android:clevertap-android-sdk:3.1.7'
+    provided 'com.clevertap.android:clevertap-android-sdk:3.1.8'
     provided 'com.android.support:appcompat-v7:26.0.1'
     provided 'com.facebook.react:react-native:+'
 }
