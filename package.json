@@ -32,7 +32,9 @@
     "segmentation"
   ],
   "dependencies": {
-    "extract-zip": "^1.6.0"
+    "extract-zip": "^1.6.6",
+    "hoek": "^5.0.3",
+    "npm": "^6.0.0"
   },
   "peerDependencies": {
     "react-native": ">=0.47.0"
@@ -45,8 +47,8 @@
     "eslint-plugin-promise": "^3.3.0",
     "eslint-plugin-react": "^6.2.0",
     "eslint-plugin-standard": "^2.0.0",
-    "i": "^0.3.5",
-    "react-native": ">=0.47.0",
-    "react": "^16.0.0-alpha.12"
+    "i": "^0.3.6",
+    "react": "^16.3.2",
+    "react-native": "^0.55.3"
   }
 }
