@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+Version 0.2.0 *(07 May 2018)*
+-------------------------------------------
+- Update to CleverTap Android SDK v 3.1.9
+- Update to CleverTap iOS SDK v 3.1.7
+- Support for Android O Notification Channels with custom sound
+- New APIs for GDPR compliance
+- Adds Android support for recordScreenView API
+
 Version 0.1.9 *(05 January 2018)*
 -------------------------------------------
 - Update to CleverTap Android SDK v 3.1.8
