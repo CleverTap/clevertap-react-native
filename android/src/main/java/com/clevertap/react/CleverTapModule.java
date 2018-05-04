@@ -190,7 +190,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         Log.i(TAG, "Notification Channel Group Id "+ groupId +" deleted");
     }
 
-    //GDPR 
+    //Enables tracking opt out for the currently active user. 
 
     @ReactMethod
     public void setOptOut(boolean value){
@@ -199,6 +199,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.setOptOut(value);
     }
 
+    //Enables the reporting of device network-related information, including IP address.  This reporting is disabled by default.
+    
     @ReactMethod
     public void enableDeviceNetworkInfoReporting(boolean value){
         CleverTapAPI clevertap = getCleverTapAPI();

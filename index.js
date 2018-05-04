@@ -165,14 +165,16 @@ var CleverTap = {
     },
 
     /**
-    * Opt Out method in compliance with GDPR.
+    * Enables tracking opt out for the currently active user.
+    * @param {boolean} value - A boolean for enabling or disabling tracking for current user 
     */
     setOptOut: function(value){
         CleverTapReact.setOptOut(value);
     },
 
     /**
-    * Enables/Disables sending Device Network Information to CleverTap in compliance with GDPR
+    * Enables the reporting of device network related information, including IP address.  This reporting is disabled by default.
+    * @param {boolean} - A boolean for enabling or disabling device network related information to be sent to CleverTap
     */
     enableDeviceNetworkInfoReporting: function(value){
         CleverTapReact.enableDeviceNetworkInfoReporting(value);
