@@ -173,7 +173,7 @@ var CleverTap = {
     },
 
     /**
-    * Enables the reporting of device network related information, including IP address.  This reporting is disabled by default.
+    * Enables the reporting of device network related information, including IP address. This reporting is disabled by default.
     * @param {boolean} - A boolean for enabling or disabling device network related information to be sent to CleverTap
     */
     enableDeviceNetworkInfoReporting: function(value){
