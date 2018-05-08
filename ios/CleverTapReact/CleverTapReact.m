@@ -108,6 +108,17 @@ RCT_EXPORT_METHOD(disablePersonalization) {
     [CleverTap disablePersonalization];
 }
 
+#pragma mark OptOut API
+
+RCT_EXPORT_METHOD(setOptOut:(BOOL)enabled) {
+    RCTLogInfo(@"[CleverTap setOptOut:  %id]", enabled);
+    [[CleverTap sharedInstance] setOptOut:enabled];
+}
+
+RCT_EXPORT_METHOD(enableDeviceNetworkInfoReporting:(BOOL)enabled) {
+    RCTLogInfo(@"[CleverTap enableDeviceNetworkInfoReporting: %id]", enabled);
+    [[CleverTap sharedInstance] enableDeviceNetworkInfoReporting:enabled];
+}
 
 #pragma mark Event API
 
