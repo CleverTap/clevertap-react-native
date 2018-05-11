@@ -72,30 +72,6 @@ RCT_EXPORT_METHOD(setPushTokenAsString:(NSString*)token withType:(NSString *)typ
     [[CleverTap sharedInstance] setPushTokenAsString:token];
 }
 
-//no-op Android O methods
-
-RCT_EXPORT_METHOD(createNotificationChannel:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(int*)importance withShowBadge:(BOOL*)showBadge){
-    RCTLogInfo(@"[no-op in iOS]");
-}
-
-RCT_EXPORT_METHOD(createNotificationChannelwithGroupId:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(int*)importance withGroupId:(NSString*)groupId withShowBadge:(BOOL*)showBadge){
-    RCTLogInfo(@"[no-op in iOS]");
-}
-
-RCT_EXPORT_METHOD(createNotificationChannelGroup:(NSString*)groupId withGroupName:(NSString*)groupName){
-    RCTLogInfo(@"[no-op in iOS]");
-}
-
-RCT_EXPORT_METHOD(deleteNotificationChannel:(NSString*)channelId){
-    RCTLogInfo(@"[no-op in iOS]");
-}
-
-RCT_EXPORT_METHOD(deleteNotificationChannelGroup:(NSString*)groupId){
-    RCTLogInfo(@"[no-op in iOS]");
-}
-
-
-
 #pragma mark Personalization
 
 RCT_EXPORT_METHOD(enablePersonalization) {
@@ -288,6 +264,35 @@ RCT_EXPORT_METHOD(sessionGetUTMDetails:(RCTResponseSenderBlock)callback) {
     [self returnResult:result withCallback:callback andError:nil];
 }
 
+#pragma mark no-op Android O methods
+
+RCT_EXPORT_METHOD(createNotificationChannel:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(NSInteger)importance withShowBadge:(BOOL)showBadge){
+    RCTLogInfo(@"[CleverTap createNotificationChannel is no-op in iOS]");
+}
+
+RCT_EXPORT_METHOD(createNotificationChannelWithSound:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(NSInteger)importance withShowBadge:(BOOL)showBadge withSound:(NSString*)sound){
+    RCTLogInfo(@"[CleverTap createNotificationChannelWithSound is no-op in iOS]");
+}
+
+RCT_EXPORT_METHOD(createNotificationChannelWithGroupId:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(NSInteger)importance withGroupId:(NSString*)groupId withShowBadge:(BOOL)showBadge){
+    RCTLogInfo(@"[CleverTap createNotificationChannelWithGroupId is no-op in iOS]");
+}
+
+RCT_EXPORT_METHOD(createNotificationChannelWithGroupIdAndSound:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(NSInteger)importance withGroupId:(NSString*)groupId withShowBadge:(BOOL)showBadge withSound:(NSString*)sound){
+    RCTLogInfo(@"[CleverTap createNotificationChannelWithGroupIdAndSound is no-op in iOS]");
+}
+
+RCT_EXPORT_METHOD(createNotificationChannelGroup:(NSString*)groupId withGroupName:(NSString*)groupName){
+    RCTLogInfo(@"[CleverTap createNotificationChannelGroup is no-op in iOS]");
+}
+
+RCT_EXPORT_METHOD(deleteNotificationChannel:(NSString*)channelId){
+    RCTLogInfo(@"[CleverTap deleteNotificationChannel is no-op in iOS]");
+}
+
+RCT_EXPORT_METHOD(deleteNotificationChannelGroup:(NSString*)groupId){
+    RCTLogInfo(@"[CleverTap deleteNotificationChannelGroup is no-op in iOS]");
+}
 
 #pragma mark Developer Options
 
