@@ -105,11 +105,38 @@ var CleverTap = {
     * @param {string} channelName - A String for setting the name of the notification channel
     * @param {string} channelDescription - A String for setting the description of the notification channel
     * @param {int} importance - An Integer value setting the importance of the notifications sent in this channel 
+    * @param {boolean} showBadge - A boolean value as to whether this channel shows a badge
+    * @param {string} sound - A String for setting the custom sound of the notification channel
+    */
+    createNotificationChannelWithSound: function(channelId, channelName, channelDescription, importance, showBadge, sound){
+        CleverTapReact.createNotificationChannelWithSound(channelId,channelName,channelDescription,importance,showBadge,sound);
+    },
+
+    /**
+    * Method to create Notification Channels in Android O
+    * @param {string} channelId - A String for setting the id of the notification channel
+    * @param {string} channelName - A String for setting the name of the notification channel
+    * @param {string} channelDescription - A String for setting the description of the notification channel
+    * @param {int} importance - An Integer value setting the importance of the notifications sent in this channel 
     * @param {string} groupId - A String for setting the notification channel as a part of a notification group
     * @param {boolean} showBadge - A boolean value as to whether this channel shows a badge
     */
-    createNotificationChannelwithGroupId: function(channelId, channelName, channelDescription, importance, groupId, showBadge){
-        CleverTapReact.createNotificationChannelwithGroupId(channelId,channelName,channelDescription,importance,groupId,showBadge);
+    createNotificationChannelWithGroupId: function(channelId, channelName, channelDescription, importance, groupId, showBadge){
+        CleverTapReact.createNotificationChannelWithGroupId(channelId,channelName,channelDescription,importance,groupId,showBadge);
+    },
+
+    /**
+    * Method to create Notification Channels in Android O
+    * @param {string} channelId - A String for setting the id of the notification channel
+    * @param {string} channelName - A String for setting the name of the notification channel
+    * @param {string} channelDescription - A String for setting the description of the notification channel
+    * @param {int} importance - An Integer value setting the importance of the notifications sent in this channel 
+    * @param {string} groupId - A String for setting the notification channel as a part of a notification group
+    * @param {boolean} showBadge - A boolean value as to whether this channel shows a badge
+    * @param {string} sound - A String for setting the custom sound of the notification channel
+    */
+    createNotificationChannelWithGroupIdAndSound: function(channelId, channelName, channelDescription, importance, groupId, showBadge, sound){
+        CleverTapReact.createNotificationChannelWithGroupIdAndSound(channelId,channelName,channelDescription,importance,groupId,showBadge,sound);
     },
 
     /**
@@ -138,6 +165,22 @@ var CleverTap = {
     },
 
     /**
+    * Enables tracking opt out for the currently active user.
+    * @param {boolean} value - A boolean for enabling or disabling tracking for current user 
+    */
+    setOptOut: function(value){
+        CleverTapReact.setOptOut(value);
+    },
+
+    /**
+    * Enables the reporting of device network related information, including IP address. This reporting is disabled by default.
+    * @param {boolean} - A boolean for enabling or disabling device network related information to be sent to CleverTap
+    */
+    enableDeviceNetworkInfoReporting: function(value){
+        CleverTapReact.enableDeviceNetworkInfoReporting(value);
+    },
+
+    /**
     * Enables the personalization API.  Call this prior to using the profile/event API getters
     */
     enablePersonalization: function() {
@@ -145,14 +188,14 @@ var CleverTap = {
     },
 
     /**
-    * Disbles the personalization API.
+    * Disables the personalization API.
     */
     disablePersonalization: function() {
         CleverTapReact.disablePersonalization();
     },
 
     /**
-    * Record a Screen View; iOS only
+    * Record a Screen View
     * @param {string} screenName - the name of the screen
     */
     recordScreenView: function(screenName) {

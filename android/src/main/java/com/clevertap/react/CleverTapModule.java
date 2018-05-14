@@ -143,11 +143,27 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @ReactMethod
-    public void createNotificationChannelwithGroupId(String channelId, String channelName, String channelDescription, int importance, String groupId, boolean showBadge){
+    public void createNotificationChannelWithSound(String channelId, String channelName, String channelDescription, int importance, boolean showBadge, String sound){
+        CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap == null || channelId == null || channelName == null || channelDescription == null || sound == null) return;
+        clevertap.createNotificationChannel(this.context,channelId,channelName,channelDescription,importance,showBadge,sound);
+        Log.i(TAG, "Notification Channel "+ channelName +" with sound file "+sound+" created");
+    }
+
+    @ReactMethod
+    public void createNotificationChannelWithGroupId(String channelId, String channelName, String channelDescription, int importance, String groupId, boolean showBadge){
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || channelId == null || channelName == null || channelDescription == null || groupId == null) return;
         clevertap.createNotificationChannel(this.context,channelId,channelName,channelDescription,importance,groupId,showBadge);
         Log.i(TAG, "Notification Channel "+ channelName +" with Group Id "+ groupId + " created");
+    }
+
+    @ReactMethod
+    public void createNotificationChannelWithGroupIdAndSound(String channelId, String channelName, String channelDescription, int importance, String groupId, boolean showBadge, String sound){
+        CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap == null || channelId == null || channelName == null || channelDescription == null || groupId == null || sound == null) return;
+        clevertap.createNotificationChannel(this.context,channelId,channelName,channelDescription,importance,groupId,showBadge,sound);
+        Log.i(TAG, "Notification Channel "+ channelName +" with Group Id "+ groupId + " and sound file "+sound+" created");
     }
 
     @ReactMethod
@@ -174,6 +190,24 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         Log.i(TAG, "Notification Channel Group Id "+ groupId +" deleted");
     }
 
+    //Enables tracking opt out for the currently active user. 
+
+    @ReactMethod
+    public void setOptOut(boolean value){
+        CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap == null) return;
+        clevertap.setOptOut(value);
+    }
+
+    //Enables the reporting of device network-related information, including IP address.  This reporting is disabled by default.
+    
+    @ReactMethod
+    public void enableDeviceNetworkInfoReporting(boolean value){
+        CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap == null) return;
+        clevertap.enableDeviceNetworkInfoReporting(value);
+    }
+
     // Personalization
 
     @ReactMethod
@@ -194,8 +228,9 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     @ReactMethod
     public void recordScreenView(String screenName) {
-        // no-op in Android
-        Log.i(TAG, "CleverTap.recordScreenView is a no-op in Android");
+        CleverTapAPI clevertap = getCleverTapAPI();
+        if(clevertap == null) return;
+        clevertap.recordScreen(screenName);
     }
 
     @ReactMethod
