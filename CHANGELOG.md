@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Version 0.2.2 *(22 July 2018)*
+-------------------------------------------
+- Fix Node 10 install.js issue
+
 Version 0.2.1 *(21 May 2018)*
 -------------------------------------------
 - Update to CleverTap Android SDK v 3.1.10
