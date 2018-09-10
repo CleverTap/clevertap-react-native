@@ -79,14 +79,10 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     private CleverTapAPI getCleverTapAPI() {
         if (mCleverTap == null) {
-            try {
-                CleverTapAPI clevertap = CleverTapAPI.getInstance(this.context);
-                clevertap.setInAppNotificationListener(this);
-                clevertap.setSyncListener(this);
-                mCleverTap = clevertap;
-            } catch (Throwable t) {
-                Log.e(TAG, t.getLocalizedMessage());
-            }
+            CleverTapAPI clevertap = CleverTapAPI.getDefaultInstance(this.context);
+            clevertap.setInAppNotificationListener(this);
+            clevertap.setSyncListener(this);
+            mCleverTap = clevertap;
         }
 
         if (mCleverTap == null) {
@@ -197,6 +193,14 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) return;
         clevertap.setOptOut(value);
+    }
+
+    //Sets the SDK to offline mode
+    @ReactMethod
+    public void setOffline(boolean value){
+        CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap == null) return;
+        clevertap.setOffline(value);
     }
 
     //Enables the reporting of device network-related information, including IP address.  This reporting is disabled by default.

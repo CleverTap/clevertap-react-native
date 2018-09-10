@@ -173,6 +173,14 @@ var CleverTap = {
     },
 
     /**
+    * Sets the CleverTap SDK to offline mode
+    * @param {boolean} value - A boolean for enabling or disabling sending events for current user 
+    */
+    setOptOut: function(value){
+        CleverTapReact.setOffline(value);
+    },
+
+    /**
     * Enables the reporting of device network related information, including IP address. This reporting is disabled by default.
     * @param {boolean} - A boolean for enabling or disabling device network related information to be sent to CleverTap
     */
