@@ -176,7 +176,7 @@ var CleverTap = {
     * Sets the CleverTap SDK to offline mode
     * @param {boolean} value - A boolean for enabling or disabling sending events for current user 
     */
-    setOptOut: function(value){
+    setOffline: function(value){
         CleverTapReact.setOffline(value);
     },
 

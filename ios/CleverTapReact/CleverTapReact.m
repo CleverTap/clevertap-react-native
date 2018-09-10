@@ -84,6 +84,13 @@ RCT_EXPORT_METHOD(disablePersonalization) {
     [CleverTap disablePersonalization];
 }
 
+#pragma mark Offline API
+
+RCT_EXPORT_METHOD(setOffline:(BOOL)enabled) {
+    RCTLogInfo(@"[CleverTap setOffline:  %id]", enabled);
+    [[CleverTap sharedInstance] setOffline:enabled];
+}
+
 #pragma mark OptOut API
 
 RCT_EXPORT_METHOD(setOptOut:(BOOL)enabled) {
