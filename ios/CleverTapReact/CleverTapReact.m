@@ -87,19 +87,19 @@ RCT_EXPORT_METHOD(disablePersonalization) {
 #pragma mark Offline API
 
 RCT_EXPORT_METHOD(setOffline:(BOOL)enabled) {
-    RCTLogInfo(@"[CleverTap setOffline:  %id]", enabled);
+    RCTLogInfo(@"[CleverTap setOffline:  %i]", enabled);
     [[CleverTap sharedInstance] setOffline:enabled];
 }
 
 #pragma mark OptOut API
 
 RCT_EXPORT_METHOD(setOptOut:(BOOL)enabled) {
-    RCTLogInfo(@"[CleverTap setOptOut:  %id]", enabled);
+    RCTLogInfo(@"[CleverTap setOptOut:  %i]", enabled);
     [[CleverTap sharedInstance] setOptOut:enabled];
 }
 
 RCT_EXPORT_METHOD(enableDeviceNetworkInfoReporting:(BOOL)enabled) {
-    RCTLogInfo(@"[CleverTap enableDeviceNetworkInfoReporting: %id]", enabled);
+    RCTLogInfo(@"[CleverTap enableDeviceNetworkInfoReporting: %i]", enabled);
     [[CleverTap sharedInstance] enableDeviceNetworkInfoReporting:enabled];
 }
 
