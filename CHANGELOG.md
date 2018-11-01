@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 0.2.5 *(31 October 2018)*
+-------------------------------------------
+- Update to CleverTap iOS SDK v 3.3.0
+- Update to CleverTap Android SDK v 3.3.0
+
 Version 0.2.4 *(26 September 2018)*
 -------------------------------------------
 - Update to CleverTap iOS SDK v 3.2.2
