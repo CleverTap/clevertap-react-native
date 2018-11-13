@@ -13,7 +13,7 @@
 ```gradle
 dependencies {
 	...
-    compile 'com.clevertap.android:clevertap-android-sdk:3.3.1'
+    compile 'com.clevertap.android:clevertap-android-sdk:3.3.2'
     compile 'com.google.android.gms:play-services-base:16.0.1'
     compile 'com.google.firebase:firebase-messaging:17.3.3'
 }
