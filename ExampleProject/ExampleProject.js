@@ -23,12 +23,16 @@ class ExampleProject extends Component {
         CleverTap.addListener(CleverTap.CleverTapProfileDidInitialize, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapProfileDidInitialize, event); });
         CleverTap.addListener(CleverTap.CleverTapProfileSync, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapProfileSync, event); });
         CleverTap.addListener(CleverTap.CleverTapInAppNotificationDismissed, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapInAppNotificationDismissed, event); });
-
+        CleverTap.addListener(CleverTap.CleverTapInboxDidInitialize, (event) => { this._handleCleverTapInbox(CleverTap.CleverTapInboxDidInitialize,event); });
+        CleverTap.addListener(CleverTap.CleverTapInboxMessagesDidUpdate, (event) => { this._handleCleverTapInbox(CleverTap.CleverTapInboxMessagesDidUpdate,event); });
         // for iOS only: register for push notifications
         CleverTap.registerForPush();
 
         // for iOS only; record a Screen View
         CleverTap.recordScreenView('HomeView');
+
+        //initialize the App Inbox
+        CleverTap.initializeInbox();
 
         // Listener to handle incoming deep links
         Linking.addEventListener('url', this._handleOpenUrl);
@@ -67,6 +71,10 @@ class ExampleProject extends Component {
         console.log('handleCleverTapEvent', eventName, event);
     }
 
+    _handleCleverTapInbox(eventName,event){
+        console.log('handleCleverTapInbox',eventName,event);
+    }
+
     render() {
         return (
           <View style={styles.container}>
@@ -86,6 +94,14 @@ class ExampleProject extends Component {
               onPress={this._getUserProfileProperty}>
               <Text>Get User Profile Property</Text>
             </TouchableHighlight>
+            <TouchableHighlight style={styles.button}
+              onPress={this._openInbox}>
+              <Text>Open Inbox</Text>
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.button}
+              onPress={this._showCounts}>
+              <Text>Show Counts</Text>
+            </TouchableHighlight>
           </View>
         );
     }
@@ -93,6 +109,7 @@ class ExampleProject extends Component {
     _recordEvent(event) {
         CleverTap.recordEvent('testEvent');
         CleverTap.recordEvent('testEventWithProps', {'foo': 'bar'});
+        CleverTap.setPushToken("FCM","abcdfcm");
     }
 
     _recordChargedEvent(event) {
@@ -122,6 +139,20 @@ class ExampleProject extends Component {
 
         CleverTap.profileGetCleverTapAttributionIdentifier((err, res) => {
             console.log('CleverTapAttributionIdentifier', res, err);
+        });
+    }
+    
+    _openInbox(event){
+        CleverTap.showInbox({'tabs':['Offers','Promotions'],'navBarTitle':'My App Inbox','navBarTitleColor':'#FF0000','navBarColor':'#FFFF00','inboxBackgroundColor':'#FF00FF','backButtonColor':'#00FF00'
+                                ,'unselectedTabColor':'#0000FF','selectedTabColor':'#FF0000','selectedTabIndicatorColor':'#000000','tabBackgroundColor':'#FFFF00'});
+    }
+
+    _showCounts(event){
+        CleverTap.getInboxMessageCount((err, res) => {
+            console.log('Total Messages: ', res, err);
+        });
+        CleverTap.getInboxMessageUnreadCount((err, res) => {
+            console.log('Unread Messages: ', res, err);
         });
     }
 }

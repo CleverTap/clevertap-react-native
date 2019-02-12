@@ -40,6 +40,8 @@ var CleverTap = {
     CleverTapInAppNotificationDismissed: CleverTapReact.CleverTapInAppNotificationDismissed,
     FCM: CleverTapReact.FCM,
     GCM: CleverTapReact.GCM,
+    CleverTapInboxDidInitialize: CleverTapReact.CleverTapInboxDidInitialize,
+    CleverTapInboxMessagesDidUpdate: CleverTapReact.CleverTapInboxMessagesDidUpdate,
 
     /**
     * Add a CleverTap event listener
@@ -162,6 +164,14 @@ var CleverTap = {
     */
     deleteNotificationChannelGroup: function(groupId){
         CleverTapReact.deleteNotificationChannelGroup(groupId);
+    },
+
+    /**
+    * Method to show App Inbox
+    * @param {object} styleConfig - key-value properties of the App Inbox Style
+    */
+    showAppInbox: function(styleConfig){
+        CleverTapReact.showAppInbox(styleConfig);
     },
 
     /**
@@ -443,6 +453,37 @@ var CleverTap = {
     */
     sessionGetUTMDetails: function(callback) {
         callWithCallback('sessionGetUTMDetails', null, callback);
+    },
+
+    /**
+    * Method to initalize the App Inbox
+    */
+    initializeInbox: function() {
+        CleverTapReact.initializeInbox();
+    },
+
+    /**
+    * Method to show the App Inbox
+    * @param {object} styleConfig - key-value profile properties.  keys and values are strings
+    */
+    showInbox: function(styleConfig) {
+        CleverTapReact.showInbox(styleConfig);
+    },
+
+    /**
+    * Get the total number of Inbox Messages
+    * @param {function(err, res)} callback that returns a res of count of inbox messages or -1
+    */
+    getInboxMessageCount: function(callback) {
+        callWithCallback('getInboxMessageCount', null, callback);
+    },
+
+    /**
+    * Get the total number of Unread Inbox Messages
+    * @param {function(err, res)} callback that returns a res of count of unread inbox messages or -1
+    */
+    getInboxMessageUnreadCount: function(callback) {
+        callWithCallback('getInboxMessageUnreadCount', null, callback);
     },
 
     /**

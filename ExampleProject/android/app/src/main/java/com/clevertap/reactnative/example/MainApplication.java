@@ -4,7 +4,6 @@ import android.app.Application;
 
 import com.clevertap.android.sdk.ActivityLifecycleCallback;
 import com.clevertap.android.sdk.CleverTapAPI;
-import com.clevertap.react.CleverTapPackage;
 
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
