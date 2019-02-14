@@ -416,12 +416,13 @@ RCT_EXPORT_METHOD(getInboxMessageUnreadCount:(RCTResponseSenderBlock)callback) {
 }
 
 RCT_EXPORT_METHOD(initializeInbox) {
-    RCTLogInfo(@"[CleverTap App Inbox Initialized]");
+    RCTLogInfo(@"[CleverTap Inbox Initialize]");
     [[CleverTap sharedInstance] initializeInboxWithCallback:^(BOOL success) {
         if (success) {
             RCTLogInfo(@"[Inbox initialized]");
             [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxDidInitialize object:nil userInfo:nil];
             [[CleverTap sharedInstance] registerInboxUpdatedBlock:^{
+                RCTLogInfo(@"[Inbox updated]");
                 [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessagesDidUpdate object:nil userInfo:nil];
             }];
         }
