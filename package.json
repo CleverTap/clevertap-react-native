@@ -1,6 +1,6 @@
 {
   "name": "clevertap-react-native",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "description": "CleverTap React Native SDK.",
   "main": "index.js",
   "scripts": {
