@@ -428,8 +428,8 @@ RCT_EXPORT_METHOD(initializeInbox) {
     }];
 }
 
-RCT_EXPORT_METHOD(showAppInbox:(NSDictionary*)styleConfig) {
-    RCTLogInfo(@"[CleverTap Show App Inbox]");
+RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
+    RCTLogInfo(@"[CleverTap Show Inbox]");
     CleverTapInboxViewController *inboxController = [[CleverTap sharedInstance] newInboxViewControllerWithConfig:[self _dictToInboxStyleConfig:styleConfig? styleConfig : nil] andDelegate:nil];
     if (inboxController) {
         UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:inboxController];
