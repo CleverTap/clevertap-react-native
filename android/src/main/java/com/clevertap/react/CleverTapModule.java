@@ -4,6 +4,8 @@ import android.location.Location;
 import android.util.Log;
 import android.net.Uri;
 
+import com.clevertap.android.sdk.CTInboxListener;
+import com.clevertap.android.sdk.CTInboxStyleConfig;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -37,7 +39,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CleverTapModule extends ReactContextBaseJavaModule implements SyncListener, InAppNotificationListener {
+public class CleverTapModule extends ReactContextBaseJavaModule implements SyncListener, InAppNotificationListener, CTInboxListener {
     private ReactApplicationContext context;
 
     private CleverTapAPI mCleverTap;
@@ -50,6 +52,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     private static final String CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED = "CleverTapInAppNotificationDismissed";
     private static final String FCM = "FCM";
     private static final String GCM = "GCM";
+    private static final String CLEVERTAP_INBOX_DID_INITIALIZE = "CleverTapInboxDidInitialize";
+    private static final String CLEVERTAP_INBOX_MESSAGES_DID_UPDATE = "CleverTapInboxMessagesDidUpdate";
 
     public static void setInitialUri(final Uri uri) {
         mlaunchURI = uri;
@@ -68,6 +72,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         constants.put(CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED, CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED);
         constants.put(FCM, FCM);
         constants.put(GCM, GCM);
+        constants.put(CLEVERTAP_INBOX_DID_INITIALIZE,CLEVERTAP_INBOX_DID_INITIALIZE);
+        constants.put(CLEVERTAP_INBOX_MESSAGES_DID_UPDATE,CLEVERTAP_INBOX_MESSAGES_DID_UPDATE);
         return constants;
     }
 
@@ -80,14 +86,14 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     private CleverTapAPI getCleverTapAPI() {
         if (mCleverTap == null) {
             CleverTapAPI clevertap = CleverTapAPI.getDefaultInstance(this.context);
-            clevertap.setInAppNotificationListener(this);
-            clevertap.setSyncListener(this);
+            if (clevertap != null) {
+                clevertap.setInAppNotificationListener(this);
+                clevertap.setSyncListener(this);
+                clevertap.setCTNotificationInboxListener(this);
+            }
             mCleverTap = clevertap;
         }
 
-        if (mCleverTap == null) {
-            Log.e(TAG, "CleverTap not initialized");
-        }
         return mCleverTap;
     }
 
@@ -120,9 +126,9 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         if (clevertap == null || token == null || type == null) return;
 
         if (FCM.equals(type)) {
-            clevertap.data.pushFcmRegistrationId(token, true);
+            clevertap.pushFcmRegistrationId(token, true);
         } else if (GCM.equals(type)) {
-            clevertap.data.pushGcmRegistrationId(token, true);
+            clevertap.pushGcmRegistrationId(token, true);
         } else {
             Log.e(TAG, "Unknown push token type "+ type);
         }
@@ -134,7 +140,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     public void createNotificationChannel(String channelId, String channelName, String channelDescription, int importance, boolean showBadge){
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || channelId == null || channelName == null || channelDescription == null) return;
-        clevertap.createNotificationChannel(this.context,channelId,channelName,channelDescription,importance,showBadge);
+        CleverTapAPI.createNotificationChannel(this.context,channelId,channelName,channelDescription,importance,showBadge);
         Log.i(TAG, "Notification Channel "+ channelName +" created");
     }
 
@@ -142,7 +148,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     public void createNotificationChannelWithSound(String channelId, String channelName, String channelDescription, int importance, boolean showBadge, String sound){
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || channelId == null || channelName == null || channelDescription == null || sound == null) return;
-        clevertap.createNotificationChannel(this.context,channelId,channelName,channelDescription,importance,showBadge,sound);
+        CleverTapAPI.createNotificationChannel(this.context,channelId,channelName,channelDescription,importance,showBadge,sound);
         Log.i(TAG, "Notification Channel "+ channelName +" with sound file "+sound+" created");
     }
 
@@ -150,7 +156,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     public void createNotificationChannelWithGroupId(String channelId, String channelName, String channelDescription, int importance, String groupId, boolean showBadge){
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || channelId == null || channelName == null || channelDescription == null || groupId == null) return;
-        clevertap.createNotificationChannel(this.context,channelId,channelName,channelDescription,importance,groupId,showBadge);
+        CleverTapAPI.createNotificationChannel(this.context,channelId,channelName,channelDescription,importance,groupId,showBadge);
         Log.i(TAG, "Notification Channel "+ channelName +" with Group Id "+ groupId + " created");
     }
 
@@ -158,7 +164,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     public void createNotificationChannelWithGroupIdAndSound(String channelId, String channelName, String channelDescription, int importance, String groupId, boolean showBadge, String sound){
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || channelId == null || channelName == null || channelDescription == null || groupId == null || sound == null) return;
-        clevertap.createNotificationChannel(this.context,channelId,channelName,channelDescription,importance,groupId,showBadge,sound);
+        CleverTapAPI.createNotificationChannel(this.context,channelId,channelName,channelDescription,importance,groupId,showBadge,sound);
         Log.i(TAG, "Notification Channel "+ channelName +" with Group Id "+ groupId + " and sound file "+sound+" created");
     }
 
@@ -166,7 +172,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     public void createNotificationChannelGroup(String groupId, String groupName){
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || groupId == null || groupName == null) return;
-        clevertap.createNotificationChannelGroup(this.context,groupId,groupName);
+        CleverTapAPI.createNotificationChannelGroup(this.context,groupId,groupName);
         Log.i(TAG, "Notification Channel Group "+ groupName +" created");
     }
 
@@ -174,7 +180,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     public void deleteNotificationChannel(String channelId){
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || channelId == null) return;
-        clevertap.deleteNotificationChannel(this.context,channelId);
+        CleverTapAPI.deleteNotificationChannel(this.context,channelId);
         Log.i(TAG, "Notification Channel Id "+ channelId +" deleted");
     }
 
@@ -182,8 +188,57 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     public void deleteNotificationChannelGroup(String groupId){
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || groupId == null) return;
-        clevertap.deleteNotificationChannelGroup(this.context,groupId);
+        CleverTapAPI.deleteNotificationChannelGroup(this.context,groupId);
         Log.i(TAG, "Notification Channel Group Id "+ groupId +" deleted");
+    }
+
+    //Notification Inbox
+
+    @ReactMethod
+    public void showAppInbox(ReadableMap styleConfig){
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if(cleverTap == null) return;
+
+        CTInboxStyleConfig inboxStyleConfig = new CTInboxStyleConfig();
+        if(styleConfig != null) {
+            if (styleConfig.hasKey("navBarColor")) {
+                inboxStyleConfig.setNavBarColor(styleConfig.getString("navBarColor"));
+            }
+            if (styleConfig.hasKey("navBarTitle")) {
+                inboxStyleConfig.setNavBarTitle(styleConfig.getString("navBarTitle"));
+            }
+            if (styleConfig.hasKey("navBarTitleColor")) {
+                inboxStyleConfig.setNavBarTitleColor(styleConfig.getString("navBarTitleColor"));
+            }
+            if (styleConfig.hasKey("inboxBackgroundColor")) {
+                inboxStyleConfig.setNavBarTitleColor(styleConfig.getString("inboxBackgroundColor"));
+            }
+            if (styleConfig.hasKey("backButtonColor")) {
+                inboxStyleConfig.setBackButtonColor(styleConfig.getString("backButtonColor"));
+            }
+            if (styleConfig.hasKey("selectedTabColor")) {
+                inboxStyleConfig.setSelectedTabColor(styleConfig.getString("selectedTabColor"));
+            }
+            if (styleConfig.hasKey("unselectedTabColor")) {
+                inboxStyleConfig.setUnselectedTabColor(styleConfig.getString("unselectedTabColor"));
+            }
+            if (styleConfig.hasKey("selectedTabIndicatorColor")) {
+                inboxStyleConfig.setSelectedTabIndicatorColor(styleConfig.getString("selectedTabIndicatorColor"));
+            }
+            if (styleConfig.hasKey("tabBackgroundColor")) {
+                inboxStyleConfig.setTabBackgroundColor(styleConfig.getString("tabBackgroundColor"));
+            }
+            if (styleConfig.hasKey("tabs")) {
+                ArrayList<String> tabsList = new ArrayList<>();
+                ReadableArray tabsArray = styleConfig.getArray("tabs");
+                for (int i = 0; i < tabsArray.size(); i++) {
+                    tabsList.add(tabsArray.getString(i));
+                }
+                inboxStyleConfig.setTabs(tabsList);
+            }
+        }
+
+        cleverTap.showAppInbox(inboxStyleConfig);
     }
 
     //Enables tracking opt out for the currently active user. 
@@ -272,7 +327,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
 
         try {
-            clevertap.event.push("Charged", finalDetails, finalItems);
+            clevertap.pushChargedEvent(finalDetails, finalItems);
         } catch (Throwable t) {
             Log.e(TAG, t.getLocalizedMessage());
         }
@@ -285,7 +340,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap != null) {
-            result = clevertap.event.getFirstTime(eventName);
+            result = clevertap.getFirstTime(eventName);
         } else {
             error = "CleverTap not initialized";
         }
@@ -299,7 +354,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap != null) {
-            result = clevertap.event.getLastTime(eventName);
+            result = clevertap.getLastTime(eventName);
         } else {
             error = "CleverTap not initialized";
         }
@@ -313,7 +368,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap != null) {
-            result = clevertap.event.getCount(eventName);
+            result = clevertap.getCount(eventName);
         } else {
             error = "CleverTap not initialized";
         }
@@ -327,7 +382,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap != null) {
-            EventDetail detail = clevertap.event.getDetails(eventName);
+            EventDetail detail = clevertap.getDetails(eventName);
             result = eventDetailToWritableMap(detail);
         } else {
             error = "CleverTap not initialized";
@@ -342,7 +397,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap != null) {
-            Map<String, EventDetail> history = clevertap.event.getHistory();
+            Map<String, EventDetail> history = clevertap.getHistory();
             result = eventHistoryToWritableMap(history);
         } else {
             error = "CleverTap not initialized";
@@ -405,7 +460,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         if (clevertap == null) return;
 
         Map<String, Object> finalProfile = profileFromReadableMap(profile);
-        clevertap.profile.push(finalProfile);
+        clevertap.pushProfile(finalProfile);
     }
 
     @ReactMethod
@@ -415,7 +470,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         try {
             JSONObject finalProfile = jsonObjectFromReadableMap(profile);
-            clevertap.profile.pushFacebookUser(finalProfile);
+            clevertap.pushFacebookUser(finalProfile);
         } catch (Throwable t) {
             Log.e(TAG, t.getLocalizedMessage());
         }
@@ -429,7 +484,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap != null) {
-            Object value = clevertap.profile.getProperty(propertyName);
+            Object value = clevertap.getProperty(propertyName);
             // Handle JSONArray for multi-values, otherwise everything should be primitive or String
             if (value instanceof JSONArray) {
                 JSONArray valueArray = (JSONArray)value;
@@ -455,7 +510,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     public void profileRemoveValueForKey(String key) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) return;
-        clevertap.profile.removeValueForKey(key);
+        clevertap.removeValueForKey(key);
     }
 
     @ReactMethod
@@ -463,14 +518,14 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) return;
         ArrayList<String> finalValues = arrayListStringFromReadableArray(values);
-        clevertap.profile.setMultiValuesForKey(key, finalValues);
+        clevertap.setMultiValuesForKey(key, finalValues);
     }
 
     @ReactMethod
     public void profileAddMultiValue(String value, String key) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) return;
-        clevertap.profile.addMultiValueForKey(key, value);
+        clevertap.addMultiValueForKey(key, value);
     }
 
     @ReactMethod
@@ -478,14 +533,14 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) return;
         ArrayList<String> finalValues = arrayListStringFromReadableArray(values);
-        clevertap.profile.addMultiValuesForKey(key, finalValues);
+        clevertap.addMultiValuesForKey(key, finalValues);
     }
 
     @ReactMethod
     public void profileRemoveMultiValue(String value, String key) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) return;
-        clevertap.profile.removeMultiValueForKey(key, value);
+        clevertap.removeMultiValueForKey(key, value);
     }
 
     @ReactMethod
@@ -493,7 +548,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) return;
         ArrayList<String> finalValues = arrayListStringFromReadableArray(values);
-        clevertap.profile.removeMultiValuesForKey(key, finalValues);
+        clevertap.removeMultiValuesForKey(key, finalValues);
     }
 
 
@@ -513,7 +568,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap != null) {
-            result = clevertap.session.getTimeElapsed();
+            result = clevertap.getTimeElapsed();
         } else {
             error = "CleverTap not initialized";
         }
@@ -527,7 +582,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap != null) {
-            result = clevertap.session.getTotalVisits();
+            result = clevertap.getTotalVisits();
         } else {
             error = "CleverTap not initialized";
         }
@@ -541,7 +596,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap != null) {
-            result = clevertap.session.getScreenCount();
+            result = clevertap.getScreenCount();
         } else {
             error = "CleverTap not initialized";
         }
@@ -555,7 +610,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap != null) {
-            result = clevertap.session.getPreviousVisitTime();
+            result = clevertap.getPreviousVisitTime();
         } else {
             error = "CleverTap not initialized";
         }
@@ -569,7 +624,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap != null) {
-            UTMDetail details = clevertap.session.getUTMDetails();
+            UTMDetail details = clevertap.getUTMDetails();
             result = utmDetailsToWritableMap(details);
         } else {
             error = "CleverTap not initialized";
@@ -577,6 +632,54 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
+    //App Inbox methods
+    @ReactMethod
+    public void initializeInbox(){
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if(cleverTap != null){
+            cleverTap.initializeInbox();
+            Log.e(TAG, "initializeInbox Called");
+        }
+    }
+
+    @ReactMethod
+    public void showInbox(ReadableMap styleConfig){
+        CTInboxStyleConfig inboxStyleConfig = styleConfigFromReadableMap(styleConfig);
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if(cleverTap != null){
+            cleverTap.showAppInbox(inboxStyleConfig);
+        }
+    }
+
+    @ReactMethod
+    public void getInboxMessageCount(Callback callback){
+
+        String error = null;
+        int result = -1;
+
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            result = cleverTap.getInboxMessageCount();
+        } else {
+            error = "CleverTap not initialized";
+        }
+        Log.d(TAG,"inside total count");
+        callbackWithErrorAndResult(callback, error, result);
+    }
+
+    @ReactMethod
+    public void getInboxMessageUnreadCount(Callback callback){
+        String error = null;
+        int result = -1;
+
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            result = cleverTap.getInboxMessageUnreadCount();
+        } else {
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback, error, result);
+    }
 
     // Developer Options
 
@@ -818,6 +921,67 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         return ret;
     }
 
+    private CTInboxStyleConfig styleConfigFromReadableMap(ReadableMap styleConfig){
+        if(styleConfig==null) return new CTInboxStyleConfig();
+
+        CTInboxStyleConfig ctInboxStyleConfig = new CTInboxStyleConfig();
+        ReadableMapKeySetIterator iterator = styleConfig.keySetIterator();
+        while(iterator.hasNextKey()){
+            try{
+                String styleConfigKey = iterator.nextKey();
+                ReadableType readableType = styleConfig.getType(styleConfigKey);
+                if("navBarTitle".equals(styleConfigKey) && readableType == ReadableType.String){
+                    String navBarTitle = styleConfig.getString(styleConfigKey);
+                    ctInboxStyleConfig.setNavBarTitle(navBarTitle);
+                }
+                if("navBarTitleColor".equals(styleConfigKey) && readableType == ReadableType.String){
+                    String navBarTitleColor = styleConfig.getString(styleConfigKey);
+                    ctInboxStyleConfig.setNavBarTitleColor(navBarTitleColor);
+                }
+                if("navBarColor".equals(styleConfigKey) && readableType == ReadableType.String){
+                    String navBarColor = styleConfig.getString(styleConfigKey);
+                    ctInboxStyleConfig.setNavBarColor(navBarColor);
+                }
+                if("inboxBackgroundColor".equals(styleConfigKey) && readableType == ReadableType.String){
+                    String inboxBackgroundColor = styleConfig.getString(styleConfigKey);
+                    ctInboxStyleConfig.setInboxBackgroundColor(inboxBackgroundColor);
+                }
+                if("backButtonColor".equals(styleConfigKey) && readableType == ReadableType.String){
+                    String backButtonColor = styleConfig.getString(styleConfigKey);
+                    ctInboxStyleConfig.setBackButtonColor(backButtonColor);
+                }
+                if("unselectedTabColor".equals(styleConfigKey) && readableType == ReadableType.String){
+                    String unselectedTabColor = styleConfig.getString(styleConfigKey);
+                    ctInboxStyleConfig.setUnselectedTabColor(unselectedTabColor);
+                }
+                if("selectedTabColor".equals(styleConfigKey) && readableType == ReadableType.String){
+                    String selectedTabColor = styleConfig.getString(styleConfigKey);
+                    ctInboxStyleConfig.setSelectedTabColor(selectedTabColor);
+                }
+                if("selectedTabIndicatorColor".equals(styleConfigKey) && readableType == ReadableType.String){
+                    String selectedTabIndicatorColor = styleConfig.getString(styleConfigKey);
+                    ctInboxStyleConfig.setSelectedTabIndicatorColor(selectedTabIndicatorColor);
+                }
+                if("tabBackgroundColor".equals(styleConfigKey) && readableType == ReadableType.String){
+                    String tabBackgroundColor = styleConfig.getString(styleConfigKey);
+                    ctInboxStyleConfig.setTabBackgroundColor(tabBackgroundColor);
+                }
+                if("tabs".equals(styleConfigKey) && readableType == ReadableType.Array){
+                    try {
+                        ArrayList<String> tabsList = arrayListStringFromReadableArray(styleConfig.getArray(styleConfigKey));
+                        ctInboxStyleConfig.setTabs(tabsList);
+                    } catch (Throwable t) {
+                        Log.e(TAG, "Unhandled ReadableType.Array from ReadableMap");
+                    }
+                }
+            }catch (Throwable t){
+                Log.e(TAG,t.getLocalizedMessage());
+                return new CTInboxStyleConfig();
+            }
+        }
+        return ctInboxStyleConfig;
+    }
+
     // Listeners
 
     // InAppNotificationListener
@@ -907,5 +1071,16 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         WritableMap params = Arguments.createMap();
         params.putString("CleverTapID", CleverTapID);
         sendEvent(CLEVERTAP_PROFILE_DID_INITIALIZE, params);
+    }
+
+    //Inbox Callbacks
+    public void inboxDidInitialize(){
+        WritableMap params = Arguments.createMap();
+        sendEvent(CLEVERTAP_INBOX_DID_INITIALIZE,params);//passing empty map
+    }
+
+    public void inboxMessagesDidUpdate(){
+        WritableMap params = Arguments.createMap();
+        sendEvent(CLEVERTAP_INBOX_MESSAGES_DID_UPDATE,params); //passing empty map
     }
 }

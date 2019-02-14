@@ -1,6 +1,7 @@
 #import "CleverTapReact.h"
 #import "CleverTapReactManager.h"
 #import <CleverTapSDK/CleverTap.h>
+#import <CleverTapSDK/CleverTap+Inbox.h>
 #import <CleverTapSDK/CleverTapEventDetail.h>
 #import <CleverTapSDK/CleverTapUTMDetail.h>
 
@@ -24,6 +25,8 @@ RCT_EXPORT_MODULE();
              kCleverTapProfileDidInitialize : kCleverTapProfileDidInitialize,
              kCleverTapProfileSync : kCleverTapProfileSync,
              kCleverTapInAppNotificationDismissed: kCleverTapInAppNotificationDismissed,
+             kCleverTapInboxDidInitialize: kCleverTapInboxDidInitialize,
+             kCleverTapInboxMessagesDidUpdate: kCleverTapInboxMessagesDidUpdate,
              };
 }
 
@@ -400,5 +403,98 @@ RCT_EXPORT_METHOD(setDebugLevel:(int)level) {
     return _profile;
 }
 
+RCT_EXPORT_METHOD(getInboxMessageCount:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap inboxMessageCount]");
+    int result = (int)[[CleverTap sharedInstance] getInboxMessageCount];
+    [self returnResult:@(result) withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(getInboxMessageUnreadCount:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap inboxMessageUnreadCount]");
+    int result = (int)[[CleverTap sharedInstance] getInboxMessageUnreadCount];
+    [self returnResult:@(result) withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(initializeInbox) {
+    RCTLogInfo(@"[CleverTap Inbox Initialize]");
+    [[CleverTap sharedInstance] initializeInboxWithCallback:^(BOOL success) {
+        if (success) {
+            RCTLogInfo(@"[Inbox initialized]");
+            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxDidInitialize object:nil userInfo:nil];
+            [[CleverTap sharedInstance] registerInboxUpdatedBlock:^{
+                RCTLogInfo(@"[Inbox updated]");
+                [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessagesDidUpdate object:nil userInfo:nil];
+            }];
+        }
+    }];
+}
+
+RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
+    RCTLogInfo(@"[CleverTap Show Inbox]");
+    CleverTapInboxViewController *inboxController = [[CleverTap sharedInstance] newInboxViewControllerWithConfig:[self _dictToInboxStyleConfig:styleConfig? styleConfig : nil] andDelegate:nil];
+    if (inboxController) {
+        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:inboxController];
+        UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+        UIViewController *mainViewController = keyWindow.rootViewController;
+        [mainViewController presentViewController:navigationController animated:YES completion:nil];
+    }
+}
+
+- (CleverTapInboxStyleConfig*)_dictToInboxStyleConfig: (NSDictionary *)dict {
+    CleverTapInboxStyleConfig *_config = [CleverTapInboxStyleConfig new];
+    NSString *title = [dict valueForKey:@"navBarTitle"];
+    if (title) {
+        _config.title = title;
+    }
+    NSArray *messageTags = [dict valueForKey:@"tabs"];
+    if (messageTags) {
+        _config.messageTags = messageTags;
+    }
+    NSString *backgroundColor = [dict valueForKey:@"inboxBackgroundColor"];
+    if (backgroundColor) {
+        _config.backgroundColor = [self ct_colorWithHexString:backgroundColor alpha:1.0];
+    }
+    NSString *navigationBarTintColor = [dict valueForKey:@"navBarColor"];
+    if (navigationBarTintColor) {
+        _config.navigationBarTintColor = [self ct_colorWithHexString:navigationBarTintColor alpha:1.0];
+    }
+    NSString *navigationTintColor = [dict valueForKey:@"navBarTitleColor"];
+    if (navigationTintColor) {
+        _config.navigationTintColor = [self ct_colorWithHexString:navigationTintColor alpha:1.0];
+    }
+    NSString *tabBackgroundColor = [dict valueForKey:@"tabBackgroundColor"];
+    if (tabBackgroundColor) {
+        _config.tabBackgroundColor = [self ct_colorWithHexString:tabBackgroundColor alpha:1.0];
+    }
+    NSString *tabSelectedBgColor = [dict valueForKey:@"tabSelectedBgColor"];
+    if (tabSelectedBgColor) {
+        _config.tabSelectedBgColor = [self ct_colorWithHexString:tabSelectedBgColor alpha:1.0];
+    }
+    NSString *tabSelectedTextColor = [dict valueForKey:@"tabSelectedTextColor"];
+    if (tabSelectedTextColor) {
+        _config.tabSelectedTextColor = [self ct_colorWithHexString:tabSelectedTextColor alpha:1.0];
+    }
+    NSString *tabUnSelectedTextColor = [dict valueForKey:@"tabUnSelectedTextColor"];
+    if (tabUnSelectedTextColor) {
+        _config.tabUnSelectedTextColor = [self ct_colorWithHexString:tabUnSelectedTextColor alpha:1.0];
+    }
+    return _config;
+}
+- (UIColor *)ct_colorWithHexString:(NSString *)string alpha:(CGFloat)alpha{
+    if (![string isKindOfClass:[NSString class]] || [string length] == 0) {
+        return [UIColor colorWithRed:0.0f green:0.0f blue:0.0f alpha:1.0f];
+    }
+    unsigned int hexint = 0;
+    NSScanner *scanner = [NSScanner scannerWithString:string];
+    [scanner setCharactersToBeSkipped:[NSCharacterSet
+                                       characterSetWithCharactersInString:@"#"]];
+    [scanner scanHexInt:&hexint];
+    UIColor *color =
+    [UIColor colorWithRed:((CGFloat) ((hexint & 0xFF0000) >> 16))/255
+                    green:((CGFloat) ((hexint & 0xFF00) >> 8))/255
+                     blue:((CGFloat) (hexint & 0xFF))/255
+                    alpha:alpha];
+    return color;
+}
 
 @end
