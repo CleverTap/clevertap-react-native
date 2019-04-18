@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.platform       = :ios, '8.0'
 
   s.preserve_paths = 'LICENSE.md', 'README.md', 'package.json', 'index.js'
-  s.source_files   = 'ios/**/*.{h,m}'
+  s.source_files   = 'ios/CleverTapReact/*.{h,m}'
 
   s.dependency 'CleverTap-iOS-SDK', '~> 3.4.2'
   s.dependency 'React'
