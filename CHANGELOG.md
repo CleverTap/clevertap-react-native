@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 0.3.1 *(18 April 2019)*
+-------------------------------------------
+- Update to CleverTap iOS SDK v 3.4.2
+- Added the local clevertap-react-native Podspec for integrating the React Native iOS bridge via Cocoapods.
+
 Version 0.3.0 *(14 February 2019)*
 -------------------------------------------
 - Update to CleverTap Android SDK v 3.4.2
