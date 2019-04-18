@@ -4,8 +4,8 @@
 2. `react-native link clevertap-react-native` **or** [follow the manual linking instructions below](#manual-linking).
 
 ### iOS with podspec
-- Add `pod 'clevertap-react-native', :path => '../node_modules/clevertap-react-native'` to your app target in your Podfile. 
-- Run pod install from your ios directory.
+- Add `pod 'clevertap-react-native', :path => '../node_modules/clevertap-react-native'` as a dependency in your ios/Podfile. 
+- Run `pod install` from your ios directory.
 
 ### iOS without podspec
 - Add `pod 'CleverTap-iOS-SDK'` as a dependency in your ios/Podfile.  [See an example Podfile here](https://github.com/CleverTap/clevertap-react-native/blob/master/ExampleProject/ios/Podfile).
