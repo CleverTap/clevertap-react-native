@@ -24,4 +24,4 @@
 ### For more: 
  - [see the included Example Project](https://github.com/CleverTap/clevertap-react-native/blob/master/ExampleProject/ExampleProject.js) 
  - [see the CleverTap JS interface](https://github.com/CleverTap/clevertap-react-native/blob/master/index.js)
-
+ - [see the CleverTap TS interface](https://github.com/CleverTap/clevertap-react-native/blob/master/index.d.ts)
