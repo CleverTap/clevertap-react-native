@@ -1,8 +1,9 @@
 {
   "name": "clevertap-react-native",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "CleverTap React Native SDK.",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "node install.js",
