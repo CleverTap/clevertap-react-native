@@ -17,7 +17,6 @@
   /**
    * Enables the reporting of device network related information, including IP address.  This reporting is disabled by default.
    * @param enable {boolean}
-   * @returns {Promise<any>}
    */
   export function enableDeviceNetworkInfoReporting(enable: boolean): void;
 
@@ -33,7 +32,6 @@
   /**
    * Sets the device's push token
    * @param token {string}
-   * @returns {Promise<any>}
    */
   export function setPushToken(token: string): void;
 
@@ -61,7 +59,6 @@
    * @param importance {number}
    * @param showBadge {boolean}
    * @param sound {string}
-   * @returns {Promise<any>}
    */
   export function createNotificationChannelWithSound(
     channelID: string,
@@ -129,7 +126,6 @@
   /**
    * Delete Notification Group for Android O+
    * @param groupID {string}
-   * @returns {Promise<any>}
    */
   export function deleteNotificationChannelGroup(groupID: string): void;
 
@@ -142,19 +138,12 @@
    * @param screenName {string}
    */
   export function recordScreenView(screenName: string): void;
-
-  /**
-   * Record Event with Name
-   * @param eventName {string}
-   */
-  export function recordEventWithName(eventName: string): void;
-
   /**
    *  Record Event with Name and Event properties
    * @param eventName {string}
    * @param eventProps {any}
    */
-  export function recordEventWithNameAndProps(
+  export function recordEvent(
     eventName: string,
     eventProps: any
   ): void;
@@ -164,7 +153,7 @@
    * @param details {any}  object with transaction details
    * @param items {any}  array of items purchased
    */
-  export function recordChargedEventWithDetailsAndItems(
+  export function recordChargedEvent(
     details: any,
     items: any
   ): void;
@@ -325,7 +314,6 @@
    * Method for removing a value from a multi-value user profile property
    * @param key {string}
    * @param values {any} array of strings
-   * @returns {Promise<any>}
    */
   export function profileRemoveMultiValues(key: string, values: any): void;
 
