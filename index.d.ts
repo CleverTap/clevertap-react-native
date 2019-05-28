@@ -269,13 +269,13 @@
    * Get a unique CleverTap identifier suitable for use with install attribution providers.
    * calls back with unique CleverTap attribution identifier
    */
-  export function profileGetCleverTapAttributionIdentifier(): void;
+  export function profileGetCleverTapAttributionIdentifier(callback: Callback): void;
 
   /**
    * Get User Profile CleverTapID
    * calls back with CleverTapID or false
    */
-  export function profileGetCleverTapID(): void;
+  export function profileGetCleverTapID(callback: Callback): void;
 
   /**
    * Remove the property specified by key from the user profile
@@ -325,31 +325,31 @@
    * Get Session Elapsed Time
    * calls back with seconds
    */
-  export function sessionGetTimeElapsed(): void;
+  export function sessionGetTimeElapsed(callback: Callback): void;
 
   /**
    * Get Session Total Visits
    * calls back with with int or -1
    */
-  export function sessionGetTotalVisits(): void;
+  export function sessionGetTotalVisits(callback: Callback): void;
 
   /**
    * Get Session Screen Count
    * calls back with with int
    */
-  export function sessionGetScreenCount(): void;
+  export function sessionGetScreenCount(callback: Callback): void;
 
   /**
    * Get Session Previous Visit Time
    * calls back with with epoch seconds or -1
    */
-  export function sessionGetPreviousVisitTime(): void;
+  export function sessionGetPreviousVisitTime(callback: Callback): void;
 
   /**
    * Get Sesssion Referrer UTM details
    * object {"source": <string>, "medium": <string>, "campaign": <string>} or empty object
    */
-  export function sessionGetUTMDetails(): void;
+  export function sessionGetUTMDetails(callback: Callback): void;
 
   /**
    * Call this to manually track the utm details for an incoming install referrer
@@ -374,12 +374,12 @@
   /**
    * Call this method to get the count of unread Inbox messages
    */
-  export function getInboxMessageUnreadCount(): void;
+  export function getInboxMessageUnreadCount(callback: Callback): void;
 
   /**
    * Call this method to get the count of total Inbox messages
    */
-  export function getInboxMessageCount(): void;
+  export function getInboxMessageCount(callback: Callback): void;
 
   /**
    * Call this method to open the App Inbox
@@ -396,3 +396,5 @@
    * @param level {number}
    */
   export function setDebugLevel(level: number): void;
+
+  type Callback = (err: object, res: object) => void;
