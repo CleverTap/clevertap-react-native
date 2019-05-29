@@ -288,34 +288,34 @@
    * @param key {string}
    * @param values {any} array of strings
    */
-  export function profileSetMultiValuesForKey(key: string, values: any): void;
+  export function profileSetMultiValuesForKey(values: any, key: string): void;
 
   /**
    * Method for adding a value to a multi-value user profile property
    * @param key {string}
    * @param value {string}
    */
-  export function profileAddMultiValueForKey(key: string, value: string): void;
+  export function profileAddMultiValueForKey(value: string, key: string): void;
 
   /**
    * Method for adding values to a multi-value user profile property
    * @param key {string}
    * @param values {any} array of strings
    */
-  export function profileAddMultiValuesForKey(key: string, values: any): void;
+  export function profileAddMultiValuesForKey(values: any, key: string): void;
   /**
    * Method for removing a value from a multi-value user profile property
    * @param key {string}
    * @param value {string}
    */
-  export function profileRemoveMultiValueForKey(key: string, value: string): void;
+  export function profileRemoveMultiValueForKey(value: string, key: string): void;
 
   /**
    * Method for removing a value from a multi-value user profile property
    * @param key {string}
    * @param values {any} array of strings
    */
-  export function profileRemoveMultiValuesForKey(key: string, values: any): void;
+  export function profileRemoveMultiValuesForKey(values: any, key: string): void;
 
   /*******************
    * Session
