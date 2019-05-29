@@ -17,7 +17,6 @@
   /**
    * Enables the reporting of device network related information, including IP address.  This reporting is disabled by default.
    * @param enable {boolean}
-   * @returns {Promise<any>}
    */
   export function enableDeviceNetworkInfoReporting(enable: boolean): void;
 
@@ -33,7 +32,6 @@
   /**
    * Sets the device's push token
    * @param token {string}
-   * @returns {Promise<any>}
    */
   export function setPushToken(token: string): void;
 
@@ -61,7 +59,6 @@
    * @param importance {number}
    * @param showBadge {boolean}
    * @param sound {string}
-   * @returns {Promise<any>}
    */
   export function createNotificationChannelWithSound(
     channelID: string,
@@ -129,7 +126,6 @@
   /**
    * Delete Notification Group for Android O+
    * @param groupID {string}
-   * @returns {Promise<any>}
    */
   export function deleteNotificationChannelGroup(groupID: string): void;
 
@@ -142,19 +138,12 @@
    * @param screenName {string}
    */
   export function recordScreenView(screenName: string): void;
-
-  /**
-   * Record Event with Name
-   * @param eventName {string}
-   */
-  export function recordEventWithName(eventName: string): void;
-
   /**
    *  Record Event with Name and Event properties
    * @param eventName {string}
    * @param eventProps {any}
    */
-  export function recordEventWithNameAndProps(
+  export function recordEvent(
     eventName: string,
     eventProps: any
   ): void;
@@ -164,7 +153,7 @@
    * @param details {any}  object with transaction details
    * @param items {any}  array of items purchased
    */
-  export function recordChargedEventWithDetailsAndItems(
+  export function recordChargedEvent(
     details: any,
     items: any
   ): void;
@@ -280,13 +269,13 @@
    * Get a unique CleverTap identifier suitable for use with install attribution providers.
    * calls back with unique CleverTap attribution identifier
    */
-  export function profileGetCleverTapAttributionIdentifier(): void;
+  export function profileGetCleverTapAttributionIdentifier(callback: Callback): void;
 
   /**
    * Get User Profile CleverTapID
    * calls back with CleverTapID or false
    */
-  export function profileGetCleverTapID(): void;
+  export function profileGetCleverTapID(callback: Callback): void;
 
   /**
    * Remove the property specified by key from the user profile
@@ -299,35 +288,34 @@
    * @param key {string}
    * @param values {any} array of strings
    */
-  export function profileSetMultiValues(key: string, values: any): void;
+  export function profileSetMultiValuesForKey(values: any, key: string): void;
 
   /**
    * Method for adding a value to a multi-value user profile property
    * @param key {string}
    * @param value {string}
    */
-  export function profileAddMultiValue(key: string, value: string): void;
+  export function profileAddMultiValueForKey(value: string, key: string): void;
 
   /**
    * Method for adding values to a multi-value user profile property
    * @param key {string}
    * @param values {any} array of strings
    */
-  export function profileAddMultiValues(key: string, values: any): void;
+  export function profileAddMultiValuesForKey(values: any, key: string): void;
   /**
    * Method for removing a value from a multi-value user profile property
    * @param key {string}
    * @param value {string}
    */
-  export function profileRemoveMultiValue(key: string, value: string): void;
+  export function profileRemoveMultiValueForKey(value: string, key: string): void;
 
   /**
    * Method for removing a value from a multi-value user profile property
    * @param key {string}
    * @param values {any} array of strings
-   * @returns {Promise<any>}
    */
-  export function profileRemoveMultiValues(key: string, values: any): void;
+  export function profileRemoveMultiValuesForKey(values: any, key: string): void;
 
   /*******************
    * Session
@@ -337,31 +325,31 @@
    * Get Session Elapsed Time
    * calls back with seconds
    */
-  export function sessionGetTimeElapsed(): void;
+  export function sessionGetTimeElapsed(callback: Callback): void;
 
   /**
    * Get Session Total Visits
    * calls back with with int or -1
    */
-  export function sessionGetTotalVisits(): void;
+  export function sessionGetTotalVisits(callback: Callback): void;
 
   /**
    * Get Session Screen Count
    * calls back with with int
    */
-  export function sessionGetScreenCount(): void;
+  export function sessionGetScreenCount(callback: Callback): void;
 
   /**
    * Get Session Previous Visit Time
    * calls back with with epoch seconds or -1
    */
-  export function sessionGetPreviousVisitTime(): void;
+  export function sessionGetPreviousVisitTime(callback: Callback): void;
 
   /**
    * Get Sesssion Referrer UTM details
    * object {"source": <string>, "medium": <string>, "campaign": <string>} or empty object
    */
-  export function sessionGetUTMDetails(): void;
+  export function sessionGetUTMDetails(callback: Callback): void;
 
   /**
    * Call this to manually track the utm details for an incoming install referrer
@@ -386,12 +374,12 @@
   /**
    * Call this method to get the count of unread Inbox messages
    */
-  export function getInboxMessageUnreadCount(): void;
+  export function getInboxMessageUnreadCount(callback: Callback): void;
 
   /**
    * Call this method to get the count of total Inbox messages
    */
-  export function getInboxMessageCount(): void;
+  export function getInboxMessageCount(callback: Callback): void;
 
   /**
    * Call this method to open the App Inbox
@@ -408,3 +396,5 @@
    * @param level {number}
    */
   export function setDebugLevel(level: number): void;
+
+  type Callback = (err: object, res: object) => void;

@@ -10,11 +10,6 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name="com.clevertap.android.sdk.InAppNotificationActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
         <receiver
             android:name="com.clevertap.android.sdk.CTPushNotificationReceiver"
             android:exported="false"

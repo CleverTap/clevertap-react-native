@@ -464,7 +464,7 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
     }
     NSString *tabBackgroundColor = [dict valueForKey:@"tabBackgroundColor"];
     if (tabBackgroundColor) {
-        _config.tabBackgroundColor = [self ct_colorWithHexString:tabBackgroundColor alpha:1.0];
+        _config.navigationBarTintColor = [self ct_colorWithHexString:tabBackgroundColor alpha:1.0];
     }
     NSString *tabSelectedBgColor = [dict valueForKey:@"tabSelectedBgColor"];
     if (tabSelectedBgColor) {

@@ -94,7 +94,7 @@ var CleverTap = {
     * @param {string} channelId - A String for setting the id of the notification channel
     * @param {string} channelName - A String for setting the name of the notification channel
     * @param {string} channelDescription - A String for setting the description of the notification channel
-    * @param {int} importance - An Integer value setting the importance of the notifications sent in this channel 
+    * @param {int} importance - An Integer value setting the importance of the notifications sent in this channel
     * @param {boolean} showBadge - A boolean value as to whether this channel shows a badge
     */
     createNotificationChannel: function(channelId, channelName, channelDescription, importance, showBadge){
@@ -106,7 +106,7 @@ var CleverTap = {
     * @param {string} channelId - A String for setting the id of the notification channel
     * @param {string} channelName - A String for setting the name of the notification channel
     * @param {string} channelDescription - A String for setting the description of the notification channel
-    * @param {int} importance - An Integer value setting the importance of the notifications sent in this channel 
+    * @param {int} importance - An Integer value setting the importance of the notifications sent in this channel
     * @param {boolean} showBadge - A boolean value as to whether this channel shows a badge
     * @param {string} sound - A String for setting the custom sound of the notification channel
     */
@@ -119,7 +119,7 @@ var CleverTap = {
     * @param {string} channelId - A String for setting the id of the notification channel
     * @param {string} channelName - A String for setting the name of the notification channel
     * @param {string} channelDescription - A String for setting the description of the notification channel
-    * @param {int} importance - An Integer value setting the importance of the notifications sent in this channel 
+    * @param {int} importance - An Integer value setting the importance of the notifications sent in this channel
     * @param {string} groupId - A String for setting the notification channel as a part of a notification group
     * @param {boolean} showBadge - A boolean value as to whether this channel shows a badge
     */
@@ -132,7 +132,7 @@ var CleverTap = {
     * @param {string} channelId - A String for setting the id of the notification channel
     * @param {string} channelName - A String for setting the name of the notification channel
     * @param {string} channelDescription - A String for setting the description of the notification channel
-    * @param {int} importance - An Integer value setting the importance of the notifications sent in this channel 
+    * @param {int} importance - An Integer value setting the importance of the notifications sent in this channel
     * @param {string} groupId - A String for setting the notification channel as a part of a notification group
     * @param {boolean} showBadge - A boolean value as to whether this channel shows a badge
     * @param {string} sound - A String for setting the custom sound of the notification channel
@@ -167,16 +167,8 @@ var CleverTap = {
     },
 
     /**
-    * Method to show App Inbox
-    * @param {object} styleConfig - key-value properties of the App Inbox Style
-    */
-    showAppInbox: function(styleConfig){
-        CleverTapReact.showAppInbox(styleConfig);
-    },
-
-    /**
     * Enables tracking opt out for the currently active user.
-    * @param {boolean} value - A boolean for enabling or disabling tracking for current user 
+    * @param {boolean} value - A boolean for enabling or disabling tracking for current user
     */
     setOptOut: function(value){
         CleverTapReact.setOptOut(value);
@@ -184,7 +176,7 @@ var CleverTap = {
 
     /**
     * Sets the CleverTap SDK to offline mode
-    * @param {boolean} value - A boolean for enabling or disabling sending events for current user 
+    * @param {boolean} value - A boolean for enabling or disabling sending events for current user
     */
     setOffline: function(value){
         CleverTapReact.setOffline(value);
