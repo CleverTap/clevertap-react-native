@@ -192,55 +192,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         Log.i(TAG, "Notification Channel Group Id "+ groupId +" deleted");
     }
 
-    //Notification Inbox
-
-    @ReactMethod
-    public void showAppInbox(ReadableMap styleConfig){
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if(cleverTap == null) return;
-
-        CTInboxStyleConfig inboxStyleConfig = new CTInboxStyleConfig();
-        if(styleConfig != null) {
-            if (styleConfig.hasKey("navBarColor")) {
-                inboxStyleConfig.setNavBarColor(styleConfig.getString("navBarColor"));
-            }
-            if (styleConfig.hasKey("navBarTitle")) {
-                inboxStyleConfig.setNavBarTitle(styleConfig.getString("navBarTitle"));
-            }
-            if (styleConfig.hasKey("navBarTitleColor")) {
-                inboxStyleConfig.setNavBarTitleColor(styleConfig.getString("navBarTitleColor"));
-            }
-            if (styleConfig.hasKey("inboxBackgroundColor")) {
-                inboxStyleConfig.setNavBarTitleColor(styleConfig.getString("inboxBackgroundColor"));
-            }
-            if (styleConfig.hasKey("backButtonColor")) {
-                inboxStyleConfig.setBackButtonColor(styleConfig.getString("backButtonColor"));
-            }
-            if (styleConfig.hasKey("selectedTabColor")) {
-                inboxStyleConfig.setSelectedTabColor(styleConfig.getString("selectedTabColor"));
-            }
-            if (styleConfig.hasKey("unselectedTabColor")) {
-                inboxStyleConfig.setUnselectedTabColor(styleConfig.getString("unselectedTabColor"));
-            }
-            if (styleConfig.hasKey("selectedTabIndicatorColor")) {
-                inboxStyleConfig.setSelectedTabIndicatorColor(styleConfig.getString("selectedTabIndicatorColor"));
-            }
-            if (styleConfig.hasKey("tabBackgroundColor")) {
-                inboxStyleConfig.setTabBackgroundColor(styleConfig.getString("tabBackgroundColor"));
-            }
-            if (styleConfig.hasKey("tabs")) {
-                ArrayList<String> tabsList = new ArrayList<>();
-                ReadableArray tabsArray = styleConfig.getArray("tabs");
-                for (int i = 0; i < tabsArray.size(); i++) {
-                    tabsList.add(tabsArray.getString(i));
-                }
-                inboxStyleConfig.setTabs(tabsList);
-            }
-        }
-
-        cleverTap.showAppInbox(inboxStyleConfig);
-    }
-
     //Enables tracking opt out for the currently active user. 
 
     @ReactMethod
@@ -259,7 +210,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     //Enables the reporting of device network-related information, including IP address.  This reporting is disabled by default.
-    
+
     @ReactMethod
     public void enableDeviceNetworkInfoReporting(boolean value){
         CleverTapAPI clevertap = getCleverTapAPI();
