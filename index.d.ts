@@ -27,7 +27,7 @@
   /**
    * Registers for push notifications
    */
-  export function registerPush(): void;
+  export function registerForPush(): void;
 
   /**
    * Sets the device's push token
@@ -184,7 +184,7 @@
    * @param eventName {string}
    * calls back with object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>} or empty object
    */
-  export function eventGetDetails(eventName: string, callback: Callback): void;
+  export function eventGetDetail(eventName: string, callback: Callback): void;
 
   /**
    * Get Event History
