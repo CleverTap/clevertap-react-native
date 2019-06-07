@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Version 0.3.4 *(7 June 2019)*
+-------------------------------------------
+- Added fixes for Typescript
+
 Version 0.3.3 *(29 May 2019)*
 -------------------------------------------
 - Update to CleverTap Android SDK v 3.5.1
