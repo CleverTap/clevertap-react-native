@@ -27,7 +27,7 @@
   /**
    * Registers for push notifications
    */
-  export function registerPush(): void;
+  export function registerForPush(): void;
 
   /**
    * Sets the device's push token
@@ -163,54 +163,34 @@
    * @param eventName {string}
    * callback returns epoch seconds or -1
    */
-  export function eventGetFirstTime(eventName: string): void;
+  export function eventGetFirstTime(eventName: string, callback: Callback): void;
 
   /**
    * Get Event Last Time
    * @param eventName {string}
    * callback returns epoch seconds or -1
    */
-  export function eventGetLastTime(eventName: string): void;
+  export function eventGetLastTime(eventName: string, callback: Callback): void;
 
   /**
    * Get Event Number of Occurrences
    * @param eventName {string}
    * calls back with int or -1
    */
-  export function eventGetOccurrences(eventName: string): void;
+  export function eventGetOccurrences(eventName: string, callback: Callback): void;
 
   /**
    * Get Event Details
    * @param eventName {string}
    * calls back with object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>} or empty object
    */
-  export function eventGetDetails(eventName: string): void;
+  export function eventGetDetail(eventName: string, callback: Callback): void;
 
   /**
    * Get Event History
    * calls back with object {"eventName1":<event1 details object>, "eventName2":<event2 details object>}
    */
-  export function getEventHistory(): void;
-
-  /*******************
-   * Profiles
-   ******************/
-
-  /**
-   * Get the device location if available.
-   * On iOS:
-   * Calling this will prompt the user location permissions dialog.
-   * Please be sure to include the NSLocationWhenInUseUsageDescription key in your Info.plist.
-   * Uses desired accuracy of kCLLocationAccuracyHundredMeters.
-   * If you need background location updates or finer accuracy please implement your own location handling.
-   * On Android:
-   * Requires Location Permission in AndroidManifest e.g. "android.permission.ACCESS_COARSE_LOCATION"
-   * You can use location to pass it to CleverTap via the setLocation API
-   * for, among other things, more fine-grained geo-targeting and segmentation purposes.
-   * Note: on iOS the call to CleverTapSDK must be made on the main thread due to LocationManager restrictions, but the CleverTapSDK method itself is non-blocking.
-   * calls back with {lat:lat, lon:lon} lat and lon are floats
-   */
-  export function getLocation(): void;
+  export function getEventHistory(callback: Callback): void;
 
   /**
    * Set location
@@ -263,7 +243,7 @@
    * @param propertyName {string}
    * calls back with value of propertyName or false
    */
-  export function profileGetProperty(propertyName: string): void;
+  export function profileGetProperty(propertyName: string, callback: Callback): void;
 
   /**
    * Get a unique CleverTap identifier suitable for use with install attribution providers.
