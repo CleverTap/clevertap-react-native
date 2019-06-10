@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 0.3.4 *(7 June 2019)*
+Version 0.3.4 *(10 June 2019)*
 -------------------------------------------
 - Added fixes for Typescript
 
