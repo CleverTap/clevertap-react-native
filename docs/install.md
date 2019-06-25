@@ -17,13 +17,13 @@
 ```gradle
 dependencies {
 	...
-    compile 'com.clevertap.android:clevertap-android-sdk:3.4.2'
+    compile 'com.clevertap.android:clevertap-android-sdk:3.5.1'
     compile 'com.google.android.gms:play-services-base:16.0.1'
     compile 'com.google.firebase:firebase-messaging:17.3.3'
     compile 'com.google.android.exoplayer:exoplayer:2.8.4' //Optional for Audio/Video
     compile 'com.google.android.exoplayer:exoplayer-hls:2.8.4' //Optional for Audio/Video
     compile 'com.google.android.exoplayer:exoplayer-ui:2.8.4' //Optional for Audio/Video
-    compile 'com.github.bumptech.glide:glide:4.8.0' //Mandatory for App Inbox
+    compile 'com.github.bumptech.glide:glide:4.9.0' //Mandatory for App Inbox
     compile 'com.android.support:design:28.0.0' //Mandatory for App Inbox
     compile "com.android.support:appcompat-v7:28.0.0" //Mandatory for App Inbox
 
