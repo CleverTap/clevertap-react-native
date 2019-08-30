@@ -6,9 +6,9 @@
 
 #import <React/RCTLog.h>
 
-#import <CleverTapSDK/CleverTap.h>
-#import <CleverTapSDK/CleverTapSyncDelegate.h>
-#import <CleverTapSDK/CleverTapInAppNotificationDelegate.h>
+#import <CleverTap-iOS-SDK/CleverTap.h>
+#import <CleverTap-iOS-SDK/CleverTapSyncDelegate.h>
+#import <CleverTap-iOS-SDK/CleverTapInAppNotificationDelegate.h>
 
 
 @interface CleverTapReactManager() <CleverTapSyncDelegate, CleverTapInAppNotificationDelegate> {
