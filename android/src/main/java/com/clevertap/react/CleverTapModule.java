@@ -1,6 +1,7 @@
 package com.clevertap.react;
 
 import android.location.Location;
+import android.telecom.Call;
 import android.util.Log;
 import android.net.Uri;
 
@@ -31,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.HashMap;
@@ -90,6 +92,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 clevertap.setInAppNotificationListener(this);
                 clevertap.setSyncListener(this);
                 clevertap.setCTNotificationInboxListener(this);
+                clevertap.setCTExperimentsListener(this);
                 clevertap.setLibrary("React-Native");
             }
             mCleverTap = clevertap;
@@ -761,6 +764,174 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
+    @ReactMethod
+    public void getBooleanVariable(ReadableArray array, Callback callback){
+        String error = null;
+        Boolean result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getBooleanVariable(array.getString(0),array.getBoolean(1));
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getDoubleVariable(ReadableArray array, Callback callback){
+        String error = null;
+        Double result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getDoubleVariable(array.getString(0),array.getDouble(1));
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getIntegerVariable(ReadableArray array, Callback callback){
+        String error = null;
+        int result = -1;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getIntegerVariable(array.getString(0),array.getInt(1));
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getStringVariable(ReadableArray array, Callback callback){
+        String error = null;
+        String result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getStringVariable(array.getString(0),array.getString(1));
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getListOfBooleanVariable(ReadableArray array, Callback callback){
+        String error = null;
+        List<Boolean> result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getListOfBooleanVariable(array.getString(0),arrayListBooleanFromReadableArray(array.getArray(1)));
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getListOfDoubleVariable(ReadableArray array, Callback callback){
+        String error = null;
+        List<Double> result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getListOfDoubleVariable(array.getString(0),arrayListDoubleFromReadableArray(array.getArray(1)));
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getListOfIntegerVariable(ReadableArray array, Callback callback){
+        String error = null;
+        List<Integer> result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getListOfIntegerVariable(array.getString(0),arrayListIntegerFromReadableArray(array.getArray(1)));
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getListOfStringVariable(ReadableArray array, Callback callback){
+        String error = null;
+        List<String> result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getListOfStringVariable(array.getString(0),arrayListStringFromReadableArray(array.getArray(1)));
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getMapOfBooleanVariable(ReadableArray array, Callback callback){
+        String error = null;
+        Map<String,Boolean> result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getMapOfBooleanVariable(array.getString(0),booleanMapFromReadableMap(array.getMap(1)));
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getMapOfDoubleVariable(ReadableArray array, Callback callback){
+        String error = null;
+        Map<String,Double> result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getMapOfDoubleVariable(array.getString(0),doubleMapFromReadableMap(array.getMap(1)));
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getMapOfIntegerVariable(ReadableArray array, Callback callback){
+        String error = null;
+        Map<String,Integer> result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getMapOfIntegerVariable(array.getString(0),integerMapFromReadableMap(array.getMap(1)));
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getMapOfStringVariable(ReadableArray array, Callback callback){
+        String error = null;
+        Map<String,String> result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getMapOfStringVariable(array.getString(0),stringMapFromReadableMap(array.getMap(1)));
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
     // Developer Options
 
     @ReactMethod
@@ -870,6 +1041,137 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             }
         }
         return array;
+    }
+
+    private static ArrayList<Boolean> arrayListBooleanFromReadableArray(ReadableArray readableArray) {
+        ArrayList<Boolean> array = new ArrayList<>();
+        for (int i = 0; i < readableArray.size(); i++) {
+            switch (readableArray.getType(i)) {
+                case Null:
+                    break;
+                case Boolean:
+                    array.add(readableArray.getBoolean(i));
+                    break;
+                case String:
+                    array.add(Boolean.parseBoolean(readableArray.getString(i)));
+                    break;
+            }
+        }
+        return array;
+    }
+
+    private static ArrayList<Integer> arrayListIntegerFromReadableArray(ReadableArray readableArray) {
+        ArrayList<Integer> array = new ArrayList<>();
+        for (int i = 0; i < readableArray.size(); i++) {
+            switch (readableArray.getType(i)) {
+                case Null:
+                    break;
+                case Number:
+                    array.add(readableArray.getInt(i));
+                    break;
+                case String:
+                    array.add(Integer.parseInt(readableArray.getString(i)));
+                    break;
+            }
+        }
+        return array;
+    }
+
+    private static ArrayList<Double> arrayListDoubleFromReadableArray(ReadableArray readableArray) {
+        ArrayList<Double> array = new ArrayList<>();
+        for (int i = 0; i < readableArray.size(); i++) {
+            switch (readableArray.getType(i)) {
+                case Null:
+                    break;
+                case Number:
+                    array.add(readableArray.getDouble(i));
+                    break;
+                case String:
+                    array.add(Double.parseDouble(readableArray.getString(i)));
+                    break;
+            }
+        }
+        return array;
+    }
+
+    private HashMap<String,Boolean> booleanMapFromReadableMap(ReadableMap booleanReadableMap){
+        if(booleanReadableMap == null) return null;
+
+        ReadableMapKeySetIterator iterator = booleanReadableMap.keySetIterator();
+        HashMap<String, Boolean> booleanMap = new HashMap<>();
+
+        while(iterator.hasNextKey()){
+            String key = iterator.nextKey();
+            ReadableType readableType = booleanReadableMap.getType(key);
+
+            if (readableType == ReadableType.Boolean) {
+                booleanMap.put(key, booleanReadableMap.getBoolean(key));
+            }else {
+                Log.e(TAG, "Unhandled event property ReadableType");
+            }
+        }
+
+        return booleanMap;
+    }
+
+    private HashMap<String,Double> doubleMapFromReadableMap(ReadableMap doubleReadableMap){
+        if(doubleReadableMap == null) return null;
+
+        ReadableMapKeySetIterator iterator = doubleReadableMap.keySetIterator();
+        HashMap<String, Double> doubleMap = new HashMap<>();
+
+        while(iterator.hasNextKey()){
+            String key = iterator.nextKey();
+            ReadableType readableType = doubleReadableMap.getType(key);
+
+            if (readableType == ReadableType.Number) {
+                doubleMap.put(key, doubleReadableMap.getDouble(key));
+            }else {
+                Log.e(TAG, "Unhandled event property ReadableType");
+            }
+        }
+
+        return doubleMap;
+    }
+
+    private HashMap<String,Integer> integerMapFromReadableMap(ReadableMap integerReadableMap){
+        if(integerReadableMap == null) return null;
+
+        ReadableMapKeySetIterator iterator = integerReadableMap.keySetIterator();
+        HashMap<String, Integer> integerMap = new HashMap<>();
+
+        while(iterator.hasNextKey()){
+            String key = iterator.nextKey();
+            ReadableType readableType = integerReadableMap.getType(key);
+
+            if (readableType == ReadableType.Number) {
+                integerMap.put(key, integerReadableMap.getInt(key));
+            }else {
+                Log.e(TAG, "Unhandled event property ReadableType");
+            }
+        }
+
+        return integerMap;
+    }
+
+    private HashMap<String,String> stringMapFromReadableMap(ReadableMap stringReadableMap){
+        if(stringReadableMap == null) return null;
+
+        ReadableMapKeySetIterator iterator = stringReadableMap.keySetIterator();
+        HashMap<String, String> stringMap = new HashMap<>();
+
+        while(iterator.hasNextKey()){
+            String key = iterator.nextKey();
+            ReadableType readableType = stringReadableMap.getType(key);
+
+            if (readableType == ReadableType.String) {
+                stringMap.put(key, stringReadableMap.getString(key));
+            }else {
+                Log.e(TAG, "Unhandled event property ReadableType");
+            }
+        }
+
+        return stringMap;
     }
 
     private HashMap<String, Object> eventPropsFromReadableMap(ReadableMap propsMap) {
