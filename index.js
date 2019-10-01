@@ -39,9 +39,9 @@ var CleverTap = {
     CleverTapProfileSync: CleverTapReact.CleverTapProfileSync,
     CleverTapInAppNotificationDismissed: CleverTapReact.CleverTapInAppNotificationDismissed,
     FCM: CleverTapReact.FCM,
-    GCM: CleverTapReact.GCM,
     CleverTapInboxDidInitialize: CleverTapReact.CleverTapInboxDidInitialize,
     CleverTapInboxMessagesDidUpdate: CleverTapReact.CleverTapInboxMessagesDidUpdate,
+    CleverTapExperimentsDidUpdate: CleverTapReact.CleverTapExperimentsDidUpdate,
 
     /**
     * Add a CleverTap event listener
@@ -476,6 +476,231 @@ var CleverTap = {
     */
     getInboxMessageUnreadCount: function(callback) {
         callWithCallback('getInboxMessageUnreadCount', null, callback);
+    },
+
+    /**
+     * Registers an ABTesting variable of type Boolean for ease of editing on the CleverTap Dashboard
+     * @param name {String} the name of the variable
+     */
+    registerBooleanVariable: function(name){
+        CleverTapReact.registerBooleanVariable(name);
+    },
+
+    /**
+     * Registers an ABTesting variable of type Double for ease of editing on the CleverTap Dashboard
+     * @param name {String} the name of the variable
+     */
+    registerDoubleVariable: function(name){
+        CleverTapReact.registerDoubleVariable(name);
+    },
+
+    /**
+     * Registers an ABTesting variable of type Integer for ease of editing on the CleverTap Dashboard
+     * @param name {String} the name of the variable
+     */
+    registerIntegerVariable: function(name){
+        CleverTapReact.registerIntegerVariable(name);
+    },
+
+    /**
+     * Registers an ABTesting variable of type String for ease of editing on the CleverTap Dashboard
+     * @param name {String} the name of the variable
+     */
+    registerStringVariable: function(name){
+        CleverTapReact.registerStringVariable(name);
+    },
+
+    /**
+     * Registers an ABTesting variable of type List of Boolean for ease of editing on the CleverTap Dashboard
+     * @param name {String} the name of the variable
+     */
+    registerListOfBooleanVariable: function(name){
+        CleverTapReact.registerListOfBooleanVariable(name);
+    },
+
+    /**
+     * Registers an ABTesting variable of type List of Double for ease of editing on the CleverTap Dashboard
+     * @param name {String} the name of the variable
+     */
+    registerListOfDoubleVariable: function(name){
+        CleverTapReact.registerListOfDoubleVariable(name);
+    },
+
+    /**
+     * Registers an ABTesting variable of type List of Integer for ease of editing on the CleverTap Dashboard
+     * @param name {String} the name of the variable
+     */
+    registerListOfIntegerVariable: function(name){
+        CleverTapReact.registerListOfIntegerVariable(name);
+    },
+
+    /**
+     * Registers an ABTesting variable of type List of String for ease of editing on the CleverTap Dashboard
+     * @param name {String} the name of the variable
+     */
+    registerListOfStringVariable: function(name){
+        CleverTapReact.registerListOfStringVariable(name);
+    },
+
+    /**
+     * Registers an ABTesting variable of type Map of Boolean for ease of editing on the CleverTap Dashboard
+     * @param name {@link String} the name of the variable
+     */
+    registerMapOfBooleanVariable: function(name){
+        CleverTapReact.registerMapOfBooleanVariable(name);
+    },
+
+    /**
+     * Registers an ABTesting variable of type Map of Double for ease of editing on the CleverTap Dashboard
+     * @param name {@link String} the name of the variable
+     */
+    registerMapOfDoubleVariable: function(name){
+        CleverTapReact.registerMapOfDoubleVariable(name);
+    },
+
+    /**
+     * Registers an ABTesting variable of type Map of Integer for ease of editing on the CleverTap Dashboard
+     * @param name {@link String} the name of the variable
+     */
+    registerMapOfIntegerVariable: function(name){
+        CleverTapReact.registerMapOfIntegerVariable(name);
+    },
+
+    /**
+     * Registers an ABTesting variable of type Map of String for ease of editing on the CleverTap Dashboard
+     * @param name {@link String} the name of the variable
+     */
+    registerMapOfStringVariable: function(name){
+        CleverTapReact.registerMapOfStringVariable(name);
+    },
+
+    /**
+     * Returns the Boolean value of the named variable set via an AB Testing Experiment or the default value if unset
+     * @param name - the name of the variable
+     * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+     * @return {Boolean} the value set by the Experiment or the default value if unset
+     */
+    getBooleanVariable: function(name,defaultValue,callback){
+        callWithCallback('getBooleanVariable', [name,defaultValue], callback);
+    },
+
+    /**
+     * Returns the Double value of the named variable set via an AB Testing Experiment or the default value if unset
+     * @param name - the name of the variable
+     * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+     * @return {Double} the value set by the Experiment or the default value if unset
+     */
+    getDoubleVariable: function(name,defaultValue,callback){
+        callWithCallback('getDoubleVariable', [name,defaultValue], callback);
+    },
+
+    /**
+     * Returns the Integer value of the named variable set via an AB Testing Experiment or the default value if unset
+     * @param name - the name of the variable
+     * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+     * @return {Integer} the value set by the Experiment or the default value if unset
+     */
+    getIntegerVariable: function(name,defaultValue,callback){
+        callWithCallback('getIntegerVariable', [name,defaultValue], callback);
+    },
+
+    /**
+     * Returns the String value of the named variable set via an AB Testing Experiment or the default value if unset
+     * @param name - the name of the variable
+     * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+     * @return {String} the value set by the Experiment or the default value if unset
+     */
+    getStringVariable: function(name,defaultValue,callback){
+        callWithCallback('getStringVariable', [name,defaultValue], callback);
+    },
+
+
+    /**
+     * Returns the List of Boolean value of the named variable set via an AB Testing Experiment or the default value if unset
+     * @param name - the name of the variable
+     * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+     * @return {List of Boolean} the value set by the Experiment or the default value if unset
+     */
+    getListOfBooleanVariable: function(name,defaultValue,callback){
+        callWithCallback('getListOfBooleanVariable', [name,defaultValue], callback);
+    },
+
+    /**
+     * Returns the List of Double value of the named variable set via an AB Testing Experiment or the default value if unset
+     * @param name - the name of the variable
+     * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+     * @return {List of Double} the value set by the Experiment or the default value if unset
+     */
+    getListOfDoubleVariable: function(name,defaultValue,callback){
+        callWithCallback('getListOfDoubleVariable', [name,defaultValue], callback);
+    },
+
+    /**
+     * Returns the List of Integer value of the named variable set via an AB Testing Experiment or the default value if unset
+     * @param name - the name of the variable
+     * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+     * @return {List of Integer} the value set by the Experiment or the default value if unset
+     */
+    getListOfIntegerVariable: function(name,defaultValue,callback){
+        callWithCallback('getListOfIntegerVariable', [name,defaultValue], callback);
+    },
+
+    /**
+     * Returns the List of String value of the named variable set via an AB Testing Experiment or the default value if unset
+     * @param name - the name of the variable
+     * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+     * @return {List of String} the value set by the Experiment or the default value if unset
+     */
+    getListOfStringVariable: function(name,defaultValue,callback){
+        callWithCallback('getListOfStringVariable', [name,defaultValue], callback);
+    },
+
+    /**
+     * Returns the Map of Boolean value of the named variable set via an AB Testing Experiment or the default value if unset
+     * @param name - the name of the variable
+     * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+     * @return {Map of Boolean} the value set by the Experiment or the default value if unset
+     */
+    getMapOfBooleanVariable: function(name,defaultValue,callback){
+        callWithCallback('getMapOfBooleanVariable', [name,defaultValue], callback);
+    },
+
+    /**
+     * Returns the Map of Double value of the named variable set via an AB Testing Experiment or the default value if unset
+     * @param name - the name of the variable
+     * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+     * @return {Map of Double} the value set by the Experiment or the default value if unset
+     */
+    getMapOfDoubleVariable: function(name,defaultValue,callback){
+        callWithCallback('getMapOfDoubleVariable', [name,defaultValue], callback);
+    },
+
+    /**
+     * Returns the Map of Integer value of the named variable set via an AB Testing Experiment or the default value if unset
+     * @param name - the name of the variable
+     * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+     * @return {Map of Integer} the value set by the Experiment or the default value if unset
+     */
+    getMapOfIntegerVariable: function(name,defaultValue,callback){
+        callWithCallback('getMapOfIntegerVariable', [name,defaultValue], callback);
+    },
+
+    /**
+     * Returns the Map of String value of the named variable set via an AB Testing Experiment or the default value if unset
+     * @param name - the name of the variable
+     * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+     * @return {Map of String} the value set by the Experiment or the default value if unset
+     */
+    getMapOfStringVariable: function(name,defaultValue,callback){
+        callWithCallback('getMapOfStringVariable', [name,defaultValue], callback);
+    },
+
+    /**
+     * Disables/Enables the ability to send Dynamic Variables to the CleverTap Dashboard
+     * Disabled by default
+     */
+    setUIEditorConnectionEnabled: function(enabled){
+        CleverTapReact.setUIEditorConnectionEnabled(enabled);
     },
 
     /**
