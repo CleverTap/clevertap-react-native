@@ -34,15 +34,15 @@ android {
 
 dependencies {
     repositories {
-        mavenLocal()
         jcenter()
+        mavenLocal()
         maven { url "https://maven.google.com" }
         maven { url "$rootDir/../node_modules/react-native/android" }
     }
 
-    api 'com.clevertap.android:clevertap-android-sdk:3.6.0'
+    compile 'com.clevertap.android:clevertap-android-sdk:3.6.0'
     //compile 'com.android.support:appcompat-v7:28.0.0'
-    api 'com.facebook.react:react-native:+'
+    compile 'com.facebook.react:react-native:+'
 }
 
 repositories {
