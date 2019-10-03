@@ -32,6 +32,9 @@
         [clevertap setSyncDelegate:self];
         [clevertap setInAppNotificationDelegate:self];
         [clevertap setLibrary:@"React-Native"];
+        [clevertap registerExperimentsUpdatedBlock:^{
+            [self postNotificationWithName:kCleverTapExperimentsDidUpdate andBody:nil];
+        }];
     }
     return self;
 }

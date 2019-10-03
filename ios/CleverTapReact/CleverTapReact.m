@@ -25,6 +25,7 @@ RCT_EXPORT_MODULE();
              kCleverTapInAppNotificationDismissed: kCleverTapInAppNotificationDismissed,
              kCleverTapInboxDidInitialize: kCleverTapInboxDidInitialize,
              kCleverTapInboxMessagesDidUpdate: kCleverTapInboxMessagesDidUpdate,
+             kCleverTapExperimentsDidUpdate: kCleverTapExperimentsDidUpdate,
              };
 }
 
@@ -610,27 +611,25 @@ RCT_EXPORT_METHOD(getListOfIntegerVariable:(NSString* _Nonnull)name defaultValue
     [self returnResult:result withCallback:callback andError:nil];
 }
 
-
-RCT_EXPORT_METHOD(getMapOfBooleanVariable:(NSString* _Nonnull)name defaultValue:(NSDictionary<NSString*, NSNumber*>* _Nonnull)defaultValue callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getMapOfBooleanVariable:(NSString* _Nonnull)name defaultValue:(NSDictionary*)defaultValue callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getDictionaryOfBoolVariableWithName:defaultValue]");
     NSDictionary *result = [[CleverTap sharedInstance] getDictionaryOfBoolVariableWithName:name defaultValue:defaultValue];
     [self returnResult:result withCallback:callback andError:nil];
 }
 
-RCT_EXPORT_METHOD(getMapOfStringVariable:(NSString* _Nonnull)name defaultValue:(NSDictionary<NSString*, NSString*>* _Nonnull)defaultValue callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getMapOfStringVariable:(NSString* _Nonnull)name defaultValue:(NSDictionary*)defaultValue callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getDictionaryOfStringVariableWithName:defaultValue]");
     NSDictionary *result = [[CleverTap sharedInstance] getDictionaryOfStringVariableWithName:name defaultValue:defaultValue];
     [self returnResult:result withCallback:callback andError:nil];
 }
 
-RCT_EXPORT_METHOD(getMapOfDoubleVariableWithName:(NSString* _Nonnull)name defaultValue:(NSDictionary<NSString*, NSNumber*>* _Nonnull)defaultValue callback:(RCTResponseSenderBlock)callback)  {
+RCT_EXPORT_METHOD(getMapOfDoubleVariable:(NSString* _Nonnull)name defaultValue:(NSDictionary*)defaultValue callback:(RCTResponseSenderBlock)callback)  {
     RCTLogInfo(@"[CleverTap getDictionaryOfDoubleVariableWithName:defaultValue]");
     NSDictionary *result = [[CleverTap sharedInstance] getDictionaryOfDoubleVariableWithName:name defaultValue:defaultValue];
     [self returnResult:result withCallback:callback andError:nil];
-
 }
 
-RCT_EXPORT_METHOD(getMapOfIntegerVariableWithName:(NSString* _Nonnull)name defaultValue:(NSDictionary<NSString*, NSNumber*>* _Nonnull)defaultValue callback:(RCTResponseSenderBlock)callback)  {
+RCT_EXPORT_METHOD(getMapOfIntegerVariable:(NSString* _Nonnull)name defaultValue:(NSDictionary*)defaultValue callback:(RCTResponseSenderBlock)callback)  {
     RCTLogInfo(@"[CleverTap getDictionaryOfIntegerVariableWithName:defaultValue]");
     NSDictionary *result = [[CleverTap sharedInstance] getDictionaryOfIntegerVariableWithName:name defaultValue:defaultValue];
     [self returnResult:result withCallback:callback andError:nil];
