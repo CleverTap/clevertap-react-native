@@ -10,7 +10,7 @@
 RCT_EXPORT_MODULE();
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[kCleverTapProfileDidInitialize, kCleverTapProfileSync, kCleverTapInAppNotificationDismissed, kCleverTapInboxDidInitialize, kCleverTapInboxMessagesDidUpdate];
+    return @[kCleverTapProfileDidInitialize, kCleverTapProfileSync, kCleverTapInAppNotificationDismissed, kCleverTapInboxDidInitialize, kCleverTapInboxMessagesDidUpdate, kCleverTapExperimentsDidUpdate];
 }
 
 
@@ -39,6 +39,11 @@ RCT_EXPORT_MODULE();
                                              selector:@selector(emitEventInternal:)
                                                  name:kCleverTapInboxMessagesDidUpdate
                                                object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                                selector:@selector(emitEventInternal:)
+                                                    name:kCleverTapExperimentsDidUpdate
+                                                  object:nil];
 }
 
 - (void)stopObserving {

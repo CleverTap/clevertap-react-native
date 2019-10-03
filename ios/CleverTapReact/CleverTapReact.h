@@ -5,6 +5,7 @@ static NSString *const kCleverTapProfileSync                = @"CleverTapProfile
 static NSString *const kCleverTapInAppNotificationDismissed = @"CleverTapInAppNotificationDismissed";
 static NSString *const kCleverTapInboxDidInitialize         = @"CleverTapInboxDidInitialize";
 static NSString *const kCleverTapInboxMessagesDidUpdate     = @"CleverTapInboxMessagesDidUpdate";
+static NSString *const kCleverTapExperimentsDidUpdate       = @"CleverTapExperimentsDidUpdate";
 
 @interface CleverTapReact : NSObject <RCTBridgeModule>
 
