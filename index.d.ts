@@ -371,8 +371,6 @@
   * AB Tests Methods
   ****************************/
   /**
-
-  /**
    * Registers an ABTesting variable of type Boolean for ease of editing on the CleverTap Dashboard
    * @param name {string} name of the variable
    */
