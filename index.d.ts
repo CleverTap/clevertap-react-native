@@ -367,6 +367,82 @@
    */
   export function showInbox(styleConfig: any): void;
 
+  /****************************
+  * AB Tests Methods
+  ****************************/
+  /**
+
+  /**
+   * Registers an ABTesting variable of type Boolean for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerBooleanVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type Double for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerDoubleVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type Integer for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerIntegerVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type String for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerStringVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type List of Boolean for ease of editing on the CleverTap Dashboard
+   * @param name {String} name of the variable
+   */
+  export function registerListOfBooleanVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type List of Double for ease of editing on the CleverTap Dashboard
+   * @param name {String} name of the variable
+   */
+  export function registerListOfDoubleVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type List of Integer for ease of editing on the CleverTap Dashboard
+   * @param name {String} name of the variable
+   */
+  export function registerListOfIntegerVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type List of String for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerListOfStringVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type Map of Boolean for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerMapOfBooleanVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type Map of Double for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerMapOfDoubleVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type Map of Integer for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerMapOfIntegerVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type Map of String for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerMapOfStringVariable(name: string): void;
 
   /*******************
    * Developer Options
