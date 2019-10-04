@@ -309,7 +309,7 @@
 
   /**
    * Get Session Total Visits
-   * calls back with with int or -1
+   * calls back with int or -1
    */
   export function sessionGetTotalVisits(callback: Callback): void;
 
@@ -321,7 +321,7 @@
 
   /**
    * Get Session Previous Visit Time
-   * calls back with with epoch seconds or -1
+   * calls back with epoch seconds or -1
    */
   export function sessionGetPreviousVisitTime(callback: Callback): void;
 
@@ -367,6 +367,217 @@
    */
   export function showInbox(styleConfig: any): void;
 
+  /****************************
+  * AB Tests Methods
+  ****************************/
+  /**
+   * Disables/Enables the ability to send Dynamic Variables to the CleverTap Dashboard
+   * Disabled by default
+   */
+  export function setUIEditorConnectionEnabled(enabled: boolean): void;
+  /**
+   * Registers an ABTesting variable of type Boolean for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerBooleanVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type Double for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerDoubleVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type Integer for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerIntegerVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type String for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerStringVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type List of Boolean for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerListOfBooleanVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type List of Double for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerListOfDoubleVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type List of Integer for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerListOfIntegerVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type List of String for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerListOfStringVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type Map of Boolean for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerMapOfBooleanVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type Map of Double for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerMapOfDoubleVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type Map of Integer for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerMapOfIntegerVariable(name: string): void;
+
+  /**
+   * Registers an ABTesting variable of type Map of String for ease of editing on the CleverTap Dashboard
+   * @param name {string} name of the variable
+   */
+  export function registerMapOfStringVariable(name: string): void;
+
+  /**
+    * Returns the Boolean value of the named variable set via an AB Testing Experiment or the default value if unset
+    * @param name - the name of the variable
+    * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+    * calls back with Boolean, the value set by the Experiment or the default value if unset
+    */
+   export function getBooleanVariable(
+     name: string,
+     defaultValue: any,
+     callback: Callback): void;
+
+   /**
+    * Returns the Double value of the named variable set via an AB Testing Experiment or the default value if unset
+    * @param name - the name of the variable
+    * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+    * calls back with Double, the value set by the Experiment or the default value if unset
+    */
+   export function getDoubleVariable(
+     name: string,
+     defaultValue: any,
+     callback: Callback): void;
+
+   /**
+    * Returns the Integer value of the named variable set via an AB Testing Experiment or the default value if unset
+    * @param name - the name of the variable
+    * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+    * calls back with Integer, the value set by the Experiment or the default value if unset
+    */
+   export function getIntegerVariable(
+     name: string,
+     defaultValue: any,
+     callback: Callback): void;
+
+   /**
+    * Returns the String value of the named variable set via an AB Testing Experiment or the default value if unset
+    * @param name - the name of the variable
+    * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+    * calls back with string, the value set by the Experiment or the default value if unset
+    */
+   export function getStringVariable(
+     name: string,
+     defaultValue: any,
+     callback: Callback): void;
+
+   /**
+    * Returns the List of Boolean value of the named variable set via an AB Testing Experiment or the default value if unset
+    * @param name - the name of the variable
+    * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+    * calls back with List of Boolean, the value set by the Experiment or the default value if unset
+    */
+   export function getListOfBooleanVariable(
+     name: string,
+     defaultValue: any,
+     callback: Callback): void;
+
+   /**
+    * Returns the List of Double value of the named variable set via an AB Testing Experiment or the default value if unset
+    * @param name - the name of the variable
+    * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+    * calls back with List of Double, the value set by the Experiment or the default value if unset
+    */
+   export function getListOfDoubleVariable(
+     name: string,
+     defaultValue: any,
+     callback: Callback): void;
+
+   /**
+    * Returns the List of Integer value of the named variable set via an AB Testing Experiment or the default value if unset
+    * @param name - the name of the variable
+    * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+    * calls back with List of Integer, the value set by the Experiment or the default value if unset
+    */
+   export function getListOfIntegerVariable(
+     name: string,
+     defaultValue: any,
+     callback: Callback): void;
+
+   /**
+    * Returns the List of String value of the named variable set via an AB Testing Experiment or the default value if unset
+    * @param name - the name of the variable
+    * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+    * calls back with List of String, the value set by the Experiment or the default value if unset
+    */
+   export function getListOfStringVariable(
+     name: string,
+     defaultValue: any,
+     callback: Callback): void;
+
+   /**
+    * Returns the Map of Boolean value of the named variable set via an AB Testing Experiment or the default value if unset
+    * @param name - the name of the variable
+    * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+    * calls back with Map of Boolean, the value set by the Experiment or the default value if unset
+    */
+   export function getMapOfBooleanVariable(
+     name: string,
+     defaultValue: any,
+     callback: Callback): void;
+
+   /**
+    * Returns the Map of Double value of the named variable set via an AB Testing Experiment or the default value if unset
+    * @param name - the name of the variable
+    * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+    * calls back with Map of Double, the value set by the Experiment or the default value if unset
+    */
+   export function getMapOfDoubleVariable(
+     name: string,
+     defaultValue: any,
+     callback: Callback): void;
+
+   /**
+    * Returns the Map of Integer value of the named variable set via an AB Testing Experiment or the default value if unset
+    * @param name - the name of the variable
+    * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+    * calls back withMap of Integer, the value set by the Experiment or the default value if unset
+    */
+   export function getMapOfIntegerVariable(
+     name: string,
+     defaultValue: any,
+     callback: Callback): void;
+
+   /**
+    * Returns the Map of String value of the named variable set via an AB Testing Experiment or the default value if unset
+    * @param name - the name of the variable
+    * @param defaultValue - the default value to return if the value has not been set via an AB Testing Experiment
+    * calls back withMap of String, the value set by the Experiment or the default value if unset
+    */
+   export function getMapOfStringVariable(
+     name: string,
+     defaultValue: any,
+     callback: Callback): void;
 
   /*******************
    * Developer Options

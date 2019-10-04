@@ -6,10 +6,7 @@
 
 #import <React/RCTLog.h>
 
-#import <CleverTapSDK/CleverTap.h>
-#import <CleverTapSDK/CleverTapSyncDelegate.h>
-#import <CleverTapSDK/CleverTapInAppNotificationDelegate.h>
-
+@import CleverTapSDK;
 
 @interface CleverTapReactManager() <CleverTapSyncDelegate, CleverTapInAppNotificationDelegate> {
 }
@@ -34,6 +31,10 @@
         CleverTap *clevertap = [CleverTap sharedInstance];
         [clevertap setSyncDelegate:self];
         [clevertap setInAppNotificationDelegate:self];
+        [clevertap setLibrary:@"React-Native"];
+        [clevertap registerExperimentsUpdatedBlock:^{
+            [self postNotificationWithName:kCleverTapExperimentsDidUpdate andBody:nil];
+        }];
     }
     return self;
 }

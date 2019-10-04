@@ -1,9 +1,11 @@
 package com.clevertap.react;
 
 import android.location.Location;
+import android.telecom.Call;
 import android.util.Log;
 import android.net.Uri;
 
+import com.clevertap.android.sdk.CTExperimentsListener;
 import com.clevertap.android.sdk.CTInboxListener;
 import com.clevertap.android.sdk.CTInboxStyleConfig;
 import com.facebook.react.bridge.Arguments;
@@ -30,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.HashMap;
@@ -39,7 +42,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CleverTapModule extends ReactContextBaseJavaModule implements SyncListener, InAppNotificationListener, CTInboxListener {
+public class CleverTapModule extends ReactContextBaseJavaModule implements SyncListener, InAppNotificationListener, CTInboxListener, CTExperimentsListener {
     private ReactApplicationContext context;
 
     private CleverTapAPI mCleverTap;
@@ -51,9 +54,9 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     private static final String CLEVERTAP_PROFILE_SYNC = "CleverTapProfileSync";
     private static final String CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED = "CleverTapInAppNotificationDismissed";
     private static final String FCM = "FCM";
-    private static final String GCM = "GCM";
     private static final String CLEVERTAP_INBOX_DID_INITIALIZE = "CleverTapInboxDidInitialize";
     private static final String CLEVERTAP_INBOX_MESSAGES_DID_UPDATE = "CleverTapInboxMessagesDidUpdate";
+    private static final String CLEVERTAP_EXPERIMENTS_DID_UPDATE = "CleverTapExperimentsDidUpdate";
 
     public static void setInitialUri(final Uri uri) {
         mlaunchURI = uri;
@@ -71,7 +74,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         constants.put(CLEVERTAP_PROFILE_SYNC, CLEVERTAP_PROFILE_SYNC);
         constants.put(CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED, CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED);
         constants.put(FCM, FCM);
-        constants.put(GCM, GCM);
         constants.put(CLEVERTAP_INBOX_DID_INITIALIZE,CLEVERTAP_INBOX_DID_INITIALIZE);
         constants.put(CLEVERTAP_INBOX_MESSAGES_DID_UPDATE,CLEVERTAP_INBOX_MESSAGES_DID_UPDATE);
         return constants;
@@ -90,6 +92,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 clevertap.setInAppNotificationListener(this);
                 clevertap.setSyncListener(this);
                 clevertap.setCTNotificationInboxListener(this);
+                clevertap.setCTExperimentsListener(this);
+                clevertap.setLibrary("React-Native");
             }
             mCleverTap = clevertap;
         }
@@ -127,11 +131,18 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         if (FCM.equals(type)) {
             clevertap.pushFcmRegistrationId(token, true);
-        } else if (GCM.equals(type)) {
-            clevertap.pushGcmRegistrationId(token, true);
         } else {
             Log.e(TAG, "Unknown push token type "+ type);
         }
+    }
+
+    //UI Editor connection
+    @ReactMethod
+    public void setUIEditorConnectionEnabled(boolean enabled){
+        CleverTapAPI clevertap = getCleverTapAPI();
+        if(clevertap == null) return;
+        CleverTapAPI.setUIEditorConnectionEnabled(enabled);
+        Log.i(TAG,"UI Editor connection enabled - " + enabled);
     }
 
     //notification channel/group methods for Android O
@@ -251,9 +262,9 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         Map<String, Object> finalProps = eventPropsFromReadableMap(props);
 
         if (finalProps == null) {
-            clevertap.event.push(eventName);
+            clevertap.pushEvent(eventName);
         } else {
-            clevertap.event.push(eventName, finalProps);
+            clevertap.pushEvent(eventName, finalProps);
         }
     }
 
@@ -630,6 +641,295 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             error = "CleverTap not initialized";
         }
         callbackWithErrorAndResult(callback, error, result);
+    }
+
+    //Dynamic Variables Methods
+    @ReactMethod
+    public void registerBooleanVariable(String name) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if(cleverTap != null){
+            cleverTap.registerBooleanVariable(name);
+        }else{
+            Log.e(TAG, "CleverTap not initialized");
+        }
+    }
+
+    @ReactMethod
+    public void registerDoubleVariable(String name) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if(cleverTap != null){
+            cleverTap.registerDoubleVariable(name);
+        }else{
+            Log.e(TAG, "CleverTap not initialized");
+        }
+    }
+
+    @ReactMethod
+    public void registerIntegerVariable(String name) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if(cleverTap != null){
+            cleverTap.registerIntegerVariable(name);
+        }else{
+            Log.e(TAG, "CleverTap not initialized");
+        }
+    }
+
+    @ReactMethod
+    public void registerStringVariable(String name) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if(cleverTap != null){
+            cleverTap.registerStringVariable(name);
+        }else{
+            Log.e(TAG, "CleverTap not initialized");
+        }
+    }
+
+    @ReactMethod
+    public void registerListOfBooleanVariable(String name) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if(cleverTap != null){
+            cleverTap.registerListOfBooleanVariable(name);
+        }else{
+            Log.e(TAG, "CleverTap not initialized");
+        }
+    }
+
+    @ReactMethod
+    public void registerListOfDoubleVariable(String name) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if(cleverTap != null){
+            cleverTap.registerListOfDoubleVariable(name);
+        }else{
+            Log.e(TAG, "CleverTap not initialized");
+        }
+    }
+
+    @ReactMethod
+    public void registerListOfIntegerVariable(String name) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if(cleverTap != null){
+            cleverTap.registerListOfIntegerVariable(name);
+        }else{
+            Log.e(TAG, "CleverTap not initialized");
+        }
+    }
+
+    @ReactMethod
+    public void registerListOfStringVariable(String name) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if(cleverTap != null){
+            cleverTap.registerListOfStringVariable(name);
+        }else{
+            Log.e(TAG, "CleverTap not initialized");
+        }
+    }
+
+    @ReactMethod
+    public void registerMapOfBooleanVariable(String name) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if(cleverTap != null){
+            cleverTap.registerMapOfBooleanVariable(name);
+        }else{
+            Log.e(TAG, "CleverTap not initialized");
+        }
+    }
+
+    @ReactMethod
+    public void registerMapOfDoubleVariable(String name) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if(cleverTap != null){
+            cleverTap.registerMapOfDoubleVariable(name);
+        }else{
+            Log.e(TAG, "CleverTap not initialized");
+        }
+    }
+
+    @ReactMethod
+    public void registerMapOfIntegerVariable(String name) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if(cleverTap != null){
+            cleverTap.registerMapOfIntegerVariable(name);
+        }else{
+            Log.e(TAG, "CleverTap not initialized");
+        }
+    }
+
+    @ReactMethod
+    public void registerMapOfStringVariable(String name) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if(cleverTap != null){
+            cleverTap.registerMapOfStringVariable(name);
+        }else{
+            Log.e(TAG, "CleverTap not initialized");
+        }
+    }
+
+    @ReactMethod
+    public void getBooleanVariable(String name, Boolean defaultValue, Callback callback){
+        String error = null;
+        Boolean result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getBooleanVariable(name,defaultValue);
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getDoubleVariable(String name, Double defaultValue, Callback callback){
+        String error = null;
+        Double result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getDoubleVariable(name,defaultValue);
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getIntegerVariable(String name, int defaultValue, Callback callback){
+        String error = null;
+        int result = -1;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getIntegerVariable(name,defaultValue);
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getStringVariable(String name, String defaultValue, Callback callback){
+        String error = null;
+        String result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getStringVariable(name,defaultValue);
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getListOfBooleanVariable(String name, List<Boolean> defaultValue, Callback callback){
+        String error = null;
+        List<Boolean> result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getListOfBooleanVariable(name, defaultValue);
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getListOfDoubleVariable(String name, List<Double> defaultValue, Callback callback){
+        String error = null;
+        List<Double> result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getListOfDoubleVariable(name, defaultValue);
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getListOfIntegerVariable(String name, List<Integer> defaultValue, Callback callback){
+        String error = null;
+        List<Integer> result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getListOfIntegerVariable(name, defaultValue);
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getListOfStringVariable(String name, List<String> defaultValue, Callback callback){
+        String error = null;
+        List<String> result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getListOfStringVariable(name, defaultValue);
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getMapOfBooleanVariable(String name, Map<String,Boolean> defaultValue, Callback callback){
+        String error = null;
+        Map<String,Boolean> result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getMapOfBooleanVariable(name, defaultValue);
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getMapOfDoubleVariable(String name, Map<String,Double> defaultValue, Callback callback){
+        String error = null;
+        Map<String,Double> result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getMapOfDoubleVariable(name, defaultValue);
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getMapOfIntegerVariable(String name, Map<String,Integer> defaultValue, Callback callback){
+        String error = null;
+        Map<String,Integer> result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getMapOfIntegerVariable(name, defaultValue);
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getMapOfStringVariable(String name, Map<String,String> defaultValue, Callback callback){
+        String error = null;
+        Map<String,String> result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            result = cleverTap.getMapOfStringVariable(name, defaultValue);
+        }else{
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback,error,result);
     }
 
     // Developer Options
@@ -1033,5 +1333,11 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     public void inboxMessagesDidUpdate(){
         WritableMap params = Arguments.createMap();
         sendEvent(CLEVERTAP_INBOX_MESSAGES_DID_UPDATE,params); //passing empty map
+    }
+
+    //Experiments Callback
+    public void CTExperimentsUpdated(){
+        WritableMap params = Arguments.createMap();
+        sendEvent(CLEVERTAP_EXPERIMENTS_DID_UPDATE,params);//passing empty map
     }
 }
