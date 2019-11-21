@@ -24,26 +24,31 @@ NOTE:  Don't forget to add the CleverTap imports at the top of the file.
     // ...
 
     // CleverTap imports
-	import com.clevertap.android.sdk.ActivityLifecycleCallback;
-	import com.clevertap.react.CleverTapPackage;
+	import com.clevertap.android.sdk.ActivityLifecycleCallback; 
+    import com.clevertap.react.CleverTapPackage; 
+    import com.clevertap.android.sdk.CleverTapAPI;
+
 
     //...
 
     // add CleverTapPackage to react-native package list
     @Override
       protected List<ReactPackage> getPackages() {
-        return Arrays.<ReactPackage>asList(
-                new MainReactPackage(),
-                new CleverTapPackage(), // <-- add this
+        List<ReactPackage> packages = new PackageList(this).getPackages(); 
+        // Packages that cannot be autolinked yet can be added manually here, for 
+        // example: 
+        packages.add(new CleverTapPackage()); 
+        return packages;
 
     // ...
 
     // add onCreate() override
     @Override
     public void onCreate() {
-	   // Register the CleverTap ActivityLifecycleCallback; before calling super
-      ActivityLifecycleCallback.register(this);	
-      super.onCreate();
+	    // Register the CleverTap ActivityLifecycleCallback; before calling super
+        CleverTapAPI.setUIEditorConnectionEnabled(false);
+        ActivityLifecycleCallback.register(this);	
+        super.onCreate();
     }
     ```
 

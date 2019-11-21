@@ -17,7 +17,7 @@
 ```gradle
 dependencies {
 	...
-    compile 'com.clevertap.android:clevertap-android-sdk:3.5.1'
+    compile 'com.clevertap.android:clevertap-android-sdk:3.6.0'
     compile 'com.google.android.gms:play-services-base:16.0.1'
     compile 'com.google.firebase:firebase-messaging:17.3.3'
     compile 'com.google.android.exoplayer:exoplayer:2.8.4' //Optional for Audio/Video
