@@ -24,7 +24,17 @@
   	   },
 	};
     ```
+    
+    3. The CleverTap SDK is not yet upgraded to AndroidX. Add the following to your gradle.properties file
+  
+    ```
+   	 android.useAndroidX=true
+   	 android.enableJetifier=true
+    ```
 
+  
+  ## Steps for iOS ##
+  
 
 ### iOS with podspec
 - Add `pod 'clevertap-react-native', :path => '../node_modules/clevertap-react-native'` as a dependency in your ios/Podfile.
@@ -50,7 +60,9 @@ end
 
 If your project configuration doesn't allow you can add `use_frameworks!` in the podfile, alternatively, you can add `use_modular_headers!` to enable the stricter search paths and module map generation for all of your pods, or you can add `:modular_headers => true` to a single pod declaration to enable for only that pod.
 
-### Android
+## Steps for Android ##
+
+
 - Add the clevertap-android-sdk and firebase-messaging (if you wish to support push notifications) packages in your `android/app/build.gradle`file.
 ```gradle
 dependencies {
@@ -69,7 +81,7 @@ dependencies {
 }
 ```
 
-### Manual Linking
+## Manual Linking ##
 
 #### iOS:
 - Drag and Drop node_modules/clevertap-react-native/ios/CleverTapReact.xcodeproj into the Libraries folder of your project in XCode ([see Step 1 here](http://facebook.github.io/react-native/docs/linking-libraries-ios.html#manual-linking)).
