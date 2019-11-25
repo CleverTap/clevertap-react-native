@@ -3,9 +3,8 @@
 
 ## Install and Integration
 1. `npm install --save clevertap-react-native`
-2. `react-native link clevertap-react-native` **or** link the project [manually](./docs/install.md#manual-linking)
-3. Follow the [install instructions](./docs/install.md)
-4. Follow the [integration instructions](./docs/integration.md)
+2. Follow the [install instructions](./docs/install.md)
+3. Follow the [integration instructions](./docs/integration.md)
 
 ## Additional Resources
 - [CleverTap Android SDK Integration guide](https://support.clevertap.com/docs/android/getting-started.html)
