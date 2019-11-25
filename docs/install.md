@@ -2,10 +2,29 @@
 
 1. `npm install --save clevertap-react-native`
 
-Link CleverTap for React Native 0.59 or below
+     Link CleverTap for React Native 0.59 or below
 
 2. `react-native link clevertap-react-native` **or** [follow the manual linking instructions below](#manual-linking).
-Note: FOR React Native 0.60 or above linking is not required. Read more [here](https://github.com/react-native-community/cli/blob/master/docs/autolinking.md
+
+    Note:
+    
+    1. For React Native 0.60 or above linking is not required. Read more [here](https://github.com/react-native-community/cli/blob/master/docs/autolinking.md
+    
+    2. To disable auto-linking in Android , Add a react-native.config.js to the project root (where the package.json is) to exempt CleverTap package from auto linking:
+    
+    ```
+    module.exports = {
+	dependencies: {
+   	 	'clevertap-react-native': {
+   	  	 platforms: {
+     	  	 ios: null,
+      	  	 android: null,
+     	       },
+   	     },
+  	   },
+	};
+    ```
+
 
 ### iOS with podspec
 - Add `pod 'clevertap-react-native', :path => '../node_modules/clevertap-react-native'` as a dependency in your ios/Podfile.
