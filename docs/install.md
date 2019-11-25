@@ -8,7 +8,7 @@
 
     Note:
     
-    1. For React Native 0.60 or above linking is not required. Read more [here].(https://github.com/react-native-community/cli/blob/master/docs/autolinking.md)
+    1. For React Native 0.60 or above linking is not required. Read more [here](https://github.com/react-native-community/cli/blob/master/docs/autolinking.md).
     
     2. To disable auto-linking in Android , Add a react-native.config.js to the project root (where the package.json is) to exempt CleverTap package from auto linking:
     
