@@ -48,7 +48,6 @@ target 'YOUR_TARGET_NAME' do
     use_frameworks!
     pod 'clevertap-react-native', :path => '../node_modules/clevertap-react-native'
 end
-
 ```
 
 - Run `pod install` from your ios directory.
@@ -110,7 +109,6 @@ if (enableHermes) {
       implementation jscFlavor
     }
 }
-
 ```
 In android/build.gradle add this -
 
