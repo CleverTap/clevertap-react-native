@@ -26,6 +26,7 @@
     ```
     
     3. The CleverTap SDK is not yet upgraded to AndroidX. Add the following to your gradle.properties file
+    
   
     ```
    	 android.useAndroidX=true
@@ -56,9 +57,10 @@ end
 - `cd ios; pod install --repo-update`
 - Note that after pod install, open your project using **[MyProject].xcworkspace** instead of the original .xcodeproj.
 
-### Troubleshoot 
+### Troubleshooting  
 
 If your project configuration doesn't allow you can add `use_frameworks!` in the podfile, alternatively, you can add `use_modular_headers!` to enable the stricter search paths and module map generation for all of your pods, or you can add `:modular_headers => true` to a single pod declaration to enable for only that pod.
+
 
 ## Steps for Android ##
 
