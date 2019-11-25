@@ -6,7 +6,7 @@
 
 2. `react-native link clevertap-react-native` **or** [follow the manual linking instructions below](#manual-linking).
 
-    Note:
+    **Note:**
     
     1. For React Native 0.60 or above linking is not required. Read more [here](https://github.com/react-native-community/cli/blob/master/docs/autolinking.md).
     
@@ -26,6 +26,7 @@
     ```
     
     3. The CleverTap SDK is not yet upgraded to AndroidX. Add the following to your gradle.properties file
+    
     
   
     ```
@@ -81,6 +82,42 @@ dependencies {
 
     //Note - ExoPlayer dependencies are optional but all 3 are required for Audio/Video Inbox and InApp Messages
 }
+```
+### Troubleshooting  
+
+If you face the following crash at runtime -
+
+```java.lang.UnsatisfiedLinkError: couldn't find DSO to load: libhermes.so```
+
+Add the following in your app/build.gradle -
+
+```
+project.ext.react = [
+    entryFile: "index.js",
+    enableHermes: false //add this
+]
+def jscFlavor = 'org.webkit:android-jsc:+'
+def enableHermes = project.ext.react.get("enableHermes", false);
+def jscFlavor = 'org.webkit:android-jsc:+'
+def enableHermes = project.ext.react.get("enableHermes", false);
+dependencies {
+if (enableHermes) {
+      // For RN 0.60.x
+      def hermesPath = "../../node_modules/hermesvm/android/"
+      debugImplementation files(hermesPath + "hermes-debug.aar")
+      releaseImplementation files(hermesPath + "hermes-release.aar")
+    } else {
+      implementation jscFlavor
+    }
+}
+
+```
+In android/build.gradle add this -
+
+```
+maven {
+        url "$rootDir/../node_modules/jsc-android/dist"
+      }
 ```
 
 ## Manual Linking ##
