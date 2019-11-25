@@ -2,13 +2,13 @@
 
 1. `npm install --save clevertap-react-native`
 
-     Link CleverTap for React Native 0.59 or below
+     Link CleverTap for React Native 0.59 or below & Not Using Cocoapods
 
 2. `react-native link clevertap-react-native` **or** [follow the manual linking instructions below](#manual-linking).
 
     Note:
     
-    1. For React Native 0.60 or above linking is not required. Read more [here](https://github.com/react-native-community/cli/blob/master/docs/autolinking.md
+    1. For React Native 0.60 or above linking is not required. Read more [here].(https://github.com/react-native-community/cli/blob/master/docs/autolinking.md)
     
     2. To disable auto-linking in Android , Add a react-native.config.js to the project root (where the package.json is) to exempt CleverTap package from auto linking:
     
@@ -45,6 +45,10 @@ end
 - Add `pod 'CleverTap-iOS-SDK'` as a dependency in your ios/Podfile.  [See an example Podfile here](https://github.com/CleverTap/clevertap-react-native/blob/master/Starter/ios/Podfile).
 - `cd ios; pod install --repo-update`
 - Note that after pod install, open your project using **[MyProject].xcworkspace** instead of the original .xcodeproj.
+
+### Troubleshoot 
+
+If your project configuration doesn't allow you can add `use_frameworks!` in the podfile, alternatively, you can add `use_modular_headers!` to enable the stricter search paths and module map generation for all of your pods, or you can add `:modular_headers => true` to a single pod declaration to enable for only that pod.
 
 ### Android
 - Add the clevertap-android-sdk and firebase-messaging (if you wish to support push notifications) packages in your `android/app/build.gradle`file.
