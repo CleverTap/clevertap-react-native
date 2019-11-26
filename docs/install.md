@@ -10,7 +10,7 @@
     
     1. For React Native 0.60 or above linking is not required. Read more [here](https://github.com/react-native-community/cli/blob/master/docs/autolinking.md).
     
-    2. To disable auto-linking in Android , Add a react-native.config.js to the project root (where the package.json is) to exempt CleverTap package from auto linking:
+    2. To disable auto-linking in Android, Add a react-native.config.js to the project root (where the package.json is) to exempt CleverTap package from auto linking:
     
     ```
     module.exports = {
@@ -59,7 +59,7 @@ end
 
 ### Troubleshooting  
 
-If your project configuration doesn't allow you can add `use_frameworks!` in the podfile, alternatively, you can add `use_modular_headers!` to enable the stricter search paths and module map generation for all of your pods, or you can add `:modular_headers => true` to a single pod declaration to enable for only that pod.
+If your project configuration doesn't allow to add `use_frameworks!` in the podfile, alternatively, you can add `use_modular_headers!` to enable the stricter search paths and module map generation for all of your pods, or you can add `:modular_headers => true` to a single pod declaration to enable for only that pod.
 
 
 ## Steps for Android ##
