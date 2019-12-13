@@ -109,7 +109,7 @@ class ExampleProject extends Component {
     _recordEvent(event) {
         CleverTap.recordEvent('testEvent');
         CleverTap.recordEvent('testEventWithProps', {'foo': 'bar'});
-        CleverTap.setPushToken("FCM","abcdfcm");
+        CleverTap.setPushToken("abcdfcm","FCM");
     }
 
     _recordChargedEvent(event) {
