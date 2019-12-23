@@ -307,6 +307,10 @@ RCT_EXPORT_METHOD(deleteNotificationChannelGroup:(NSString*)groupId){
     RCTLogInfo(@"[CleverTap deleteNotificationChannelGroup is no-op in iOS]");
 }
 
+RCT_EXPORT_METHOD(createNotification:(NSDictionary*)extras) {
+    RCTLogInfo(@"[CleverTap createNotification is no-op in iOS]");
+}
+
 #pragma mark Developer Options
 
 RCT_EXPORT_METHOD(setDebugLevel:(int)level) {
