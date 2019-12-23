@@ -129,6 +129,12 @@
    */
   export function deleteNotificationChannelGroup(groupID: string): void;
 
+  /**
+   * Create Notification for Custom Handling Push Notifications
+   * @param extras {any}
+   */
+  export function createNotification(extras: any): void;
+
   /*******************
    * Events
    ******************/

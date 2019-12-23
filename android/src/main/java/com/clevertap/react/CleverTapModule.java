@@ -4,6 +4,7 @@ import android.location.Location;
 import android.telecom.Call;
 import android.util.Log;
 import android.net.Uri;
+import android.os.Bundle;
 
 import com.clevertap.android.sdk.CTExperimentsListener;
 import com.clevertap.android.sdk.CTInboxListener;
@@ -201,6 +202,21 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         if (clevertap == null || groupId == null) return;
         CleverTapAPI.deleteNotificationChannelGroup(this.context,groupId);
         Log.i(TAG, "Notification Channel Group Id "+ groupId +" deleted");
+    }
+
+    //Custom Push Notification
+    @ReactMethod
+    public void createNotification(ReadableMap extras){
+        CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap == null || groupId == null) return;
+        JSONObject extrasJsonObject = jsonObjectFromReadableMap(extras);
+        Bundle bundle = new Bundle();
+        for (Iterator<String> entry = extrasJsonObject.keys(); entry.hasNext();) {
+           String key = entry.next();
+           String str = extrasJsonObject.optString(key);                  
+           bundle.putString(key,str);
+        }
+        CleverTapAPI.createNotification(this.context,bundle);
     }
 
     //Enables tracking opt out for the currently active user. 

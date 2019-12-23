@@ -167,6 +167,14 @@ var CleverTap = {
     },
 
     /**
+    * Method to show the App Inbox
+    * @param {object} extras - key-value data from RemoteMessage.getData().  keys and values are strings
+    */
+    createNotification: function(extras) {
+        CleverTapReact.createNotification(extras);
+    },
+
+    /**
     * Enables tracking opt out for the currently active user.
     * @param {boolean} value - A boolean for enabling or disabling tracking for current user
     */
