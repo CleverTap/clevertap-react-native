@@ -208,15 +208,20 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     @ReactMethod
     public void createNotification(ReadableMap extras){
         CleverTapAPI clevertap = getCleverTapAPI();
-        if (clevertap == null || groupId == null) return;
-        JSONObject extrasJsonObject = jsonObjectFromReadableMap(extras);
-        Bundle bundle = new Bundle();
-        for (Iterator<String> entry = extrasJsonObject.keys(); entry.hasNext();) {
-           String key = entry.next();
-           String str = extrasJsonObject.optString(key);                  
-           bundle.putString(key,str);
+        if (clevertap == null) return;
+        JSONObject extrasJsonObject = null;
+        try {
+            extrasJsonObject = jsonObjectFromReadableMap(extras);
+            Bundle bundle = new Bundle();
+            for (Iterator<String> entry = extrasJsonObject.keys(); entry.hasNext();) {
+                String key = entry.next();
+                String str = extrasJsonObject.optString(key);
+                bundle.putString(key,str);
+            }
+            CleverTapAPI.createNotification(this.context,bundle);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        CleverTapAPI.createNotification(this.context,bundle);
     }
 
     //Enables tracking opt out for the currently active user. 
