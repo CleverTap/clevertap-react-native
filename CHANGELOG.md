@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 0.3.7 *(26 December 2019)*
+Version 0.3.7 *(28 December 2019)*
 -------------------------------------------
 - Added method to custom handle Push Notifications in Android
 
