@@ -40,7 +40,7 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTapSDK/C
         List<ReactPackage> packages = new PackageList(this).getPackages(); 
         // Packages that cannot be autolinked yet can be added manually here, for 
         // example: 
-        packages.add(new CleverTapPackage()); 
+        packages.add(new CleverTapPackage());// only needed when not auto-linking
         return packages;
 
     // ...
@@ -57,8 +57,9 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTapSDK/C
 
 3. Optionally Override onCreate in MainActivity.java to notify CleverTap of a launch deep link  (`android/app/src/[...]/MainActivity.java`)
     ```java
-	import com.clevertap.react.CleverTapModule;
-
+    import com.clevertap.react.CleverTapModule;
+    import android.os.Bundle;
+    
     public class MainActivity extends ReactActivity {
 		// ...
 
