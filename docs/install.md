@@ -29,8 +29,7 @@
     
     
   
-    ```
-   	 android.useAndroidX=true
+    ```android.useAndroidX=true
    	 android.enableJetifier=true
     ```
 

@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Version 0.3.8 *(28 December 2019)*
+-------------------------------------------
+- Update to CleverTap Android SDK v3.6.3
+
 Version 0.3.7 *(28 December 2019)*
 -------------------------------------------
 - Added method to custom handle Push Notifications in Android
