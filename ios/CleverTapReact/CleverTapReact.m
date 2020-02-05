@@ -27,6 +27,7 @@ RCT_EXPORT_MODULE();
              kCleverTapProfileDidInitialize : kCleverTapProfileDidInitialize,
              kCleverTapProfileSync : kCleverTapProfileSync,
              kCleverTapInAppNotificationDismissed: kCleverTapInAppNotificationDismissed,
+             kCleverTapInAppNotificationButtonPressed: kCleverTapInAppNotificationButtonPressed,
              kCleverTapInboxDidInitialize: kCleverTapInboxDidInitialize,
              kCleverTapInboxMessagesDidUpdate: kCleverTapInboxMessagesDidUpdate,
              kCleverTapExperimentsDidUpdate: kCleverTapExperimentsDidUpdate,

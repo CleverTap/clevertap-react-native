@@ -94,4 +94,14 @@
     [self postNotificationWithName:kCleverTapInAppNotificationDismissed andBody:body];
 }
 
+- (void)inAppNotificationButtonTappedWithCustomExtras:(NSDictionary *)customExtras {
+    NSMutableDictionary *body = [NSMutableDictionary new];
+
+    if (customExtras != nil) {
+        body[@"customExtras"] = customExtras;
+    }
+
+    [self postNotificationWithName:kCleverTapInAppNotificationButtonPressed andBody:body];
+}
+
 @end

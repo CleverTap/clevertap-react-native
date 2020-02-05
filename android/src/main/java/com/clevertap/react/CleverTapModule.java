@@ -26,6 +26,7 @@ import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.android.sdk.EventDetail;
 
 import com.clevertap.android.sdk.InAppNotificationListener;
+import com.clevertap.android.sdk.InAppNotificationButtonListener;
 import com.clevertap.android.sdk.SyncListener;
 import com.clevertap.android.sdk.UTMDetail;
 
@@ -43,7 +44,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CleverTapModule extends ReactContextBaseJavaModule implements SyncListener, InAppNotificationListener, CTInboxListener, CTExperimentsListener {
+public class CleverTapModule extends ReactContextBaseJavaModule implements SyncListener, InAppNotificationListener, InAppNotificationButtonListener, CTInboxListener, CTExperimentsListener {
     private ReactApplicationContext context;
 
     private CleverTapAPI mCleverTap;
@@ -54,6 +55,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     private static final String CLEVERTAP_PROFILE_DID_INITIALIZE = "CleverTapProfileDidInitialize";
     private static final String CLEVERTAP_PROFILE_SYNC = "CleverTapProfileSync";
     private static final String CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED = "CleverTapInAppNotificationDismissed";
+    private static final String CLEVERTAP_IN_APP_NOTIFICATION_BUTTON_PRESSED = "CleverTapInAppNotificationButtonPressed";
     private static final String FCM = "FCM";
     private static final String CLEVERTAP_INBOX_DID_INITIALIZE = "CleverTapInboxDidInitialize";
     private static final String CLEVERTAP_INBOX_MESSAGES_DID_UPDATE = "CleverTapInboxMessagesDidUpdate";
@@ -74,6 +76,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         constants.put(CLEVERTAP_PROFILE_DID_INITIALIZE, CLEVERTAP_PROFILE_DID_INITIALIZE);
         constants.put(CLEVERTAP_PROFILE_SYNC, CLEVERTAP_PROFILE_SYNC);
         constants.put(CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED, CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED);
+        constants.put(CLEVERTAP_IN_APP_NOTIFICATION_BUTTON_PRESSED, CLEVERTAP_IN_APP_NOTIFICATION_BUTTON_PRESSED);
         constants.put(FCM, FCM);
         constants.put(CLEVERTAP_INBOX_DID_INITIALIZE,CLEVERTAP_INBOX_DID_INITIALIZE);
         constants.put(CLEVERTAP_INBOX_MESSAGES_DID_UPDATE,CLEVERTAP_INBOX_MESSAGES_DID_UPDATE);
@@ -91,6 +94,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             CleverTapAPI clevertap = CleverTapAPI.getDefaultInstance(this.context);
             if (clevertap != null) {
                 clevertap.setInAppNotificationListener(this);
+                clevertap.setInAppNotificationButtonListener(this);
                 clevertap.setSyncListener(this);
                 clevertap.setCTNotificationInboxListener(this);
                 clevertap.setCTExperimentsListener(this);
@@ -1304,6 +1308,33 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         params.putMap("actionExtras", actionExtrasParams);
 
         sendEvent(CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED, params);
+    }
+
+    @Override
+    public void onInAppButtonClick(HashMap<String, String> hashMap) {
+        JSONObject customExtras = hashMap != null ? new JSONObject(hashMap) : new JSONObject();
+
+        WritableMap extrasParams = Arguments.createMap();
+        Iterator extrasKeys = customExtras.keys();
+        while (extrasKeys.hasNext()) {
+            String key = null;
+            String value = null;
+            try {
+                key = extrasKeys.next().toString();
+                value = customExtras.get(key).toString();
+            } catch (Throwable t) {
+                Log.e(TAG, t.getLocalizedMessage());
+            }
+
+            if (key != null && value != null) {
+                extrasParams.putString(key, value);
+            }
+        }
+
+        WritableMap params = Arguments.createMap();
+        params.putMap("customExtras", extrasParams);
+
+        sendEvent(CLEVERTAP_IN_APP_NOTIFICATION_BUTTON_PRESSED, params);
     }
 
     // SyncListener

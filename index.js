@@ -38,6 +38,7 @@ var CleverTap = {
     CleverTapProfileDidInitialize: CleverTapReact.CleverTapProfileDidInitialize,
     CleverTapProfileSync: CleverTapReact.CleverTapProfileSync,
     CleverTapInAppNotificationDismissed: CleverTapReact.CleverTapInAppNotificationDismissed,
+    CleverTapInAppNotificationButtonPressed: CleverTapReact.CleverTapInAppNotificationButtonPressed,
     FCM: CleverTapReact.FCM,
     CleverTapInboxDidInitialize: CleverTapReact.CleverTapInboxDidInitialize,
     CleverTapInboxMessagesDidUpdate: CleverTapReact.CleverTapInboxMessagesDidUpdate,
