@@ -1,7 +1,6 @@
 package com.clevertap.react;
 
 import android.location.Location;
-import android.telecom.Call;
 import android.util.Log;
 import android.net.Uri;
 import android.os.Bundle;
