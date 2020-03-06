@@ -1,4 +1,30 @@
   /*******************
+   * Listners & Deeplinks
+   ******************/
+
+   /**
+    * Add a CleverTap event listener
+    * supported events are CleverTap.CleverTapProfileDidInitialize, CleverTap.CleverTapProfileSync and CleverTap.CleverTapInAppNotificationDismissed
+    * @param {string} eventName - the CleverTap event name
+    * @param {function(event)} your event handler
+    */
+   export function addListener(
+   eventName: String,
+   handler: Handler
+   ): void;
+
+   /**
+    * Remove all CleverTap event listeners
+    */
+   export function removeListeners(): void;
+
+   /**
+    * If an application is launched from a push notification click, returns the CleverTap deep link included in the push notification
+    * @param {function(err, res)} callback that return the url as string in res or a string error in err
+    */
+   export getInitialUrl(callback: Function): void;
+
+  /*******************
    * Personalization
    ******************/
 
