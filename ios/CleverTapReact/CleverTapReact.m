@@ -6,11 +6,11 @@
 
 #import <React/RCTLog.h>
 
-#import "CleverTap.h"
-#import "CleverTap+Inbox.h"
-#import "CleverTap+ABTesting.h"
-#import "CleverTapEventDetail.h"
-#import "CleverTapUTMDetail.h"
+#import <CleverTapSDK/CleverTap.h>
+#import <CleverTapSDK/CleverTap+Inbox.h>
+#import <CleverTapSDK/CleverTap+ABTesting.h>
+#import <CleverTapSDK/CleverTapEventDetail.h>
+#import <CleverTapSDK/CleverTapUTMDetail.h>
 
 static NSDateFormatter *dateFormatter;
 
