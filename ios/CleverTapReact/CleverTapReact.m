@@ -24,13 +24,13 @@ RCT_EXPORT_MODULE();
 
 - (NSDictionary *)constantsToExport {
     return @{
-             kCleverTapProfileDidInitialize : kCleverTapProfileDidInitialize,
-             kCleverTapProfileSync : kCleverTapProfileSync,
-             kCleverTapInAppNotificationDismissed: kCleverTapInAppNotificationDismissed,
-             kCleverTapInboxDidInitialize: kCleverTapInboxDidInitialize,
-             kCleverTapInboxMessagesDidUpdate: kCleverTapInboxMessagesDidUpdate,
-             kCleverTapExperimentsDidUpdate: kCleverTapExperimentsDidUpdate,
-             };
+        kCleverTapProfileDidInitialize : kCleverTapProfileDidInitialize,
+        kCleverTapProfileSync : kCleverTapProfileSync,
+        kCleverTapInAppNotificationDismissed: kCleverTapInAppNotificationDismissed,
+        kCleverTapInboxDidInitialize: kCleverTapInboxDidInitialize,
+        kCleverTapInboxMessagesDidUpdate: kCleverTapInboxMessagesDidUpdate,
+        kCleverTapExperimentsDidUpdate: kCleverTapExperimentsDidUpdate,
+    };
 }
 
 - (dispatch_queue_t)methodQueue {
@@ -57,12 +57,12 @@ RCT_EXPORT_METHOD(registerForPush) {
         UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
         [center requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound | UNAuthorizationOptionBadge)
                               completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                                  if (granted) {
-                                      dispatch_async(dispatch_get_main_queue(), ^(void) {
-                                          [[UIApplication sharedApplication] registerForRemoteNotifications];
-                                      });
-                                  }
-                              }];
+            if (granted) {
+                dispatch_async(dispatch_get_main_queue(), ^(void) {
+                    [[UIApplication sharedApplication] registerForRemoteNotifications];
+                });
+            }
+        }];
         
     }
     else {
@@ -420,6 +420,55 @@ RCT_EXPORT_METHOD(getInboxMessageUnreadCount:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap inboxMessageUnreadCount]");
     int result = (int)[[CleverTap sharedInstance] getInboxMessageUnreadCount];
     [self returnResult:@(result) withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(getAllInboxMessages:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getAllInboxMessages]");
+    NSArray<CleverTapInboxMessage *> *messageList = [[CleverTap sharedInstance] getAllInboxMessages];
+    NSMutableArray *allMessages = [NSMutableArray new];
+    for (CleverTapInboxMessage *message in messageList) {
+        [allMessages addObject:message.json];
+    }
+    NSArray *result = [allMessages mutableCopy];
+    [self returnResult:result withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(getUnreadInboxMessages:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getUnreadInboxMessages]");
+    NSArray<CleverTapInboxMessage *> *messageList = [[CleverTap sharedInstance] getUnreadInboxMessages];
+    NSMutableArray *unreadMessages = [NSMutableArray new];
+    for (CleverTapInboxMessage *message in messageList) {
+        [unreadMessages addObject:message.json];
+    }
+    NSArray *result = [unreadMessages mutableCopy];
+    [self returnResult:result withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(getInboxMessageForId:(NSString*)messageId callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getInboxMessageForId]");
+    CleverTapInboxMessage * message = [[CleverTap sharedInstance] getInboxMessageForId:messageId];
+    NSDictionary *result = message.json;
+    [self returnResult:result withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(pushInboxNotificationViewedEventForId:(NSString*)messageId) {
+    RCTLogInfo(@"[CleverTap pushInboxNotificationViewedEventForId]");
+    [[CleverTap sharedInstance] recordInboxNotificationViewedEventForID:messageId];
+}
+
+RCT_EXPORT_METHOD(pushInboxNotificationClickedEventForId:(NSString*)messageId) {
+    RCTLogInfo(@"[CleverTap pushInboxNotificationClickedEventForId]");
+    [[CleverTap sharedInstance] recordInboxNotificationClickedEventForID:messageId];
+}
+
+RCT_EXPORT_METHOD(markReadInboxMessageForId:(NSString*)messageId) {
+    RCTLogInfo(@"[CleverTap markReadInboxMessageForId]");
+    [[CleverTap sharedInstance] markReadInboxMessageForID:messageId];
+}
+
+RCT_EXPORT_METHOD(deleteInboxMessageForId:(NSString*)messageId) {
+    RCTLogInfo(@"[CleverTap deleteInboxMessageForId]");
+    [[CleverTap sharedInstance] deleteInboxMessageForID:messageId];
 }
 
 RCT_EXPORT_METHOD(initializeInbox) {
