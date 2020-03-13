@@ -470,7 +470,7 @@ var CleverTap = {
         CleverTapReact.showInbox(styleConfig);
     },
 
-    /**
+   /**
     * Get the total number of Inbox Messages
     * @param {function(err, res)} callback that returns a res of count of inbox messages or -1
     */
@@ -478,12 +478,68 @@ var CleverTap = {
         callWithCallback('getInboxMessageCount', null, callback);
     },
 
-    /**
+   /**
     * Get the total number of Unread Inbox Messages
     * @param {function(err, res)} callback that returns a res of count of unread inbox messages or -1
     */
     getInboxMessageUnreadCount: function(callback) {
         callWithCallback('getInboxMessageUnreadCount', null, callback);
+    },
+
+   /**
+    * Get All inbox messages
+    * @param {function(err, res)} callback that returns a list of json string representation of CTInboxMessage
+    */
+    getAllInboxMessages : function(callback){
+        callWithCallback('getAllInboxMessages', null, callback);
+    },
+
+   /**
+    * Get All unread inbox messages
+    * @param {function(err, res)} callback that returns a list of json string representation of CTInboxMessage
+    */
+    getUnreadInboxMessages : function(callback){
+        callWithCallback('getUnreadInboxMessages', null, callback);
+    },
+
+   /**
+    * Get Inbox Message that belongs to the given message id
+    * @param {function(err, res)} callback that returns json string representation of CTInboxMessage
+    */
+    getInboxMessageForId : function(messageId,callback){
+        callWithCallback('getInboxMessageForId', [messageId], callback);
+    },
+
+   /**
+    * Deletes Inbox Message that belongs to the given message id
+    * @param {string} message id of inbox message of type CTInboxMessage
+    */
+    deleteInboxMessage : function(messageId){
+        CleverTapReact.deleteInboxMessage(messageId);
+    },
+
+   /**
+    * Marks Inbox Message that belongs to the given message id as read
+    * @param {string} message id of inbox message of type CTInboxMessage
+    */
+    markReadInboxMessage : function(messageId){
+       CleverTapReact.markReadInboxMessage(messageId);
+    },
+
+   /**
+    * Pushes the Notification Clicked event for App Inbox to CleverTap.
+    * @param {string} message id of inbox message of type CTInboxMessage
+    */
+    pushInboxNotificationClickedEvent : function(messageId){
+       CleverTapReact.pushInboxNotificationClickedEvent(messageId);
+    },
+
+   /**
+    * Pushes the Notification Viewed event for App Inbox to CleverTap.
+    * @param {string} message id of inbox message of type CTInboxMessage
+    */
+    pushInboxNotificationViewedEvent : function(messageId){
+       CleverTapReact.pushInboxNotificationViewedEvent(messageId);
     },
 
     /**

@@ -399,6 +399,41 @@
    */
   export function showInbox(styleConfig: any): void;
 
+  /**
+   * Call this method to get all inbox messages
+   */
+  export function getAllInboxMessages(callback: Callback): void;
+
+  /**
+   * Call this method to get all unread inbox messages
+   */
+  export function getUnreadInboxMessages(callback: Callback): void;
+
+  /**
+   * Call this method to get inbox message that belongs to the given message id
+   */
+  export function getInboxMessageForId(messageId: string, callback: Callback): void;
+
+  /**
+   * Call this method to delete inbox message that belongs to the given message id
+   */
+  export function deleteInboxMessage(messageId: string): void;
+
+  /**
+   * Call this method to mark inbox message as read
+   */
+  export function markReadInboxMessage(messageId: string): void;
+
+  /**
+   * Call this method to push the Notification Clicked event for App Inbox to CleverTap
+   */
+  export function pushInboxNotificationClickedEvent(messageId: string): void;
+
+   /**
+    * Call this method to push the Notification Viewed event for App Inbox to CleverTap
+    */
+  export function pushInboxNotificationViewedEvent(messageId: string): void;
+
   /****************************
   * AB Tests Methods
   ****************************/
