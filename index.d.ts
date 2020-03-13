@@ -417,22 +417,22 @@
   /**
    * Call this method to delete inbox message that belongs to the given message id
    */
-  export function deleteInboxMessage(messageId: string): void;
+export function deleteInboxMessageForId(messageId: string): void;
 
   /**
    * Call this method to mark inbox message as read
    */
-  export function markReadInboxMessage(messageId: string): void;
+export function markReadInboxMessageForId(messageId: string): void;
 
   /**
    * Call this method to push the Notification Clicked event for App Inbox to CleverTap
    */
-  export function pushInboxNotificationClickedEvent(messageId: string): void;
+export function pushInboxNotificationClickedEventForId(messageId: string): void;
 
    /**
     * Call this method to push the Notification Viewed event for App Inbox to CleverTap
     */
-  export function pushInboxNotificationViewedEvent(messageId: string): void;
+export function pushInboxNotificationViewedEventForId(messageId: string): void;
 
   /****************************
   * AB Tests Methods
