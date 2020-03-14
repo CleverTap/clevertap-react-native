@@ -9,7 +9,10 @@ import com.clevertap.android.sdk.CTExperimentsListener;
 import com.clevertap.android.sdk.CTInboxListener;
 import com.clevertap.android.sdk.CTInboxMessage;
 import com.clevertap.android.sdk.CTInboxStyleConfig;
+import com.clevertap.android.sdk.InAppNotificationButtonListener;
 import com.clevertap.android.sdk.InboxMessageButtonListener;
+import com.clevertap.android.sdk.displayunits.DisplayUnitListener;
+import com.clevertap.android.sdk.displayunits.model.CleverTapDisplayUnit;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -45,7 +48,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CleverTapModule extends ReactContextBaseJavaModule implements SyncListener, InAppNotificationListener, CTInboxListener,
-        CTExperimentsListener, InboxMessageButtonListener,InAppNotificationButtonListener,DisplayUnitListener {
+        CTExperimentsListener, InboxMessageButtonListener, InAppNotificationButtonListener, DisplayUnitListener {
     private ReactApplicationContext context;
 
     private CleverTapAPI mCleverTap;
@@ -1518,7 +1521,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     //InApp Notification callback
     public void onInAppButtonClick(HashMap<String, String> hashMap) {
-        sendEvent(CLEVERTAP_ON_INAPP_BUTTON_CLICK, getWritableMapFromMap(payload));
+        sendEvent(CLEVERTAP_ON_INAPP_BUTTON_CLICK, getWritableMapFromMap(hashMap));
     }
 
     //Native Display callback
