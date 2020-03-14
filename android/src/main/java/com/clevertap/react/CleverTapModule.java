@@ -45,7 +45,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CleverTapModule extends ReactContextBaseJavaModule implements SyncListener, InAppNotificationListener, CTInboxListener,
-        CTExperimentsListener, InboxMessageButtonListener {
+        CTExperimentsListener, InboxMessageButtonListener,InAppNotificationButtonListener,DisplayUnitListener {
     private ReactApplicationContext context;
 
     private CleverTapAPI mCleverTap;
@@ -61,6 +61,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     private static final String CLEVERTAP_INBOX_MESSAGES_DID_UPDATE = "CleverTapInboxMessagesDidUpdate";
     private static final String CLEVERTAP_EXPERIMENTS_DID_UPDATE = "CleverTapExperimentsDidUpdate";
     private static final String CLEVERTAP_ON_INBOX_BUTTON_CLICK = "CleverTapOnInboxButtonClick";
+    private static final String CLEVERTAP_ON_INAPP_BUTTON_CLICK = "CleverTapOnInAppButtonClick";
+    private static final String CLEVERTAP_ON_DISPLAY_UNITS_LOADED = "CleverTapOnDisplayUnitsLoaded";
 
     private enum InBoxMessages {
         ALL(0),
@@ -108,6 +110,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         constants.put(CLEVERTAP_INBOX_DID_INITIALIZE,CLEVERTAP_INBOX_DID_INITIALIZE);
         constants.put(CLEVERTAP_INBOX_MESSAGES_DID_UPDATE,CLEVERTAP_INBOX_MESSAGES_DID_UPDATE);
         constants.put(CLEVERTAP_ON_INBOX_BUTTON_CLICK,CLEVERTAP_ON_INBOX_BUTTON_CLICK);
+        constants.put(CLEVERTAP_ON_DISPLAY_UNITS_LOADED,CLEVERTAP_ON_DISPLAY_UNITS_LOADED);
+        constants.put(CLEVERTAP_ON_INAPP_BUTTON_CLICK,CLEVERTAP_ON_INAPP_BUTTON_CLICK);
         return constants;
     }
 
@@ -125,6 +129,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 clevertap.setSyncListener(this);
                 clevertap.setCTNotificationInboxListener(this);
                 clevertap.setCTExperimentsListener(this);
+                clevertap.setDisplayUnitListener(this);
                 clevertap.setLibrary("React-Native");
             }
             mCleverTap = clevertap;
@@ -727,7 +732,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @ReactMethod
-    public void deleteInboxMessage(String messageId){
+    public void deleteInboxMessageForId(String messageId){
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.deleteInboxMessage(messageId);
@@ -737,7 +742,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @ReactMethod
-    public void markReadInboxMessage(String messageId) {
+    public void markReadInboxMessageForId(String messageId) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.markReadInboxMessage(messageId);
@@ -747,7 +752,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @ReactMethod
-    public void pushInboxNotificationViewedEvent(String messageId) {
+    public void pushInboxNotificationViewedEventForId(String messageId) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.pushInboxNotificationViewedEvent(messageId);
@@ -757,7 +762,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @ReactMethod
-    public void pushInboxNotificationClickedEvent(String messageId) {
+    public void pushInboxNotificationClickedEventForId(String messageId) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.pushInboxNotificationClickedEvent(messageId);
@@ -790,6 +795,22 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             error = "CleverTap not initialized";
         }
         Log.d(TAG, "inside total count");
+        callbackWithErrorAndResult(callback, error, result);
+    }
+
+    //Native Display methods
+
+    @ReactMethod
+    public void getAllDisplayUnits(Callback callback) {
+        String error = null;
+        WritableArray result = Arguments.createArray();
+
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            result = getWritableArrayFromList(cleverTap.getAllDisplayUnits());
+        } else {
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+        }
         callbackWithErrorAndResult(callback, error, result);
     }
 
@@ -1425,6 +1446,20 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         return extrasParams;
     }
 
+    private WritableArray getWritableArrayFromList(List<CleverTapDisplayUnit> list) {
+        WritableArray writableArray = Arguments.createArray();
+        if (list!=null)
+        {
+            for (CleverTapDisplayUnit item:list)
+            {
+                if (item!=null) {
+                    writableArray.pushString(item.getJsonObject().toString());
+                }
+            }
+        }
+        return writableArray;
+    }
+
     // SyncListener
     public void profileDataUpdated(JSONObject updates) {
         if(updates == null) return;
@@ -1479,6 +1514,16 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         sendEvent(CLEVERTAP_ON_INBOX_BUTTON_CLICK, getWritableMapFromMap(payload));
 
+    }
+
+    //InApp Notification callback
+    public void onInAppButtonClick(HashMap<String, String> hashMap) {
+        sendEvent(CLEVERTAP_ON_INAPP_BUTTON_CLICK, getWritableMapFromMap(payload));
+    }
+
+    //Native Display callback
+    public void onDisplayUnitsLoaded(ArrayList<CleverTapDisplayUnit> units) {
+        sendEvent(CLEVERTAP_ON_DISPLAY_UNITS_LOADED, getWritableArrayFromList(units));
     }
 
     //Experiments Callback

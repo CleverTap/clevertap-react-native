@@ -42,10 +42,14 @@ var CleverTap = {
     CleverTapInboxDidInitialize: CleverTapReact.CleverTapInboxDidInitialize,
     CleverTapInboxMessagesDidUpdate: CleverTapReact.CleverTapInboxMessagesDidUpdate,
     CleverTapExperimentsDidUpdate: CleverTapReact.CleverTapExperimentsDidUpdate,
+    CleverTapOnInboxButtonClick: CleverTapReact.CleverTapOnInboxButtonClick,
+    CleverTapOnDisplayUnitsLoaded: CleverTapReact.CleverTapOnDisplayUnitsLoaded,
+    CleverTapOnInAppButtonClick: CleverTapReact.CleverTapOnInAppButtonClick,
 
     /**
     * Add a CleverTap event listener
-    * supported events are CleverTap.CleverTapProfileDidInitialize, CleverTap.CleverTapProfileSync and CleverTap.CleverTapInAppNotificationDismissed
+    * supported events are CleverTap.CleverTapProfileDidInitialize, CleverTap.CleverTapProfileSync,CleverTap.CleverTapOnInboxButtonClick
+    * ,CleverTap.CleverTapOnInAppButtonClick,CleverTap.CleverTapOnDisplayUnitsLoaded and CleverTap.CleverTapInAppNotificationDismissed
     * @param {string} eventName - the CleverTap event name
     * @param {function(event)} your event handler
     */
@@ -490,7 +494,7 @@ var CleverTap = {
     * Get All inbox messages
     * @param {function(err, res)} callback that returns a list of json string representation of CTInboxMessage
     */
-    getAllInboxMessages: function(callback) {
+    getAllInboxMessages : function(callback){
         callWithCallback('getAllInboxMessages', null, callback);
     },
 
@@ -498,7 +502,7 @@ var CleverTap = {
     * Get All unread inbox messages
     * @param {function(err, res)} callback that returns a list of json string representation of CTInboxMessage
     */
-    getUnreadInboxMessages: function(callback) {
+    getUnreadInboxMessages : function(callback){
         callWithCallback('getUnreadInboxMessages', null, callback);
     },
 
@@ -506,7 +510,7 @@ var CleverTap = {
     * Get Inbox Message that belongs to the given message id
     * @param {function(err, res)} callback that returns json string representation of CTInboxMessage
     */
-    getInboxMessageForId: function(messageId,callback) {
+    getInboxMessageForId : function(messageId,callback){
         callWithCallback('getInboxMessageForId', [messageId], callback);
     },
 
@@ -540,6 +544,14 @@ var CleverTap = {
     */
     pushInboxNotificationViewedEventForId: function(messageId){
        CleverTapReact.pushInboxNotificationViewedEventForId(messageId);
+    },
+
+   /**
+    * Get all display units
+    * @param {function(err, res)} callback that returns a list of json string representation of CleverTapDisplayUnit
+    */
+    getAllDisplayUnits : function(callback){
+        callWithCallback('getAllDisplayUnits', null, callback);
     },
 
     /**
