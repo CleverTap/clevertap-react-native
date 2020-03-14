@@ -10,7 +10,7 @@
 RCT_EXPORT_MODULE();
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[kCleverTapProfileDidInitialize, kCleverTapProfileSync, kCleverTapInAppNotificationDismissed, kCleverTapInboxDidInitialize, kCleverTapInboxMessagesDidUpdate, kCleverTapExperimentsDidUpdate];
+    return @[kCleverTapProfileDidInitialize, kCleverTapProfileSync, kCleverTapInAppNotificationDismissed, kCleverTapInboxDidInitialize, kCleverTapInboxMessagesDidUpdate, kCleverTapExperimentsDidUpdate, kCleverTapInAppNotificationButtonTapped, kCleverTapInboxMessageButtonTapped, kCleverTapDisplayUnitsLoaded];
 }
 
 
@@ -41,9 +41,24 @@ RCT_EXPORT_MODULE();
                                                object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                                selector:@selector(emitEventInternal:)
-                                                    name:kCleverTapExperimentsDidUpdate
-                                                  object:nil];
+                                             selector:@selector(emitEventInternal:)
+                                                 name:kCleverTapExperimentsDidUpdate
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(emitEventInternal:)
+                                                 name:kCleverTapDisplayUnitsLoaded
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(emitEventInternal:)
+                                                 name:kCleverTapInAppNotificationButtonTapped
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(emitEventInternal:)
+                                                 name:kCleverTapInboxMessageButtonTapped
+                                               object:nil];
 }
 
 - (void)stopObserving {

@@ -9,12 +9,13 @@
 #import "CleverTap.h"
 #import "CleverTap+Inbox.h"
 #import "CleverTap+ABTesting.h"
+#import "CleverTap+DisplayUnit.h"
 #import "CleverTapEventDetail.h"
 #import "CleverTapUTMDetail.h"
 #import "CleverTapSyncDelegate.h"
 #import "CleverTapInAppNotificationDelegate.h"
 
-@interface CleverTapReactManager() <CleverTapSyncDelegate, CleverTapInAppNotificationDelegate> {
+@interface CleverTapReactManager() <CleverTapSyncDelegate, CleverTapInAppNotificationDelegate, CleverTapDisplayUnitDelegate, CleverTapInboxViewControllerDelegate> {
 }
 
 @end
@@ -37,6 +38,7 @@
         CleverTap *clevertap = [CleverTap sharedInstance];
         [clevertap setSyncDelegate:self];
         [clevertap setInAppNotificationDelegate:self];
+        [clevertap setDisplayUnitDelegate:self];
         [clevertap setLibrary:@"React-Native"];
         [clevertap registerExperimentsUpdatedBlock:^{
             [self postNotificationWithName:kCleverTapExperimentsDidUpdate andBody:nil];
@@ -92,6 +94,45 @@
     }
     
     [self postNotificationWithName:kCleverTapInAppNotificationDismissed andBody:body];
+}
+
+- (void)inAppNotificationButtonTappedWithCustomExtras:(NSDictionary *)customExtras {
+    
+    NSMutableDictionary *body = [NSMutableDictionary new];
+    
+    if (customExtras != nil) {
+        body[@"customExtras"] = customExtras;
+    }
+    
+    [self postNotificationWithName:kCleverTapInAppNotificationButtonTapped andBody:body];
+    
+}
+
+- (void)displayUnitsUpdated:(NSArray<CleverTapDisplayUnit *> *)displayUnits {
+    
+    NSMutableDictionary *body = [NSMutableDictionary new];
+    
+    if (displayUnits != nil) {
+        NSMutableArray *units = [NSMutableArray new];
+        for (CleverTapDisplayUnit *unit in displayUnits) {
+            [units addObject:unit.json];
+        }
+        NSArray *result = [displayUnits mutableCopy];
+        body[@"displayUnits"] = result;
+    }
+    
+    [self postNotificationWithName:kCleverTapDisplayUnitsLoaded andBody:body];
+}
+
+- (void)messageButtonTappedWithCustomExtras:(NSDictionary *)customExtras {
+    
+    NSMutableDictionary *body = [NSMutableDictionary new];
+    
+    if (customExtras != nil) {
+        body[@"customExtras"] = customExtras;
+    }
+    
+    [self postNotificationWithName:kCleverTapInboxMessageButtonTapped andBody:body];
 }
 
 @end

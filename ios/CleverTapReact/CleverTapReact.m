@@ -11,6 +11,7 @@
 #import "CleverTap+ABTesting.h"
 #import "CleverTapEventDetail.h"
 #import "CleverTapUTMDetail.h"
+#import "CleverTap+DisplayUnit.h"
 
 static NSDateFormatter *dateFormatter;
 
@@ -30,6 +31,9 @@ RCT_EXPORT_MODULE();
         kCleverTapInboxDidInitialize: kCleverTapInboxDidInitialize,
         kCleverTapInboxMessagesDidUpdate: kCleverTapInboxMessagesDidUpdate,
         kCleverTapExperimentsDidUpdate: kCleverTapExperimentsDidUpdate,
+        kCleverTapInboxMessageButtonTapped: kCleverTapInboxMessageButtonTapped,
+        kCleverTapInAppNotificationButtonTapped: kCleverTapInAppNotificationButtonTapped,
+        kCleverTapDisplayUnitsLoaded: kCleverTapDisplayUnitsLoaded,
     };
 }
 
@@ -689,6 +693,19 @@ RCT_EXPORT_METHOD(getMapOfDoubleVariable:(NSString* _Nonnull)name defaultValue:(
 RCT_EXPORT_METHOD(getMapOfIntegerVariable:(NSString* _Nonnull)name defaultValue:(NSDictionary*)defaultValue callback:(RCTResponseSenderBlock)callback)  {
     RCTLogInfo(@"[CleverTap getDictionaryOfIntegerVariableWithName:defaultValue]");
     NSDictionary *result = [[CleverTap sharedInstance] getDictionaryOfIntegerVariableWithName:name defaultValue:defaultValue];
+    [self returnResult:result withCallback:callback andError:nil];
+}
+
+#pragma mark Display Units
+
+RCT_EXPORT_METHOD(getAllDisplayUnits:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getAllDisplayUnits]");
+    NSArray <CleverTapDisplayUnit*> *units = [[CleverTap sharedInstance] getAllDisplayUnits];
+    NSMutableArray *displayUnits = [NSMutableArray new];
+    for (CleverTapDisplayUnit *unit in units) {
+        [displayUnits addObject:unit.json];
+    }
+    NSArray *result = [displayUnits mutableCopy];
     [self returnResult:result withCallback:callback andError:nil];
 }
 
