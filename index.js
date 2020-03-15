@@ -554,6 +554,31 @@ var CleverTap = {
         callWithCallback('getAllDisplayUnits', null, callback);
     },
 
+   /**
+    * Get display unit for given unitID.
+    * @param {string} unit id of display unit of type CleverTapDisplayUnit
+    * @param {function(err, res)} callback that returns a json string representation of CleverTapDisplayUnit
+    */
+    getDisplayUnitForId: function(unitID,callback) {
+       callWithCallback('getDisplayUnitForId', [unitID], callback);
+    },
+
+   /**
+    * Raises the Display Unit Viewed event
+    * @param {string} unit id of display unit of type CleverTapDisplayUnit
+    */
+    pushDisplayUnitViewedEventForID: function(unitID) {
+       CleverTapReact.pushDisplayUnitViewedEventForID(unitID);
+    },
+
+   /**
+    * Raises the Display Unit Clicked event
+    * @param {string} unit id of display unit of type CleverTapDisplayUnit
+    */
+    pushDisplayUnitClickedEventForID: function(unitID) {
+       CleverTapReact.pushDisplayUnitClickedEventForID(unitID);
+    },
+
     /**
      * Registers an ABTesting variable of type Boolean for ease of editing on the CleverTap Dashboard
      * @param name {String} the name of the variable

@@ -63,9 +63,9 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     private static final String CLEVERTAP_INBOX_DID_INITIALIZE = "CleverTapInboxDidInitialize";
     private static final String CLEVERTAP_INBOX_MESSAGES_DID_UPDATE = "CleverTapInboxMessagesDidUpdate";
     private static final String CLEVERTAP_EXPERIMENTS_DID_UPDATE = "CleverTapExperimentsDidUpdate";
-    private static final String CLEVERTAP_ON_INBOX_BUTTON_CLICK = "CleverTapOnInboxButtonClick";
-    private static final String CLEVERTAP_ON_INAPP_BUTTON_CLICK = "CleverTapOnInAppButtonClick";
-    private static final String CLEVERTAP_ON_DISPLAY_UNITS_LOADED = "CleverTapOnDisplayUnitsLoaded";
+    private static final String CLEVERTAP_ON_INBOX_BUTTON_CLICK = "CleverTapInboxMessageButtonTapped";
+    private static final String CLEVERTAP_ON_INAPP_BUTTON_CLICK = "CleverTapInAppNotificationButtonTapped";
+    private static final String CLEVERTAP_ON_DISPLAY_UNITS_LOADED = "CleverTapDisplayUnitsLoaded";
 
     private enum InBoxMessages {
         ALL(0),
@@ -817,6 +817,42 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
+    @ReactMethod
+    public void getDisplayUnitForId(String unitID,Callback callback) {
+        String error = null;
+        String result=null;
+
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            CleverTapDisplayUnit displayUnit = cleverTap.getDisplayUnitForId(unitID);
+            if (displayUnit!=null&&displayUnit.getJsonObject()!=null) {
+                result = displayUnit.getJsonObject().toString();
+            }
+        } else {
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+        }
+        callbackWithErrorAndResult(callback, error, result);
+    }
+
+    @ReactMethod
+    public void pushDisplayUnitViewedEventForID(String unitID) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.pushDisplayUnitViewedEventForID(unitID);
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+        }
+    }
+
+    @ReactMethod
+    public void pushDisplayUnitClickedEventForID(String unitID) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.pushDisplayUnitClickedEventForID(unitID);
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+        }
+    }
 
 
     //Dynamic Variables Methods
@@ -1455,7 +1491,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         {
             for (CleverTapDisplayUnit item:list)
             {
-                if (item!=null) {
+                if (item!=null&&item.getJsonObject()!=null) {
                     writableArray.pushString(item.getJsonObject().toString());
                 }
             }

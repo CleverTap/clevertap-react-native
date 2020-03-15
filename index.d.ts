@@ -443,6 +443,21 @@
    */
   export function getAllDisplayUnits(callback: Callback): void;
 
+  /**
+   * Call this method to get display unit that belongs to the given unit id
+   */
+  export function getDisplayUnitForId(unitID: string, callback: Callback): void;
+
+  /**
+   * Call this method to raise display unit viewed event
+   */
+  export function pushDisplayUnitViewedEventForID(unitID: string): void;
+
+  /**
+   * Call this method to raise display unit clicked event
+   */
+  export function pushDisplayUnitClickedEventForID(unitID: string): void;
+
   /****************************
   * AB Tests Methods
   ****************************/
