@@ -31,6 +31,11 @@ export default class App extends Component<Props> {
         CleverTap.addListener(CleverTap.CleverTapInAppNotificationDismissed, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapInAppNotificationDismissed, event); });
         CleverTap.addListener(CleverTap.CleverTapInboxDidInitialize, (event) => { this._handleCleverTapInbox(CleverTap.CleverTapInboxDidInitialize,event); });
         CleverTap.addListener(CleverTap.CleverTapInboxMessagesDidUpdate, (event) => { this._handleCleverTapInbox(CleverTap.CleverTapInboxMessagesDidUpdate,event); });
+        CleverTap.addListener(CleverTap.CleverTapInboxMessageButtonTapped, (event) => { this._handleCleverTapInbox(CleverTap.CleverTapInboxMessageButtonTapped,event); });
+        CleverTap.addListener(CleverTap.CleverTapDisplayUnitsLoaded, (event) => { this._handleCleverTapInbox(CleverTap.CleverTapDisplayUnitsLoaded,event); });
+        CleverTap.addListener(CleverTap.CleverTapInAppNotificationButtonTapped, (event) => { this._handleCleverTapInbox(CleverTap.CleverTapInAppNotificationButtonTapped,event); });
+
+        CleverTap.setDebugLevel(1);
         // for iOS only: register for push notifications
         CleverTap.registerForPush();
 
@@ -130,6 +135,81 @@ export default class App extends Component<Props> {
             console.log('Unread Messages: ', res, err);
         });
     }
+
+    _getAllInboxMessages(event){
+        CleverTap.getAllInboxMessages((err, res) => {
+             console.log('All Inbox Messages: ', res, err);
+         });
+    }
+
+    _getUnreadInboxMessages(event){
+        CleverTap.getUnreadInboxMessages((err, res) => {
+             console.log('Unread Inbox Messages: ', res, err);
+         });
+    }
+
+    _deleteInboxMessage(event){
+
+    CleverTap.getAllInboxMessages((err, res) => {
+                 try{
+                    if(res.length>0)
+                    {
+                 		var obj=JSON.parse(res[0]);
+                        console.log("deleting message id = "+obj.id);
+
+                        CleverTap.deleteInboxMessageForId(obj.id);
+                        }
+                 	}catch(err)
+                 	{
+                 		console.log(err);
+                 	}
+             });
+
+    }
+
+    _markReadInboxMessage(event){
+
+        CleverTap.getUnreadInboxMessages((err, res) => {
+                     try{
+                        if(res.length>0)
+                        {
+                     		var obj=JSON.parse(res[0]);
+
+                     		CleverTap.getInboxMessageForId(obj.id,(err, res) => {
+                     		    console.log("marking message read = "+res);
+                     		});
+
+                            CleverTap.markReadInboxMessageForId(obj.id);
+                            CleverTap.pushInboxNotificationViewedEventForId(obj.id);
+                            CleverTap.pushInboxNotificationClickedEventForId(obj.id);
+                            }
+                     	}catch(err)
+                     	{
+                     		console.log(err);
+                     	}
+                 });
+
+        }
+
+    _getAllDisplayUnits(event){
+        CleverTap.getAllDisplayUnits((err, res) => {
+                      try{
+                         if(res.length>0)
+                         {
+                            var obj=JSON.parse(res[0]);
+                             console.log('All Display Units: ', res, err);
+                             console.log('Display unit with id = '+obj.wzrk_id,res[0])
+
+                             CleverTap.pushDisplayUnitViewedEventForID(obj.wzrk_id);
+                             CleverTap.pushDisplayUnitClickedEventForID(obj.wzrk_id);
+
+                             }
+                        }catch(err)
+                        {
+                            console.log(err);
+                        }
+                  });
+    }
   
   render() {
     return (
@@ -157,6 +237,26 @@ export default class App extends Component<Props> {
             <TouchableHighlight style={styles.button}
               onPress={this._showCounts}>
               <Text>Show Counts</Text>
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.button}
+              onPress={this._getAllInboxMessages}>
+              <Text>Get all inbox messages</Text>
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.button}
+              onPress={this._getUnreadInboxMessages}>
+              <Text>Get unread messages</Text>
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.button}
+              onPress={this._deleteInboxMessage}>
+              <Text>Delete message</Text>
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.button}
+              onPress={this._markReadInboxMessage}>
+              <Text>Mark message read</Text>
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.button}
+              onPress={this._getAllDisplayUnits}>
+              <Text>Get All Display Units</Text>
             </TouchableHighlight>
       </View>
     );
