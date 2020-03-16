@@ -709,4 +709,21 @@ RCT_EXPORT_METHOD(getAllDisplayUnits:(RCTResponseSenderBlock)callback) {
     [self returnResult:result withCallback:callback andError:nil];
 }
 
+RCT_EXPORT_METHOD(getDisplayUnitForId:(NSString*)unitId callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getDisplayUnitForId]");
+    CleverTapDisplayUnit * displayUnit = [[CleverTap sharedInstance] getDisplayUnitForID:unitId];
+    NSDictionary *result = displayUnit.json;
+    [self returnResult:result withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(pushDisplayUnitViewedEventForID:(NSString*)unitId) {
+    RCTLogInfo(@"[CleverTap pushDisplayUnitViewedEventForID]");
+    [[CleverTap sharedInstance] recordDisplayUnitViewedEventForID:unitId];
+}
+
+RCT_EXPORT_METHOD(pushDisplayUnitClickedEventForID:(NSString*)unitId) {
+    RCTLogInfo(@"[CleverTap pushDisplayUnitClickedEventForID]");
+    [[CleverTap sharedInstance] recordDisplayUnitClickedEventForID:unitId];
+}
+
 @end
