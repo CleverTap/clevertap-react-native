@@ -14,6 +14,9 @@ NOTE:  Don't forget to add the CleverTap imports at the top of the file.
 #import <CleverTapSDK/CleverTap.h>
 #import <CleverTapReact/CleverTapReactManager.h>
 ```
+
+Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTapSDK/CleverTap.h>** and **@import CleverTapReact;** instead of **#import <CleverTapReact/CleverTapReactManager.h>** in the AppDelegate class in case if using ```use_modular_headers!``` in the podfile.
+
 [See the Example Project](https://github.com/CleverTap/clevertap-react-native/blob/master/ExampleProject/ios/ExampleProject/AppDelegate.m).
 
 ### Android
@@ -24,33 +27,39 @@ NOTE:  Don't forget to add the CleverTap imports at the top of the file.
     // ...
 
     // CleverTap imports
-	import com.clevertap.android.sdk.ActivityLifecycleCallback;
-	import com.clevertap.react.CleverTapPackage;
+	import com.clevertap.android.sdk.ActivityLifecycleCallback; 
+    import com.clevertap.react.CleverTapPackage; 
+    import com.clevertap.android.sdk.CleverTapAPI;
+
 
     //...
 
     // add CleverTapPackage to react-native package list
     @Override
       protected List<ReactPackage> getPackages() {
-        return Arrays.<ReactPackage>asList(
-                new MainReactPackage(),
-                new CleverTapPackage(), // <-- add this
+        List<ReactPackage> packages = new PackageList(this).getPackages(); 
+        // Packages that cannot be autolinked yet can be added manually here, for 
+        // example: 
+        packages.add(new CleverTapPackage());// only needed when not auto-linking
+        return packages;
 
     // ...
 
     // add onCreate() override
     @Override
     public void onCreate() {
-	   // Register the CleverTap ActivityLifecycleCallback; before calling super
-      ActivityLifecycleCallback.register(this);	
-      super.onCreate();
+	    // Register the CleverTap ActivityLifecycleCallback; before calling super
+        CleverTapAPI.setUIEditorConnectionEnabled(false);
+        ActivityLifecycleCallback.register(this);	
+        super.onCreate();
     }
     ```
 
 3. Optionally Override onCreate in MainActivity.java to notify CleverTap of a launch deep link  (`android/app/src/[...]/MainActivity.java`)
     ```java
-	import com.clevertap.react.CleverTapModule;
-
+    import com.clevertap.react.CleverTapModule;
+    import android.os.Bundle;
+    
     public class MainActivity extends ReactActivity {
 		// ...
 

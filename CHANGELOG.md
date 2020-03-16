@@ -1,6 +1,27 @@
 Change Log
 ==========
 
+Version 0.3.9 *(26 February 2020)*
+-------------------------------------------
+- Update to CleverTap Android SDK v3.6.4
+
+Version 0.3.8 *(15 January 2020)*
+-------------------------------------------
+- Update to CleverTap Android SDK v3.6.3
+
+Version 0.3.7 *(28 December 2019)*
+-------------------------------------------
+- Added method to custom handle Push Notifications in Android
+
+Version 0.3.6 *(12 December 2019)*
+-------------------------------------------
+- Update to CleverTap iOS SDK v 3.7.2
+
+Version 0.3.5 *(3 October 2019)*
+-------------------------------------------
+- Update to CleverTap Android SDK v 3.6.0
+- Update to CleverTap iOS SDK v 3.7.0
+
 Version 0.3.4 *(10 June 2019)*
 -------------------------------------------
 - Added fixes for Typescript
