@@ -82,56 +82,42 @@
 #pragma mark CleverTapInAppNotificationDelegate
 
 -(void)inAppNotificationDismissedWithExtras:(NSDictionary *)extras andActionExtras:(NSDictionary *)actionExtras {
-    
     NSMutableDictionary *body = [NSMutableDictionary new];
-    
     if (extras != nil) {
         body[@"extras"] = extras;
     }
-    
     if (actionExtras != nil) {
         body[@"actionExtras"] = actionExtras;
     }
-    
     [self postNotificationWithName:kCleverTapInAppNotificationDismissed andBody:body];
 }
 
 - (void)inAppNotificationButtonTappedWithCustomExtras:(NSDictionary *)customExtras {
-    
     NSMutableDictionary *body = [NSMutableDictionary new];
-    
     if (customExtras != nil) {
         body[@"customExtras"] = customExtras;
     }
-    
     [self postNotificationWithName:kCleverTapInAppNotificationButtonTapped andBody:body];
-    
 }
 
 - (void)displayUnitsUpdated:(NSArray<CleverTapDisplayUnit *> *)displayUnits {
-    
     NSMutableDictionary *body = [NSMutableDictionary new];
-    
     if (displayUnits != nil) {
         NSMutableArray *units = [NSMutableArray new];
         for (CleverTapDisplayUnit *unit in displayUnits) {
             [units addObject:unit.json];
         }
-        NSArray *result = [displayUnits mutableCopy];
+        NSArray *result = [units mutableCopy];
         body[@"displayUnits"] = result;
     }
-    
     [self postNotificationWithName:kCleverTapDisplayUnitsLoaded andBody:body];
 }
 
 - (void)messageButtonTappedWithCustomExtras:(NSDictionary *)customExtras {
-    
     NSMutableDictionary *body = [NSMutableDictionary new];
-    
     if (customExtras != nil) {
         body[@"customExtras"] = customExtras;
     }
-    
     [self postNotificationWithName:kCleverTapInboxMessageButtonTapped andBody:body];
 }
 

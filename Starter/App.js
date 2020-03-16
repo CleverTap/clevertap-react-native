@@ -88,8 +88,13 @@ export default class App extends Component<Props> {
 
     _recordEvent(event) {
         CleverTap.recordEvent('testEvent');
+        CleverTap.recordEvent('Alert');
+        CleverTap.recordEvent('Alert ios');
         CleverTap.recordEvent('testEventWithProps', {'foo': 'bar'});
         CleverTap.setPushToken("FCM","abcdfcm");
+        CleverTap.recordEvent('Alert');
+        CleverTap.recordEvent('Alert Landscape');
+        CleverTap.recordEvent('Added To Cart');
     }
 
      _recordChargedEvent(event) {

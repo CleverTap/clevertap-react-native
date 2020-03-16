@@ -32,6 +32,13 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   
+//  CleverTap.setCredentialsWithAccountID("W9R-486-4W5Z", andToken: "6b4-2c0")
+//
+//  [CleverTap setCredentialsWithAccountID:@"TEST-Z9R-486-4W5Z"
+//                                andToken:@"TEST-6b4-2c1"];
+  [CleverTap setCredentialsWithAccountID:@"W9R-486-4W5Z"
+                                 andToken:@"6b4-2c0"];
+
   // Add CleverTap Account ID and Account Token in your .plist file)
   // initialize CleverTap
 #ifdef DEBUG
