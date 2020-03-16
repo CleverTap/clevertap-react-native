@@ -685,7 +685,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         } else {
             error = "CleverTap not initialized";
         }
-        Log.d(TAG,"inside total count");
         callbackWithErrorAndResult(callback, error, result);
     }
 
@@ -797,7 +796,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         } else {
             error = "CleverTap not initialized";
         }
-        Log.d(TAG, "inside total count");
         callbackWithErrorAndResult(callback, error, result);
     }
 
@@ -1562,7 +1560,9 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     //Native Display callback
     public void onDisplayUnitsLoaded(ArrayList<CleverTapDisplayUnit> units) {
-        sendEvent(CLEVERTAP_ON_DISPLAY_UNITS_LOADED, getWritableArrayFromList(units));
+        WritableMap params = Arguments.createMap();
+        params.putArray("displayUnits",getWritableArrayFromList(units));
+        sendEvent(CLEVERTAP_ON_DISPLAY_UNITS_LOADED, params);
     }
 
     //Experiments Callback
