@@ -113,12 +113,4 @@
     [self postNotificationWithName:kCleverTapDisplayUnitsLoaded andBody:body];
 }
 
-- (void)messageButtonTappedWithCustomExtras:(NSDictionary *)customExtras {
-    NSMutableDictionary *body = [NSMutableDictionary new];
-    if (customExtras != nil) {
-        body[@"customExtras"] = customExtras;
-    }
-    [self postNotificationWithName:kCleverTapInboxMessageButtonTapped andBody:body];
-}
-
 @end

@@ -95,6 +95,7 @@ export default class App extends Component<Props> {
         CleverTap.recordEvent('Alert');
         CleverTap.recordEvent('Alert Landscape');
         CleverTap.recordEvent('Added To Cart');
+        CleverTap.recordEvent('in-app');
     }
 
      _recordChargedEvent(event) {

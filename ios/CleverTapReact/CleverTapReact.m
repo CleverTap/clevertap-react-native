@@ -414,6 +414,8 @@ RCT_EXPORT_METHOD(setDebugLevel:(int)level) {
     return _profile;
 }
 
+#pragma mark App Inbox
+
 RCT_EXPORT_METHOD(getInboxMessageCount:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap inboxMessageCount]");
     int result = (int)[[CleverTap sharedInstance] getInboxMessageCount];
@@ -491,7 +493,7 @@ RCT_EXPORT_METHOD(initializeInbox) {
 
 RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
     RCTLogInfo(@"[CleverTap Show Inbox]");
-    CleverTapInboxViewController *inboxController = [[CleverTap sharedInstance] newInboxViewControllerWithConfig:[self _dictToInboxStyleConfig:styleConfig? styleConfig : nil] andDelegate:nil];
+    CleverTapInboxViewController *inboxController = [[CleverTap sharedInstance] newInboxViewControllerWithConfig:[self _dictToInboxStyleConfig:styleConfig? styleConfig : nil] andDelegate:(id <CleverTapInboxViewControllerDelegate>)self];
     if (inboxController) {
         UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:inboxController];
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
@@ -555,6 +557,14 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
                      blue:((CGFloat) (hexint & 0xFF))/255
                     alpha:alpha];
     return color;
+}
+
+- (void)messageButtonTappedWithCustomExtras:(NSDictionary *)customExtras {
+    NSMutableDictionary *body = [NSMutableDictionary new];
+    if (customExtras != nil) {
+        body[@"customExtras"] = customExtras;
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessageButtonTapped object:nil userInfo:body];
 }
 
 #pragma mark Dynamic Variables
