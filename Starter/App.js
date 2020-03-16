@@ -32,8 +32,8 @@ export default class App extends Component<Props> {
         CleverTap.addListener(CleverTap.CleverTapInboxDidInitialize, (event) => { this._handleCleverTapInbox(CleverTap.CleverTapInboxDidInitialize,event); });
         CleverTap.addListener(CleverTap.CleverTapInboxMessagesDidUpdate, (event) => { this._handleCleverTapInbox(CleverTap.CleverTapInboxMessagesDidUpdate,event); });
         CleverTap.addListener(CleverTap.CleverTapInboxMessageButtonTapped, (event) => { this._handleCleverTapInbox(CleverTap.CleverTapInboxMessageButtonTapped,event); });
-        CleverTap.addListener(CleverTap.CleverTapDisplayUnitsLoaded, (event) => { this._handleCleverTapInbox(CleverTap.CleverTapDisplayUnitsLoaded,event); });
-        CleverTap.addListener(CleverTap.CleverTapInAppNotificationButtonTapped, (event) => { this._handleCleverTapInbox(CleverTap.CleverTapInAppNotificationButtonTapped,event); });
+        CleverTap.addListener(CleverTap.CleverTapDisplayUnitsLoaded, (event) => { this._handleCleverTapDisplayUnitsLoaded(CleverTap.CleverTapDisplayUnitsLoaded,event); });
+        CleverTap.addListener(CleverTap.CleverTapInAppNotificationButtonTapped, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapInAppNotificationButtonTapped,event); });
 
         CleverTap.setDebugLevel(1);
         // for iOS only: register for push notifications
@@ -84,6 +84,11 @@ export default class App extends Component<Props> {
 
     _handleCleverTapInbox(eventName,event){
         console.log('handleCleverTapInbox',eventName,event);
+    }
+
+    _handleCleverTapDisplayUnitsLoaded(eventName,event){
+        console.log('handleCleverTapDisplayUnitsLoaded',eventName,event);
+        console.log("displayUnit Map = "+event.displayUnits);
     }
 
     _recordEvent(event) {
