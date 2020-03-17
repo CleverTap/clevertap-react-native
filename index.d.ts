@@ -9,7 +9,7 @@
     * @param {function(event)} your event handler
     */
    export function addListener(
-   eventName: String,
+   eventName: string,
    handler: Function
    ): void;
 
