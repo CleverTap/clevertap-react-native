@@ -22,7 +22,7 @@
     * If an application is launched from a push notification click, returns the CleverTap deep link included in the push notification
     * @param {function(err, res)} callback that return the url as string in res or a string error in err
     */
-   export getInitialUrl(callback: Function): void;
+   export function getInitialUrl(callback: Callback): void;
 
   /*******************
    * Personalization
