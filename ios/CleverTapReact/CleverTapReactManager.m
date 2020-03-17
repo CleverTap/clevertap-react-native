@@ -15,7 +15,7 @@
 #import "CleverTapSyncDelegate.h"
 #import "CleverTapInAppNotificationDelegate.h"
 
-@interface CleverTapReactManager() <CleverTapSyncDelegate, CleverTapInAppNotificationDelegate, CleverTapDisplayUnitDelegate, CleverTapInboxViewControllerDelegate> {
+@interface CleverTapReactManager() <CleverTapSyncDelegate, CleverTapInAppNotificationDelegate, CleverTapDisplayUnitDelegate> {
 }
 
 @end
