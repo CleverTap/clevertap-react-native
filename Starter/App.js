@@ -88,19 +88,12 @@ export default class App extends Component<Props> {
 
     _handleCleverTapDisplayUnitsLoaded(eventName,event){
         console.log('handleCleverTapDisplayUnitsLoaded',eventName,event);
-        console.log("displayUnit Map = "+event.displayUnits);
     }
 
     _recordEvent(event) {
         CleverTap.recordEvent('testEvent');
-        CleverTap.recordEvent('Alert');
-        CleverTap.recordEvent('Alert ios');
         CleverTap.recordEvent('testEventWithProps', {'foo': 'bar'});
         CleverTap.setPushToken("FCM","abcdfcm");
-        CleverTap.recordEvent('Alert');
-        CleverTap.recordEvent('Alert Landscape');
-        CleverTap.recordEvent('Added To Cart');
-        CleverTap.recordEvent('in-app');
     }
 
      _recordChargedEvent(event) {
@@ -149,7 +142,7 @@ export default class App extends Component<Props> {
 
     _getAllInboxMessages(event){
         CleverTap.getAllInboxMessages((err, res) => {
-             console.log('All Inbox Messages: ', res, err);
+            console.log('All Inbox Messages: ', res, err);
          });
     }
 
@@ -159,67 +152,27 @@ export default class App extends Component<Props> {
          });
     }
 
-    _deleteInboxMessage(event){
+    _customAppInboxAPI(event){
+        CleverTap.getInboxMessageForId('Message Id',(err, res) => {
+            console.log("marking message read = "+res);
+        });
 
-    CleverTap.getAllInboxMessages((err, res) => {
-                 try{
-                    if(res.length>0)
-                    {
-                 		var obj=JSON.parse(res[0]);
-                        console.log("deleting message id = "+obj.id);
-
-                        CleverTap.deleteInboxMessageForId(obj.id);
-                        }
-                 	}catch(err)
-                 	{
-                 		console.log(err);
-                 	}
-             });
-
+        CleverTap.deleteInboxMessageForId('Message Id');
+        CleverTap.markReadInboxMessageForId('Message Id');
+        CleverTap.pushInboxNotificationViewedEventForId('Message Id');
+        CleverTap.pushInboxNotificationClickedEventForId('Message Id');
     }
 
-    _markReadInboxMessage(event){
-
-        CleverTap.getUnreadInboxMessages((err, res) => {
-                     try{
-                        if(res.length>0)
-                        {
-                     		var obj=JSON.parse(res[0]);
-
-                     		CleverTap.getInboxMessageForId(obj.id,(err, res) => {
-                     		    console.log("marking message read = "+res);
-                     		});
-
-                            CleverTap.markReadInboxMessageForId(obj.id);
-                            CleverTap.pushInboxNotificationViewedEventForId(obj.id);
-                            CleverTap.pushInboxNotificationClickedEventForId(obj.id);
-                            }
-                     	}catch(err)
-                     	{
-                     		console.log(err);
-                     	}
-                 });
-
-        }
+    _getDisplayUnitForId(event){
+        CleverTap.getDisplayUnitForId('Unit Id', (err, res) => {
+             console.log('Get Display Unit for Id:', res, err);
+        });
+     }
 
     _getAllDisplayUnits(event){
         CleverTap.getAllDisplayUnits((err, res) => {
-                      try{
-                         if(res.length>0)
-                         {
-                            var obj=JSON.parse(res[0]);
-                             console.log('All Display Units: ', res, err);
-                             console.log('Display unit with id = '+obj.wzrk_id,res[0])
-
-                             CleverTap.pushDisplayUnitViewedEventForID(obj.wzrk_id);
-                             CleverTap.pushDisplayUnitClickedEventForID(obj.wzrk_id);
-
-                             }
-                        }catch(err)
-                        {
-                            console.log(err);
-                        }
-                  });
+             console.log('All Display Units: ', res, err);
+        });
     }
   
   render() {
@@ -258,12 +211,12 @@ export default class App extends Component<Props> {
               <Text>Get unread messages</Text>
             </TouchableHighlight>
             <TouchableHighlight style={styles.button}
-              onPress={this._deleteInboxMessage}>
-              <Text>Delete message</Text>
+              onPress={this._customAppInboxAPI}>
+              <Text>Custom App Inbox API</Text>
             </TouchableHighlight>
             <TouchableHighlight style={styles.button}
-              onPress={this._markReadInboxMessage}>
-              <Text>Mark message read</Text>
+              onPress={this._getDisplayUnitForId}>
+              <Text>Get Display Unit For Id</Text>
             </TouchableHighlight>
             <TouchableHighlight style={styles.button}
               onPress={this._getAllDisplayUnits}>
