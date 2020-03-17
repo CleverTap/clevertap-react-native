@@ -10,7 +10,7 @@
     */
    export function addListener(
    eventName: String,
-   handler: Handler
+   handler: Function
    ): void;
 
    /**
