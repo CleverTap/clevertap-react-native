@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 0.4.0 *(17 March 2020)*
+-------------------------------------------
+- Adds support for Dynamic Variables & Native Display
+- Supports CleverTap Android SDK v3.7.0
+- Supports CleverTap iOS SDK v3.7.3
+
 Version 0.3.9 *(26 February 2020)*
 -------------------------------------------
 - Update to CleverTap Android SDK v3.6.4

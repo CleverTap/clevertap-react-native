@@ -1,4 +1,30 @@
   /*******************
+   * Listners & Deeplinks
+   ******************/
+
+   /**
+    * Add a CleverTap event listener
+    * supported events are CleverTap.CleverTapProfileDidInitialize, CleverTap.CleverTapProfileSync and CleverTap.CleverTapInAppNotificationDismissed
+    * @param {string} eventName - the CleverTap event name
+    * @param {function(event)} your event handler
+    */
+   export function addListener(
+   eventName: string,
+   handler: Function
+   ): void;
+
+   /**
+    * Remove all CleverTap event listeners
+    */
+   export function removeListeners(): void;
+
+   /**
+    * If an application is launched from a push notification click, returns the CleverTap deep link included in the push notification
+    * @param {function(err, res)} callback that return the url as string in res or a string error in err
+    */
+   export function getInitialUrl(callback: Callback): void;
+
+  /*******************
    * Personalization
    ******************/
 
@@ -372,6 +398,65 @@
    * @param styleConfig : any or empty object
    */
   export function showInbox(styleConfig: any): void;
+
+  /**
+   * Call this method to get all inbox messages
+   */
+  export function getAllInboxMessages(callback: Callback): void;
+
+  /**
+   * Call this method to get all unread inbox messages
+   */
+  export function getUnreadInboxMessages(callback: Callback): void;
+
+  /**
+   * Call this method to get inbox message that belongs to the given message id
+   */
+  export function getInboxMessageForId(messageId: string, callback: Callback): void;
+
+  /**
+   * Call this method to delete inbox message that belongs to the given message id
+   */
+  export function deleteInboxMessageForId(messageId: string): void;
+
+  /**
+   * Call this method to mark inbox message as read
+   */
+  export function markReadInboxMessageForId(messageId: string): void;
+
+  /**
+   * Call this method to push the Notification Clicked event for App Inbox to CleverTap
+   */
+  export function pushInboxNotificationClickedEventForId(messageId: string): void;
+
+  /**
+   * Call this method to push the Notification Viewed event for App Inbox to CleverTap
+   */
+  export function pushInboxNotificationViewedEventForId(messageId: string): void;
+
+  /****************************
+  * Native Display Methods
+  ****************************/
+
+  /**
+   * Call this method to get all display units
+   */
+  export function getAllDisplayUnits(callback: Callback): void;
+
+  /**
+   * Call this method to get display unit that belongs to the given unit id
+   */
+  export function getDisplayUnitForId(unitID: string, callback: Callback): void;
+
+  /**
+   * Call this method to raise display unit viewed event
+   */
+  export function pushDisplayUnitViewedEventForID(unitID: string): void;
+
+  /**
+   * Call this method to raise display unit clicked event
+   */
+  export function pushDisplayUnitClickedEventForID(unitID: string): void;
 
   /****************************
   * AB Tests Methods

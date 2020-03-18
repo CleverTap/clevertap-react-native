@@ -31,6 +31,11 @@ export default class App extends Component<Props> {
         CleverTap.addListener(CleverTap.CleverTapInAppNotificationDismissed, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapInAppNotificationDismissed, event); });
         CleverTap.addListener(CleverTap.CleverTapInboxDidInitialize, (event) => { this._handleCleverTapInbox(CleverTap.CleverTapInboxDidInitialize,event); });
         CleverTap.addListener(CleverTap.CleverTapInboxMessagesDidUpdate, (event) => { this._handleCleverTapInbox(CleverTap.CleverTapInboxMessagesDidUpdate,event); });
+        CleverTap.addListener(CleverTap.CleverTapInboxMessageButtonTapped, (event) => { this._handleCleverTapInbox(CleverTap.CleverTapInboxMessageButtonTapped,event); });
+        CleverTap.addListener(CleverTap.CleverTapDisplayUnitsLoaded, (event) => { this._handleCleverTapDisplayUnitsLoaded(CleverTap.CleverTapDisplayUnitsLoaded,event); });
+        CleverTap.addListener(CleverTap.CleverTapInAppNotificationButtonTapped, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapInAppNotificationButtonTapped,event); });
+
+        CleverTap.setDebugLevel(1);
         // for iOS only: register for push notifications
         CleverTap.registerForPush();
 
@@ -79,6 +84,10 @@ export default class App extends Component<Props> {
 
     _handleCleverTapInbox(eventName,event){
         console.log('handleCleverTapInbox',eventName,event);
+    }
+
+    _handleCleverTapDisplayUnitsLoaded(eventName,event){
+        console.log('handleCleverTapDisplayUnitsLoaded',eventName,event);
     }
 
     _recordEvent(event) {
@@ -130,6 +139,41 @@ export default class App extends Component<Props> {
             console.log('Unread Messages: ', res, err);
         });
     }
+
+    _getAllInboxMessages(event){
+        CleverTap.getAllInboxMessages((err, res) => {
+            console.log('All Inbox Messages: ', res, err);
+         });
+    }
+
+    _getUnreadInboxMessages(event){
+        CleverTap.getUnreadInboxMessages((err, res) => {
+             console.log('Unread Inbox Messages: ', res, err);
+         });
+    }
+
+    _customAppInboxAPI(event){
+        CleverTap.getInboxMessageForId('Message Id',(err, res) => {
+            console.log("marking message read = "+res);
+        });
+
+        CleverTap.deleteInboxMessageForId('Message Id');
+        CleverTap.markReadInboxMessageForId('Message Id');
+        CleverTap.pushInboxNotificationViewedEventForId('Message Id');
+        CleverTap.pushInboxNotificationClickedEventForId('Message Id');
+    }
+
+    _getDisplayUnitForId(event){
+        CleverTap.getDisplayUnitForId('Unit Id', (err, res) => {
+             console.log('Get Display Unit for Id:', res, err);
+        });
+     }
+
+    _getAllDisplayUnits(event){
+        CleverTap.getAllDisplayUnits((err, res) => {
+             console.log('All Display Units: ', res, err);
+        });
+    }
   
   render() {
     return (
@@ -157,6 +201,26 @@ export default class App extends Component<Props> {
             <TouchableHighlight style={styles.button}
               onPress={this._showCounts}>
               <Text>Show Counts</Text>
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.button}
+              onPress={this._getAllInboxMessages}>
+              <Text>Get all inbox messages</Text>
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.button}
+              onPress={this._getUnreadInboxMessages}>
+              <Text>Get unread messages</Text>
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.button}
+              onPress={this._customAppInboxAPI}>
+              <Text>Custom App Inbox API</Text>
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.button}
+              onPress={this._getDisplayUnitForId}>
+              <Text>Get Display Unit For Id</Text>
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.button}
+              onPress={this._getAllDisplayUnits}>
+              <Text>Get All Display Units</Text>
             </TouchableHighlight>
       </View>
     );
