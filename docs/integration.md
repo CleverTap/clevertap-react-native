@@ -72,5 +72,5 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTapSDK/C
         // ...
     }
     ```
-[See the Example Project](https://github.com/CleverTap/clevertap-react-native/tree/master/ExampleProject/android/app/src/main).
+[see the included Example Project](https://github.com/CleverTap/clevertap-react-native/blob/master/Starter/App.js) 
 
