@@ -39,6 +39,9 @@ var CleverTap = {
     CleverTapProfileSync: CleverTapReact.CleverTapProfileSync,
     CleverTapInAppNotificationDismissed: CleverTapReact.CleverTapInAppNotificationDismissed,
     FCM: CleverTapReact.FCM,
+    XPS: CleverTapReact.XPS,
+    BPS: CleverTapReact.BPS,
+    HPS: CleverTapReact.HPS,
     CleverTapInboxDidInitialize: CleverTapReact.CleverTapInboxDidInitialize,
     CleverTapInboxMessagesDidUpdate: CleverTapReact.CleverTapInboxMessagesDidUpdate,
     CleverTapExperimentsDidUpdate: CleverTapReact.CleverTapExperimentsDidUpdate,
@@ -87,7 +90,7 @@ var CleverTap = {
     /**
     * Manually set the push token on the CleverTap user profile
     * @param {string} token - the device token
-    * @param {string} type - for Android only, specify CleverTap.GCM or CleverTap.FCM
+    * @param {string} type - for Android only, specify CleverTap.FCM or CleverTap.XPS or CleverTap.BPS or CleverTap.HPS
     */
     setPushToken: function(token, type) {
         CleverTapReact.setPushTokenAsString(token, type);

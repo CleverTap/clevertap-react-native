@@ -60,6 +60,9 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     private static final String CLEVERTAP_PROFILE_SYNC = "CleverTapProfileSync";
     private static final String CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED = "CleverTapInAppNotificationDismissed";
     private static final String FCM = "FCM";
+    private static final String XPS = "XPS";
+    private static final String BPS = "BPS";
+    private static final String HPS = "HPS";
     private static final String CLEVERTAP_INBOX_DID_INITIALIZE = "CleverTapInboxDidInitialize";
     private static final String CLEVERTAP_INBOX_MESSAGES_DID_UPDATE = "CleverTapInboxMessagesDidUpdate";
     private static final String CLEVERTAP_EXPERIMENTS_DID_UPDATE = "CleverTapExperimentsDidUpdate";
@@ -110,6 +113,9 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         constants.put(CLEVERTAP_PROFILE_SYNC, CLEVERTAP_PROFILE_SYNC);
         constants.put(CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED, CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED);
         constants.put(FCM, FCM);
+        constants.put(XPS, XPS);
+        constants.put(BPS, BPS);
+        constants.put(HPS, HPS);
         constants.put(CLEVERTAP_INBOX_DID_INITIALIZE,CLEVERTAP_INBOX_DID_INITIALIZE);
         constants.put(CLEVERTAP_INBOX_MESSAGES_DID_UPDATE,CLEVERTAP_INBOX_MESSAGES_DID_UPDATE);
         constants.put(CLEVERTAP_ON_INBOX_BUTTON_CLICK,CLEVERTAP_ON_INBOX_BUTTON_CLICK);
@@ -173,6 +179,12 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         if (FCM.equals(type)) {
             clevertap.pushFcmRegistrationId(token, true);
+        } else if (XPS.equals(type)) {
+            clevertap.pushXiaomiRegistrationId(token,true);
+        } else if (BPS.equals(type)) {
+            clevertap.pushBaiduRegistrationId(token,true);
+        } else if (HPS.equals(type)) {
+            clevertap.pushHuaweiRegistrationId(token,true);
         } else {
             Log.e(TAG, "Unknown push token type "+ type);
         }

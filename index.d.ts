@@ -59,7 +59,7 @@
    * Sets the device's push token
    * @param token {string}
    */
-  export function setPushToken(token: string): void;
+  export function setPushToken(token: string,type: string): void;
 
   /**
    * Create Notification Channel for Android O+
