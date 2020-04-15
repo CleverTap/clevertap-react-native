@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Version 0.4.2 *(15 April 2020)*
+-------------------------------------------
+- Added support for Xiaomi/Baidu Push methods
+
 Version 0.4.1 *(30 March 2020)*
 -------------------------------------------
 - Update to CleverTap Android SDK v3.7.2
