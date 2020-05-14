@@ -34,6 +34,10 @@ RCT_EXPORT_MODULE();
         kCleverTapInboxMessageButtonTapped: kCleverTapInboxMessageButtonTapped,
         kCleverTapInAppNotificationButtonTapped: kCleverTapInAppNotificationButtonTapped,
         kCleverTapDisplayUnitsLoaded: kCleverTapDisplayUnitsLoaded,
+        kCleverTapFeatureFlagsUpdated: kCleverTapFeatureFlagsUpdated,
+        kCleverTapProductConfigFetched: kCleverTapProductConfigFetched,
+        kCleverTapProductConfigActivated: kCleverTapProductConfigActivated,
+        kCleverTapProductConfigInitialized: kCleverTapProductConfigInitialized
     };
 }
 

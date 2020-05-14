@@ -9,6 +9,10 @@ static NSString *const kCleverTapInboxMessagesDidUpdate     = @"CleverTapInboxMe
 static NSString *const kCleverTapInboxMessageButtonTapped   = @"CleverTapInboxMessageButtonTapped";
 static NSString *const kCleverTapExperimentsDidUpdate       = @"CleverTapExperimentsDidUpdate";
 static NSString *const kCleverTapDisplayUnitsLoaded         = @"CleverTapDisplayUnitsLoaded";
+static NSString *const kCleverTapFeatureFlagsUpdated        = @"CleverTapFeatureFlagsUpdated";
+static NSString *const kCleverTapProductConfigFetched       = @"CleverTapProductConfigFetched";
+static NSString *const kCleverTapProductConfigActivated     = @"CleverTapProductConfigActivated";
+static NSString *const kCleverTapProductConfigInitialized   = @"CleverTapProductConfigInitialized";
 
 @interface CleverTapReact : NSObject <RCTBridgeModule>
 
