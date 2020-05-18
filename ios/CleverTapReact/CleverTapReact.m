@@ -781,7 +781,7 @@ RCT_EXPORT_METHOD(setMinimumFetchIntervalInSeconds:(NSTimeInterval)time) {
     [[[CleverTap sharedInstance] productConfig] setMinimumFetchInterval: time];
 }
 
-RCT_EXPORT_METHOD(getLastFetchTimeStampInMillis:(NSString*)key callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getLastFetchTimeStampInMillis:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap Last Fetch Config time]");
     NSTimeInterval result = [[[[CleverTap sharedInstance] productConfig] getLastFetchTimeStamp] timeIntervalSince1970] * 1000;
     [self returnResult: @(result) withCallback: callback andError:nil];
