@@ -74,7 +74,7 @@ export default class App extends Component<Props> {
     componentWillUnmount() {
         // clean up listeners
         Linking.removeEventListener('url', this._handleOpenUrl);
-        CleverTap.removeListeners();
+        CleverTap.removeAllListeners();
     }
 
     _handleOpenUrl(event, from) {
