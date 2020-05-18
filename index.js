@@ -71,7 +71,7 @@ var CleverTap = {
     */
     removeListeners: function() {
         if (EventEmitter) {
-            EventEmitter.removeListeners();
+            EventEmitter.removeAllListeners();
         }
     },
 
