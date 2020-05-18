@@ -12,6 +12,8 @@
 #import "CleverTapEventDetail.h"
 #import "CleverTapUTMDetail.h"
 #import "CleverTap+DisplayUnit.h"
+#import "CleverTap+FeatureFlags.h"
+#import "CleverTap+ProductConfig.h"
 
 static NSDateFormatter *dateFormatter;
 
@@ -738,6 +740,80 @@ RCT_EXPORT_METHOD(pushDisplayUnitViewedEventForID:(NSString*)unitId) {
 RCT_EXPORT_METHOD(pushDisplayUnitClickedEventForID:(NSString*)unitId) {
     RCTLogInfo(@"[CleverTap pushDisplayUnitClickedEventForID]");
     [[CleverTap sharedInstance] recordDisplayUnitClickedEventForID:unitId];
+}
+
+# pragma mark Feature Flag
+RCT_EXPORT_METHOD(getFeatureFlag:(NSString*)flag withdefaultValue:(BOOL)defaultValue callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getFeatureFlag]");
+    BOOL result = [[[CleverTap sharedInstance] featureFlags] get:flag withDefaultValue:defaultValue];
+    [self returnResult:@(result) withCallback:callback andError:nil];
+}
+
+#pragma mark Product Config
+
+RCT_EXPORT_METHOD(setDefaultsMap:(NSDictionary*)jsonDict) {
+    RCTLogInfo(@"[CleverTap setDefaultsMap]");
+    [[[CleverTap sharedInstance] productConfig] setDefaults:jsonDict];
+}
+
+RCT_EXPORT_METHOD(fetch) {
+    RCTLogInfo(@"[CleverTap ProductConfig Fetch]");
+    [[[CleverTap sharedInstance] productConfig] fetch];
+}
+
+RCT_EXPORT_METHOD(fetchWithMinimumFetchIntervalInSeconds:(NSTimeInterval)time) {
+    RCTLogInfo(@"[CleverTap ProductConfig Fetch with minimum Interval]");
+    [[[CleverTap sharedInstance] productConfig] fetchWithMinimumInterval: time];
+}
+
+RCT_EXPORT_METHOD(activate) {
+    RCTLogInfo(@"[CleverTap ProductConfig Activate]");
+    [[[CleverTap sharedInstance] productConfig] activate];
+}
+
+RCT_EXPORT_METHOD(fetchAndActivate) {
+    RCTLogInfo(@"[CleverTap ProductConfig Fetch and Activate]");
+    [[[CleverTap sharedInstance] productConfig] fetchAndActivate];
+}
+
+RCT_EXPORT_METHOD(setMinimumFetchIntervalInSeconds:(NSTimeInterval)time) {
+    RCTLogInfo(@"[CleverTap ProductConfig Minimum Time Interval Setup]");
+    [[[CleverTap sharedInstance] productConfig] setMinimumFetchInterval: time];
+}
+
+RCT_EXPORT_METHOD(getLastFetchTimeStampInMillis:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap Last Fetch Config time]");
+    NSTimeInterval result = [[[[CleverTap sharedInstance] productConfig] getLastFetchTimeStamp] timeIntervalSince1970] * 1000;
+    [self returnResult: @(result) withCallback: callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(getString:(NSString*)key callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap fetch String value for Key]");
+    NSString *result = [[[CleverTap sharedInstance] productConfig] get:key].stringValue;
+    [self returnResult: result withCallback: callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(getBoolean:(NSString*)key callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap fetch Bool value for Key]");
+    BOOL result = [[[CleverTap sharedInstance] productConfig] get:key].boolValue;
+    [self returnResult: @(result) withCallback: callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(getInteger:(NSString*)key callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap fetch Long value for Key]");
+    long result = [[[CleverTap sharedInstance] productConfig] get:key].numberValue.doubleValue;
+    [self returnResult: @(result) withCallback: callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(getDouble:(NSString*)key callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap fetch Double value for Key]");
+    long result = [[[CleverTap sharedInstance] productConfig] get:key].numberValue.doubleValue;
+    [self returnResult: @(result) withCallback: callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(reset) {
+    RCTLogInfo(@"[CleverTap ProductConfig Reset]");
+    [[[CleverTap sharedInstance] productConfig] reset];
 }
 
 @end
