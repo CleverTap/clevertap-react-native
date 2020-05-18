@@ -22,7 +22,6 @@ export default class App extends Component<Props> {
 
   componentWillMount() {
       console.log('Component WILL MOUNT123!')
-
    }
     componentDidMount() {
         // optional: add listeners for CleverTap Events
@@ -34,6 +33,10 @@ export default class App extends Component<Props> {
         CleverTap.addListener(CleverTap.CleverTapInboxMessageButtonTapped, (event) => { this._handleCleverTapInbox(CleverTap.CleverTapInboxMessageButtonTapped,event); });
         CleverTap.addListener(CleverTap.CleverTapDisplayUnitsLoaded, (event) => { this._handleCleverTapDisplayUnitsLoaded(CleverTap.CleverTapDisplayUnitsLoaded,event); });
         CleverTap.addListener(CleverTap.CleverTapInAppNotificationButtonTapped, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapInAppNotificationButtonTapped,event); });
+        CleverTap.addListener(CleverTap.CleverTapFeatureFlagsDidUpdate, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapFeatureFlagsDidUpdate,event); });
+        CleverTap.addListener(CleverTap.CleverTapProductConfigDidInitialize, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapProductConfigDidInitialize,event); });
+        CleverTap.addListener(CleverTap.CleverTapProductConfigDidFetch, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapProductConfigDidFetch,event); });
+        CleverTap.addListener(CleverTap.CleverTapProductConfigDidActivate, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapProductConfigDidActivate,event); });
 
         CleverTap.setDebugLevel(1);
         // for iOS only: register for push notifications
@@ -174,7 +177,67 @@ export default class App extends Component<Props> {
              console.log('All Display Units: ', res, err);
         });
     }
-  
+
+    //Product configs
+
+    _setDefaultProductConfigs(event){
+       CleverTap.setDefaultsMap({'text_color': 'red', 'msg_count': 100, 'price': 100.50, 'is_shown': true});
+    }
+
+    _fetch(event){
+      CleverTap.fetch();
+    }
+
+    _activate(event){
+      CleverTap.activate();
+    }
+
+    _fetchAndActivate(event){
+      CleverTap.fetchAndActivate();
+    }
+
+    _reset(event){
+      CleverTap.reset();
+    }
+
+    _fetchWithMinimumFetchIntervalInSeconds(event){
+      CleverTap.fetchWithMinimumFetchIntervalInSeconds(60);
+    }
+
+    _setMinimumFetchIntervalInSeconds(event){
+      CleverTap.setMinimumFetchIntervalInSeconds(60);
+    }
+
+    _getLastFetchTimeStampInMillis(event){
+      CleverTap.getLastFetchTimeStampInMillis((err, res) => {
+               console.log('LastFetchTimeStampInMillis in string: ', res, err);
+          });
+    }
+
+    _getProductConfigs(event){
+      CleverTap.getString('text_color', (err, res) => {
+              console.log('PC text_color val in string :', res, err);
+         });
+      CleverTap.getBoolean('is_shown', (err, res) => {
+              console.log('PC is_shown val in boolean :', res, err);
+         });
+      CleverTap.getInteger('msg_count', (err, res) => {
+              console.log('PC msg_count val in integer :', res, err);
+         });
+      CleverTap.getDouble('price', (err, res) => {
+              console.log('PC price val in double :', res, err);
+         });
+
+    }
+
+    //Feature flags
+
+    _getFeatureFlag(event){
+      CleverTap.getFeatureFlag('is_dark_mode', false, (err, res) => {
+              console.log('FF is_dark_mode val in boolean :', res, err);
+         });
+    }
+
   render() {
     return (
       <View style={styles.container}>
