@@ -74,7 +74,7 @@ export default class App extends Component<Props> {
     componentWillUnmount() {
         // clean up listeners
         Linking.removeEventListener('url', this._handleOpenUrl);
-        CleverTap.removeAllListeners();
+        CleverTap.removeListeners();
     }
 
     _handleOpenUrl(event, from) {
@@ -97,6 +97,7 @@ export default class App extends Component<Props> {
         CleverTap.recordEvent('testEvent');
         CleverTap.recordEvent('testEventWithProps', {'foo': 'bar'});
         CleverTap.setPushToken("abcdfcm",CleverTap.FCM);
+        CleverTap.removeListeners();
     }
 
      _recordChargedEvent(event) {
