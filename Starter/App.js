@@ -7,7 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, Alert, TouchableHighlight, Linking} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button, Alert, TouchableHighlight, Linking, SectionList} from 'react-native';
 const CleverTap = require('clevertap-react-native');
 
 const instructions = Platform.select({
@@ -16,6 +16,22 @@ const instructions = Platform.select({
     'Double tap R on your keyboard to reload,\n' +
     'Shake or press menu button for dev menu',
 });
+
+const sectionsList=[
+                {title: 'EVENTS', data: [{id : '_recordEvent',title: 'Record Event'},{id : '_recordChargedEvent', title: 'Record Charged Event'}]},
+                {title: 'USER PROFILE', data: [{id : '_updateUserProfile',title: 'Update User Profile'},
+                {id : '_getUserProfileProperty',title: 'Get User Profile Property'}]},
+                {title: 'INBOX', data: [{id : '_openInbox',title: 'Open Inbox'},{id : '_showCounts',title: 'Show Counts'},
+                {id : '_getAllInboxMessages',title: 'Get All Inbox Messages'},{id : '_getUnreadInboxMessages',title: 'Get Unread Messages'},
+                {id : '_customAppInboxAPI',title: 'Custom App Inbox API'}]},
+                {title: 'DISPLAY UNITS', data: [{id : '_getDisplayUnitForId',title: 'Get Display Unit For Id'},{id : '_getAllDisplayUnits',
+                                title: 'Get All Display Units'}]},
+                {title: 'PRODUCT CONFIGS', data: [{id : '_setDefaultProductConfigs',title: 'Set Default Product Configs'},
+                {id : '_fetch', title: 'Fetch'},{id : '_activate', title: 'Activate'},{id : '_fetchAndActivate', title: 'Fetch And Activate'},
+                {id : '_reset', title: 'Reset'},{id : '_fetchWithMinimumFetchIntervalInSeconds', title: 'Fetch With Minimum Fetch Interval In Seconds'},
+                {id : '_getProductConfigs', title: 'Get Product Configs'}]},
+                {title: 'FEATURE FLAGS', data: [{id : '_getFeatureFlag',title: 'Get Feature Flag'}]}
+              ]
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -97,7 +113,6 @@ export default class App extends Component<Props> {
         CleverTap.recordEvent('testEvent');
         CleverTap.recordEvent('testEventWithProps', {'foo': 'bar'});
         CleverTap.setPushToken("abcdfcm",CleverTap.FCM);
-        CleverTap.removeListeners();
     }
 
      _recordChargedEvent(event) {
@@ -182,7 +197,7 @@ export default class App extends Component<Props> {
     //Product configs
 
     _setDefaultProductConfigs(event){
-       CleverTap.setDefaultsMap({'text_color': 'red', 'msg_count': 100, 'price': 100.50, 'is_shown': true});
+       CleverTap.setDefaultsMap({'text_color': 'red', 'msg_count': 100, 'price': 100.50, 'is_shown': true, 'json': '{"key":"val"}'});
     }
 
     _fetch(event){
@@ -201,11 +216,11 @@ export default class App extends Component<Props> {
       CleverTap.reset();
     }
 
-    _fetchWithMinimumFetchIntervalInSeconds(event){
+    _fetchWithMinimumFetchIntervalInSeconds(){
       CleverTap.fetchWithMinimumFetchIntervalInSeconds(60);
     }
 
-    _setMinimumFetchIntervalInSeconds(event){
+    _setMinimumFetchIntervalInSeconds(){
       CleverTap.setMinimumFetchIntervalInSeconds(60);
     }
 
@@ -222,11 +237,14 @@ export default class App extends Component<Props> {
       CleverTap.getBoolean('is_shown', (err, res) => {
               console.log('PC is_shown val in boolean :', res, err);
          });
-      CleverTap.getInteger('msg_count', (err, res) => {
+      CleverTap.getDouble('msg_count', (err, res) => {
               console.log('PC msg_count val in integer :', res, err);
          });
       CleverTap.getDouble('price', (err, res) => {
               console.log('PC price val in double :', res, err);
+         });
+      CleverTap.getString('json', (err, res) => {
+              console.log('PC json val in string :', res, err);
          });
 
     }
@@ -239,53 +257,83 @@ export default class App extends Component<Props> {
          });
     }
 
+    _onListItemClick(item){
+        console.log('_onListItemClick', item.id);
+        switch(item.id)
+        {
+            case "_recordEvent":
+              this._recordEvent();
+              break;
+            case "_recordChargedEvent":
+              this._recordChargedEvent();
+              break;
+            case "_updateUserProfile":
+              this._updateUserProfile();
+              break;
+            case "_getUserProfileProperty":
+              this._getUserProfileProperty();
+              break;
+            case "_openInbox":
+              this._openInbox();
+              break;
+            case "_showCounts":
+              this._showCounts();
+              break;
+            case "_getAllInboxMessages":
+              this._getAllInboxMessages();
+              break;
+            case "_getUnreadInboxMessages":
+              this._getUnreadInboxMessages();
+              break;
+            case "_customAppInboxAPI":
+              this._customAppInboxAPI();
+              break;
+            case "_getDisplayUnitForId":
+              this._getDisplayUnitForId();
+              break;
+            case "_getAllDisplayUnits":
+              this._getAllDisplayUnits();
+              break;
+            case "_setDefaultProductConfigs":
+              this._setDefaultProductConfigs();
+              break;
+            case "_fetch":
+              this._fetch();
+              break;
+            case "_activate":
+              this._activate();
+              break;
+            case "_fetchAndActivate":
+              this._fetchAndActivate();
+              break;
+            case "_reset":
+              this._reset();
+              break;
+            case "_fetchWithMinimumFetchIntervalInSeconds":
+              this._fetchWithMinimumFetchIntervalInSeconds();
+              break;
+            case "_getProductConfigs":
+              this._getProductConfigs();
+              break;
+            case "_getFeatureFlag":
+              this._getFeatureFlag();
+              break;
+        }
+    }
+
+
   render() {
     return (
-      <View style={styles.container}>
-            <TouchableHighlight style={styles.button}
-              onPress={this._recordEvent}>
-              <Text>Record Event</Text>
-            </TouchableHighlight>
-            <TouchableHighlight style={styles.button}
-              onPress={this._recordChargedEvent}>
-              <Text>Record Charged Event</Text>
-            </TouchableHighlight>
-            <TouchableHighlight style={styles.button}
-              onPress={this._updateUserProfile}>
-              <Text>Update User Profile</Text>
-            </TouchableHighlight>
-            <TouchableHighlight style={styles.button}
-              onPress={this._getUserProfileProperty}>
-              <Text>Get User Profile Property</Text>
-            </TouchableHighlight>
-            <TouchableHighlight style={styles.button}
-              onPress={this._openInbox}>
-              <Text>Open Inbox</Text>
-            </TouchableHighlight>
-            <TouchableHighlight style={styles.button}
-              onPress={this._showCounts}>
-              <Text>Show Counts</Text>
-            </TouchableHighlight>
-            <TouchableHighlight style={styles.button}
-              onPress={this._getAllInboxMessages}>
-              <Text>Get all inbox messages</Text>
-            </TouchableHighlight>
-            <TouchableHighlight style={styles.button}
-              onPress={this._getUnreadInboxMessages}>
-              <Text>Get unread messages</Text>
-            </TouchableHighlight>
-            <TouchableHighlight style={styles.button}
-              onPress={this._customAppInboxAPI}>
-              <Text>Custom App Inbox API</Text>
-            </TouchableHighlight>
-            <TouchableHighlight style={styles.button}
-              onPress={this._getDisplayUnitForId}>
-              <Text>Get Display Unit For Id</Text>
-            </TouchableHighlight>
-            <TouchableHighlight style={styles.button}
-              onPress={this._getAllDisplayUnits}>
-              <Text>Get All Display Units</Text>
-            </TouchableHighlight>
+      <View style={styles.containerList}>
+      <Text style={styles.instructionsApi}>Please go through "index.js" file for all sets of APIs</Text>
+      <SectionList
+                sections={sectionsList}
+                renderItem={({item,index}) => <TouchableHighlight underlayColor='#cce0ff' onPress={() => this._onListItemClick(item)} style={styles.item}><Text>{item.title}</Text></TouchableHighlight>}
+                renderSectionHeader={({section}) => <Text style={styles.sectionHeader}>{section.title}</Text>}
+                keyExtractor={(item, index) => index}
+                stickySectionHeadersEnabled = {true}
+                stickyHeaderIndices={[0]}
+              />
       </View>
     );
   }
@@ -310,5 +358,33 @@ const styles = StyleSheet.create({
   },
   button: {
         marginBottom: 20
-  }
+  },
+  item: {
+    padding: 10,
+    fontSize: 18,
+    height: 44
+   },
+  sectionHeader: {
+    paddingTop: 2,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingBottom: 2,
+    fontSize: 14,
+    fontWeight: 'bold',
+    backgroundColor: '#4d94ff',
+    color: '#FFFFFF'
+  },
+  containerList: {
+     flex: 1,
+     paddingBottom: 10
+    },
+   instructionsApi: {
+     textAlign: 'center',
+     backgroundColor: '#ff3333',
+     color: '#FFFFFF',
+     fontWeight: 'bold',
+     marginBottom: 5,
+     paddingBottom:10,
+     paddingTop:10
+    }
 });
