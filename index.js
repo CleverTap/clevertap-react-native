@@ -882,15 +882,6 @@ var CleverTap = {
     },
 
     /**
-    * Returns the product config parameter value for the given key as a integer.
-    * @param {string} the property key
-    * @param {function(err, res)} callback that returns a value of type integer if present else 0
-    */
-    getInteger: function(key, callback) {
-        callWithCallback('getInteger', [key], callback);
-    },
-
-    /**
     * Returns the product config parameter value for the given key as a double.
     * @param {string} the property key
     * @param {function(err, res)} callback that returns a value of type double if present else 0

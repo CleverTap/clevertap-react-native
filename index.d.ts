@@ -730,15 +730,6 @@
     callback: Callback): void;
 
   /**
-   * Returns the product config parameter value for the given key as a integer.
-   * @param key {string} - the name of the key
-   * @param callback {Callback} - callback that returns a value of type integer if present else 0
-   */
-  export function getInteger(
-    key: string,
-    callback: Callback): void;
-
-  /**
    * Returns the product config parameter value for the given key as a double.
    * @param key {string} - the name of the key
    * @param callback {Callback} - callback that returns a value of type double if present else 0

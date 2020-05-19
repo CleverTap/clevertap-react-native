@@ -156,6 +156,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 clevertap.setInboxMessageButtonListener(this);
                 clevertap.setInAppNotificationButtonListener(this);
                 clevertap.setDisplayUnitListener(this);
+                clevertap.setCTProductConfigListener(this);
+                clevertap.setCTFeatureFlagsListener(this);
                 clevertap.setLibrary("React-Native");
             }
             mCleverTap = clevertap;
@@ -1261,26 +1263,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             if (productConfigController != null)
             {
                 result = productConfigController.getBoolean(key);
-            }else {
-                error = ErrorMessages.PRODUCTCONFIG_NOT_INITIALIZED.getErrorMessage();
-            }
-        }else{
-            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
-        }
-        callbackWithErrorAndResult(callback,error,result);
-    }
-
-    @ReactMethod
-    public void getInteger(String key, Callback callback){
-        String error = null;
-        int result = 0;
-
-        CleverTapAPI cleverTap =  getCleverTapAPI();
-        if(cleverTap != null){
-            CTProductConfigController productConfigController = cleverTap.productConfig();
-            if (productConfigController != null)
-            {
-                result = productConfigController.getLong(key).intValue();
             }else {
                 error = ErrorMessages.PRODUCTCONFIG_NOT_INITIALIZED.getErrorMessage();
             }
