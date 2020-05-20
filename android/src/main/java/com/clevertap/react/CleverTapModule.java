@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.clevertap.android.sdk.CTExperimentsListener;
+import com.clevertap.android.sdk.CTFeatureFlagsListener;
 import com.clevertap.android.sdk.CTInboxListener;
 import com.clevertap.android.sdk.CTInboxMessage;
 import com.clevertap.android.sdk.CTInboxStyleConfig;
@@ -13,6 +14,9 @@ import com.clevertap.android.sdk.InAppNotificationButtonListener;
 import com.clevertap.android.sdk.InboxMessageButtonListener;
 import com.clevertap.android.sdk.displayunits.DisplayUnitListener;
 import com.clevertap.android.sdk.displayunits.model.CleverTapDisplayUnit;
+import com.clevertap.android.sdk.featureFlags.CTFeatureFlagsController;
+import com.clevertap.android.sdk.product_config.CTProductConfigController;
+import com.clevertap.android.sdk.product_config.CTProductConfigListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -48,7 +52,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CleverTapModule extends ReactContextBaseJavaModule implements SyncListener, InAppNotificationListener, CTInboxListener,
-        CTExperimentsListener, InboxMessageButtonListener, InAppNotificationButtonListener, DisplayUnitListener {
+        CTExperimentsListener, InboxMessageButtonListener, InAppNotificationButtonListener, DisplayUnitListener, CTProductConfigListener,
+        CTFeatureFlagsListener {
     private ReactApplicationContext context;
 
     private CleverTapAPI mCleverTap;
@@ -69,6 +74,10 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     private static final String CLEVERTAP_ON_INBOX_BUTTON_CLICK = "CleverTapInboxMessageButtonTapped";
     private static final String CLEVERTAP_ON_INAPP_BUTTON_CLICK = "CleverTapInAppNotificationButtonTapped";
     private static final String CLEVERTAP_ON_DISPLAY_UNITS_LOADED = "CleverTapDisplayUnitsLoaded";
+    private static final String CLEVERTAP_FEATURE_FLAGS_DID_UPDATE = "CleverTapFeatureFlagsDidUpdate";
+    private static final String CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE = "CleverTapProductConfigDidInitialize";
+    private static final String CLEVERTAP_PRODUCT_CONFIG_DID_FETCH = "CleverTapProductConfigDidFetch";
+    private static final String CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE = "CleverTapProductConfigDidActivate";
 
     private enum InBoxMessages {
         ALL(0),
@@ -84,7 +93,9 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     private enum ErrorMessages{
 
-        CLEVERTAP_NOT_INITIALIZED("CleverTap not initialized");
+        CLEVERTAP_NOT_INITIALIZED("CleverTap not initialized"),
+        PRODUCTCONFIG_NOT_INITIALIZED("Product Config not initialized"),
+        FF_NOT_INITIALIZED("Feature Flags not initialized");
 
         private final String errorMessage;
 
@@ -121,6 +132,10 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         constants.put(CLEVERTAP_ON_INBOX_BUTTON_CLICK,CLEVERTAP_ON_INBOX_BUTTON_CLICK);
         constants.put(CLEVERTAP_ON_DISPLAY_UNITS_LOADED,CLEVERTAP_ON_DISPLAY_UNITS_LOADED);
         constants.put(CLEVERTAP_ON_INAPP_BUTTON_CLICK,CLEVERTAP_ON_INAPP_BUTTON_CLICK);
+        constants.put(CLEVERTAP_FEATURE_FLAGS_DID_UPDATE,CLEVERTAP_FEATURE_FLAGS_DID_UPDATE);
+        constants.put(CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE,CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE);
+        constants.put(CLEVERTAP_PRODUCT_CONFIG_DID_FETCH,CLEVERTAP_PRODUCT_CONFIG_DID_FETCH);
+        constants.put(CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE,CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE);
         return constants;
     }
 
@@ -141,6 +156,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 clevertap.setInboxMessageButtonListener(this);
                 clevertap.setInAppNotificationButtonListener(this);
                 clevertap.setDisplayUnitListener(this);
+                clevertap.setCTProductConfigListener(this);
+                clevertap.setCTFeatureFlagsListener(this);
                 clevertap.setLibrary("React-Native");
             }
             mCleverTap = clevertap;
@@ -1156,6 +1173,174 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback,error,result);
     }
 
+    // Product Config methods
+
+    @ReactMethod
+    public void setDefaultsMap(ReadableMap map) {
+        CTProductConfigController productConfigController = getCtProductConfigController();
+        if (productConfigController == null) return;
+
+        HashMap<String, Object> finalMap = eventPropsFromReadableMap(map);
+        productConfigController.setDefaults(finalMap);
+    }
+
+    @ReactMethod
+    public void fetch() {
+        CTProductConfigController productConfigController = getCtProductConfigController();
+        if (productConfigController == null) return;
+
+        productConfigController.fetch();
+    }
+
+    @ReactMethod
+    public void fetchWithMinimumFetchIntervalInSeconds(int interval) {
+        CTProductConfigController productConfigController = getCtProductConfigController();
+        if (productConfigController == null) return;
+
+        productConfigController.fetch(interval);
+    }
+
+    @ReactMethod
+    public void activate() {
+        CTProductConfigController productConfigController = getCtProductConfigController();
+        if (productConfigController == null) return;
+
+        productConfigController.activate();
+    }
+
+    @ReactMethod
+    public void fetchAndActivate() {
+        CTProductConfigController productConfigController = getCtProductConfigController();
+        if (productConfigController == null) return;
+
+        productConfigController.fetchAndActivate();
+    }
+
+    @ReactMethod
+    public void setMinimumFetchIntervalInSeconds(int interval) {
+        CTProductConfigController productConfigController = getCtProductConfigController();
+        if (productConfigController == null) return;
+
+        productConfigController.setMinimumFetchIntervalInSeconds(interval);
+    }
+
+    @ReactMethod
+    public void reset() {
+        CTProductConfigController productConfigController = getCtProductConfigController();
+        if (productConfigController == null) return;
+
+        productConfigController.reset();
+    }
+
+    @ReactMethod
+    public void getString(String key, Callback callback){
+        String error = null;
+        String result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            CTProductConfigController productConfigController = cleverTap.productConfig();
+            if (productConfigController != null)
+            {
+                result = productConfigController.getString(key);
+            }else {
+                error = ErrorMessages.PRODUCTCONFIG_NOT_INITIALIZED.getErrorMessage();
+            }
+        }else{
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getBoolean(String key, Callback callback){
+        String error = null;
+        Boolean result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            CTProductConfigController productConfigController = cleverTap.productConfig();
+            if (productConfigController != null)
+            {
+                result = productConfigController.getBoolean(key);
+            }else {
+                error = ErrorMessages.PRODUCTCONFIG_NOT_INITIALIZED.getErrorMessage();
+            }
+        }else{
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getDouble(String key, Callback callback){
+        String error = null;
+        Double result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            CTProductConfigController productConfigController = cleverTap.productConfig();
+            if (productConfigController != null)
+            {
+                result = productConfigController.getDouble(key);
+            }else {
+                error = ErrorMessages.PRODUCTCONFIG_NOT_INITIALIZED.getErrorMessage();
+            }
+        }else{
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    @ReactMethod
+    public void getLastFetchTimeStampInMillis(Callback callback){
+        String error = null;
+        String result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            CTProductConfigController productConfigController = cleverTap.productConfig();
+            if (productConfigController != null)
+            {
+                result = String.valueOf(productConfigController.getLastFetchTimeStampInMillis());
+            }else {
+                error = ErrorMessages.PRODUCTCONFIG_NOT_INITIALIZED.getErrorMessage();
+            }
+        }else{
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
+    private CTProductConfigController getCtProductConfigController() {
+        CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap == null) return null;
+
+        return clevertap.productConfig();
+    }
+
+    // Feature Flag methods
+
+    @ReactMethod
+    public void getFeatureFlag(String name, Boolean defaultValue, Callback callback){
+        String error = null;
+        Boolean result = null;
+
+        CleverTapAPI cleverTap =  getCleverTapAPI();
+        if(cleverTap != null){
+            CTFeatureFlagsController featureFlagsController = cleverTap.featureFlag();
+            if (featureFlagsController != null)
+            {
+                result = featureFlagsController.get(name,defaultValue);
+            }else {
+                error = ErrorMessages.FF_NOT_INITIALIZED.getErrorMessage();
+            }
+        }else{
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+        }
+        callbackWithErrorAndResult(callback,error,result);
+    }
+
     // Developer Options
 
     @ReactMethod
@@ -1583,5 +1768,31 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     public void CTExperimentsUpdated(){
         WritableMap params = Arguments.createMap();
         sendEvent(CLEVERTAP_EXPERIMENTS_DID_UPDATE,params);//passing empty map
+    }
+
+    //Feature Flags Callback
+    @Override
+    public void featureFlagsUpdated() {
+        WritableMap params = Arguments.createMap();
+        sendEvent(CLEVERTAP_FEATURE_FLAGS_DID_UPDATE,params);//passing empty map
+    }
+
+    //Product Config Callback
+    @Override
+    public void onInit() {
+        WritableMap params = Arguments.createMap();
+        sendEvent(CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE,params);//passing empty map
+    }
+
+    @Override
+    public void onFetched() {
+        WritableMap params = Arguments.createMap();
+        sendEvent(CLEVERTAP_PRODUCT_CONFIG_DID_FETCH,params);//passing empty map
+    }
+
+    @Override
+    public void onActivated() {
+        WritableMap params = Arguments.createMap();
+        sendEvent(CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE,params);//passing empty map
     }
 }

@@ -48,6 +48,10 @@ var CleverTap = {
     CleverTapInboxMessageButtonTapped: CleverTapReact.CleverTapInboxMessageButtonTapped,
     CleverTapDisplayUnitsLoaded: CleverTapReact.CleverTapDisplayUnitsLoaded,
     CleverTapInAppNotificationButtonTapped: CleverTapReact.CleverTapInAppNotificationButtonTapped,
+    CleverTapFeatureFlagsDidUpdate: CleverTapReact.CleverTapFeatureFlagsDidUpdate,
+    CleverTapProductConfigDidInitialize: CleverTapReact.CleverTapProductConfigDidInitialize,
+    CleverTapProductConfigDidFetch: CleverTapReact.CleverTapProductConfigDidFetch,
+    CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate,
 
     /**
     * Add a CleverTap event listener
@@ -67,7 +71,7 @@ var CleverTap = {
     */
     removeListeners: function() {
         if (EventEmitter) {
-            EventEmitter.removeListeners();
+            EventEmitter.removeAllListeners();
         }
     },
 
@@ -805,6 +809,103 @@ var CleverTap = {
      */
     setUIEditorConnectionEnabled: function(enabled){
         CleverTapReact.setUIEditorConnectionEnabled(enabled);
+    },
+
+   /**
+    * Sets default product config params using the given object.
+    * @param {object} productConfigMap - key-value product config properties.  keys are strings and values can be string, double, integer, boolean or json in string format.
+    */
+    setDefaultsMap: function(productConfigMap) {
+        CleverTapReact.setDefaultsMap(productConfigMap);
+    },
+
+   /**
+    * Starts fetching product configs, adhering to the default minimum fetch interval.
+    */
+    fetch: function() {
+        CleverTapReact.fetch();
+    },
+
+   /**
+    * Starts fetching product configs, adhering to the specified minimum fetch interval in seconds.
+    * @param {int} intervalInSecs - minimum fetch interval in seconds.
+    */
+    fetchWithMinimumIntervalInSeconds: function(intervalInSecs) {
+        CleverTapReact.fetchWithMinimumFetchIntervalInSeconds(intervalInSecs);
+    },
+
+   /**
+    * Activates the most recently fetched product configs, so that the fetched key value pairs take effect.
+    */
+    activate: function() {
+        CleverTapReact.activate();
+    },
+
+   /**
+    * Asynchronously fetches and then activates the fetched product configs.
+    */
+    fetchAndActivate: function() {
+        CleverTapReact.fetchAndActivate();
+    },
+
+   /**
+    * Sets the minimum interval in seconds between successive fetch calls.
+    * @param {int} intervalInSecs - interval in seconds between successive fetch calls.
+    */
+    setMinimumFetchIntervalInSeconds: function(intervalInSecs) {
+        CleverTapReact.setMinimumFetchIntervalInSeconds(intervalInSecs);
+    },
+
+   /**
+    * Deletes all activated, fetched and defaults configs as well as all Product Config settings.
+    */
+    resetProductConfig: function() {
+        CleverTapReact.reset();
+    },
+
+    /**
+    * Returns the product config parameter value for the given key as a String.
+    * @param {string} the property key
+    * @param {function(err, res)} callback that returns a value of type string if present else blank
+    */
+    getProductConfigString: function(key, callback) {
+        callWithCallback('getString', [key], callback);
+    },
+
+    /**
+    * Returns the product config parameter value for the given key as a boolean.
+    * @param {string} the property key
+    * @param {function(err, res)} callback that returns a value of type boolean if present else false
+    */
+    getProductConfigBoolean: function(key, callback) {
+        callWithCallback('getBoolean', [key], callback);
+    },
+
+    /**
+    * Returns the product config parameter value for the given key as a number.
+    * @param {string} the property key
+    * @param {function(err, res)} callback that returns a value of type number if present else 0
+    */
+    getNumber: function(key, callback) {
+        callWithCallback('getDouble', [key], callback);
+    },
+
+   /**
+    * Returns the last fetched timestamp in millis.
+    * @param {function(err, res)} callback that returns value of timestamp in millis as a string.
+    */
+    getLastFetchTimeStampInMillis: function(callback) {
+        callWithCallback('getLastFetchTimeStampInMillis', null, callback);
+    },
+
+    /**
+    * Getter to return the feature flag configured at the dashboard
+    * @param {string} key of the feature flag
+    * @param {string} default value of the key, in case we don't find any feature flag with the key.
+    * @param {function(err, res)} callback that returns a feature flag value of type boolean if present else provided default value
+    */
+    getFeatureFlag: function(name,defaultValue,callback){
+        callWithCallback('getFeatureFlag', [name,defaultValue], callback);
     },
 
     /**

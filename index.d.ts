@@ -671,6 +671,95 @@
      callback: Callback): void;
 
   /*******************
+   * Product Configs
+   ******************/ 
+  /**
+   * Sets default product config params using the given object.
+   * @param productConfigMap {any} key-value product config properties. keys are strings and values can be string, double, integer, boolean or json in string format.
+   */
+  export function setDefaultsMap(productConfigMap: any): void;
+
+  /**
+   * Starts fetching product configs, adhering to the default minimum fetch interval.
+   */
+  export function fetch(): void;
+
+  /**
+   * Starts fetching product configs, adhering to the default minimum fetch interval.
+   * @param intervalInSecs {number}  minimum fetch interval in seconds.
+   */
+  export function fetchWithMinimumIntervalInSeconds(intervalInSecs: number): void;
+
+  /**
+   * Activates the most recently fetched product configs, so that the fetched key value pairs take effect.
+   */
+  export function activate(): void;
+
+  /**
+   * Asynchronously fetches and then activates the fetched product configs.
+   */
+  export function fetchAndActivate(): void;
+
+  /**
+   * Sets the minimum interval in seconds between successive fetch calls.
+   * @param intervalInSecs {number} interval in seconds between successive fetch calls.
+   */
+  export function setMinimumFetchIntervalInSeconds(intervalInSecs: number): void;
+
+  /**
+   * Deletes all activated, fetched and defaults configs as well as all Product Config settings.
+   */
+  export function resetProductConfig(): void;
+
+  /**
+   * Returns the product config parameter value for the given key as a String.
+   * @param key {string} - the name of the key
+   * @param callback {Callback} - callback that returns a value of type string if present else blank
+   */
+  export function getProductConfigString(
+    key: string,
+    callback: Callback): void;
+
+  /**
+   * Returns the product config parameter value for the given key as a boolean.
+   * @param key {string} - the name of the key
+   * @param callback {Callback} - callback that returns a value of type boolean if present else false
+   */
+  export function getProductConfigBoolean(
+    key: string,
+    callback: Callback): void;
+
+  /**
+   * Returns the product config parameter value for the given key as a number.
+   * @param key {string} - the name of the key
+   * @param callback {Callback} - callback that returns a value of type number if present else 0
+   */
+  export function getNumber(
+    key: string,
+    callback: Callback): void;
+
+  /**
+   * Returns the last fetched timestamp in millis.
+   * @param callback {Callback} - callback that returns value of timestamp in millis as a string.
+   */
+  export function getLastFetchTimeStampInMillis(callback: Callback): void;
+
+  /*******************
+   * Feature Flags
+   ******************/
+
+  /**
+   * Getter to return the feature flag configured at the dashboard
+   * @param key {string} - the name of the key
+   * @param defaultValue {boolean} - default value of the key, in case we don't find any feature flag with the key.
+   * @param callback {Callback} - callback that returns a feature flag value of type boolean if present else provided default value
+   */
+  export function getFeatureFlag(
+    key: string,
+    defaultValue: boolean,
+    callback: Callback): void;
+
+  /*******************
    * Developer Options
    ******************/
   /**

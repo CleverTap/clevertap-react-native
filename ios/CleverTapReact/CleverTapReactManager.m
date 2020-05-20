@@ -14,8 +14,10 @@
 #import "CleverTapUTMDetail.h"
 #import "CleverTapSyncDelegate.h"
 #import "CleverTapInAppNotificationDelegate.h"
+#import "CleverTap+FeatureFlags.h"
+#import "CleverTap+ProductConfig.h"
 
-@interface CleverTapReactManager() <CleverTapSyncDelegate, CleverTapInAppNotificationDelegate, CleverTapDisplayUnitDelegate> {
+@interface CleverTapReactManager() <CleverTapSyncDelegate, CleverTapInAppNotificationDelegate, CleverTapDisplayUnitDelegate,  CleverTapFeatureFlagsDelegate, CleverTapProductConfigDelegate> {
 }
 
 @end
@@ -39,6 +41,8 @@
         [clevertap setSyncDelegate:self];
         [clevertap setInAppNotificationDelegate:self];
         [clevertap setDisplayUnitDelegate:self];
+        [[clevertap featureFlags] setDelegate:self];
+        [[clevertap productConfig] setDelegate:self];
         [clevertap setLibrary:@"React-Native"];
         [clevertap registerExperimentsUpdatedBlock:^{
             [self postNotificationWithName:kCleverTapExperimentsDidUpdate andBody:nil];
@@ -111,6 +115,24 @@
         body[@"displayUnits"] = result;
     }
     [self postNotificationWithName:kCleverTapDisplayUnitsLoaded andBody:body];
+}
+
+#pragma mark CleverTapFeatureFlagsDelegate
+-(void)ctFeatureFlagsUpdated {
+    [self postNotificationWithName:kCleverTapFeatureFlagsDidUpdate andBody:nil];
+}
+
+#pragma mark CleverTapProductConfigDelegate
+-(void)ctProductConfigFetched {
+    [self postNotificationWithName:kCleverTapProductConfigDidFetch andBody:nil];
+}
+
+-(void)ctProductConfigActivated {
+    [self postNotificationWithName:kCleverTapProductConfigDidActivate andBody:nil];
+}
+
+-(void)ctProductConfigInitialized {
+    [self postNotificationWithName:kCleverTapProductConfigDidInitialize andBody:nil];
 }
 
 @end
