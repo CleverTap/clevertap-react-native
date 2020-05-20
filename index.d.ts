@@ -688,7 +688,7 @@
    * Starts fetching product configs, adhering to the default minimum fetch interval.
    * @param intervalInSecs {number}  minimum fetch interval in seconds.
    */
-  export function fetchWithMinimumFetchIntervalInSeconds(intervalInSecs: number): void;
+  export function fetchWithMinimumIntervalInSeconds(intervalInSecs: number): void;
 
   /**
    * Activates the most recently fetched product configs, so that the fetched key value pairs take effect.
@@ -709,14 +709,14 @@
   /**
    * Deletes all activated, fetched and defaults configs as well as all Product Config settings.
    */
-  export function reset(): void;
+  export function resetProductConfig(): void;
 
   /**
    * Returns the product config parameter value for the given key as a String.
    * @param key {string} - the name of the key
    * @param callback {Callback} - callback that returns a value of type string if present else blank
    */
-  export function getString(
+  export function getProductConfigString(
     key: string,
     callback: Callback): void;
 
@@ -725,16 +725,16 @@
    * @param key {string} - the name of the key
    * @param callback {Callback} - callback that returns a value of type boolean if present else false
    */
-  export function getBoolean(
+  export function getProductConfigBoolean(
     key: string,
     callback: Callback): void;
 
   /**
-   * Returns the product config parameter value for the given key as a double.
+   * Returns the product config parameter value for the given key as a number.
    * @param key {string} - the name of the key
-   * @param callback {Callback} - callback that returns a value of type double if present else 0
+   * @param callback {Callback} - callback that returns a value of type number if present else 0
    */
-  export function getDouble(
+  export function getNumber(
     key: string,
     callback: Callback): void;
 

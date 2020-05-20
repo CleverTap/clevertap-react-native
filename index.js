@@ -830,7 +830,7 @@ var CleverTap = {
     * Starts fetching product configs, adhering to the specified minimum fetch interval in seconds.
     * @param {int} intervalInSecs - minimum fetch interval in seconds.
     */
-    fetchWithMinimumFetchIntervalInSeconds: function(intervalInSecs) {
+    fetchWithMinimumIntervalInSeconds: function(intervalInSecs) {
         CleverTapReact.fetchWithMinimumFetchIntervalInSeconds(intervalInSecs);
     },
 
@@ -859,7 +859,7 @@ var CleverTap = {
    /**
     * Deletes all activated, fetched and defaults configs as well as all Product Config settings.
     */
-    reset: function() {
+    resetProductConfig: function() {
         CleverTapReact.reset();
     },
 
@@ -868,7 +868,7 @@ var CleverTap = {
     * @param {string} the property key
     * @param {function(err, res)} callback that returns a value of type string if present else blank
     */
-    getString: function(key, callback) {
+    getProductConfigString: function(key, callback) {
         callWithCallback('getString', [key], callback);
     },
 
@@ -877,16 +877,16 @@ var CleverTap = {
     * @param {string} the property key
     * @param {function(err, res)} callback that returns a value of type boolean if present else false
     */
-    getBoolean: function(key, callback) {
+    getProductConfigBoolean: function(key, callback) {
         callWithCallback('getBoolean', [key], callback);
     },
 
     /**
-    * Returns the product config parameter value for the given key as a double.
+    * Returns the product config parameter value for the given key as a number.
     * @param {string} the property key
-    * @param {function(err, res)} callback that returns a value of type double if present else 0
+    * @param {function(err, res)} callback that returns a value of type number if present else 0
     */
-    getDouble: function(key, callback) {
+    getNumber: function(key, callback) {
         callWithCallback('getDouble', [key], callback);
     },
 

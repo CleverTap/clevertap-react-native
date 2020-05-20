@@ -28,7 +28,7 @@ const sectionsList=[
                                 title: 'Get All Display Units'}]},
                 {title: 'PRODUCT CONFIGS', data: [{id : '_setDefaultProductConfigs',title: 'Set Default Product Configs'},
                 {id : '_fetch', title: 'Fetch'},{id : '_activate', title: 'Activate'},{id : '_fetchAndActivate', title: 'Fetch And Activate'},
-                {id : '_reset', title: 'Reset'},{id : '_fetchWithMinimumFetchIntervalInSeconds', title: 'Fetch With Minimum Fetch Interval In Seconds'},
+                {id : '_resetProductConfig', title: 'Reset'},{id : '_fetchWithMinimumIntervalInSeconds', title: 'Fetch With Minimum Fetch Interval In Seconds'},
                 {id : '_getProductConfigs', title: 'Get Product Configs'}]},
                 {title: 'FEATURE FLAGS', data: [{id : '_getFeatureFlag',title: 'Get Feature Flag'}]}
               ]
@@ -212,12 +212,12 @@ export default class App extends Component<Props> {
       CleverTap.fetchAndActivate();
     }
 
-    _reset(event){
-      CleverTap.reset();
+    _resetProductConfig(event){
+      CleverTap.resetProductConfig();
     }
 
-    _fetchWithMinimumFetchIntervalInSeconds(){
-      CleverTap.fetchWithMinimumFetchIntervalInSeconds(60);
+    _fetchWithMinimumIntervalInSeconds(){
+      CleverTap.fetchWithMinimumIntervalInSeconds(60);
     }
 
     _setMinimumFetchIntervalInSeconds(){
@@ -231,19 +231,19 @@ export default class App extends Component<Props> {
     }
 
     _getProductConfigs(event){
-      CleverTap.getString('text_color', (err, res) => {
+      CleverTap.getProductConfigString('text_color', (err, res) => {
               console.log('PC text_color val in string :', res, err);
          });
-      CleverTap.getBoolean('is_shown', (err, res) => {
+      CleverTap.getProductConfigBoolean('is_shown', (err, res) => {
               console.log('PC is_shown val in boolean :', res, err);
          });
-      CleverTap.getDouble('msg_count', (err, res) => {
-              console.log('PC msg_count val in integer :', res, err);
+      CleverTap.getNumber('msg_count', (err, res) => {
+              console.log('PC msg_count val in number :', res, err);
          });
-      CleverTap.getDouble('price', (err, res) => {
-              console.log('PC price val in double :', res, err);
+      CleverTap.getNumber('price', (err, res) => {
+              console.log('PC price val in number :', res, err);
          });
-      CleverTap.getString('json', (err, res) => {
+      CleverTap.getProductConfigString('json', (err, res) => {
               console.log('PC json val in string :', res, err);
          });
 
@@ -306,11 +306,11 @@ export default class App extends Component<Props> {
             case "_fetchAndActivate":
               this._fetchAndActivate();
               break;
-            case "_reset":
-              this._reset();
+            case "_resetProductConfig":
+              this._resetProductConfig();
               break;
-            case "_fetchWithMinimumFetchIntervalInSeconds":
-              this._fetchWithMinimumFetchIntervalInSeconds();
+            case "_fetchWithMinimumIntervalInSeconds":
+              this._fetchWithMinimumIntervalInSeconds();
               break;
             case "_getProductConfigs":
               this._getProductConfigs();
