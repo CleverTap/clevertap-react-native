@@ -36,10 +36,10 @@ RCT_EXPORT_MODULE();
         kCleverTapInboxMessageButtonTapped: kCleverTapInboxMessageButtonTapped,
         kCleverTapInAppNotificationButtonTapped: kCleverTapInAppNotificationButtonTapped,
         kCleverTapDisplayUnitsLoaded: kCleverTapDisplayUnitsLoaded,
-        kCleverTapFeatureFlagsUpdated: kCleverTapFeatureFlagsUpdated,
-        kCleverTapProductConfigFetched: kCleverTapProductConfigFetched,
-        kCleverTapProductConfigActivated: kCleverTapProductConfigActivated,
-        kCleverTapProductConfigInitialized: kCleverTapProductConfigInitialized
+        kCleverTapFeatureFlagsDidUpdate: kCleverTapFeatureFlagsDidUpdate,
+        kCleverTapProductConfigDidFetch: kCleverTapProductConfigDidFetch,
+        kCleverTapProductConfigDidActivate: kCleverTapProductConfigDidActivate,
+        kCleverTapProductConfigDidInitialize: kCleverTapProductConfigDidInitialize
     };
 }
 
@@ -761,7 +761,7 @@ RCT_EXPORT_METHOD(fetch) {
     [[[CleverTap sharedInstance] productConfig] fetch];
 }
 
-RCT_EXPORT_METHOD(fetchWithMinimumFetchIntervalInSeconds:(NSTimeInterval)time) {
+RCT_EXPORT_METHOD(fetchWithMinimumFetchIntervalInSeconds:(double)time) {
     RCTLogInfo(@"[CleverTap ProductConfig Fetch with minimum Interval]");
     [[[CleverTap sharedInstance] productConfig] fetchWithMinimumInterval: time];
 }
@@ -776,7 +776,7 @@ RCT_EXPORT_METHOD(fetchAndActivate) {
     [[[CleverTap sharedInstance] productConfig] fetchAndActivate];
 }
 
-RCT_EXPORT_METHOD(setMinimumFetchIntervalInSeconds:(NSTimeInterval)time) {
+RCT_EXPORT_METHOD(setMinimumFetchIntervalInSeconds:(double)time) {
     RCTLogInfo(@"[CleverTap ProductConfig Minimum Time Interval Setup]");
     [[[CleverTap sharedInstance] productConfig] setMinimumFetchInterval: time];
 }
@@ -796,12 +796,6 @@ RCT_EXPORT_METHOD(getString:(NSString*)key callback:(RCTResponseSenderBlock)call
 RCT_EXPORT_METHOD(getBoolean:(NSString*)key callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap fetch Bool value for Key]");
     BOOL result = [[[CleverTap sharedInstance] productConfig] get:key].boolValue;
-    [self returnResult: @(result) withCallback: callback andError:nil];
-}
-
-RCT_EXPORT_METHOD(getInteger:(NSString*)key callback:(RCTResponseSenderBlock)callback) {
-    RCTLogInfo(@"[CleverTap fetch Long value for Key]");
-    long result = [[[CleverTap sharedInstance] productConfig] get:key].numberValue.doubleValue;
     [self returnResult: @(result) withCallback: callback andError:nil];
 }
 
