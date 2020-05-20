@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 0.4.3 *(20 May 2020)*
+-------------------------------------------
+- Added support for Product Config and Feature Flags methods
+- Added fix for TypeError: EventEmitter.removeListeners is not a function
+
 Version 0.4.2 *(15 April 2020)*
 -------------------------------------------
 - Added support for Xiaomi/Baidu Push methods
