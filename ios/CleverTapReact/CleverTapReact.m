@@ -761,7 +761,7 @@ RCT_EXPORT_METHOD(fetch) {
     [[[CleverTap sharedInstance] productConfig] fetch];
 }
 
-RCT_EXPORT_METHOD(fetchWithMinimumFetchIntervalInSeconds:(NSTimeInterval)time) {
+RCT_EXPORT_METHOD(fetchWithMinimumFetchIntervalInSeconds:(double)time) {
     RCTLogInfo(@"[CleverTap ProductConfig Fetch with minimum Interval]");
     [[[CleverTap sharedInstance] productConfig] fetchWithMinimumInterval: time];
 }
@@ -776,7 +776,7 @@ RCT_EXPORT_METHOD(fetchAndActivate) {
     [[[CleverTap sharedInstance] productConfig] fetchAndActivate];
 }
 
-RCT_EXPORT_METHOD(setMinimumFetchIntervalInSeconds:(NSTimeInterval)time) {
+RCT_EXPORT_METHOD(setMinimumFetchIntervalInSeconds:(double)time) {
     RCTLogInfo(@"[CleverTap ProductConfig Minimum Time Interval Setup]");
     [[[CleverTap sharedInstance] productConfig] setMinimumFetchInterval: time];
 }
