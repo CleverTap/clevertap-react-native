@@ -119,20 +119,20 @@
 
 #pragma mark CleverTapFeatureFlagsDelegate
 -(void)ctFeatureFlagsUpdated {
-    [self postNotificationWithName:kCleverTapFeatureFlagsUpdated andBody:nil];
+    [self postNotificationWithName:kCleverTapFeatureFlagsDidUpdate andBody:nil];
 }
 
 #pragma mark CleverTapProductConfigDelegate
 -(void)ctProductConfigFetched {
-    [self postNotificationWithName:kCleverTapProductConfigFetched andBody:nil];
+    [self postNotificationWithName:kCleverTapProductConfigDidFetch andBody:nil];
 }
 
 -(void)ctProductConfigActivated {
-    [self postNotificationWithName:kCleverTapProductConfigActivated andBody:nil];
+    [self postNotificationWithName:kCleverTapProductConfigDidActivate andBody:nil];
 }
 
 -(void)ctProductConfigInitialized {
-    [self postNotificationWithName:kCleverTapProductConfigInitialized andBody:nil];
+    [self postNotificationWithName:kCleverTapProductConfigDidInitialize andBody:nil];
 }
 
 @end

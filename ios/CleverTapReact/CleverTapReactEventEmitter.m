@@ -10,7 +10,7 @@
 RCT_EXPORT_MODULE();
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[kCleverTapProfileDidInitialize, kCleverTapProfileSync, kCleverTapInAppNotificationDismissed, kCleverTapInboxDidInitialize, kCleverTapInboxMessagesDidUpdate, kCleverTapExperimentsDidUpdate, kCleverTapInAppNotificationButtonTapped, kCleverTapInboxMessageButtonTapped, kCleverTapDisplayUnitsLoaded,  kCleverTapFeatureFlagsUpdated, kCleverTapProductConfigFetched, kCleverTapProductConfigActivated, kCleverTapProductConfigInitialized];
+    return @[kCleverTapProfileDidInitialize, kCleverTapProfileSync, kCleverTapInAppNotificationDismissed, kCleverTapInboxDidInitialize, kCleverTapInboxMessagesDidUpdate, kCleverTapExperimentsDidUpdate, kCleverTapInAppNotificationButtonTapped, kCleverTapInboxMessageButtonTapped, kCleverTapDisplayUnitsLoaded,  kCleverTapFeatureFlagsDidUpdate, kCleverTapProductConfigDidFetch, kCleverTapProductConfigDidActivate, kCleverTapProductConfigDidInitialize];
 }
 
 
@@ -62,22 +62,22 @@ RCT_EXPORT_MODULE();
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(emitEventInternal:)
-                                                 name:kCleverTapFeatureFlagsUpdated
+                                                 name:kCleverTapFeatureFlagsDidUpdate
                                                object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(emitEventInternal:)
-                                                 name:kCleverTapProductConfigFetched
+                                                 name:kCleverTapProductConfigDidFetch
                                                object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(emitEventInternal:)
-                                                 name:kCleverTapProductConfigActivated
+                                                 name:kCleverTapProductConfigDidActivate
                                                object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(emitEventInternal:)
-                                                 name:kCleverTapProductConfigInitialized
+                                                 name:kCleverTapProductConfigDidInitialize
                                                object:nil];
     
 }
