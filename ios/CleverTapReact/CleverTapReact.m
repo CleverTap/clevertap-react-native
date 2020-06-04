@@ -47,7 +47,8 @@ RCT_EXPORT_MODULE();
     return dispatch_get_main_queue();
 }
 
-# pragma mark launch
+
+# pragma mark - Launch
 
 RCT_EXPORT_METHOD(getInitialUrl:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getInitialUrl]");
@@ -59,7 +60,8 @@ RCT_EXPORT_METHOD(getInitialUrl:(RCTResponseSenderBlock)callback) {
     }
 }
 
-#pragma mark Push
+
+#pragma mark - Push Notifications
 
 RCT_EXPORT_METHOD(registerForPush) {
     RCTLogInfo(@"[CleverTap registerForPush]");
@@ -88,7 +90,8 @@ RCT_EXPORT_METHOD(setPushTokenAsString:(NSString*)token withType:(NSString *)typ
     [[CleverTap sharedInstance] setPushTokenAsString:token];
 }
 
-#pragma mark Personalization
+
+#pragma mark - Personalization
 
 RCT_EXPORT_METHOD(enablePersonalization) {
     RCTLogInfo(@"[CleverTap enablePersonalization]");
@@ -100,14 +103,16 @@ RCT_EXPORT_METHOD(disablePersonalization) {
     [CleverTap disablePersonalization];
 }
 
-#pragma mark Offline API
+
+#pragma mark - Offline API
 
 RCT_EXPORT_METHOD(setOffline:(BOOL)enabled) {
     RCTLogInfo(@"[CleverTap setOffline:  %i]", enabled);
     [[CleverTap sharedInstance] setOffline:enabled];
 }
 
-#pragma mark OptOut API
+
+#pragma mark - OptOut API
 
 RCT_EXPORT_METHOD(setOptOut:(BOOL)enabled) {
     RCTLogInfo(@"[CleverTap setOptOut:  %i]", enabled);
@@ -119,7 +124,8 @@ RCT_EXPORT_METHOD(enableDeviceNetworkInfoReporting:(BOOL)enabled) {
     [[CleverTap sharedInstance] enableDeviceNetworkInfoReporting:enabled];
 }
 
-#pragma mark Event API
+
+#pragma mark - Event API
 
 RCT_EXPORT_METHOD(recordScreenView:(NSString*)screenName) {
     RCTLogInfo(@"[CleverTap recordScreenView]");
@@ -175,7 +181,7 @@ RCT_EXPORT_METHOD(getEventHistory:(RCTResponseSenderBlock)callback) {
 }
 
 
-#pragma mark Profile API
+#pragma mark - Profile API
 
 RCT_EXPORT_METHOD(setLocation:(double)latitude longitude:(double)longitude) {
     RCTLogInfo(@"[CleverTap setLocation: %f %f]", latitude, longitude);
@@ -249,7 +255,7 @@ RCT_EXPORT_METHOD(profileRemoveMultiValues:(NSArray<NSString*>*)values forKey:(N
 }
 
 
-#pragma mark Session API
+#pragma mark - Session API
 
 RCT_EXPORT_METHOD(pushInstallReferrer:(NSString*)source medium:(NSString*)medium campaign:(NSString*)campaign) {
     RCTLogInfo(@"[CleverTap pushInstallReferrer source: %@ medium: %@ campaign: %@]", source, medium, campaign);
@@ -287,7 +293,8 @@ RCT_EXPORT_METHOD(sessionGetUTMDetails:(RCTResponseSenderBlock)callback) {
     [self returnResult:result withCallback:callback andError:nil];
 }
 
-#pragma mark no-op Android O methods
+
+#pragma mark - no-op Android O methods
 
 RCT_EXPORT_METHOD(createNotificationChannel:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(NSInteger)importance withShowBadge:(BOOL)showBadge){
     RCTLogInfo(@"[CleverTap createNotificationChannel is no-op in iOS]");
@@ -321,7 +328,8 @@ RCT_EXPORT_METHOD(createNotification:(NSDictionary*)extras) {
     RCTLogInfo(@"[CleverTap createNotification is no-op in iOS]");
 }
 
-#pragma mark Developer Options
+
+#pragma mark - Developer Options
 
 RCT_EXPORT_METHOD(setDebugLevel:(int)level) {
     RCTLogInfo(@"[CleverTap setDebugLevel: %i]", level);
@@ -329,7 +337,7 @@ RCT_EXPORT_METHOD(setDebugLevel:(int)level) {
 }
 
 
-#pragma mark private/helpers
+#pragma mark - Private/Helpers
 
 - (void)returnResult:(id)result withCallback:(RCTResponseSenderBlock)callback andError:(NSString *)error {
     if (callback == nil) {
@@ -420,7 +428,8 @@ RCT_EXPORT_METHOD(setDebugLevel:(int)level) {
     return _profile;
 }
 
-#pragma mark App Inbox
+
+#pragma mark - App Inbox
 
 RCT_EXPORT_METHOD(getInboxMessageCount:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap inboxMessageCount]");
@@ -573,7 +582,8 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
     [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessageButtonTapped object:nil userInfo:body];
 }
 
-#pragma mark Dynamic Variables
+
+#pragma mark - Dynamic Variables
 
 RCT_EXPORT_METHOD(setUIEditorConnectionEnabled:(BOOL)enabled) {
     RCTLogInfo(@"[CleverTap setUIEditorConnectionEnabled:  %i]", enabled);
@@ -712,7 +722,8 @@ RCT_EXPORT_METHOD(getMapOfIntegerVariable:(NSString* _Nonnull)name defaultValue:
     [self returnResult:result withCallback:callback andError:nil];
 }
 
-#pragma mark Display Units
+
+#pragma mark - Display Units
 
 RCT_EXPORT_METHOD(getAllDisplayUnits:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getAllDisplayUnits]");
@@ -742,14 +753,17 @@ RCT_EXPORT_METHOD(pushDisplayUnitClickedEventForID:(NSString*)unitId) {
     [[CleverTap sharedInstance] recordDisplayUnitClickedEventForID:unitId];
 }
 
-# pragma mark Feature Flag
+
+# pragma mark - Feature Flag
+
 RCT_EXPORT_METHOD(getFeatureFlag:(NSString*)flag withdefaultValue:(BOOL)defaultValue callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getFeatureFlag]");
     BOOL result = [[[CleverTap sharedInstance] featureFlags] get:flag withDefaultValue:defaultValue];
     [self returnResult:@(result) withCallback:callback andError:nil];
 }
 
-#pragma mark Product Config
+
+#pragma mark - Product Config
 
 RCT_EXPORT_METHOD(setDefaultsMap:(NSDictionary*)jsonDict) {
     RCTLogInfo(@"[CleverTap setDefaultsMap]");
