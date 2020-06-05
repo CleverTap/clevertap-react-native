@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Version 0.4.4 *(14th June 2020)*
+-------------------------------------------
+- Performance improvements
+
 Version 0.4.3 *(20 May 2020)*
 -------------------------------------------
 - Added support for Product Config and Feature Flags methods
