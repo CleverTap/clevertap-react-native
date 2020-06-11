@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 0.4.4 *(14th June 2020)*
+Version 0.4.4 *(12th June 2020)*
 -------------------------------------------
 - Performance improvements
 
