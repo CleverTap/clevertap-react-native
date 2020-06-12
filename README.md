@@ -25,10 +25,10 @@
  - [see the CleverTap JS interface](https://github.com/CleverTap/clevertap-react-native/blob/master/index.js)
  - [see the CleverTap TS interface](https://github.com/CleverTap/clevertap-react-native/blob/master/index.d.ts)
 
-### Changelog
+## Changelog
 
 Check out the CleverTap React Native SDK [Change Log](https://github.com/CleverTap/clevertap-react-native/blob/master/CHANGELOG.md) here.
 
-### Questions?
+## Questions?
 
  If you have questions or concerns, you can reach out to the CleverTap support team at [support@clevertap.com](mailto:support@clevertap.com).
