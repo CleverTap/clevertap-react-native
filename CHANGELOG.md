@@ -3,7 +3,7 @@ Change Log
 
 Version 0.4.4 *(12th June 2020)*
 -------------------------------------------
-- Performance improvements
+- Performance improvements and fixes
 
 Version 0.4.3 *(20 May 2020)*
 -------------------------------------------
