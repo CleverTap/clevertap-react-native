@@ -350,7 +350,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) return;
 
-        Map<String, Object> finalProps = eventPropsFromReadableMap(props);
+        Map<String, Object> finalProps = eventPropsFromReadableMap(props,Object.class);
 
         if (finalProps == null) {
             clevertap.pushEvent(eventName);
@@ -364,14 +364,14 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || details == null) return;
 
-        HashMap<String, Object> finalDetails = eventPropsFromReadableMap(details);
+        HashMap<String, Object> finalDetails = eventPropsFromReadableMap(details,Object.class);
 
         ArrayList<HashMap<String, Object>> finalItems = new ArrayList<>();
 
         if (items != null) {
             for (int i = 0; i < items.size(); i++) {
                 try {
-                    HashMap<String, Object> item = eventPropsFromReadableMap(items.getMap(i));
+                    HashMap<String, Object> item = eventPropsFromReadableMap(items.getMap(i),Object.class);
                     finalItems.add(item);
                 } catch (Throwable t) {
                     Log.e(TAG, t.getLocalizedMessage());
@@ -1062,115 +1062,115 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @ReactMethod
-    public void getListOfBooleanVariable(String name, List<Boolean> defaultValue, Callback callback){
+    public void getListOfBooleanVariable(String name, ReadableArray defaultValue, Callback callback){
         String error = null;
         List<Boolean> result = null;
 
         CleverTapAPI cleverTap =  getCleverTapAPI();
         if(cleverTap != null){
-            result = cleverTap.getListOfBooleanVariable(name, defaultValue);
+            result = cleverTap.getListOfBooleanVariable(name, arrayListFromReadableArray(defaultValue,Boolean.class));
         }else{
             error = "CleverTap not initialized";
         }
-        callbackWithErrorAndResult(callback,error,result);
+        callbackWithErrorAndResult(callback,error,writableArrayFromArrayList(result,Boolean.class));
     }
 
     @ReactMethod
-    public void getListOfDoubleVariable(String name, List<Double> defaultValue, Callback callback){
+    public void getListOfDoubleVariable(String name, ReadableArray defaultValue, Callback callback){
         String error = null;
         List<Double> result = null;
 
         CleverTapAPI cleverTap =  getCleverTapAPI();
         if(cleverTap != null){
-            result = cleverTap.getListOfDoubleVariable(name, defaultValue);
+            result = cleverTap.getListOfDoubleVariable(name, arrayListFromReadableArray(defaultValue,Double.class));
         }else{
             error = "CleverTap not initialized";
         }
-        callbackWithErrorAndResult(callback,error,result);
+        callbackWithErrorAndResult(callback,error,writableArrayFromArrayList(result,Double.class));
     }
 
     @ReactMethod
-    public void getListOfIntegerVariable(String name, List<Integer> defaultValue, Callback callback){
+    public void getListOfIntegerVariable(String name, ReadableArray defaultValue, Callback callback){
         String error = null;
         List<Integer> result = null;
 
         CleverTapAPI cleverTap =  getCleverTapAPI();
         if(cleverTap != null){
-            result = cleverTap.getListOfIntegerVariable(name, defaultValue);
+            result = cleverTap.getListOfIntegerVariable(name, arrayListFromReadableArray(defaultValue,Integer.class));
         }else{
             error = "CleverTap not initialized";
         }
-        callbackWithErrorAndResult(callback,error,result);
+        callbackWithErrorAndResult(callback,error,writableArrayFromArrayList(result,Integer.class));
     }
 
     @ReactMethod
-    public void getListOfStringVariable(String name, List<String> defaultValue, Callback callback){
+    public void getListOfStringVariable(String name, ReadableArray defaultValue, Callback callback){
         String error = null;
         List<String> result = null;
 
         CleverTapAPI cleverTap =  getCleverTapAPI();
         if(cleverTap != null){
-            result = cleverTap.getListOfStringVariable(name, defaultValue);
+            result = cleverTap.getListOfStringVariable(name, arrayListFromReadableArray(defaultValue,String.class));
         }else{
             error = "CleverTap not initialized";
         }
-        callbackWithErrorAndResult(callback,error,result);
+        callbackWithErrorAndResult(callback,error,writableArrayFromArrayList(result,String.class));
     }
 
     @ReactMethod
-    public void getMapOfBooleanVariable(String name, Map<String,Boolean> defaultValue, Callback callback){
+    public void getMapOfBooleanVariable(String name, ReadableMap defaultValue, Callback callback){
         String error = null;
         Map<String,Boolean> result = null;
 
         CleverTapAPI cleverTap =  getCleverTapAPI();
         if(cleverTap != null){
-            result = cleverTap.getMapOfBooleanVariable(name, defaultValue);
+            result = cleverTap.getMapOfBooleanVariable(name, eventPropsFromReadableMap(defaultValue,Boolean.class));
         }else{
             error = "CleverTap not initialized";
         }
-        callbackWithErrorAndResult(callback,error,result);
+        callbackWithErrorAndResult(callback,error,writableMapFromMap(result,Boolean.class));
     }
 
     @ReactMethod
-    public void getMapOfDoubleVariable(String name, Map<String,Double> defaultValue, Callback callback){
+    public void getMapOfDoubleVariable(String name, ReadableMap defaultValue, Callback callback){
         String error = null;
         Map<String,Double> result = null;
 
         CleverTapAPI cleverTap =  getCleverTapAPI();
         if(cleverTap != null){
-            result = cleverTap.getMapOfDoubleVariable(name, defaultValue);
+            result = cleverTap.getMapOfDoubleVariable(name, eventPropsFromReadableMap(defaultValue,Double.class));
         }else{
             error = "CleverTap not initialized";
         }
-        callbackWithErrorAndResult(callback,error,result);
+        callbackWithErrorAndResult(callback,error,writableMapFromMap(result,Double.class));
     }
 
     @ReactMethod
-    public void getMapOfIntegerVariable(String name, Map<String,Integer> defaultValue, Callback callback){
+    public void getMapOfIntegerVariable(String name, ReadableMap defaultValue, Callback callback){
         String error = null;
         Map<String,Integer> result = null;
 
         CleverTapAPI cleverTap =  getCleverTapAPI();
         if(cleverTap != null){
-            result = cleverTap.getMapOfIntegerVariable(name, defaultValue);
+            result = cleverTap.getMapOfIntegerVariable(name, eventPropsFromReadableMap(defaultValue,Integer.class));
         }else{
             error = "CleverTap not initialized";
         }
-        callbackWithErrorAndResult(callback,error,result);
+        callbackWithErrorAndResult(callback,error,writableMapFromMap(result,Integer.class));
     }
 
     @ReactMethod
-    public void getMapOfStringVariable(String name, Map<String,String> defaultValue, Callback callback){
+    public void getMapOfStringVariable(String name, ReadableMap defaultValue, Callback callback){
         String error = null;
         Map<String,String> result = null;
 
         CleverTapAPI cleverTap =  getCleverTapAPI();
         if(cleverTap != null){
-            result = cleverTap.getMapOfStringVariable(name, defaultValue);
+            result = cleverTap.getMapOfStringVariable(name, eventPropsFromReadableMap(defaultValue,String.class));
         }else{
             error = "CleverTap not initialized";
         }
-        callbackWithErrorAndResult(callback,error,result);
+        callbackWithErrorAndResult(callback,error,writableMapFromMap(result,String.class));
     }
 
     // Product Config methods
@@ -1180,7 +1180,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         CTProductConfigController productConfigController = getCtProductConfigController();
         if (productConfigController == null) return;
 
-        HashMap<String, Object> finalMap = eventPropsFromReadableMap(map);
+        HashMap<String, Object> finalMap = eventPropsFromReadableMap(map,Object.class);
         productConfigController.setDefaults(finalMap);
     }
 
@@ -1452,10 +1452,63 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         return array;
     }
 
-    private HashMap<String, Object> eventPropsFromReadableMap(ReadableMap propsMap) {
+    private static <T> ArrayList<T> arrayListFromReadableArray(ReadableArray readableArray,Class<T> tClass) {
+        ArrayList<T> array = new ArrayList<>();
+        for (int i = 0; i < readableArray.size(); i++) {
+            switch (readableArray.getType(i)) {
+                case Null:
+                    break;
+                case Boolean:
+                    array.add(tClass.cast(readableArray.getBoolean(i)));
+                    break;
+                case Number:
+                    try {
+                        array.add(tClass.cast(readableArray.getDouble(i)));
+                    } catch (Throwable t) {
+                        try {
+                            array.add(tClass.cast(readableArray.getInt(i)));
+                        } catch (Throwable t1) {
+                            Log.e(TAG, "Unhandled ReadableType.Number from ReadableArray");
+                        }
+                    }
+                    break;
+                case String:
+                    array.add(tClass.cast(readableArray.getString(i)));
+                    break;
+            }
+        }
+        return array;
+    }
+
+    private static <T> WritableArray writableArrayFromArrayList(List<T> list,Class<T> tClass) {
+        WritableArray writableArray = Arguments.createArray();
+        if (list!=null)
+        {
+            for (Object item:list)
+            {
+                switch (tClass.getSimpleName()) {
+                    case "Boolean":
+                        writableArray.pushBoolean((Boolean) item);
+                        break;
+                    case "Double":
+                        writableArray.pushDouble((Double) item);
+                        break;
+                    case "Integer":
+                        writableArray.pushInt((Integer) item);
+                        break;
+                    case "String":
+                        writableArray.pushString((String) item);
+                        break;
+                }
+            }
+        }
+        return writableArray;
+    }
+
+    private <T> HashMap<String, T> eventPropsFromReadableMap(ReadableMap propsMap,Class<T> tClass) {
         if (propsMap == null) return null;
 
-        HashMap<String, Object> props = new HashMap<>();
+        HashMap<String, T> props = new HashMap<>();
 
         ReadableMapKeySetIterator iterator = propsMap.keySetIterator();
 
@@ -1465,17 +1518,17 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 ReadableType readableType = propsMap.getType(key);
 
                 if (readableType == ReadableType.String) {
-                    props.put(key, propsMap.getString(key));
+                    props.put(key, tClass.cast(propsMap.getString(key)));
                 }
                 else if (readableType == ReadableType.Boolean) {
-                    props.put(key, propsMap.getBoolean(key));
+                    props.put(key, tClass.cast(propsMap.getBoolean(key)));
                 }
                 else if (readableType == ReadableType.Number) {
                     try {
-                        props.put(key, propsMap.getDouble(key));
+                        props.put(key, tClass.cast(propsMap.getDouble(key)));
                     } catch (Throwable t) {
                         try {
-                            props.put(key, propsMap.getInt(key));
+                            props.put(key, tClass.cast(propsMap.getInt(key)));
                         } catch (Throwable t1) {
                             Log.e(TAG, "Unhandled ReadableType.Number from ReadableMap");
                         }
@@ -1678,6 +1731,37 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             if (key != null && value != null) {
                 extrasParams.putString(key, value);
             }
+        }
+        return extrasParams;
+    }
+
+    private <T> WritableMap writableMapFromMap(Map<String,T> var1, Class<T> tClass) {
+        JSONObject extras = var1 != null ? new JSONObject(var1) : new JSONObject();
+        WritableMap extrasParams = Arguments.createMap();
+        Iterator extrasKeys = extras.keys();
+        while (extrasKeys.hasNext()) {
+            String key;
+            try {
+                key = extrasKeys.next().toString();
+
+                switch (tClass.getSimpleName()) {
+                    case "Boolean":
+                        extrasParams.putBoolean(key, extras.getBoolean(key));
+                        break;
+                    case "Double":
+                        extrasParams.putDouble(key, extras.getDouble(key));
+                        break;
+                    case "Integer":
+                        extrasParams.putInt(key, extras.getInt(key));
+                        break;
+                    case "String":
+                        extrasParams.putString(key, extras.getString(key));
+                        break;
+                }
+            } catch (Throwable t) {
+                Log.e(TAG, t.getLocalizedMessage());
+            }
+
         }
         return extrasParams;
     }

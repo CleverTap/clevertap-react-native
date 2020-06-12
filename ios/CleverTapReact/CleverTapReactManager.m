@@ -5,7 +5,6 @@
 #import <UIKit/UIKit.h>
 
 #import <React/RCTLog.h>
-
 #import "CleverTap.h"
 #import "CleverTap+Inbox.h"
 #import "CleverTap+ABTesting.h"
@@ -33,7 +32,6 @@
     return sharedInstance;
 }
 
-
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -60,32 +58,34 @@
     }
 }
 
-#pragma mark Private
+
+#pragma mark - Private
 
 - (void)postNotificationWithName:(NSString *)name andBody:(NSDictionary *)body {
     [[NSNotificationCenter defaultCenter] postNotificationName:name object:nil userInfo:body];
 }
 
-#pragma mark CleverTapSyncDelegate
 
--(void)profileDidInitialize:(NSString*)cleverTapID {
+#pragma mark - CleverTapSyncDelegate
+
+- (void)profileDidInitialize:(NSString*)cleverTapID {
     if(!cleverTapID) {
         return;
     }
-    
     [self postNotificationWithName:kCleverTapProfileDidInitialize andBody:@{@"CleverTapID":cleverTapID}];
 }
 
--(void)profileDataUpdated:(NSDictionary *)updates {
+- (void)profileDataUpdated:(NSDictionary *)updates {
     if(!updates) {
         return ;
     }
     [self postNotificationWithName:kCleverTapProfileSync andBody:@{@"updates":updates}];
 }
 
-#pragma mark CleverTapInAppNotificationDelegate
 
--(void)inAppNotificationDismissedWithExtras:(NSDictionary *)extras andActionExtras:(NSDictionary *)actionExtras {
+#pragma mark - CleverTapInAppNotificationDelegate
+
+- (void)inAppNotificationDismissedWithExtras:(NSDictionary *)extras andActionExtras:(NSDictionary *)actionExtras {
     NSMutableDictionary *body = [NSMutableDictionary new];
     if (extras != nil) {
         body[@"extras"] = extras;
@@ -117,22 +117,26 @@
     [self postNotificationWithName:kCleverTapDisplayUnitsLoaded andBody:body];
 }
 
-#pragma mark CleverTapFeatureFlagsDelegate
--(void)ctFeatureFlagsUpdated {
+
+#pragma mark - CleverTapFeatureFlagsDelegate
+
+- (void)ctFeatureFlagsUpdated {
     [self postNotificationWithName:kCleverTapFeatureFlagsDidUpdate andBody:nil];
 }
 
-#pragma mark CleverTapProductConfigDelegate
--(void)ctProductConfigFetched {
+
+#pragma mark - CleverTapProductConfigDelegate
+
+- (void)ctProductConfigFetched {
     [self postNotificationWithName:kCleverTapProductConfigDidFetch andBody:nil];
 }
 
--(void)ctProductConfigActivated {
+- (void)ctProductConfigActivated {
     [self postNotificationWithName:kCleverTapProductConfigDidActivate andBody:nil];
 }
 
--(void)ctProductConfigInitialized {
+- (void)ctProductConfigInitialized {
     [self postNotificationWithName:kCleverTapProductConfigDidInitialize andBody:nil];
 }
-
+ 
 @end

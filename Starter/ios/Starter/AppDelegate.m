@@ -33,6 +33,7 @@
   [self.window makeKeyAndVisible];
   // Add CleverTap Account ID and Account Token in your .plist file)
   // initialize CleverTap
+  
 #ifdef DEBUG
   [CleverTap setDebugLevel:CleverTapLogDebug];
 #endif
