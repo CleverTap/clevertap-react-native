@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/CleverTap/clevertap-segment-ios/blob/master/clevertap-logo.png" width="300"/>
+</p>
+
 # CleverTap React Native SDK
 [![npm version](https://badge.fury.io/js/clevertap-react-native.svg)](https://badge.fury.io/js/clevertap-react-native)
 
