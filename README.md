@@ -35,4 +35,4 @@ Check out the CleverTap React Native SDK Change Log [here](https://github.com/Cl
 
 ## Questions?
 
- If you have questions or concerns, you can reach out to the CleverTap support team at [support@clevertap.com](mailto:support@clevertap.com).
+ If you have questions or concerns, you can reach out to the CleverTap support team from the CleverTap Dashboard.
