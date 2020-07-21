@@ -31,8 +31,8 @@
 
 ## Changelog
 
-Checkout the [CleverTap React Native SDK Change Log](https://github.com/CleverTap/clevertap-react-native/blob/master/CHANGELOG.md).
+See the [CleverTap React Native SDK Change Log](https://github.com/CleverTap/clevertap-react-native/blob/master/CHANGELOG.md).
 
-## Questions?
+## Help and Questions?
 
  If you have questions or concerns, you can reach out to the CleverTap support team from the CleverTap Dashboard.
