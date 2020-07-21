@@ -24,14 +24,14 @@
 ### Update a user profile  
 `CleverTap.onUserLogin({'Name': 'testUserA1', 'Identity': '123456', 'Email': 'test@test.com', 'custom1': 123});`
 
-### For more: 
+### For more
  - [see the included Example Project](https://github.com/CleverTap/clevertap-react-native/blob/master/Starter/App.js) 
  - [see the CleverTap JS interface](https://github.com/CleverTap/clevertap-react-native/blob/master/index.js)
  - [see the CleverTap TS interface](https://github.com/CleverTap/clevertap-react-native/blob/master/index.d.ts)
 
 ## Changelog
 
-Check out the CleverTap React Native SDK Change Log [here](https://github.com/CleverTap/clevertap-react-native/blob/master/CHANGELOG.md).
+Checkout the [CleverTap React Native SDK Change Log](https://github.com/CleverTap/clevertap-react-native/blob/master/CHANGELOG.md).
 
 ## Questions?
 
