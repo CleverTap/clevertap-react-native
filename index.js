@@ -52,6 +52,7 @@ var CleverTap = {
     CleverTapProductConfigDidInitialize: CleverTapReact.CleverTapProductConfigDidInitialize,
     CleverTapProductConfigDidFetch: CleverTapReact.CleverTapProductConfigDidFetch,
     CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate,
+    CleverTapPushNotificationClicked: CleverTapReact.CleverTapPushNotificationClicked,
 
     /**
     * Add a CleverTap event listener

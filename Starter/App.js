@@ -59,14 +59,17 @@ export default class App extends Component<Props> {
         CleverTap.addListener(CleverTap.CleverTapProductConfigDidInitialize, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapProductConfigDidInitialize,event); });
         CleverTap.addListener(CleverTap.CleverTapProductConfigDidFetch, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapProductConfigDidFetch,event); });
         CleverTap.addListener(CleverTap.CleverTapProductConfigDidActivate, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapProductConfigDidActivate,event); });
+        CleverTap.addListener(CleverTap.CleverTapPushNotificationClicked, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapPushNotificationClicked,event); });
 
-        CleverTap.setDebugLevel(1);
+        CleverTap.setDebugLevel(3);
         // for iOS only: register for push notifications
         CleverTap.registerForPush();
 
         // for iOS only; record a Screen View
         CleverTap.recordScreenView('HomeView');
 
+        //Create notification channel for Android O and above
+        CleverTap.createNotificationChannel("RNTesting", "React Native Testing", "React Native Testing", 4, true);
         //initialize the App Inbox
         CleverTap.initializeInbox();
 
