@@ -39,7 +39,8 @@ RCT_EXPORT_MODULE();
         kCleverTapFeatureFlagsDidUpdate: kCleverTapFeatureFlagsDidUpdate,
         kCleverTapProductConfigDidFetch: kCleverTapProductConfigDidFetch,
         kCleverTapProductConfigDidActivate: kCleverTapProductConfigDidActivate,
-        kCleverTapProductConfigDidInitialize: kCleverTapProductConfigDidInitialize
+        kCleverTapProductConfigDidInitialize: kCleverTapProductConfigDidInitialize,
+        KCleverTapPushNotificationClicked: KCleverTapPushNotificationClicked
     };
 }
 
