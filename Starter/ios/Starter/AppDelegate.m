@@ -34,6 +34,8 @@
   // Add CleverTap Account ID and Account Token in your .plist file)
   // initialize CleverTap
   
+  [CleverTap setCredentialsWithAccountID:@"W9R-486-4W5Z" andToken:@"6b4-2c0"];
+  
 #ifdef DEBUG
   [CleverTap setDebugLevel:CleverTapLogDebug];
 #endif
