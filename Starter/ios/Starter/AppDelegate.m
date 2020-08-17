@@ -22,10 +22,10 @@
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"Starter"
-                                            initialProperties:nil];  
-
+                                            initialProperties:nil];
+  
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-
+  
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
@@ -33,9 +33,7 @@
   [self.window makeKeyAndVisible];
   // Add CleverTap Account ID and Account Token in your .plist file)
   // initialize CleverTap
-  
-  [CleverTap setCredentialsWithAccountID:@"W9R-486-4W5Z" andToken:@"6b4-2c0"];
-  
+    
 #ifdef DEBUG
   [CleverTap setDebugLevel:CleverTapLogDebug];
 #endif
@@ -44,18 +42,6 @@
   
   return YES;
 }
-
-- (void) application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-  
-  NSLog(@"didReceiveRemoteNotification:fetchCompletionHandler %@", userInfo);
-  
-}
-
-- (void) application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-  
-  NSLog(@"didReceiveRemoteNotification %@", userInfo);
-}
-
 
 // Deep links
 
@@ -75,7 +61,7 @@
 
 // Universal links
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler {
-   return [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
+  return [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
