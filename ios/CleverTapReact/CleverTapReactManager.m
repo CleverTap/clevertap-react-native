@@ -60,14 +60,14 @@
 }
 
 
-#pragma mark Private
+#pragma mark - Private
 
 - (void)postNotificationWithName:(NSString *)name andBody:(NSDictionary *)body {
     [[NSNotificationCenter defaultCenter] postNotificationName:name object:nil userInfo:body];
 }
 
 
-#pragma mark CleverTapSyncDelegate
+#pragma mark - CleverTapSyncDelegate
 
 - (void)profileDidInitialize:(NSString*)cleverTapID {
     if(!cleverTapID) {
@@ -85,18 +85,18 @@
 }
 
 
-#pragma mark CleverTapInAppNotificationDelegate
+#pragma mark - CleverTapPushNotificationDelegate
 
 - (void)pushNotificationTappedWithCustomExtras:(NSDictionary *)customExtras {
     NSMutableDictionary *body = [NSMutableDictionary new];
     if (customExtras != nil) {
         body[@"customExtras"] = customExtras;
     }
-    [self postNotificationWithName:KCleverTapPushNotificationClicked andBody:body];
+    [self postNotificationWithName:kCleverTapPushNotificationClicked andBody:body];
 }
 
 
-#pragma mark CleverTapInAppNotificationDelegate
+#pragma mark - CleverTapInAppNotificationDelegate
 
 - (void)inAppNotificationDismissedWithExtras:(NSDictionary *)extras andActionExtras:(NSDictionary *)actionExtras {
     NSMutableDictionary *body = [NSMutableDictionary new];
@@ -131,14 +131,14 @@
 }
 
 
-#pragma mark CleverTapFeatureFlagsDelegate
+#pragma mark - CleverTapFeatureFlagsDelegate
 
 - (void)ctFeatureFlagsUpdated {
     [self postNotificationWithName:kCleverTapFeatureFlagsDidUpdate andBody:nil];
 }
 
 
-#pragma mark CleverTapProductConfigDelegate
+#pragma mark - CleverTapProductConfigDelegate
 
 - (void)ctProductConfigFetched {
     [self postNotificationWithName:kCleverTapProductConfigDidFetch andBody:nil];

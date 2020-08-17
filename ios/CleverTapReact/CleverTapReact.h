@@ -13,7 +13,7 @@ static NSString *const kCleverTapFeatureFlagsDidUpdate       = @"CleverTapFeatur
 static NSString *const kCleverTapProductConfigDidFetch       = @"CleverTapProductConfigDidFetch";
 static NSString *const kCleverTapProductConfigDidActivate    = @"CleverTapProductConfigDidActivate";
 static NSString *const kCleverTapProductConfigDidInitialize  = @"CleverTapProductConfigDidInitialize";
-static NSString *const KCleverTapPushNotificationClicked     = @"CleverTapPushNotificationClicked";
+static NSString *const kCleverTapPushNotificationClicked     = @"CleverTapPushNotificationClicked";
 
 
 @interface CleverTapReact : NSObject <RCTBridgeModule>
