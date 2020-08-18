@@ -88,11 +88,7 @@
 #pragma mark - CleverTapPushNotificationDelegate
 
 - (void)pushNotificationTappedWithCustomExtras:(NSDictionary *)customExtras {
-    NSMutableDictionary *body = [NSMutableDictionary new];
-    if (customExtras != nil) {
-        body[@"customExtras"] = customExtras;
-    }
-    [self postNotificationWithName:kCleverTapPushNotificationClicked andBody:body];
+    [self postNotificationWithName:kCleverTapPushNotificationClicked andBody:[self parseCustomExtras: customExtras]];
 }
 
 
@@ -110,11 +106,7 @@
 }
 
 - (void)inAppNotificationButtonTappedWithCustomExtras:(NSDictionary *)customExtras {
-    NSMutableDictionary *body = [NSMutableDictionary new];
-    if (customExtras != nil) {
-        body[@"customExtras"] = customExtras;
-    }
-    [self postNotificationWithName:kCleverTapInAppNotificationButtonTapped andBody:body];
+    [self postNotificationWithName:kCleverTapInAppNotificationButtonTapped andBody:[self parseCustomExtras: customExtras]];
 }
 
 - (void)displayUnitsUpdated:(NSArray<CleverTapDisplayUnit *> *)displayUnits {
@@ -128,6 +120,14 @@
         body[@"displayUnits"] = result;
     }
     [self postNotificationWithName:kCleverTapDisplayUnitsLoaded andBody:body];
+}
+
+- (NSMutableDictionary *)parseCustomExtras:(NSDictionary *)customExtras {
+    NSMutableDictionary *body = [NSMutableDictionary new];
+    if (customExtras != nil) {
+        body[@"customExtras"] = customExtras;
+    }
+    return body;
 }
 
 
