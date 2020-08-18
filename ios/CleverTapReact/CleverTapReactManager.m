@@ -88,7 +88,11 @@
 #pragma mark - CleverTapPushNotificationDelegate
 
 - (void)pushNotificationTappedWithCustomExtras:(NSDictionary *)customExtras {
-    [self postNotificationWithName:kCleverTapPushNotificationClicked andBody:[self parseCustomExtras: customExtras]];
+    NSMutableDictionary *pushNotificationExtras = [NSMutableDictionary new];
+    if (customExtras != nil) {
+        pushNotificationExtras[@"customExtras"] = customExtras;
+    }
+    [self postNotificationWithName:kCleverTapPushNotificationClicked andBody:pushNotificationExtras];
 }
 
 
@@ -106,7 +110,11 @@
 }
 
 - (void)inAppNotificationButtonTappedWithCustomExtras:(NSDictionary *)customExtras {
-    [self postNotificationWithName:kCleverTapInAppNotificationButtonTapped andBody:[self parseCustomExtras: customExtras]];
+    NSMutableDictionary *body = [NSMutableDictionary new];
+    if (customExtras != nil) {
+        body[@"customExtras"] = customExtras;
+    }
+    [self postNotificationWithName:kCleverTapInAppNotificationButtonTapped andBody:body];
 }
 
 - (void)displayUnitsUpdated:(NSArray<CleverTapDisplayUnit *> *)displayUnits {
@@ -120,14 +128,6 @@
         body[@"displayUnits"] = result;
     }
     [self postNotificationWithName:kCleverTapDisplayUnitsLoaded andBody:body];
-}
-
-- (NSMutableDictionary *)parseCustomExtras:(NSDictionary *)customExtras {
-    NSMutableDictionary *body = [NSMutableDictionary new];
-    if (customExtras != nil) {
-        body[@"customExtras"] = customExtras;
-    }
-    return body;
 }
 
 

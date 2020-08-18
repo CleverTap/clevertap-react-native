@@ -350,7 +350,7 @@ RCT_EXPORT_METHOD(setDebugLevel:(int)level) {
     callback(@[e,r]);
 }
 
-- (NSDictionary*)_eventDetailToDict:(CleverTapEventDetail*)detail {
+- (NSDictionary *)_eventDetailToDict:(CleverTapEventDetail*)detail {
     NSMutableDictionary *_dict = [NSMutableDictionary new];
     
     if(detail) {
@@ -374,7 +374,7 @@ RCT_EXPORT_METHOD(setDebugLevel:(int)level) {
     return _dict;
 }
 
-- (NSDictionary*)_utmDetailToDict:(CleverTapUTMDetail*)detail {
+- (NSDictionary *)_utmDetailToDict:(CleverTapUTMDetail*)detail {
     NSMutableDictionary *_dict = [NSMutableDictionary new];
     
     if(detail) {
