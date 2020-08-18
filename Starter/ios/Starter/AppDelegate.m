@@ -15,6 +15,9 @@
 #import <CleverTapSDK/CleverTap.h>
 #import <CleverTapReact/CleverTapReactManager.h>
 
+//#import "CleverTap.h"
+//#import "CleverTapReactManager.h"
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -33,7 +36,7 @@
   [self.window makeKeyAndVisible];
   // Add CleverTap Account ID and Account Token in your .plist file)
   // initialize CleverTap
-    
+      
 #ifdef DEBUG
   [CleverTap setDebugLevel:CleverTapLogDebug];
 #endif
