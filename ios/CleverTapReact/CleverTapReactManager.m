@@ -3,20 +3,21 @@
 #import "CleverTapReact.h"
 
 #import <UIKit/UIKit.h>
-
 #import <React/RCTLog.h>
+
 #import "CleverTap.h"
 #import "CleverTap+Inbox.h"
-#import "CleverTap+ABTesting.h"
-#import "CleverTap+DisplayUnit.h"
-#import "CleverTapEventDetail.h"
 #import "CleverTapUTMDetail.h"
+#import "CleverTap+ABTesting.h"
+#import "CleverTapEventDetail.h"
+#import "CleverTap+DisplayUnit.h"
 #import "CleverTapSyncDelegate.h"
-#import "CleverTapInAppNotificationDelegate.h"
 #import "CleverTap+FeatureFlags.h"
 #import "CleverTap+ProductConfig.h"
+#import "CleverTapPushNotificationDelegate.h"
+#import "CleverTapInAppNotificationDelegate.h"
 
-@interface CleverTapReactManager() <CleverTapSyncDelegate, CleverTapInAppNotificationDelegate, CleverTapDisplayUnitDelegate,  CleverTapFeatureFlagsDelegate, CleverTapProductConfigDelegate> {
+@interface CleverTapReactManager() <CleverTapSyncDelegate, CleverTapInAppNotificationDelegate, CleverTapDisplayUnitDelegate,  CleverTapFeatureFlagsDelegate, CleverTapProductConfigDelegate, CleverTapPushNotificationDelegate> {
 }
 
 @end
@@ -39,6 +40,7 @@
         [clevertap setSyncDelegate:self];
         [clevertap setInAppNotificationDelegate:self];
         [clevertap setDisplayUnitDelegate:self];
+        [clevertap setPushNotificationDelegate:self];
         [[clevertap featureFlags] setDelegate:self];
         [[clevertap productConfig] setDelegate:self];
         [clevertap setLibrary:@"React-Native"];
@@ -48,7 +50,6 @@
     }
     return self;
 }
-
 
 - (void)applicationDidLaunchWithOptions:(NSDictionary *)options {
     NSDictionary *notification = [options valueForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
@@ -72,6 +73,7 @@
     if(!cleverTapID) {
         return;
     }
+    
     [self postNotificationWithName:kCleverTapProfileDidInitialize andBody:@{@"CleverTapID":cleverTapID}];
 }
 
@@ -80,6 +82,17 @@
         return ;
     }
     [self postNotificationWithName:kCleverTapProfileSync andBody:@{@"updates":updates}];
+}
+
+
+#pragma mark - CleverTapPushNotificationDelegate
+
+- (void)pushNotificationTappedWithCustomExtras:(NSDictionary *)customExtras {
+    NSMutableDictionary *pushNotificationExtras = [NSMutableDictionary new];
+    if (customExtras != nil) {
+        pushNotificationExtras[@"customExtras"] = customExtras;
+    }
+    [self postNotificationWithName:kCleverTapPushNotificationClicked andBody:pushNotificationExtras];
 }
 
 
@@ -138,5 +151,5 @@
 - (void)ctProductConfigInitialized {
     [self postNotificationWithName:kCleverTapProductConfigDidInitialize andBody:nil];
 }
- 
+
 @end

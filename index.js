@@ -52,6 +52,7 @@ var CleverTap = {
     CleverTapProductConfigDidInitialize: CleverTapReact.CleverTapProductConfigDidInitialize,
     CleverTapProductConfigDidFetch: CleverTapReact.CleverTapProductConfigDidFetch,
     CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate,
+    CleverTapPushNotificationClicked: CleverTapReact.CleverTapPushNotificationClicked,
 
     /**
     * Add a CleverTap event listener
@@ -70,8 +71,8 @@ var CleverTap = {
     * Remove all CleverTap event listeners
     */
     removeListeners: function() {
-        if (EventEmitter) {
-            EventEmitter.removeAllListeners();
+        if (DeviceEventEmitter) {
+            DeviceEventEmitter.removeAllListeners();
         }
     },
 

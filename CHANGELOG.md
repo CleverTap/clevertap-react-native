@@ -1,25 +1,35 @@
 Change Log
 ==========
 
+Version 0.4.5 *(19th August 2020)*
+-------------------------------------------
+- Adds a callback to provide Push Notifications custom key-value pairs
+- Supports CleverTap [Android](https://github.com/CleverTap/clevertap-android-sdk/releases/tag/3.8.2) and [iOS](https://github.com/CleverTap/clevertap-ios-sdk/releases/tag/3.8.2) SDK v3.8.2
+
 Version 0.4.4 *(12th June 2020)*
 -------------------------------------------
+- Use v0.4.5
 - Performance improvements and fixes
 
 Version 0.4.3 *(20 May 2020)*
 -------------------------------------------
+- Use v0.4.5
 - Added support for Product Config and Feature Flags methods
 - Added fix for TypeError: EventEmitter.removeListeners is not a function
 
 Version 0.4.2 *(15 April 2020)*
 -------------------------------------------
+- Use v0.4.5
 - Added support for Xiaomi/Baidu Push methods
 
 Version 0.4.1 *(30 March 2020)*
 -------------------------------------------
+- Use v0.4.5
 - Update to CleverTap Android SDK v3.7.2
 
 Version 0.4.0 *(17 March 2020)*
 -------------------------------------------
+- Use v0.4.5
 - Adds support for Custom App Inbox & Native Display
 - Supports CleverTap Android SDK v3.7.0
 - Supports CleverTap iOS SDK v3.7.3

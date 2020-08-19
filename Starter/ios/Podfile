@@ -5,7 +5,6 @@ target 'Starter' do
   # Pods for HelloWorld
   
   use_frameworks!
-  #  use_modular_headers!
   pod 'clevertap-react-native', :path => '../node_modules/clevertap-react-native'
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
