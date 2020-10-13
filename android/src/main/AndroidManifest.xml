@@ -1,12 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.clevertap.react">
-
     <application>
-        <receiver
-            android:name="com.clevertap.android.sdk.CTPushNotificationReceiver"
-            android:exported="false"
-            android:enabled="true">
-        </receiver>
     </application>
-
 </manifest>
