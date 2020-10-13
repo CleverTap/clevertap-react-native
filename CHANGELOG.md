@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 0.5.0 *(15th October 2020)*
+-------------------------------------------
+- Supports [CleverTap iOS SDK v3.9.1](https://github.com/CleverTap/clevertap-ios-sdk/releases/tag/3.9.1)
+- Supports [CleverTap Android SDK v4.0.0](https://github.com/CleverTap/clevertap-android-sdk/releases/tag/core-v4.0.0)
+
 Version 0.4.5 *(19th August 2020)*
 -------------------------------------------
 - Adds a callback to provide Push Notifications custom key-value pairs
