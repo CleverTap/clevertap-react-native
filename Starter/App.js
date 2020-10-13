@@ -99,7 +99,19 @@ export default class App extends Component<Props> {
     componentWillUnmount() {
         // clean up listeners
         Linking.removeEventListener('url', this._handleOpenUrl);
-        CleverTap.removeListeners();
+        CleverTap.removeListeners(CleverTap.CleverTapProfileDidInitialize);
+        CleverTap.removeListeners(CleverTap.CleverTapProfileSync);
+        CleverTap.removeListeners(CleverTap.CleverTapInAppNotificationDismissed);
+        CleverTap.removeListeners(CleverTap.CleverTapInboxDidInitialize);
+        CleverTap.removeListeners(CleverTap.CleverTapInboxMessagesDidUpdate);
+        CleverTap.removeListeners(CleverTap.CleverTapInboxMessageButtonTapped);
+        CleverTap.removeListeners(CleverTap.CleverTapDisplayUnitsLoaded);
+        CleverTap.removeListeners(CleverTap.CleverTapInAppNotificationButtonTapped);
+        CleverTap.removeListeners(CleverTap.CleverTapFeatureFlagsDidUpdate);
+        CleverTap.removeListeners(CleverTap.CleverTapProductConfigDidInitialize);
+        CleverTap.removeListeners(CleverTap.CleverTapProductConfigDidFetch);
+        CleverTap.removeListeners(CleverTap.CleverTapProductConfigDidActivate);
+        CleverTap.removeListeners(CleverTap.CleverTapPushNotificationClicked);
     }
 
     _handleOpenUrl(event, from) {
