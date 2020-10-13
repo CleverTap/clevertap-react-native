@@ -170,7 +170,8 @@ export default class App extends Component<Props> {
 
     _openInbox(event){
         CleverTap.showInbox({'tabs':['Offers','Promotions'],'navBarTitle':'My App Inbox','navBarTitleColor':'#FF0000','navBarColor':'#FFFFFF','inboxBackgroundColor':'#AED6F1','backButtonColor':'#00FF00'
-                                ,'unselectedTabColor':'#0000FF','selectedTabColor':'#FF0000','selectedTabIndicatorColor':'#000000'});
+                                ,'unselectedTabColor':'#0000FF','selectedTabColor':'#FF0000','selectedTabIndicatorColor':'#000000',
+                                'noMessageTitle':'Feels like lonely :(','noMessageTitleColor':'#FF0000'});
     }
 
     _showCounts(event){
