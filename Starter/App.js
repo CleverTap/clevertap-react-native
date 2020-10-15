@@ -99,19 +99,19 @@ export default class App extends Component<Props> {
     componentWillUnmount() {
         // clean up listeners
         Linking.removeEventListener('url', this._handleOpenUrl);
-        CleverTap.removeListeners(CleverTap.CleverTapProfileDidInitialize);
-        CleverTap.removeListeners(CleverTap.CleverTapProfileSync);
-        CleverTap.removeListeners(CleverTap.CleverTapInAppNotificationDismissed);
-        CleverTap.removeListeners(CleverTap.CleverTapInboxDidInitialize);
-        CleverTap.removeListeners(CleverTap.CleverTapInboxMessagesDidUpdate);
-        CleverTap.removeListeners(CleverTap.CleverTapInboxMessageButtonTapped);
-        CleverTap.removeListeners(CleverTap.CleverTapDisplayUnitsLoaded);
-        CleverTap.removeListeners(CleverTap.CleverTapInAppNotificationButtonTapped);
-        CleverTap.removeListeners(CleverTap.CleverTapFeatureFlagsDidUpdate);
-        CleverTap.removeListeners(CleverTap.CleverTapProductConfigDidInitialize);
-        CleverTap.removeListeners(CleverTap.CleverTapProductConfigDidFetch);
-        CleverTap.removeListeners(CleverTap.CleverTapProductConfigDidActivate);
-        CleverTap.removeListeners(CleverTap.CleverTapPushNotificationClicked);
+        CleverTap.removeListener(CleverTap.CleverTapProfileDidInitialize);
+        CleverTap.removeListener(CleverTap.CleverTapProfileSync);
+        CleverTap.removeListener(CleverTap.CleverTapInAppNotificationDismissed);
+        CleverTap.removeListener(CleverTap.CleverTapInboxDidInitialize);
+        CleverTap.removeListener(CleverTap.CleverTapInboxMessagesDidUpdate);
+        CleverTap.removeListener(CleverTap.CleverTapInboxMessageButtonTapped);
+        CleverTap.removeListener(CleverTap.CleverTapDisplayUnitsLoaded);
+        CleverTap.removeListener(CleverTap.CleverTapInAppNotificationButtonTapped);
+        CleverTap.removeListener(CleverTap.CleverTapFeatureFlagsDidUpdate);
+        CleverTap.removeListener(CleverTap.CleverTapProductConfigDidInitialize);
+        CleverTap.removeListener(CleverTap.CleverTapProductConfigDidFetch);
+        CleverTap.removeListener(CleverTap.CleverTapProductConfigDidActivate);
+        CleverTap.removeListener(CleverTap.CleverTapPushNotificationClicked);
     }
 
     _handleOpenUrl(event, from) {
