@@ -74,8 +74,8 @@ var CleverTap = {
     *   listeners to remove
     */
     removeListeners: function(eventName) {
-        if (DeviceEventEmitter) {
-            DeviceEventEmitter.removeAllListeners(eventName);
+        if (EventEmitter) {
+            EventEmitter.removeAllListeners(eventName);
         }
     },
 
