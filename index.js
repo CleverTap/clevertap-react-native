@@ -67,15 +67,24 @@ var CleverTap = {
         }
     },
 
-   /**
-    * Removes all of the registered listeners.
+    /**
+    * Removes all of the registered listeners for given eventName.
     *
-    * @param eventName - Optional name of the event whose registered
-    *   listeners to remove
+    * @param {string} eventName -  name of the event whose registered listeners to remove
     */
-    removeListeners: function(eventName) {
+    removeListener: function(eventName) {
         if (EventEmitter) {
             EventEmitter.removeAllListeners(eventName);
+        }
+    },
+
+    /**
+    *  Deprecated - Since version 5.0.0. Use removeListener(eventName) instead
+    *  Remove all event listeners
+    */
+    removeListeners: function() {
+        if (DeviceEventEmitter) {
+            DeviceEventEmitter.removeAllListeners();
         }
     },
 
