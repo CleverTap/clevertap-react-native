@@ -1892,11 +1892,11 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                     }
                 }
 
-                if ("noMessageTitle".equals(styleConfigKey) && readableType == ReadableType.String) {
+                if ("noMessageText".equals(styleConfigKey) && readableType == ReadableType.String) {
                     String noMessageTitle = styleConfig.getString(styleConfigKey);
                     ctInboxStyleConfig.setNoMessageViewText(noMessageTitle);
                 }
-                if ("noMessageTitleColor".equals(styleConfigKey) && readableType == ReadableType.String) {
+                if ("noMessageTextColor".equals(styleConfigKey) && readableType == ReadableType.String) {
                     String noMessageTitleColor = styleConfig.getString(styleConfigKey);
                     ctInboxStyleConfig.setNoMessageViewTextColor(noMessageTitleColor);
                 }
