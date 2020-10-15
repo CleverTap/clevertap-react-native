@@ -14,7 +14,15 @@
    ): void;
 
    /**
-    * Remove all CleverTap event listeners
+    * Removes all of the registered listeners for given eventName.
+    *
+    * @param {string} eventName -  name of the event whose registered listeners to remove
+    */
+   export function removeListener(eventName: string): void;
+
+   /**
+    * Deprecated - Since version 5.0.0. Use removeListener(eventName) instead
+    * Remove all event listeners
     */
    export function removeListeners(): void;
 

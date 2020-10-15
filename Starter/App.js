@@ -99,7 +99,19 @@ export default class App extends Component<Props> {
     componentWillUnmount() {
         // clean up listeners
         Linking.removeEventListener('url', this._handleOpenUrl);
-        CleverTap.removeListeners();
+        CleverTap.removeListener(CleverTap.CleverTapProfileDidInitialize);
+        CleverTap.removeListener(CleverTap.CleverTapProfileSync);
+        CleverTap.removeListener(CleverTap.CleverTapInAppNotificationDismissed);
+        CleverTap.removeListener(CleverTap.CleverTapInboxDidInitialize);
+        CleverTap.removeListener(CleverTap.CleverTapInboxMessagesDidUpdate);
+        CleverTap.removeListener(CleverTap.CleverTapInboxMessageButtonTapped);
+        CleverTap.removeListener(CleverTap.CleverTapDisplayUnitsLoaded);
+        CleverTap.removeListener(CleverTap.CleverTapInAppNotificationButtonTapped);
+        CleverTap.removeListener(CleverTap.CleverTapFeatureFlagsDidUpdate);
+        CleverTap.removeListener(CleverTap.CleverTapProductConfigDidInitialize);
+        CleverTap.removeListener(CleverTap.CleverTapProductConfigDidFetch);
+        CleverTap.removeListener(CleverTap.CleverTapProductConfigDidActivate);
+        CleverTap.removeListener(CleverTap.CleverTapPushNotificationClicked);
     }
 
     _handleOpenUrl(event, from) {
@@ -158,7 +170,8 @@ export default class App extends Component<Props> {
 
     _openInbox(event){
         CleverTap.showInbox({'tabs':['Offers','Promotions'],'navBarTitle':'My App Inbox','navBarTitleColor':'#FF0000','navBarColor':'#FFFFFF','inboxBackgroundColor':'#AED6F1','backButtonColor':'#00FF00'
-                                ,'unselectedTabColor':'#0000FF','selectedTabColor':'#FF0000','selectedTabIndicatorColor':'#000000'});
+                                ,'unselectedTabColor':'#0000FF','selectedTabColor':'#FF0000','selectedTabIndicatorColor':'#000000',
+                                'noMessageText':'No message(s)','noMessageTextColor':'#FF0000'});
     }
 
     _showCounts(event){

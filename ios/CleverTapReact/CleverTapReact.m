@@ -556,6 +556,14 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
     if (tabUnSelectedTextColor) {
         _config.tabUnSelectedTextColor = [self ct_colorWithHexString:tabUnSelectedTextColor alpha:1.0];
     }
+    NSString *noMessageTextColor = [dict valueForKey:@"noMessageTextColor"];
+    if (noMessageTextColor) {
+        _config.noMessageViewTextColor = [self ct_colorWithHexString:noMessageTextColor alpha:1.0];
+    }
+    NSString *noMessageText = [dict valueForKey:@"noMessageText"];
+    if (noMessageText) {
+        _config.noMessageViewText = noMessageText;
+    }
     return _config;
 }
 - (UIColor *)ct_colorWithHexString:(NSString *)string alpha:(CGFloat)alpha{
