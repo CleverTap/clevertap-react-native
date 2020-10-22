@@ -4,6 +4,9 @@
 
 # CleverTap React Native SDK
 [![npm version](https://badge.fury.io/js/clevertap-react-native.svg)](https://badge.fury.io/js/clevertap-react-native)
+<a href="https://github.com/CleverTap/clevertap-react-native/releases">
+    <img src="https://img.shields.io/github/release/CleverTap/clevertap-react-native.svg" />
+</a>
 
 ## 👋 Introduction
 The CleverTap React Native SDK for Mobile Customer Engagement and Analytics solutions.
