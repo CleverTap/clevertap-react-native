@@ -12,11 +12,14 @@
 #import <React/RCTLinkingManager.h>
 #import <React/RCTBridge.h>
 
-#import <CleverTapSDK/CleverTap.h>
-#import <CleverTapReact/CleverTapReactManager.h>
+//@import CleverTapReact;
+//@import CleverTapSDK;
 
-//#import "CleverTap.h"
-//#import "CleverTapReactManager.h"
+//#import <CleverTapSDK/CleverTap.h>
+//#import <CleverTapReact/CleverTapReactManager.h>
+
+#import "CleverTap.h"
+#import "CleverTapReactManager.h"
 
 @implementation AppDelegate
 
@@ -35,7 +38,7 @@
   [self.window makeKeyAndVisible];
   // Add CleverTap Account ID and Account Token in your .plist file)
   // initialize CleverTap
-    
+  
 #ifdef DEBUG
   [CleverTap setDebugLevel:CleverTapLogDebug];
 #endif
@@ -74,5 +77,6 @@
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
 }
+
 
 @end
