@@ -9,8 +9,6 @@ target 'Starter' do
 
   use_react_native!(:path => config["reactNativePath"])
   
-#  pod 'clevertap-react-native', :path => '../node_modules/clevertap-react-native', :modular_headers => true
-
   target 'StarterTests' do
     inherit! :complete
     # Pods for testing
