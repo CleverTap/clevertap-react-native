@@ -26,7 +26,7 @@ To get started, sign up [here](https://clevertap.com/live-product-demo/).
 
 ## 💻 Example Usage
 
-View [Example Usage](https://github.com/CleverTap/clevertap-react-native/blob/SDK-362/documentation/docs/usage.md) to see how the CleverTap React Native can be implemented.
+View [Example Usage](https://github.com/CleverTap/clevertap-react-native/blob/master/docs/usage.md) to see how the CleverTap React Native can be implemented.
 
 
 ## 🆕 Changelog
