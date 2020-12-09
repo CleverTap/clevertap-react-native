@@ -44,6 +44,7 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
   @Override
   public void onCreate() {
     CleverTapAPI.setUIEditorConnectionEnabled(false);
+    CleverTapAPI.setDebugLevel(3);
     ActivityLifecycleCallback.register(this); 
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);

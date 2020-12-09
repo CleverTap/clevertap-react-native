@@ -7,7 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, Alert, TouchableHighlight, Linking, SectionList} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button, Alert, TouchableHighlight, Linking, SectionList, PermissionsAndroid} from 'react-native';
 const CleverTap = require('clevertap-react-native');
 
 const instructions = Platform.select({
@@ -21,6 +21,8 @@ const sectionsList=[
                 {title: 'EVENTS', data: [{id : '_recordEvent',title: 'Record Event'},{id : '_recordChargedEvent', title: 'Record Charged Event'}]},
                 {title: 'USER PROFILE', data: [{id : '_updateUserProfile',title: 'Update User Profile'},
                 {id : '_getUserProfileProperty',title: 'Get User Profile Property'}]},
+                {title: 'GEOFENCE', data: [{id : '_initGeofence',title: 'Init Geofence'},{id : '_triggerGeofenceLocation',title: 'Trigger Geofence Location'},
+                {id : '_deactivateGeofence',title: 'Deactivate Geofence'}]},
                 {title: 'INBOX', data: [{id : '_openInbox',title: 'Open Inbox'},{id : '_showCounts',title: 'Show Counts'},
                 {id : '_getAllInboxMessages',title: 'Get All Inbox Messages'},{id : '_getUnreadInboxMessages',title: 'Get Unread Messages'},
                 {id : '_customAppInboxAPI',title: 'Custom App Inbox API'}]},
@@ -60,7 +62,11 @@ export default class App extends Component<Props> {
         CleverTap.addListener(CleverTap.CleverTapProductConfigDidFetch, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapProductConfigDidFetch,event); });
         CleverTap.addListener(CleverTap.CleverTapProductConfigDidActivate, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapProductConfigDidActivate,event); });
         CleverTap.addListener(CleverTap.CleverTapPushNotificationClicked, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapPushNotificationClicked,event); });
-
+        CleverTap.addListener(CleverTap.CleverTapGeofenceDidInitialize, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapGeofenceDidInitialize,event); });
+        CleverTap.addListener(CleverTap.CleverTapGeofenceDidEnter, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapGeofenceDidEnter,event); });
+        CleverTap.addListener(CleverTap.CleverTapGeofenceDidExit, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapGeofenceDidExit,event); });
+        CleverTap.addListener(CleverTap.CleverTapGeofenceLocationDidUpdate, (event) => { this._handleCleverTapEvent(CleverTap.CleverTapGeofenceLocationDidUpdate,event); });
+        
         CleverTap.setDebugLevel(3);
         // for iOS only: register for push notifications
         CleverTap.registerForPush();
@@ -94,6 +100,7 @@ export default class App extends Component<Props> {
                 console.log('CleverTap launch url', err);
             }
         });
+    
     }
 
     componentWillUnmount() {
@@ -112,6 +119,9 @@ export default class App extends Component<Props> {
         CleverTap.removeListener(CleverTap.CleverTapProductConfigDidFetch);
         CleverTap.removeListener(CleverTap.CleverTapProductConfigDidActivate);
         CleverTap.removeListener(CleverTap.CleverTapPushNotificationClicked);
+        CleverTap.removeListener(CleverTap.CleverTapGeofenceDidInitialize);
+        CleverTap.removeListener(CleverTap.CleverTapGeofenceDidEnter);
+        CleverTap.removeListener(CleverTap.CleverTapGeofenceDidExit);
     }
 
     _handleOpenUrl(event, from) {
@@ -357,6 +367,65 @@ export default class App extends Component<Props> {
          });
     }
 
+    // Geofence
+
+    _initGeofence(event){
+      if (Platform.OS === 'android') {
+
+        /* For geofence to work properly, user must provide access for both PERMISSIONS,
+         ACCESS_FINE_LOCATION and ACCESS_BACKGROUND_LOCATION    
+        */
+        const requestLocationPermission = async () => {
+          try {
+            const granted = await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+              console.log("You can use the Location API");
+              const grantedBg = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION
+              );
+
+              if (grantedBg === PermissionsAndroid.RESULTS.GRANTED) {
+
+                /**
+                 * Once User has given both permissions, we can initialze Geofence SDK
+                 * You can omit Settings object as input in which case default settings will be used
+                 */
+                  CleverTap.initGeofence({"logLevel":CleverTap.CleverTapGeofenceLoggingVerbose,
+                  "enableBackgroundLocationUpdates":true,
+                  "locationAccuracy":CleverTap.AccuracyHigh,
+                  "locationFetchMode":CleverTap.FetchModeCurrentLocationPeriodic,
+                  "geofenceMonitoringCount":100,
+                  "interval":1800000,
+                  "fastestInterval":1800,
+                  "smallestDisplacement":235  });
+              } else {
+                console.log("BgLocation permission denied");
+              }
+            } else {
+              console.log("Location permission denied");
+            }
+          } catch (err) {
+            console.warn(err);
+          }
+        };
+
+        requestLocationPermission();
+
+      }
+    }
+
+    _triggerGeofenceLocation(event)
+    {
+      CleverTap.triggerGeofenceLocation();
+    }
+
+    _deactivateGeofence(event)
+    {
+      CleverTap.deactivateGeofence();
+    }
+
     _onListItemClick(item){
         console.log('_onListItemClick', item.id);
         switch(item.id)
@@ -436,6 +505,15 @@ export default class App extends Component<Props> {
             case "_getPrimitiveDynamicVariables":
               this._getPrimitiveDynamicVariables();
               break;
+            case "_initGeofence":
+              this._initGeofence();
+              break;
+            case "_triggerGeofenceLocation":
+              this._triggerGeofenceLocation();
+            break;
+            case "_deactivateGeofence":
+              this._deactivateGeofence();
+            break;
 
         }
     }

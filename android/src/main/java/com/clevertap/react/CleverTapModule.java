@@ -7,6 +7,13 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
+import com.clevertap.android.geofence.CTGeofenceAPI;
+import com.clevertap.android.geofence.CTGeofenceAPI.OnGeofenceApiInitializedListener;
+import com.clevertap.android.geofence.CTGeofenceSettings;
+import com.clevertap.android.geofence.CTGeofenceSettings.Builder;
+import com.clevertap.android.geofence.Logger;
+import com.clevertap.android.geofence.interfaces.CTGeofenceEventsListener;
+import com.clevertap.android.geofence.interfaces.CTLocationUpdatesListener;
 import com.clevertap.android.sdk.CTExperimentsListener;
 import com.clevertap.android.sdk.CTFeatureFlagsListener;
 import com.clevertap.android.sdk.CTInboxListener;
@@ -36,6 +43,7 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,9 +62,12 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         InAppNotificationListener, CTInboxListener,
         CTExperimentsListener, InboxMessageButtonListener,
         InAppNotificationButtonListener, DisplayUnitListener, CTProductConfigListener,
-        CTFeatureFlagsListener, CTPushNotificationListener {
+        CTFeatureFlagsListener, CTPushNotificationListener, OnGeofenceApiInitializedListener,
+        CTGeofenceEventsListener, CTLocationUpdatesListener {
 
     private ReactApplicationContext context;
+
+    private CTGeofenceAPI mCTGeofenceAPI;
 
     private CleverTapAPI mCleverTap;
 
@@ -79,6 +90,15 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     private static final String BPS = "BPS";
 
     private static final String HPS = "HPS";
+    private static final String CLEVERTAP_GEOFENCE_LOGGING_OFF = "CleverTapGeofenceLoggingOff";
+    private static final String CLEVERTAP_GEOFENCE_LOGGING_INFO = "CleverTapGeofenceLoggingInfo";
+    private static final String CLEVERTAP_GEOFENCE_LOGGING_DEBUG = "CleverTapGeofenceLoggingDebug";
+    private static final String CLEVERTAP_GEOFENCE_LOGGING_VERBOSE = "CleverTapGeofenceLoggingVerbose";
+    private static final String CLEVERTAP_GEOFENCE_ACCURACY_HIGH = "CleverTapGeofenceAccuracyHigh";
+    private static final String CLEVERTAP_GEOFENCE_ACCURACY_MEDIUM = "CleverTapGeofenceAccuracyMedium";
+    private static final String CLEVERTAP_GEOFENCE_ACCURACY_LOW = "CleverTapGeofenceAccuracyLow";
+    private static final String CLEVERTAP_GEOFENCE_FETCH_MODE_LAST_LOCATION_PERIODIC = "CleverTapGeofenceFetchModeLastLocationPeriodic";
+    private static final String CLEVERTAP_GEOFENCE_FETCH_MODE_CURRENT_LOCATION_PERIODIC = "CleverTapGeofenceFetchModeCurrentLocationPeriodic";
 
     private static final String CLEVERTAP_INBOX_DID_INITIALIZE = "CleverTapInboxDidInitialize";
 
@@ -101,6 +121,10 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     private static final String CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE = "CleverTapProductConfigDidActivate";
 
     private static final String CLEVERTAP_PUSH_NOTIFICATION_CLICKED = "CleverTapPushNotificationClicked";
+    private static final String CLEVERTAP_GEOFENCE_LOCATION_DID_UPDATE = "CleverTapGeofenceLocationDidUpdate";
+    private static final String CLEVERTAP_GEOFENCE_DID_INITIALIZE = "CleverTapGeofenceDidInitialize";
+    private static final String CLEVERTAP_GEOFENCE_DID_ENTER = "CleverTapGeofenceDidEnter";
+    private static final String CLEVERTAP_GEOFENCE_DID_EXIT = "CleverTapGeofenceDidExit";
 
     private enum InBoxMessages {
         ALL(0),
@@ -118,7 +142,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         CLEVERTAP_NOT_INITIALIZED("CleverTap not initialized"),
         PRODUCTCONFIG_NOT_INITIALIZED("Product Config not initialized"),
-        FF_NOT_INITIALIZED("Feature Flags not initialized");
+        FF_NOT_INITIALIZED("Feature Flags not initialized"),
+        REACT_APPLICATION_CONTEXT_NULL("ReactApplicationContext is null");
 
         private final String errorMessage;
 
@@ -150,6 +175,15 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         constants.put(XPS, XPS);
         constants.put(BPS, BPS);
         constants.put(HPS, HPS);
+        constants.put(CLEVERTAP_GEOFENCE_LOGGING_OFF, Logger.OFF);
+        constants.put(CLEVERTAP_GEOFENCE_LOGGING_INFO, Logger.INFO);
+        constants.put(CLEVERTAP_GEOFENCE_LOGGING_DEBUG, Logger.DEBUG);
+        constants.put(CLEVERTAP_GEOFENCE_LOGGING_VERBOSE, Logger.VERBOSE);
+        constants.put(CLEVERTAP_GEOFENCE_FETCH_MODE_CURRENT_LOCATION_PERIODIC, CTGeofenceSettings.FETCH_CURRENT_LOCATION_PERIODIC);
+        constants.put(CLEVERTAP_GEOFENCE_FETCH_MODE_LAST_LOCATION_PERIODIC, CTGeofenceSettings.FETCH_LAST_LOCATION_PERIODIC);
+        constants.put(CLEVERTAP_GEOFENCE_ACCURACY_HIGH, CTGeofenceSettings.ACCURACY_HIGH);
+        constants.put(CLEVERTAP_GEOFENCE_ACCURACY_MEDIUM, CTGeofenceSettings.ACCURACY_MEDIUM);
+        constants.put(CLEVERTAP_GEOFENCE_ACCURACY_LOW, CTGeofenceSettings.ACCURACY_LOW);
         constants.put(CLEVERTAP_INBOX_DID_INITIALIZE, CLEVERTAP_INBOX_DID_INITIALIZE);
         constants.put(CLEVERTAP_INBOX_MESSAGES_DID_UPDATE, CLEVERTAP_INBOX_MESSAGES_DID_UPDATE);
         constants.put(CLEVERTAP_ON_INBOX_BUTTON_CLICK, CLEVERTAP_ON_INBOX_BUTTON_CLICK);
@@ -160,6 +194,10 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         constants.put(CLEVERTAP_PRODUCT_CONFIG_DID_FETCH, CLEVERTAP_PRODUCT_CONFIG_DID_FETCH);
         constants.put(CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE, CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE);
         constants.put(CLEVERTAP_PUSH_NOTIFICATION_CLICKED, CLEVERTAP_PUSH_NOTIFICATION_CLICKED);
+        constants.put(CLEVERTAP_GEOFENCE_LOCATION_DID_UPDATE, CLEVERTAP_GEOFENCE_LOCATION_DID_UPDATE);
+        constants.put(CLEVERTAP_GEOFENCE_DID_INITIALIZE, CLEVERTAP_GEOFENCE_DID_INITIALIZE);
+        constants.put(CLEVERTAP_GEOFENCE_DID_ENTER, CLEVERTAP_GEOFENCE_DID_ENTER);
+        constants.put(CLEVERTAP_GEOFENCE_DID_EXIT, CLEVERTAP_GEOFENCE_DID_EXIT);
         return constants;
     }
 
@@ -189,6 +227,139 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
 
         return mCleverTap;
+    }
+
+    @Nullable
+    private CTGeofenceAPI getCTGeofenceAPI(){
+
+        if (context == null)
+        {
+            Log.e(TAG,ErrorMessages.REACT_APPLICATION_CONTEXT_NULL.getErrorMessage());
+            return null;
+        }
+
+        if (mCTGeofenceAPI == null) {
+            CTGeofenceAPI ctGeofenceAPI = CTGeofenceAPI.getInstance(context);
+            ctGeofenceAPI.setOnGeofenceApiInitializedListener(this);
+            ctGeofenceAPI.setCtGeofenceEventsListener(this);
+            ctGeofenceAPI.setCtLocationUpdatesListener(this);
+            mCTGeofenceAPI = ctGeofenceAPI;
+        }
+
+        return mCTGeofenceAPI;
+
+    }
+
+    // Geofence public apis
+
+    @ReactMethod
+    public void initGeofence(ReadableMap map) {
+        CTGeofenceAPI ctGeofenceAPI = getCTGeofenceAPI();
+        if (ctGeofenceAPI!=null)
+        {
+            try {
+                if (map!=null)
+                {
+                    ReadableMapKeySetIterator iterator = map.keySetIterator();
+                    Builder builder = new CTGeofenceSettings.Builder();
+                    while (iterator.hasNextKey()) {
+                        String key = iterator.nextKey();
+                        ReadableType readableType = map.getType(key);
+
+                        switch (key)
+                        {
+                            case "enableBackgroundLocationUpdates":
+                                if (readableType == ReadableType.Boolean)
+                                {
+                                    builder.enableBackgroundLocationUpdates(map.getBoolean(key));
+                                }
+                                break;
+                            case "logLevel":
+                                if (readableType == ReadableType.Number)
+                                {
+                                    int logLevel = map.getInt(key);
+                                    builder.setLogLevel(logLevel);
+                                }
+                                break;
+                            case "locationAccuracy":
+                                if (readableType == ReadableType.Number)
+                                {
+                                    byte accuracy = (byte) map.getInt(key);
+                                    builder.setLocationAccuracy(accuracy);
+                                }
+                                break;
+                            case "locationFetchMode":
+                                if (readableType == ReadableType.Number)
+                                {
+                                    byte fetchMode = (byte) map.getInt(key);
+                                    builder.setLocationFetchMode(fetchMode);
+                                }
+                                break;
+                            case "geofenceMonitoringCount":
+                                if (readableType == ReadableType.Number)
+                                {
+                                    int geofenceCount = map.getInt(key);
+                                    builder.setGeofenceMonitoringCount(geofenceCount);
+                                }
+                                break;
+                            case "interval":
+                                if (readableType == ReadableType.Number)
+                                {
+                                    long intervalInMillis = (long) map.getDouble(key);
+                                    builder.setInterval(intervalInMillis);
+                                }
+                                break;
+                            case "fastestInterval":
+                                if (readableType == ReadableType.Number)
+                                {
+                                    long fastestIntervalInMillis = (long) map.getDouble(key);
+                                    builder.setFastestInterval(fastestIntervalInMillis);
+                                }
+                                break;
+                            case "smallestDisplacement":
+                                if (readableType == ReadableType.Number)
+                                {
+                                    float displacement = (float) map.getDouble(key);
+                                    builder.setSmallestDisplacement(displacement);
+                                }
+                                break;
+                        }
+
+                    }
+                    ctGeofenceAPI.init(builder.build(), getCleverTapAPI());
+                } else {
+                    ctGeofenceAPI.init(null, getCleverTapAPI());
+                }
+
+            } catch (Exception e)
+            {
+                Log.e(TAG,"Failed to init Geofence");
+            }
+        }
+    }
+
+    @ReactMethod
+    public void triggerLocation() {
+        CTGeofenceAPI ctGeofenceAPI = getCTGeofenceAPI();
+        if (ctGeofenceAPI!=null)
+        {
+            try {
+                ctGeofenceAPI.triggerLocation();
+            } catch (IllegalStateException e) {
+                // thrown when this method is called before geofence sdk initiaisation
+                //noinspection ConstantConditions
+                Log.e(TAG,e.getMessage());
+            }
+        }
+    }
+
+    @ReactMethod
+    public void deactivateGeofence() {
+        CTGeofenceAPI ctGeofenceAPI = getCTGeofenceAPI();
+        if (ctGeofenceAPI!=null)
+        {
+            ctGeofenceAPI.deactivate();
+        }
     }
 
     // launch
@@ -2102,6 +2273,45 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         sendEvent(CLEVERTAP_PUSH_NOTIFICATION_CLICKED, getWritableMapFromMap(payload));
     }
 
+    // Geofence Callbacks
+
+    @Override
+    public void OnGeofenceApiInitialized() {
+        WritableMap params = Arguments.createMap();
+        sendEvent(CLEVERTAP_GEOFENCE_DID_INITIALIZE, params);//passing empty map
+    }
+
+    @Override
+    public void onGeofenceEnteredEvent(final JSONObject geofenceEnteredEventProperties) {
+        WritableMap writableMap = CleverTapReactNativeBridge.jsonToWritableMap(geofenceEnteredEventProperties);
+        sendEvent(CLEVERTAP_GEOFENCE_DID_ENTER,writableMap);
+    }
+
+    @Override
+    public void onGeofenceExitedEvent(final JSONObject geofenceExitedEventProperties) {
+        WritableMap writableMap = CleverTapReactNativeBridge.jsonToWritableMap(geofenceExitedEventProperties);
+        sendEvent(CLEVERTAP_GEOFENCE_DID_EXIT,writableMap);
+    }
+
+    @Override
+    public void onLocationUpdates(final Location location) {
+        WritableNativeMap resultLocation = new WritableNativeMap();
+
+        if (location != null) {
+            resultLocation.putString("provider", location.getProvider());
+            resultLocation.putDouble("latitude", location.getLatitude());
+            resultLocation.putDouble("longitude", location.getLongitude());
+            resultLocation.putDouble("accuracy", location.getAccuracy());
+            resultLocation.putDouble("altitude", location.getAltitude());
+            resultLocation.putDouble("speed", location.getSpeed());
+            resultLocation.putDouble("bearing", location.getBearing());
+            resultLocation.putDouble("time", location.getTime());
+        }
+
+        sendEvent(CLEVERTAP_GEOFENCE_LOCATION_DID_UPDATE,resultLocation);
+
+    }
+
     private boolean checkKitkatVersion(String methodName) {
         if (VERSION.SDK_INT < VERSION_CODES.KITKAT) {
             Log.e(TAG, "Call requires API level 19 (current min is " + VERSION.SDK_INT + "):" + methodName);
@@ -2109,4 +2319,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
         return true;
     }
+
+
 }

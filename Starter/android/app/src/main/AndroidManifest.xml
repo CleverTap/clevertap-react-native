@@ -30,13 +30,13 @@
         </service>
       <meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"
-            android:value="YOUR-PROJECT-ID"/>
+            android:value="TEST-46W-WWR-R85Z"/>
         <meta-data
             android:name="CLEVERTAP_TOKEN"
-            android:value="YOUR-PROJECT-TOKEN"/>
+            android:value="TEST-200-064"/>
         <meta-data
             android:name="CLEVERTAP_REGION"
-            android:value="YOUR-PROJECT-REGION"/>
+            android:value="eu1"/>
     </application>
 
 </manifest>

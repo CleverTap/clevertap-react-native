@@ -42,6 +42,15 @@ var CleverTap = {
     XPS: CleverTapReact.XPS,
     BPS: CleverTapReact.BPS,
     HPS: CleverTapReact.HPS,
+    CleverTapGeofenceLoggingOff: CleverTapReact.CleverTapGeofenceLoggingOff,
+    CleverTapGeofenceLoggingInfo: CleverTapReact.CleverTapGeofenceLoggingInfo,
+    CleverTapGeofenceLoggingDebug: CleverTapReact.CleverTapGeofenceLoggingDebug,
+    CleverTapGeofenceLoggingVerbose: CleverTapReact.CleverTapGeofenceLoggingVerbose,
+    AccuracyHigh: CleverTapReact.CleverTapGeofenceAccuracyHigh,
+    AccuracyMedium: CleverTapReact.CleverTapGeofenceAccuracyMedium,
+    AccuracyLow: CleverTapReact.CleverTapGeofenceAccuracyLow,
+    FetchModeLastLocationPeriodic: CleverTapReact.CleverTapGeofenceFetchModeLastLocationPeriodic,
+    FetchModeCurrentLocationPeriodic: CleverTapReact.CleverTapGeofenceFetchModeCurrentLocationPeriodic,
     CleverTapInboxDidInitialize: CleverTapReact.CleverTapInboxDidInitialize,
     CleverTapInboxMessagesDidUpdate: CleverTapReact.CleverTapInboxMessagesDidUpdate,
     CleverTapExperimentsDidUpdate: CleverTapReact.CleverTapExperimentsDidUpdate,
@@ -53,7 +62,10 @@ var CleverTap = {
     CleverTapProductConfigDidFetch: CleverTapReact.CleverTapProductConfigDidFetch,
     CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate,
     CleverTapPushNotificationClicked: CleverTapReact.CleverTapPushNotificationClicked,
-
+    CleverTapGeofenceLocationDidUpdate: CleverTapReact.CleverTapGeofenceLocationDidUpdate,
+    CleverTapGeofenceDidInitialize: CleverTapReact.CleverTapGeofenceDidInitialize,
+    CleverTapGeofenceDidEnter: CleverTapReact.CleverTapGeofenceDidEnter,
+    CleverTapGeofenceDidExit: CleverTapReact.CleverTapGeofenceDidExit,
     /**
     * Add a CleverTap event listener
     * supported events are CleverTap.CleverTapProfileDidInitialize, CleverTap.CleverTapProfileSync,CleverTap.CleverTapOnInboxButtonClick
@@ -927,6 +939,28 @@ var CleverTap = {
     */
     setDebugLevel: function(level) {
         CleverTapReact.setDebugLevel(level);
+    },
+
+    /**
+    * Method to initialize Geofence SDK.
+    * @param {object} ctGeofenceSettings - key-value geofence setting values. 
+    */
+   initGeofence: function(ctGeofenceSettings) {
+        CleverTapReact.initGeofence(ctGeofenceSettings);
+    },
+
+   /** 
+    * Fetches last known location from OS and delivers it to APP through CleverTapGeofenceLocationDidUpdate
+    */
+   triggerGeofenceLocation: function() {
+        CleverTapReact.triggerLocation();
+    },
+
+    /**
+    * Deactivates Geofence SDK
+    */
+   deactivateGeofence: function() {
+        CleverTapReact.deactivateGeofence();
     }
 };
 
