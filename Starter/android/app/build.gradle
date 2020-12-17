@@ -147,7 +147,7 @@ def enableHermes = project.ext.react.get("enableHermes", false);
 dependencies {
     implementation project(':clevertap-react-native')
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'com.clevertap.android:clevertap-android-sdk:4.0.0'
+    implementation 'com.clevertap.android:clevertap-android-sdk:4.0.1'
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation 'com.google.android.gms:play-services-base:17.4.0'
     implementation 'com.google.firebase:firebase-messaging:20.2.4'
