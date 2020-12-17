@@ -28,7 +28,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-      <meta-data
+      <!--<meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"
             android:value="YOUR-PROJECT-ID"/>
         <meta-data
@@ -36,7 +36,14 @@
             android:value="YOUR-PROJECT-TOKEN"/>
         <meta-data
             android:name="CLEVERTAP_REGION"
-            android:value="YOUR-PROJECT-REGION"/>
+            android:value="YOUR-PROJECT-REGION"/>-->
+        <meta-data
+            android:name="CLEVERTAP_ACCOUNT_ID"
+            android:value="TEST-46W-WWR-R85Z" />
+        <meta-data
+            android:name="CLEVERTAP_TOKEN"
+            android:value="TEST-200-064" />
+
     </application>
 
 </manifest>

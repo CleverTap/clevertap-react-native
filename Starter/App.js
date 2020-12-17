@@ -20,6 +20,7 @@ const instructions = Platform.select({
 const sectionsList=[
                 {title: 'EVENTS', data: [{id : '_recordEvent',title: 'Record Event'},{id : '_recordChargedEvent', title: 'Record Charged Event'}]},
                 {title: 'USER PROFILE', data: [{id : '_updateUserProfile',title: 'Update User Profile'},
+                {id : '_onUserLogin',title: 'new identity'},
                 {id : '_getUserProfileProperty',title: 'Get User Profile Property'}]},
                 {title: 'INBOX', data: [{id : '_openInbox',title: 'Open Inbox'},{id : '_showCounts',title: 'Show Counts'},
                 {id : '_getAllInboxMessages',title: 'Get All Inbox Messages'},{id : '_getUnreadInboxMessages',title: 'Get Unread Messages'},
@@ -132,24 +133,37 @@ export default class App extends Component<Props> {
 
     _recordEvent(event) {
         CleverTap.recordEvent('testEvent');
-        CleverTap.recordEvent('testEventWithProps', {'foo': 'bar'});
+        CleverTap.recordEvent('testEventWithProps', {'start': new Date(),'foo':'bar'});
         if (Platform.OS === 'android') {
              CleverTap.setPushToken("FCM-Token", CleverTap.FCM);
         }
     }
 
      _recordChargedEvent(event) {
-        CleverTap.recordChargedEvent({'totalValue': 20, 'category': 'books'}, [{'title': 'book1'}, {'title': 'book2'}, {'title': 'book3'}]);
+        CleverTap.recordChargedEvent({'totalValue': 20, 'category': 'books', 'purchase_date': new Date()},
+         [{'title': 'book1', 'published_date': new Date('2010-12-12T06:35:31'),'author':'ABC'},
+          {'title': 'book2','published_date': new Date('2000-12-12T06:35:31')},
+           {'title': 'book3','published_date': new Date(),'author':'XYZ'
+          }]
+          );
+          
     }
 
     _updateUserProfile(event) {
-        CleverTap.profileSet({'Name': 'testUserA1', 'Identity': '123456', 'Email': 'test@test.com', 'custom1': 123});
+        CleverTap.profileSet({'Name': 'testUserA1', 'Identity': '123456', 'Email': 'test@test.com', 'custom1': 123,
+        'birthdate':new Date('1990-12-22T06:35:31')});
         CleverTap.profileSetMultiValuesForKey(['a', 'b', 'c'], 'letters');
         CleverTap.profileAddMultiValueForKey('d', 'letters');
         CleverTap.profileAddMultiValuesForKey(['e', 'f'], 'letters');
         CleverTap.profileRemoveMultiValueForKey('b', 'letters');
         CleverTap.profileRemoveMultiValuesForKey(['a', 'c'], 'letters');
         CleverTap.setLocation(34.15, -118.20);
+    }
+
+    _onUserLogin(event){
+      CleverTap.onUserLogin({'Name': 'testUserA1', 'Identity': new Date().getTime()+'',
+       'Email': new Date().getTime()+'test@test.com', 'custom1': 123,
+      'birthdate':new Date('1990-12-22T06:35:31')})
     }
 
     _getUserProfileProperty(event) {
@@ -369,6 +383,9 @@ export default class App extends Component<Props> {
               break;
             case "_updateUserProfile":
               this._updateUserProfile();
+              break;
+            case "_onUserLogin":
+              this._onUserLogin();
               break;
             case "_getUserProfileProperty":
               this._getUserProfileProperty();
