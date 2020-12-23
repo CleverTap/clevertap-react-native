@@ -7,6 +7,7 @@
 <a href="https://github.com/CleverTap/clevertap-react-native/releases">
     <img src="https://img.shields.io/github/release/CleverTap/clevertap-react-native.svg" />
 </a>
+[![npm downloads](https://img.shields.io/npm/dm/clevertap-react-native.svg)](https://www.npmjs.com/package/clevertap-react-native)
 
 ## 👋 Introduction
 The CleverTap React Native SDK for Mobile Customer Engagement and Analytics solutions.
