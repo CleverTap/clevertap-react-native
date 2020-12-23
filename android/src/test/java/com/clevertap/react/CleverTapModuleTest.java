@@ -1,14 +1,18 @@
 package com.clevertap.react;
 
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
+
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
-
 import com.clevertap.android.sdk.CTExperimentsListener;
 import com.clevertap.android.sdk.CTFeatureFlagsListener;
 import com.clevertap.android.sdk.CTInboxListener;
 import com.clevertap.android.sdk.CleverTapAPI;
-import com.clevertap.android.sdk.EventDetail;
 import com.clevertap.android.sdk.InAppNotificationButtonListener;
 import com.clevertap.android.sdk.InAppNotificationListener;
 import com.clevertap.android.sdk.InboxMessageButtonListener;
@@ -18,39 +22,14 @@ import com.clevertap.android.sdk.product_config.CTProductConfigListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.CallbackImpl;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.ReadableNativeMap;
 import com.facebook.react.bridge.WritableMap;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.junit.*;
+import org.junit.runner.*;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-
-import java.lang.reflect.Field;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.refEq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyPrivate;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore({"org.robolectric.*", "android.*", "org.json.*"})
@@ -111,15 +90,15 @@ public class CleverTapModuleTest {
 
         //test case 1 - when token null
         cleverTapModule.setPushTokenAsString(null, type);
-        verifyZeroInteractions(clevertap);
+        verify(clevertap,times(0)).pushFcmRegistrationId(anyString(),anyBoolean());
 
         //test case 2 - when type null
         cleverTapModule.setPushTokenAsString(token, null);
-        verifyZeroInteractions(clevertap);
+        verify(clevertap,times(0)).pushFcmRegistrationId(anyString(),anyBoolean());
 
         //test case 3 - when type and token null
         cleverTapModule.setPushTokenAsString(null, null);
-        verifyZeroInteractions(clevertap);
+        verify(clevertap,times(0)).pushFcmRegistrationId(anyString(),anyBoolean());
     }
 
     @Test
@@ -129,22 +108,18 @@ public class CleverTapModuleTest {
         //test case 1 - type FCM
         cleverTapModule.setPushTokenAsString(token, "FCM");
         verify(clevertap).pushFcmRegistrationId(token,true);
-        verifyZeroInteractions(clevertap);
 
         //test case 2 - type XPS
         cleverTapModule.setPushTokenAsString(token, "XPS");
         verify(clevertap).pushXiaomiRegistrationId(token,true);
-        verifyZeroInteractions(clevertap);
 
         //test case 3 - type BPS
         cleverTapModule.setPushTokenAsString(token, "BPS");
         verify(clevertap).pushBaiduRegistrationId(token,true);
-        verifyZeroInteractions(clevertap);
 
         //test case 4 - type HPS
         cleverTapModule.setPushTokenAsString(token, "HPS");
         verify(clevertap).pushHuaweiRegistrationId(token,true);
-        verifyZeroInteractions(clevertap);
     }
 
     @Test

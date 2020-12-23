@@ -5,7 +5,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "test": "jest",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "node install.js",
     "lint": "./node_modules/.bin/eslint index.js */**.js",
     "lint-fix": "./node_modules/.bin/eslint --fix index.js */**.js"
@@ -39,9 +39,6 @@
     "react-native": ">=0.47.0"
   },
   "devDependencies": {
-    "babel-jest": "*",
-    "babel-preset-env": "*",
-    "babel-preset-react-native": "*",
     "eslint": "^4.18.2",
     "eslint-config-standard": "^6.0.0",
     "eslint-config-standard-jsx": "^3.0.0",
@@ -50,12 +47,7 @@
     "eslint-plugin-react": "^6.2.0",
     "eslint-plugin-standard": "^2.0.0",
     "i": "^0.3.6",
-    "jest": "*",
-    "react": "^16.13.1",
-    "react-native": "^0.49.5",
-    "react-test-renderer": "*"
-  },
-  "jest": {
-    "preset": "react-native"
+    "react": "^16.3.2",
+    "react-native": "^0.49.5"
   }
 }
