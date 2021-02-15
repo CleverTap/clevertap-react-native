@@ -12,12 +12,12 @@ Pod::Spec.new do |s|
   s.source         = { :git => 'https://github.com/CleverTap/clevertap-react-native.git', :tag => s.version }
 
   s.requires_arc   = true
-  s.module_name    = 'CleverTapReact' 
+  s.module_name    = 'CleverTapReact'
   s.platform       = :ios, '9.0'
 
   s.preserve_paths = 'LICENSE.md', 'README.md', 'package.json', 'index.js'
   s.source_files   = 'ios/CleverTapReact/*.{h,m}'
 
   s.dependency 'CleverTap-iOS-SDK', '~> 3.9.1'
-  s.dependency 'React'
+  s.dependency 'React-Core'
 end
