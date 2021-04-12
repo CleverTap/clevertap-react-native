@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/docs/ct_logo.png" height="220"/>
+  <img src="https://github.com/CleverTap/clevertap-ios-sdk/blob/master/docs/images/clevertap-logo.png" height="220"/>
 </p>
 
 # CleverTap React Native SDK
