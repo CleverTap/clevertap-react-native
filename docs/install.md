@@ -60,6 +60,13 @@ end
 
 If you're on RN 0.60 or your project configuration doesn't allow to add `use_frameworks!` in the podfile, alternatively, you can add `use_modular_headers!` to enable the stricter search paths and module map generation for all of your pods, or you can add `:modular_headers => true` to a single pod declaration to enable for only that pod.
 
+### Install Specific Version of CleverTap iOS SDK's
+
+By default this integration pulls in the latest versions of the CleverTap iOS SDK. If you rather want to use a specific version, simply specify the required versions in your podfile directly:
+
+```ruby
+pod 'CleverTap-iOS-SDK', '3.9.2'
+```
 
 ## Steps for Android ##
 
