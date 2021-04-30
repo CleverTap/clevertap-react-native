@@ -30,13 +30,7 @@ const sectionsList=[
                 {id : '_fetch', title: 'Fetch'},{id : '_activate', title: 'Activate'},{id : '_fetchAndActivate', title: 'Fetch And Activate'},
                 {id : '_resetProductConfig', title: 'Reset'},{id : '_fetchWithMinimumIntervalInSeconds', title: 'Fetch With Minimum Fetch Interval In Seconds'},
                 {id : '_getProductConfigs', title: 'Get Product Configs'}]},
-                {title: 'FEATURE FLAGS', data: [{id : '_getFeatureFlag',title: 'Get Feature Flag'}]},
-                {title: 'DYNAMIC VARIABLES (A/B TEST)', data: [{id : '_registerListOfDynamicVariables',title: 'Register List Of Dynamic Variables'},
-                {id : '_registerMapOfDynamicVariables',title: 'Register Map Of Dynamic Variables'},
-                {id : '_registerPrimitiveDynamicVariables',title: 'Register Primitive Dynamic Variables'},
-                {id : '_getListOfDynamicVariables',title: 'Get List Of Dynamic Variables'},
-                {id : '_getMapOfDynamicVariables',title: 'Get Map Of Dynamic Variables'},
-                {id : '_getPrimitiveDynamicVariables',title: 'Get Primitive Dynamic Variables'}]}
+                {title: 'FEATURE FLAGS', data: [{id : '_getFeatureFlag',title: 'Get Feature Flag'}]}
               ]
 
 type Props = {};
@@ -218,82 +212,6 @@ export default class App extends Component<Props> {
         });
     }
 
-    //Dynamic variable - A/B test
-
-    _registerListOfDynamicVariables(event){
-        CleverTap.registerListOfBooleanVariable("booleanList");
-        CleverTap.registerListOfDoubleVariable("doubleList");
-        CleverTap.registerListOfIntegerVariable("integerList");
-        CleverTap.registerListOfStringVariable("stringList");
-    }
-
-    _registerMapOfDynamicVariables(event){
-        CleverTap.registerMapOfBooleanVariable("booleanMap");
-        CleverTap.registerMapOfDoubleVariable("doubleMap");
-        CleverTap.registerMapOfIntegerVariable("integerMap");
-        CleverTap.registerMapOfStringVariable("stringMap");
-    }
-
-    _registerPrimitiveDynamicVariables(event){
-        CleverTap.registerBooleanVariable("booleanVar");
-        CleverTap.registerDoubleVariable("doubleVar");
-        CleverTap.registerIntegerVariable("integerVar");
-        CleverTap.registerStringVariable("stringVar");
-    }
-
-    _getListOfDynamicVariables(event){
-        CleverTap.getListOfBooleanVariable("booleanList",[true,false,false], (err, res) => {
-            console.log('List of Boolean Dynamic Variables in res: ', res, err);
-        });
-
-        CleverTap.getListOfDoubleVariable("doubleList",[11.54,54.44333,67.777], (err, res) => {
-            console.log('List of Double Dynamic Variables in res: ', res, err);
-        });
-
-        CleverTap.getListOfIntegerVariable("integerList",[11,54,67], (err, res) => {
-            console.log('List of Integer Dynamic Variables in res: ', res, err);
-        });
-
-        CleverTap.getListOfStringVariable("stringList",["Batman","SpiderMan","AntMan"], (err, res) => {
-            console.log('List of String Dynamic Variables in res: ', res, err);
-        });
-    }
-
-    _getMapOfDynamicVariables(event){
-        CleverTap.getMapOfBooleanVariable("booleanMap",{"k1":true,"k2":false,"k3":true}, (err, res) => {
-            console.log('Map of Boolean Dynamic Variables in res: ', res, err);
-        });
-
-        CleverTap.getMapOfDoubleVariable("doubleMap",{"k1":11.54,"k2":54.44333,"k3":67.777}, (err, res) => {
-            console.log('Map of Double Dynamic Variables in res: ', res, err);
-        });
-
-        CleverTap.getMapOfIntegerVariable("integerMap",{"k1":11,"k2":54,"k3":67}, (err, res) => {
-            console.log('Map of Integer Dynamic Variables in res: ', res, err);
-        });
-
-        CleverTap.getMapOfStringVariable("stringMap",{"k1":"Batman","k2":"SpiderMan","k3":"67321"}, (err, res) => {
-            console.log('Map of String Dynamic Variables in res: ', res, err);
-        });
-    }
-
-    _getPrimitiveDynamicVariables(event){
-        CleverTap.getBooleanVariable("booleanVar",true, (err, res) => {
-            console.log('Boolean Dynamic Variables in res: ', res, err);
-        });
-
-        CleverTap.getDoubleVariable("doubleVar",54.44333, (err, res) => {
-            console.log('Double Dynamic Variables in res: ', res, err);
-        });
-
-        CleverTap.getIntegerVariable("integerVar",374, (err, res) => {
-            console.log('Integer Dynamic Variables in res: ', res, err);
-        });
-
-        CleverTap.getStringVariable("stringVar","Batman", (err, res) => {
-            console.log('String Dynamic Variables in res: ', res, err);
-        });
-    }
     //Product configs
 
     _setDefaultProductConfigs(event){
