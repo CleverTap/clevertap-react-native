@@ -8,7 +8,6 @@
 #import "CleverTap.h"
 #import "CleverTap+Inbox.h"
 #import "CleverTapUTMDetail.h"
-#import "CleverTap+ABTesting.h"
 #import "CleverTapEventDetail.h"
 #import "CleverTap+DisplayUnit.h"
 #import "CleverTapSyncDelegate.h"
@@ -44,9 +43,6 @@
         [[clevertap featureFlags] setDelegate:self];
         [[clevertap productConfig] setDelegate:self];
         [clevertap setLibrary:@"React-Native"];
-        [clevertap registerExperimentsUpdatedBlock:^{
-            [self postNotificationWithName:kCleverTapExperimentsDidUpdate andBody:nil];
-        }];
     }
     return self;
 }
