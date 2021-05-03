@@ -250,6 +250,7 @@ var CleverTap = {
     * keys are strings and values can be string, number or boolean.
     */
     recordEvent: function (eventName, props) {
+        formatDateEntries(props);
         CleverTapReact.recordEvent(eventName, props);
     },
 
@@ -259,6 +260,12 @@ var CleverTap = {
     * @param {array<object>} items - an array of objects containing the key-value data for the items that make up the transaction.
     */
     recordChargedEvent: function (details, items) {
+        formatDateEntries(details);
+        if (Array.isArray(items) && items.length) {
+            items.forEach(value => {
+                formatDateEntries(value);
+            });
+        }
         CleverTapReact.recordChargedEvent(details, items);
     },
 
@@ -347,6 +354,7 @@ var CleverTap = {
     * @param {object} profile - key-value profile properties.  keys are strings and values can be string, number or boolean.
     */
     onUserLogin: function (profile) {
+        formatDateEntries(profile);
         CleverTapReact.onUserLogin(profile);
     },
 
@@ -355,6 +363,7 @@ var CleverTap = {
     * @param {object} profile - key-value profile properties.  keys are strings and values can be string, number or boolean.
     */
     profileSet: function (profile) {
+        formatDateEntries(profile);
         CleverTapReact.profileSet(profile);
     },
 
@@ -363,6 +372,7 @@ var CleverTap = {
     * @param {object} profile - key-value profile properties.  keys are strings and values can be string, number or boolean.
     */
     profileSetGraphUser: function (user) {
+        formatDateEntries(user);
         CleverTapReact.profileSetGraphUser(user);
     },
 
@@ -703,6 +713,17 @@ var CleverTap = {
     setDebugLevel: function (level) {
         CleverTapReact.setDebugLevel(level);
     }
+};
+
+function formatDateEntries(map) {
+    if (map) {
+        for (let [key, value] of Object.entries(map)) {
+            if (Object.prototype.toString.call(value) === '[object Date]') {
+                map[key] = "$D_" + Math.floor(value.getTime() / 1000);
+            }
+        }
+    }
+
 };
 
 module.exports = CleverTap;
