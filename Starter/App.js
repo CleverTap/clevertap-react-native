@@ -21,7 +21,7 @@ const sectionsList = [
     { title: 'EVENTS', data: [{ id: '_recordEvent', title: 'Record Event' }, { id: '_recordChargedEvent', title: 'Record Charged Event' }] },
     {
         title: 'USER PROFILE', data: [{ id: '_updateUserProfile', title: 'Update User Profile' },
-        { id: '_onUserLogin', title: 'new identity' },
+        { id: '_onUserLogin', title: 'On User Login, create new profile' },
         { id: '_getUserProfileProperty', title: 'Get User Profile Property' }]
 
     },
@@ -159,7 +159,7 @@ export default class App extends Component<Props> {
     _updateUserProfile(event) {
         CleverTap.profileSet({
             'Name': 'testUserA1', 'Identity': '123456', 'Email': 'test@test.com', 'custom1': 123,
-            'birthdate': new Date('1992-12-22T06:35:31')
+            'birthdate': new Date('2020-03-03T06:35:31')
         });
         CleverTap.profileSetMultiValuesForKey(['a', 'b', 'c'], 'letters');
         CleverTap.profileAddMultiValueForKey('d', 'letters');
@@ -172,7 +172,7 @@ export default class App extends Component<Props> {
     _onUserLogin(event) {
         CleverTap.onUserLogin({
             'Name': 'testUserA1', 'Identity': new Date().getTime() + '',
-            'Email': new Date().getTime() + 'test@test.com', 'custom1': 123,
+            'Email': new Date().getTime() + 'testmobile@test.com', 'custom1': 123,
             'birthdate': new Date('1992-12-22T06:35:31')
         })
     }
