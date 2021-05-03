@@ -136,7 +136,7 @@ export default class App extends Component<Props> {
 
     _recordEvent(event) {
         CleverTap.recordEvent('testEvent');
-        CleverTap.recordEvent('testEventWithProps', { 'foo': 'bar' });
+        CleverTap.recordEvent('testEventWithProps', { 'start': new Date(), 'foo': 'bar' });
         if (Platform.OS === 'android') {
             CleverTap.setPushToken("FCM-Token", CleverTap.FCM);
         }
@@ -144,10 +144,21 @@ export default class App extends Component<Props> {
 
     _recordChargedEvent(event) {
         CleverTap.recordChargedEvent({ 'totalValue': 20, 'category': 'books' }, [{ 'title': 'book1' }, { 'title': 'book2' }, { 'title': 'book3' }]);
+        CleverTap.recordChargedEvent({ 'totalValue': 20, 'category': 'books', 'purchase_date': new Date() },
+            [{ 'title': 'book1', 'published_date': new Date('2010-12-12T06:35:31'), 'author': 'ABC' },
+            { 'title': 'book2', 'published_date': new Date('2000-12-12T06:35:31') },
+            {
+                'title': 'book3', 'published_date': new Date(), 'author': 'XYZ'
+            }]
+        );
+
     }
 
     _updateUserProfile(event) {
-        CleverTap.profileSet({ 'Name': 'testUserA1', 'Identity': '123456', 'Email': 'test@test.com', 'custom1': 123 });
+        CleverTap.profileSet({
+            'Name': 'testUserA1', 'Identity': '123456', 'Email': 'test@test.com', 'custom1': 123,
+            'birthdate': new Date('1992-12-22T06:35:31')
+        });
         CleverTap.profileSetMultiValuesForKey(['a', 'b', 'c'], 'letters');
         CleverTap.profileAddMultiValueForKey('d', 'letters');
         CleverTap.profileAddMultiValuesForKey(['e', 'f'], 'letters');
