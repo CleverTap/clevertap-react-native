@@ -21,7 +21,9 @@ const sectionsList = [
     { title: 'EVENTS', data: [{ id: '_recordEvent', title: 'Record Event' }, { id: '_recordChargedEvent', title: 'Record Charged Event' }] },
     {
         title: 'USER PROFILE', data: [{ id: '_updateUserProfile', title: 'Update User Profile' },
+        { id: '_onUserLogin', title: 'new identity' },
         { id: '_getUserProfileProperty', title: 'Get User Profile Property' }]
+
     },
     {
         title: 'INBOX', data: [{ id: '_openInbox', title: 'Open Inbox' }, { id: '_showCounts', title: 'Show Counts' },
@@ -167,6 +169,15 @@ export default class App extends Component<Props> {
         CleverTap.setLocation(34.15, -118.20);
     }
 
+    _onUserLogin(event) {
+        CleverTap.onUserLogin({
+            'Name': 'testUserA1', 'Identity': new Date().getTime() + '',
+            'Email': new Date().getTime() + 'test@test.com', 'custom1': 123,
+            'birthdate': new Date('1992-12-22T06:35:31')
+        })
+    }
+
+
     _getUserProfileProperty(event) {
         CleverTap.enablePersonalization();
 
@@ -309,6 +320,9 @@ export default class App extends Component<Props> {
                 break;
             case "_updateUserProfile":
                 this._updateUserProfile();
+                break;
+            case "_onUserLogin":
+                this._onUserLogin();
                 break;
             case "_getUserProfileProperty":
                 this._getUserProfileProperty();
