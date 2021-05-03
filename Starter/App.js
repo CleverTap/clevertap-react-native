@@ -358,25 +358,6 @@ export default class App extends Component<Props> {
             case "_getFeatureFlag":
                 this._getFeatureFlag();
                 break;
-            case "_registerListOfDynamicVariables":
-                this._registerListOfDynamicVariables();
-                break;
-            case "_registerMapOfDynamicVariables":
-                this._registerMapOfDynamicVariables();
-                break;
-            case "_registerPrimitiveDynamicVariables":
-                this._registerPrimitiveDynamicVariables();
-                break;
-            case "_getListOfDynamicVariables":
-                this._getListOfDynamicVariables();
-                break;
-            case "_getMapOfDynamicVariables":
-                this._getMapOfDynamicVariables();
-                break;
-            case "_getPrimitiveDynamicVariables":
-                this._getPrimitiveDynamicVariables();
-                break;
-
         }
     }
 
