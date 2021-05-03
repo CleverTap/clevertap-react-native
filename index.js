@@ -250,7 +250,7 @@ var CleverTap = {
     * keys are strings and values can be string, number or boolean.
     */
     recordEvent: function (eventName, props) {
-        formatDateEntries(props);
+        convertDateToEpochInProperties(props);
         CleverTapReact.recordEvent(eventName, props);
     },
 
@@ -260,10 +260,10 @@ var CleverTap = {
     * @param {array<object>} items - an array of objects containing the key-value data for the items that make up the transaction.
     */
     recordChargedEvent: function (details, items) {
-        formatDateEntries(details);
+        convertDateToEpochInProperties(details);
         if (Array.isArray(items) && items.length) {
             items.forEach(value => {
-                formatDateEntries(value);
+                convertDateToEpochInProperties(value);
             });
         }
         CleverTapReact.recordChargedEvent(details, items);
@@ -354,7 +354,7 @@ var CleverTap = {
     * @param {object} profile - key-value profile properties.  keys are strings and values can be string, number or boolean.
     */
     onUserLogin: function (profile) {
-        formatDateEntries(profile);
+        convertDateToEpochInProperties(profile);
         CleverTapReact.onUserLogin(profile);
     },
 
@@ -363,7 +363,7 @@ var CleverTap = {
     * @param {object} profile - key-value profile properties.  keys are strings and values can be string, number or boolean.
     */
     profileSet: function (profile) {
-        formatDateEntries(profile);
+        convertDateToEpochInProperties(profile);
         CleverTapReact.profileSet(profile);
     },
 
@@ -372,7 +372,7 @@ var CleverTap = {
     * @param {object} profile - key-value profile properties.  keys are strings and values can be string, number or boolean.
     */
     profileSetGraphUser: function (user) {
-        formatDateEntries(user);
+        convertDateToEpochInProperties(user);
         CleverTapReact.profileSetGraphUser(user);
     },
 
@@ -715,7 +715,10 @@ var CleverTap = {
     }
 };
 
-function formatDateEntries(map) {
+function convertDateToEpochInProperties(map) {
+    /**
+     * Conversion of date object in suitable CleverTap format(Epoch)
+     */
     if (map) {
         for (let [key, value] of Object.entries(map)) {
             if (Object.prototype.toString.call(value) === '[object Date]') {
