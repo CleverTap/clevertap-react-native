@@ -368,15 +368,6 @@ var CleverTap = {
     },
 
     /**
-    * Set key-value facebook properties on a user profile
-    * @param {object} profile - key-value profile properties.  keys are strings and values can be string, number or boolean.
-    */
-    profileSetGraphUser: function (user) {
-        convertDateToEpochInProperties(user);
-        CleverTapReact.profileSetGraphUser(user);
-    },
-
-    /**
     * Get the value of a profile property
     * @param {string} the property key
     * @param {function(err, res)} callback that returns a res of the property value or null
