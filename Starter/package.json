@@ -10,7 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "clevertap-react-native": "git+https://github.com/CleverTap/clevertap-react-native.git#task/SDK-794-date-enhancement",
+    "clevertap-react-native": "git+https://github.com/CleverTap/clevertap-react-native.git#develop",
     "react": "16.9.0",
     "react-native": "^0.63.3"
   },
