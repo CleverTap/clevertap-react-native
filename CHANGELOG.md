@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 0.5.1 *(6th May 2021)*
+Version 0.5.1 *(5th May 2021)*
 -------------------------------------------
 - Update and Freeze [CleverTap React Native Podspec](/clevertap-react-native.podspec) to a specific version of a CleverTap iOS SDK
 - Update to CleverTap iOS SDK v3.9.3
