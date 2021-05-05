@@ -4,8 +4,10 @@ Change Log
 Version 0.5.1 *(5th May 2021)*
 -------------------------------------------
 - Update and Freeze [CleverTap React Native Podspec](/clevertap-react-native.podspec) to a specific version of a CleverTap iOS SDK
-- Update to CleverTap iOS SDK v3.9.3
-- Update to CleverTap Android SDK v4.1.1
+- Supports CleverTap iOS SDK v3.9.3
+- Supports CleverTap Android SDK v4.1.1
+- Removes Product Experiences (Dynamic Variables) related code
+- Removed `pushGooglePlusPerson` and `profileSetGraphUser` API
 
 Version 0.5.0 *(15th October 2020)*
 -------------------------------------------
