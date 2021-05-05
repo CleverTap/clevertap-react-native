@@ -212,11 +212,6 @@ RCT_EXPORT_METHOD(profileSet:(NSDictionary*)profile) {
     [[CleverTap sharedInstance] profilePush:_profile];
 }
 
-RCT_EXPORT_METHOD(profileSetGraphUser:(NSDictionary*)profile) {
-    RCTLogInfo(@"[CleverTap profileSetGraphUser: %@]", profile);
-    [[CleverTap sharedInstance] profilePushGraphUser:profile];
-}
-
 RCT_EXPORT_METHOD(profileGetProperty:(NSString*)propertyName callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap profileGetProperty: %@]", propertyName);
     id result = [[CleverTap sharedInstance] profileGet:propertyName];

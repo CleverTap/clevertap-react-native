@@ -267,18 +267,6 @@
   export function profileSet(profile: any): void;
 
   /**
-   * Set profile attributes from facebook user
-   * @param profile {any} facebook graph user object
-   */
-  export function profileSetGraphUser(profile: any): void;
-
-  /**
-   * Set profile attributes rom google plus user
-   * @param profile {any} google plus user object
-   */
-  export function profileGooglePlusUser(profile: any): void;
-
-  /**
    * Get User Profile Property
    * @param propertyName {string}
    * calls back with value of propertyName or false
