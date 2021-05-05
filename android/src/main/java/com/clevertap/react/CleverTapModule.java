@@ -1016,7 +1016,13 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         if (clevertap == null) {
             return;
         }
-        clevertap.recordScreen(screenName);
+        try {
+            clevertap.recordScreen(screenName);
+        }catch (NullPointerException npe)
+        {
+            Log.e(TAG,"Something went wrong in native SDK!");
+            npe.printStackTrace();
+        }
     }
 
     // Product Config methods
