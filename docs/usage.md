@@ -57,21 +57,21 @@ CleverTap.recordChargedEvent({'totalValue': 20, 'category': 'books'}, [{'title':
 ```
 
 
-#### App Inbox
+## App Inbox
 
-##### Initialize the CleverTap App Inbox Method
+#### Initialize the CleverTap App Inbox Method
 ```javascript 
 CleverTap.initializeInbox();
 ```
 
-##### Show the App Inbox
+#### Show the App Inbox
 ```javascript
 CleverTap.showInbox({'tabs':['Offers','Promotions'],'navBarTitle':'My App Inbox','navBarTitleColor':'#FF0000','navBarColor':'#FFFFFF','inboxBackgroundColor':'#AED6F1','backButtonColor':'#00FF00'
                                 ,'unselectedTabColor':'#0000FF','selectedTabColor':'#FF0000','selectedTabIndicatorColor':'#000000',
                                 'noMessageText':'No message(s)','noMessageTextColor':'#FF0000'});
  ```
 
-##### Get Total message count
+#### Get Total message count
 ```javascript 
 CleverTap.getInboxMessageCount((err, res) => {
 				console.log('Total Messages: ', res, err);
@@ -79,7 +79,7 @@ CleverTap.getInboxMessageCount((err, res) => {
 			});	
 ```
 
-##### Get Total message count
+#### Get Total message count
 ```javascript 
 CleverTap.getInboxMessageUnreadCount((err, res) => {
 				console.log('Unread Messages: ', res, err);
@@ -87,7 +87,7 @@ CleverTap.getInboxMessageUnreadCount((err, res) => {
 			});	
 ```
 
-##### Get All Inbox Messages
+#### Get All Inbox Messages
 ```javascript 
 CleverTap.getAllInboxMessages((err, res) => {
 				console.log('All Inbox Messages: ', res, err);
@@ -95,7 +95,7 @@ CleverTap.getAllInboxMessages((err, res) => {
 			 });	
 ```
 
-##### Get all Inbox unread messages
+#### Get all Inbox unread messages
 ```javascript 
 CleverTap.getUnreadInboxMessages((err, res) => {
 				 console.log('Unread Inbox Messages: ', res, err);
@@ -103,7 +103,7 @@ CleverTap.getUnreadInboxMessages((err, res) => {
 			 });	
 ```
 
-##### Get inbox Id
+#### Get inbox Id
 ```javascript 
 CleverTap.getInboxMessageForId('Message Id',(err, res) => {
             		console.log("marking message read = "+res);
@@ -112,64 +112,64 @@ CleverTap.getInboxMessageForId('Message Id',(err, res) => {
 				
 ```
 
-##### Delete message with id
+#### Delete message with id
 ```javascript 
 CleverTap.deleteInboxMessageForId('Message Id');		
 ```
 
-##### Mark a message as Read for inbox Id
+#### Mark a message as Read for inbox Id
 ```javascript 
 CleverTap.markReadInboxMessageForId('Message Id');		
 ```
 
-##### pushInbox Notification Viewed Event For Id
+#### pushInbox Notification Viewed Event For Id
 ```javascript 
 CleverTap.pushInboxNotificationViewedEventForId('Message Id');		
 ```
 
-##### push Inbox Notification Clicked Event For Id
+#### push Inbox Notification Clicked Event For Id
 ```javascript 
 CleverTap.pushInboxNotificationClickedEventForId('Message Id');			
 ```
 
 
-#### Push Notifications
+## Push Notifications
 
-##### Creating Notification Channel
+#### Creating Notification Channel
 ```javascript 
 CleverTap.createNotificationChannel("CtRNS", "Clever Tap React Native Testing", "CT React Native Testing", 1, true);			
 ```
 
-##### Delete Notification Channel
+#### Delete Notification Channel
 ```javascript 
 CleverTap.deleteNotificationChannel("RNTesting");		
 ```
 
-##### Creating a group notification channel
+#### Creating a group notification channel
 ```javascript 
 CleverTap.createNotificationChannelGroup(String groupId, String groupName);		
 ```
 
-##### Delete a group notification channel
+#### Delete a group notification channel
 ```javascript 
 CleverTap.deleteNotificationChannelGroup(String groupId);			
 ```
 
-##### Registering Fcm Token
+#### Registering Fcm Token
 ```javascript 
 CleverTap.setPushToken("<Replace with FCM Token value>", CleverTap.FCM);
 ```
  
-#### Native Display
+## Native Display
 
-##### Get Display Unit for Id
+#### Get Display Unit for Id
 ```javascript 
 CleverTap.getDisplayUnitForId('Unit Id', (err, res) => {
              console.log('Get Display Unit for Id:', res, err);
 			 alert(`Get Display Unit for Id: ${res}`);
 ```
 
-##### Get All Display Units
+#### Get All Display Units
 ```javascript 
 CleverTap.getAllDisplayUnits((err, res) => {
              console.log('All Display Units: ', res, err);
@@ -177,51 +177,79 @@ CleverTap.getAllDisplayUnits((err, res) => {
         });
 ```
 
-#### Product Config 
+## Product Config 
 
-##### Set Product Configuration to default
+#### Set Product Configuration to default
 ```javascript 
 CleverTap.setDefaultsMap({'text_color': 'red', 'msg_count': 100, 'price': 100.50, 'is_shown': true, 'json': '{"key":"val"}'});
 ```
 
-##### Fetching product configs
+#### Fetching product configs
 ```javascript 
 CleverTap.fetch();
 ```
 
-##### Activate the most recently fetched product config
+#### Activate the most recently fetched product config
 ```javascript 
 CleverTap.activate();
 ```
 
-##### Fetch And Activate product config
+#### Fetch And Activate product config
 ```javascript 
 CleverTap.fetchAndActivate();
 ```
 
-##### Fetch Minimum Time Interval
+#### Fetch Minimum Time Interval
 ```javascript 
 CleverTap.fetchWithMinimumIntervalInSeconds(60);
 ```
 
-##### Set Minimum Time Interval for Fetch 
+#### Set Minimum Time Interval for Fetch 
 ```javascript 
 CleverTap.setMinimumFetchIntervalInSeconds(60);
 ```
 
-##### Get Boolean key
+#### Get Boolean key
 ```javascript 
 CleverTap.getProductConfigBoolean('is_shown', (err, res) => {
 		      console.log('PC is_shown val in boolean :', res, err);
 			  alert(`PC is_shown val in boolean : ${res}`);
 ```
+#### Get Long
+```javascript 
+CleverTap.getNumber('msg_count', (err, res) => {
+		      console.log('PC is_shown val in number(long)  :', res, err);
+			  alert(`PC is_shown val in number(long) : ${res}`);
+		 });
+```
+#### Get Double
+```javascript 
+CleverTap.getNumber('price', (err, res) => {
+		      console.log('PC price val in number :', res, err);
+			  alert(`PC is_shown val in number(double) : ${res}`);
+		 });		
+```
+#### Get String
+```javascript 
+CleverTap.getProductConfigString('text_color', (err, res) => {
+              		console.log('PC text_color val in string :', res, err);
+					alert(`PC is_shown val in String : ${res}`);
+         	});	
+```
+#### Get String (JSON)
+```javascript 
+CleverTap.getProductConfigString('json', (err, res) => {
+		      console.log('PC json val in string :', res, err);
+			  alert(`PC json val in String : ${res}`);
+		 });	
+```
 
-##### Delete all activated, fetched and defaults configs
+#### Delete all activated, fetched and defaults configs
 ```javascript 
 CleverTap.resetProductConfig();
 ```
 
-##### Get last fetched timestamp in millis
+#### Get last fetched timestamp in millis
 ```javascript 
 CleverTap.getLastFetchTimeStampInMillis((err, res) => {
                console.log('LastFetchTimeStampInMillis in string: ', res, err);
@@ -229,9 +257,9 @@ CleverTap.getLastFetchTimeStampInMillis((err, res) => {
           });		
 ```
 
-#### Feature Flag
+## Feature Flag
 
-##### Get Feature Flag
+#### Get Feature Flag
 ```javascript 
 CleverTap.getFeatureFlag('is_dark_mode', false, (err, res) => {
 			      console.log('FF is_dark_mode val in boolean :', res, err);
@@ -239,16 +267,16 @@ CleverTap.getFeatureFlag('is_dark_mode', false, (err, res) => {
 		     });
 ```
 
-#### App Personalisation
+## App Personalisation
 
-##### Enable Personalization
+#### Enable Personalization
 ```javascript 
 CleverTap.enablePersonalization();
 			alert('enabled Personalization');	
 		};
 ```
 
-##### Get Profile Name
+#### Get Profile Name
 ```javascript 
 CleverTap.profileGetProperty('Name', (err, res) => {
 		    console.log('CleverTap Profile Name: ', res, err);
@@ -256,9 +284,9 @@ CleverTap.profileGetProperty('Name', (err, res) => {
         });
 ```
 
-#### Attributions
+## Attributions
 
-##### Get CleverTap Attribution Identifier
+#### Get CleverTap Attribution Identifier
 ```javascript 
 CleverTap.profileGetCleverTapAttributionIdentifier((err, res) => {
             console.log('CleverTapAttributionIdentifier', res, err);
