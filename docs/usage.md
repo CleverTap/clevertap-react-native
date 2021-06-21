@@ -6,7 +6,7 @@
 const CleverTap = require('clevertap-react-native');
 ```
 
-## User Properties
+## User Profiles
 
 #### Update User Profile(Push Profile )
 ```javascript 
@@ -46,6 +46,8 @@ CleverTap.profileGetCleverTapID((err, res) => {
 CleverTap.setLocation(34.15, -118.20);
 ```
 
+## User Events
+
 #### Record an event  
 ```javascript 
 CleverTap.recordEvent('testEvent');
@@ -55,7 +57,6 @@ CleverTap.recordEvent('testEvent');
 ```javascript 
 CleverTap.recordChargedEvent({'totalValue': 20, 'category': 'books'}, [{'title': 'book1'}, {'title': 'book2'}, {'title': 'book3'}]);
 ```
-
 
 ## App Inbox
 
@@ -131,7 +132,6 @@ CleverTap.pushInboxNotificationViewedEventForId('Message Id');
 ```javascript 
 CleverTap.pushInboxNotificationClickedEventForId('Message Id');			
 ```
-
 
 ## Push Notifications
 
@@ -272,7 +272,15 @@ CleverTap.getFeatureFlag('is_dark_mode', false, (err, res) => {
 #### Enable Personalization
 ```javascript 
 CleverTap.enablePersonalization();
-			alert('enabled Personalization');	
+			alert('Personalization Enabled');	
+		};
+```
+
+#### Disable Personalization
+
+```javascript 
+CleverTap.disablePersonalization();
+			alert('Personalization Disabled');	
 		};
 ```
 
@@ -296,10 +304,7 @@ CleverTap.profileGetCleverTapAttributionIdentifier((err, res) => {
 
 
 
-
-
-
 ### For more information,
- - [see included Starter Application](https://github.com/CleverTap/clevertap-react-native/blob/master/Starter/App.js) 
- - [see CleverTap JS interface](https://github.com/CleverTap/clevertap-react-native/blob/master/index.js)
- - [see CleverTap TS interface](https://github.com/CleverTap/clevertap-react-native/blob/master/index.d.ts)
+ - [See included Starter Application](https://github.com/CleverTap/clevertap-react-native/blob/master/Starter/App.js) 
+ - [See CleverTap JS interface](/index.js)
+ - [See CleverTap TS interface](/index.d.ts)
