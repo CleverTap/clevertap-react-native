@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "861418673493",
+    "project_id": "reactnct",
+    "storage_bucket": "reactnct.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:861418673493:android:6ef73274e9f850ddcf4bdc",
+        "android_client_info": {
+          "package_name": "com.reactnct"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "861418673493-g57cm7skcb11f464tnfqb6jlu7u4q1of.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWmFXNi1MIkC51cbx2dO-USYPChZRrpk4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "861418673493-g57cm7skcb11f464tnfqb6jlu7u4q1of.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

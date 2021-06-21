@@ -1,0 +1,166 @@
+//App Inbox
+
+appInbox = () => {
+			alert('I am an alert for on button click');
+  
+		//console.log('Display on called: ', res, err);
+			
+		
+		//Show Inbox 
+		CleverTap.showInbox({'tabs':['Offers','Promotions'],'navBarTitle':'My App Inbox','navBarTitleColor':'#FF0000','navBarColor':'#FFFFFF','inboxBackgroundColor':'#AED6F1','backButtonColor':'#00FF00'
+                                ,'unselectedTabColor':'#0000FF','selectedTabColor':'#FF0000','selectedTabIndicatorColor':'#000000',
+                                'noMessageText':'No message(s)','noMessageTextColor':'#FF0000'});
+								
+								
+		}; 		
+getTotmsg = () => {
+			//Get Total messagecount
+			alert('Check Console for values');
+		CleverTap.getInboxMessageCount((err, res) => {
+				console.log('Total Messages: ', res, err);
+			});							
+		}; 
+
+	unread = () => {
+		alert('Check Console for values');
+			//Get the count of unread messages
+		CleverTap.getInboxMessageUnreadCount((err, res) => {
+				console.log('Unread Messages: ', res, err);
+			});							
+		}; 	
+		
+		allmsg = () => {
+			alert('Check Console for values');
+			//Get All Inbox Messages
+		CleverTap.getAllInboxMessages((err, res) => {
+				console.log('All Inbox Messages: ', res, err);
+			 });							
+		}; 
+		
+		allunreadmsg = () => {
+			alert('Check Console for values');
+		//get all Inbox unread messages
+		CleverTap.getUnreadInboxMessages((err, res) => {
+				 console.log('Unread Inbox Messages: ', res, err);
+			 });			
+		}; 
+		
+		inboxid = () => {
+			//Get inbox Id
+			alert('Check Console for values');
+		CleverTap.getInboxMessageForId('Message Id',(err, res) => {
+            		console.log("marking message read = "+res);
+        	});							
+		}; 	 
+		
+delteMsg = () => {
+			//Get inbox Id
+			alert('Check Console for values');
+		CleverTap.deleteInboxMessageForId('Message Id');
+        							
+		}; 	
+markread = () => {
+			//Get inbox Id
+			alert('Check Console for values');
+		CleverTap.markReadInboxMessageForId('Message Id');
+        							
+		}; 
+pnviewed = () => {
+			//Get inbox Id
+			alert('Check Console for values');
+		CleverTap.pushInboxNotificationViewedEventForId('Message Id');
+        							
+		}; 
+pnclicked = () => {
+			//Get inbox Id
+			alert('Check Console for values');
+		CleverTap.pushInboxNotificationClickedEventForId('Message Id');	
+        								
+		}; 
+
+
+function App_Inbox({ navigation }) {
+  return (
+     <View>
+  <TouchableOpacity
+          style={styles.button}
+          onPress={this.appInbox}
+         >
+          <Text style={styles.btnText}>show App Inbox
+			</Text>
+</TouchableOpacity>
+/*
+  <TouchableOpacity
+          style={styles.button}
+          onPress={this.getTotmsg}
+         >
+          <Text style={styles.btnText}>get Inbox Message Count
+			</Text>
+</TouchableOpacity>
+ 
+  <TouchableOpacity>
+          style={styles.button}
+          onPress={this.unread}
+         >
+          <Text style={styles.btnText}>get Inbox Message Unread Count
+			</Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+          style={styles.button}
+          onPress={this.allmsg}
+         >
+          <Text style={styles.btnText}>get All Inbox Messages
+			</Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+          style={styles.button}
+          onPress={this.allunreadmsg}
+         >
+          <Text style={styles.btnText}>get Unread Inbox Messages
+		  </Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+          style={styles.button}
+          onPress={this.inboxid}
+         >
+          <Text style={styles.btnText}>get Inbox Message For Id
+		  </Text>
+</TouchableOpacity>
+<TouchableOpacity
+          style={styles.button}
+          onPress={this.delteMsg}
+         >
+          <Text style={styles.btnText}>delete Inbox Message
+		  </Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+          style={styles.button}
+          onPress={this.markread}
+         >
+          <Text style={styles.btnText}>mark Read Inbox Message
+		  </Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+          style={styles.button}
+          onPress={this.pnviewed}
+         >
+          <Text style={styles.btnText}>pushInboxNotificationViewedEvent
+		</Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+          style={styles.button}
+          onPress={this.pnclicked}
+         >
+          <Text style={styles.btnText}>pushInboxNotificationClickedEvent
+		  </Text>
+</TouchableOpacity>
+*/
+</View>
+  );
+}
