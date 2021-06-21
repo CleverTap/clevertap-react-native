@@ -46,6 +46,8 @@ CleverTap.profileGetCleverTapID((err, res) => {
 CleverTap.setLocation(34.15, -118.20);
 ```
 
+-----------
+
 ## User Events
 
 #### Record an event  
@@ -57,6 +59,8 @@ CleverTap.recordEvent('testEvent');
 ```javascript 
 CleverTap.recordChargedEvent({'totalValue': 20, 'category': 'books'}, [{'title': 'book1'}, {'title': 'book2'}, {'title': 'book3'}]);
 ```
+
+-----------
 
 ## App Inbox
 
@@ -133,6 +137,8 @@ CleverTap.pushInboxNotificationViewedEventForId('Message Id');
 CleverTap.pushInboxNotificationClickedEventForId('Message Id');			
 ```
 
+-----------
+
 ## Push Notifications
 
 #### Creating Notification Channel
@@ -159,6 +165,8 @@ CleverTap.deleteNotificationChannelGroup(String groupId);
 ```javascript 
 CleverTap.setPushToken("<Replace with FCM Token value>", CleverTap.FCM);
 ```
+
+-----------
  
 ## Native Display
 
@@ -176,6 +184,8 @@ CleverTap.getAllDisplayUnits((err, res) => {
 			 alert(`All Display Units: ${res}`);
         });
 ```
+
+-----------
 
 ## Product Config 
 
@@ -267,6 +277,8 @@ CleverTap.getFeatureFlag('is_dark_mode', false, (err, res) => {
 		     });
 ```
 
+-----------
+
 ## App Personalisation
 
 #### Enable Personalization
@@ -291,6 +303,8 @@ CleverTap.profileGetProperty('Name', (err, res) => {
 		 			alert(`CleverTap Profile Name:${res}`);
         });
 ```
+
+-----------
 
 ## Attributions
 
