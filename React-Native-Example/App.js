@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Alert, LayoutAnimation, StyleSheet, View, Text, ScrollView, UIManager, TouchableOpacity, Platform, Image } from 'react-native';
+import { Alert, LayoutAnimation, StyleSheet, View, Text, ScrollView, UIManager, TouchableOpacity, Platform, Image,Linking,ToastAndroid } from 'react-native';
 const CleverTap = require('clevertap-react-native');
 
 class Expandable_ListView extends Component {
@@ -151,13 +151,17 @@ show_Selected_Category = (item) => {
 			break;
 			case 52	: CleverTap.setOffline(value);
 			break;
+			case 53: addCleverTapAPIListeners(true);
+			break;
+			case 54: removeCleverTapAPIListeners();
+			break;
 		}
 }
-	  
+
   render() {
     return (
       <View style={styles.Panel_Holder}>
-	
+
         <TouchableOpacity activeOpacity={0.8} onPress={this.props.onClickFunction} style={styles.category_View}>
 
           <Text style={styles.category_Text}>{this.props.item.category_Name} </Text>
@@ -170,9 +174,9 @@ show_Selected_Category = (item) => {
 
         <View style={{ height: this.state.layout_Height, overflow: 'hidden' }}>
 
-          {	
+          {
             this.props.item.sub_Category.map((item, key) => (
-		
+
               <TouchableOpacity key={key} style={styles.sub_Category_Text} onPress={this.show_Selected_Category.bind(this, item.id)}>
 
                 <Text> {item.name} </Text>
@@ -202,8 +206,34 @@ export default class App extends Component {
       UIManager.setLayoutAnimationEnabledExperimental(true)
 
     }
+
 	CleverTap.setDebugLevel(3);
-	CleverTap.initializeInbox();
+    addCleverTapAPIListeners(false);
+    CleverTap.initializeInbox();
+
+	  // Listener to handle incoming deep links
+	  Linking.addEventListener('url', _handleOpenUrl);
+
+	  // this handles the case where a deep link launches the application
+	  Linking.getInitialURL().then((url) => {
+		  if (url) {
+			  console.log('launch url', url);
+			  _handleOpenUrl({ url });
+		  }
+	  }).catch(err => console.error('launch url error', err));
+
+	  // check to see if CleverTap has a launch deep link
+	  // handles the case where the app is launched from a push notification containing a deep link
+	  CleverTap.getInitialUrl((err, url) => {
+		  if (url) {
+			  console.log('CleverTap launch url', url);
+			  _handleOpenUrl({ url }, 'CleverTap');
+		  } else if (err) {
+			  console.log('CleverTap launch url', err);
+		  }
+	  });
+
+
     const array = [
 
       {
@@ -233,8 +263,8 @@ export default class App extends Component {
 
       {
         expanded: false, category_Name: "Enable Debugging", sub_Category: [{ id: 24, name: 'Set Debug Level' }]
-        
-      }, 
+
+      },
 	  {
         expanded: false, category_Name: "Push Notifications", sub_Category: [{ id: 25, name: 'createNotificationChannelGroup' },
 		{ id: 26, name: 'createNotificationChannel' }, { id: 27, name: 'deleteNotificationChannel' },{ id: 28, name: 'deleteNotificationChannelGroup' },
@@ -264,7 +294,10 @@ export default class App extends Component {
 	   {
 	  expanded: false, category_Name: "Multi-Instance", sub_Category: [{ id: 51, name: 'enablePersonalization' },{ id: 52, name: 'setOffline' }]
       },
-	  
+	   {
+	  expanded: false, category_Name: "Listeners", sub_Category: [{id:53, name : 'addCleverTapAPIListeners'},{ id: 54, name: 'removeCleverTapAPIListeners' }]
+      }
+
 	];
 
     this.state = { AccordionData: [...array] }
@@ -304,362 +337,415 @@ export default class App extends Component {
 }
 
 userProfile = () => {
-	
+
 			alert('User Profile Updated');
-	
+
 		CleverTap.profileSet({"Identity":11102008, "Name":"React-Test Profile","Email":"r@gmail.com","Gender":"Male","DOB":"1995-10-14", "custom":1.73});
-								
+
 		};
 //Identity_Management
 id_mngmt = () => {
 			alert('User Profile Updated');
-	
-		//On user Login 
+
+		//On user Login
 		CleverTap.onUserLogin({'Name': 'React-Test', 'Identity': '11102008', 'Email': 'r@gmail.com', 'custom1': 43});
-								
-		}; 
+
+		};
 rmvalskey = () => {
 			alert('User Profile Updated');
-	
+
 		//Removing Multiple Values
 		CleverTap.profileRemoveMultiValuesForKey(['a', 'c'], 'letters');
-								
-		}; 
+
+		};
 rmvalkey = () => {
 			alert('User Profile Updated');
-	
+
 		//Removing Value for key
 		CleverTap.profileRemoveValueForKey("letters");
-								
-		}; 
+
+		};
 getCTid = () =>{
-	
+
 	CleverTap.profileGetCleverTapID((err, res) => {
            		 console.log('CleverTapID', res, err);
 				 alert(`CleverTapID: \n ${res}`);
         	});
-}	
+}
 // Location
 userLocation = () => {
 			alert('User Location set');
-	
+
 		CleverTap.setLocation(34.15, -118.20);
-								
-		};   
+
+		};
 ///Events
 
 pushevent = () => {
 			alert('Event Recorded');
-	
-		//Recording an Event	
+
+		//Recording an Event
 		CleverTap.recordEvent('testEvent');
-								
-		}; 
+
+		};
 
 pushchargedevent = () => {
 			alert('Charged Event Recorded');
-	
-		//Recording an Event	
+
+		//Recording an Event
 		CleverTap.recordChargedEvent({'totalValue': 20, 'category': 'books'}, [{'title': 'book1'}, {'title': 'book2'}, {'title': 'book3'}]);
-								
-		}; 
+
+		};
 //App Inbox
 
 appInbox = () => {
-			alert('I am an alert for on button click');
-  
-		//console.log('Display on called: ', res, err);
 			
-		
-		//Show Inbox 
+
+		//console.log('Display on called: ', res, err);
+
+
+		//Show Inbox
 		CleverTap.showInbox({'tabs':['Offers','Promotions'],'navBarTitle':'My App Inbox','navBarTitleColor':'#FF0000','navBarColor':'#FFFFFF','inboxBackgroundColor':'#AED6F1','backButtonColor':'#00FF00'
                                 ,'unselectedTabColor':'#0000FF','selectedTabColor':'#FF0000','selectedTabIndicatorColor':'#000000',
                                 'noMessageText':'No message(s)','noMessageTextColor':'#FF0000'});
-								
-								
-		}; 		
+
+
+		};
 
 getTotmsg = () => {
 			//Get Total messagecount
-			
+
 		CleverTap.getInboxMessageCount((err, res) => {
 				console.log('Total Messages: ', res, err);
 				alert(`Total Messages: \n ${res}`);
-			});							
-		}; 
+			});
+		};
 unread = () => {
-		
+
 			//Get the count of unread messages
 		CleverTap.getInboxMessageUnreadCount((err, res) => {
 				console.log('Unread Messages: ', res, err);
 				alert(`Unread Messages: \n ${res}`);
-			});							
-		}; 	
+			});
+		};
 allmsg = () => {
-			
+
 			//Get All Inbox Messages
 		CleverTap.getAllInboxMessages((err, res) => {
 				console.log('All Inbox Messages: ', res, err);
 				alert(`All Inbox Messages: \n ${res}`);
-			 });							
-		}; 
+			 });
+		};
 allunreadmsg = () => {
-			
+
 		//get all Inbox unread messages
 		CleverTap.getUnreadInboxMessages((err, res) => {
 				 console.log('Unread Inbox Messages: ', res, err);
 				 alert(`Unread Inbox Messages: \n ${res}`);
-			 });			
-		}; 
+			 });
+		};
 inboxid = () => {
 			//Get inbox Id
-			
+
 		CleverTap.getInboxMessageForId('Message Id',(err, res) => {
             		console.log("marking message read = "+res);
 					alert(`marking message read: \n ${res}`);
-        	});							
-		}; 	 
+        	});
+		};
 
 deleteMsg = () => {
 			//Get inbox Id
 			alert('Check Console for values');
 		CleverTap.deleteInboxMessageForId('Message Id');
-        							
-		}; 	
+
+		};
 
 markread = () => {
 			//Get inbox Id
 			alert('Check Console for values');
 		CleverTap.markReadInboxMessageForId('Message Id');
-        							
-		}; 
+
+		};
 pnviewed = () => {
 			//Get inbox Id
 			alert('Check Console for values');
 		CleverTap.pushInboxNotificationViewedEventForId('Message Id');
-        							
-		}; 
+
+		};
 pnclicked = () => {
 			//Get inbox Id
 			alert('Check Console for values');
-		CleverTap.pushInboxNotificationClickedEventForId('Message Id');	
-        								
-		}; 
+		CleverTap.pushInboxNotificationClickedEventForId('Message Id');
+
+		};
 ///Push Notification
 create_NC = () => {
 			alert('Notification Channel Created');
 		//Creating Notification Channel
 		 CleverTap.createNotificationChannel("CtRNS", "Clever Tap React Native Testing", "CT React Native Testing", 1, true);
- 								
-		}; 
+
+		};
 delete_NC = () => {
 			alert('Notification Channel Deleted');
 		//Delete Notification Channel
 		CleverTap.deleteNotificationChannel("RNTesting")
- 								
-		}; 
-		 
+
+		};
+
 create_NCGroup = () => {
 			alert('Notification Channel Group Created');
 		//Creating a group notification channel
 		//CleverTap.createNotificationChannelGroup(String groupId, String groupName)
- 								
-		};		
+
+		};
 delete_NCGroup = () => {
 			alert('Notification Channel Group Deleted');
 		//Delete a group notification channel
 		//CleverTap.deleteNotificationChannelGroup(String groupId)
- 								
-		};			
+
+		};
 
 pushFcmRegistrationId = () => {
 			alert('Registered FCM Id for Push');
 		//Setting up a Push Notification
 		//CleverTap.setPushToken("111056687894", CleverTap.FCM);
- 								
-		};	
+
+		};
 create_notification= () => {
 			alert('');
 		//Setting up a Push Notification
 		//CleverTapReact.createNotification(extras);
- 								
-		};	
+
+		};
 //Native Display
 getUnitID= () => {
-			
+
 		CleverTap.getDisplayUnitForId('Unit Id', (err, res) => {
              console.log('Get Display Unit for Id:', res, err);
 			 alert(`Get Display Unit for Id: ${res}`);
         });
- 								
-		};	
+
+		};
 getAllDisplayUnits= () => {
-			
+
 		CleverTap.getAllDisplayUnits((err, res) => {
              console.log('All Display Units: ', res, err);
 			 alert(`All Display Units: ${res}`);
         });
- 								
-		};	
+
+		};
 // Product Config 
 
 productConfig = () => {
 			alert('Product Configuration set to default');
 		//Product config:
 		CleverTap.setDefaultsMap({'text_color': 'red', 'msg_count': 100, 'price': 100.50, 'is_shown': true, 'json': '{"key":"val"}'});
-		        								
+
 		};
 fetch= () => {
 			alert('Check Console for update result');
 		//Fetch
 		CleverTap.fetch();
-     								
+
 		};
 activate = () => {
 			alert('Check Console for update result');
 		//Activate
 		CleverTap.activate();
-     								
+
 		};
 fetchAndActivate = () => {
 			alert('Check Console for update result');
-		
+
 		//Fetch And Activate
 		CleverTap.fetchAndActivate();
-    								
+
 		};
 fetchwithMinIntervalinsec = () => {
 			alert('Check Console for update result');
-		
+
 		//Fetch Minimum Time Interval
 		CleverTap.fetchWithMinimumIntervalInSeconds(60);
-      								
+
 		};
 
 setMinimumFetchIntervalInSeconds  = () => {
 			alert('Check Console for update result');
-		
+
 		//Set Minimum Interval
 		CleverTap.setMinimumFetchIntervalInSeconds(60);
-         								
+
 		};
 getBoolean  = () => {
-			
+
 		//Boolean
 		CleverTap.getProductConfigBoolean('is_shown', (err, res) => {
 		      console.log('PC is_shown val in boolean :', res, err);
 			  alert(`PC is_shown val in boolean : ${res}`);
 		 });
 
-         								
+
 		};
 getLong = () => {
 			alert('Check Console for update result');
-		
+
 		//Number
 		CleverTap.getNumber('msg_count', (err, res) => {
 		      console.log('PC is_shown val in number(long)  :', res, err);
 			  alert(`PC is_shown val in number(long) : ${res}`);
 		 });
-		
-        								
+
+
 		};
 getDouble = () => {
-			
+
 		CleverTap.getNumber('price', (err, res) => {
 		      console.log('PC price val in number :', res, err);
 			  alert(`PC is_shown val in number(double) : ${res}`);
-		 });						
+		 });
 		};
 getString = () => {
 			alert('Check Console for update result');
-		
+
 		//Set Minimum Interval
 		//String
 		CleverTap.getProductConfigString('text_color', (err, res) => {
               		console.log('PC text_color val in string :', res, err);
 					alert(`PC is_shown val in String : ${res}`);
          	});
-        								
+
 		};
 getStrings = () => {
 			alert('Check Console for update result');
-		
+
 		//Set Minimum Interval
 		CleverTap.getProductConfigString('json', (err, res) => {
 		      console.log('PC json val in string :', res, err);
 			  alert(`PC json val in String : ${res}`);
 		 });
-        								
+
 		};
 reset_config = () => {
 			alert('Check Console for update result');
 		//Reset Product config
-		CleverTap.resetProductConfig();				
+		CleverTap.resetProductConfig();
 		};
-		
+
 getLastFetchTimeStampInMillis = () => {
-			
+
 		//get Last Fetch TimeStamp In Milliseconds
 		 CleverTap.getLastFetchTimeStampInMillis((err, res) => {
                console.log('LastFetchTimeStampInMillis in string: ', res, err);
 			    alert(`LastFetchTimeStampInMillis in string: ${res}`);
-          });		
+          });
 		};
 //feature flag
 getFeatureFlag= () => {
-			
+
 		//Feature flag
 		CleverTap.getFeatureFlag('is_dark_mode', false, (err, res) => {
 			      console.log('FF is_dark_mode val in boolean :', res, err);
 				  alert(`FF is_dark_mode val in boolean :{res}`);
 		     });
-     								
+
 		};
 
 //App Personalisation
 
 enablePersonalization= () => {
-			
-		
+
+
 		//enablePersonalization
 		CleverTap.enablePersonalization();
 			alert('enabled Personalization');
-      					
+
 		};
 profile_getProperty= () => {
-			
-		
+
+
 		//CleverTap Profile Name:
 		CleverTap.profileGetProperty('Name', (err, res) => {
 		    console.log('CleverTap Profile Name: ', res, err);
 		 			alert(`CleverTap Profile Name:${res}`);
         });
-     								
+
 		};
 ///Attributions
 attri= () => {
-	
-			
-		
+
+
+
 		//Default Instance
 		CleverTap.profileGetCleverTapAttributionIdentifier((err, res) => {
             console.log('CleverTapAttributionIdentifier', res, err);
 			alert(`CleverTapAttributionIdentifier${res}`);
         });
-     								
+
 		};
 
+function _handleOpenUrl(event, from) {
+	console.log('handleOpenUrl', event.url, from);
+}
 
-		
-		
-		
-		
-		
-		
-		
-		
-		
+function removeCleverTapAPIListeners(){
+	// clean up listeners
+
+	Linking.removeEventListener('url',_handleOpenUrl);
+	CleverTap.removeListener(CleverTap.CleverTapProfileDidInitialize);
+	CleverTap.removeListener(CleverTap.CleverTapProfileSync);
+	CleverTap.removeListener(CleverTap.CleverTapInAppNotificationDismissed);
+	CleverTap.removeListener(CleverTap.CleverTapInboxDidInitialize);
+	CleverTap.removeListener(CleverTap.CleverTapInboxMessagesDidUpdate);
+	CleverTap.removeListener(CleverTap.CleverTapInboxMessageButtonTapped);
+	CleverTap.removeListener(CleverTap.CleverTapDisplayUnitsLoaded);
+	CleverTap.removeListener(CleverTap.CleverTapInAppNotificationButtonTapped);
+	CleverTap.removeListener(CleverTap.CleverTapFeatureFlagsDidUpdate);
+	CleverTap.removeListener(CleverTap.CleverTapProductConfigDidInitialize);
+	CleverTap.removeListener(CleverTap.CleverTapProductConfigDidFetch);
+	CleverTap.removeListener(CleverTap.CleverTapProductConfigDidActivate);
+	CleverTap.removeListener(CleverTap.CleverTapPushNotificationClicked);
+	alert("Listeners removed successfully");
+}
+
+function addCleverTapAPIListeners(fromClick) {
+	// optional: add listeners for CleverTap Events
+	CleverTap.addListener(CleverTap.CleverTapProfileDidInitialize, (event) => { _handleCleverTapEvent(CleverTap.CleverTapProfileDidInitialize, event); });
+	CleverTap.addListener(CleverTap.CleverTapProfileSync, (event) => { _handleCleverTapEvent(CleverTap.CleverTapProfileSync, event); });
+	CleverTap.addListener(CleverTap.CleverTapInAppNotificationDismissed, (event) => { _handleCleverTapEvent(CleverTap.CleverTapInAppNotificationDismissed, event); });
+	CleverTap.addListener(CleverTap.CleverTapInboxDidInitialize, (event) => { _handleCleverTapInbox(CleverTap.CleverTapInboxDidInitialize, event); });
+	CleverTap.addListener(CleverTap.CleverTapInboxMessagesDidUpdate, (event) => { _handleCleverTapInbox(CleverTap.CleverTapInboxMessagesDidUpdate, event); });
+	CleverTap.addListener(CleverTap.CleverTapInboxMessageButtonTapped, (event) => { _handleCleverTapInbox(CleverTap.CleverTapInboxMessageButtonTapped, event); });
+	CleverTap.addListener(CleverTap.CleverTapDisplayUnitsLoaded, (event) => { _handleCleverTapDisplayUnitsLoaded(CleverTap.CleverTapDisplayUnitsLoaded, event); });
+	CleverTap.addListener(CleverTap.CleverTapInAppNotificationButtonTapped, (event) => { _handleCleverTapEvent(CleverTap.CleverTapInAppNotificationButtonTapped, event); });
+	CleverTap.addListener(CleverTap.CleverTapFeatureFlagsDidUpdate, (event) => { _handleCleverTapEvent(CleverTap.CleverTapFeatureFlagsDidUpdate, event); });
+	CleverTap.addListener(CleverTap.CleverTapProductConfigDidInitialize, (event) => { _handleCleverTapEvent(CleverTap.CleverTapProductConfigDidInitialize, event); });
+	CleverTap.addListener(CleverTap.CleverTapProductConfigDidFetch, (event) => { _handleCleverTapEvent(CleverTap.CleverTapProductConfigDidFetch, event); });
+	CleverTap.addListener(CleverTap.CleverTapProductConfigDidActivate, (event) => { _handleCleverTapEvent(CleverTap.CleverTapProductConfigDidActivate, event); });
+	CleverTap.addListener(CleverTap.CleverTapPushNotificationClicked, (event) => { _handleCleverTapEvent(CleverTap.CleverTapPushNotificationClicked, event); });
+
+	if (fromClick){
+	alert("Listeners added successfully");}
+}
+
+
+function _handleCleverTapEvent(eventName, event) {
+	console.log('handleCleverTapEvent', eventName, event);
+	ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
+}
+
+function _handleCleverTapInbox(eventName, event) {
+	console.log('handleCleverTapInbox', eventName, event);
+	ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
+}
+
+function _handleCleverTapDisplayUnitsLoaded(eventName, event) {
+	console.log('handleCleverTapDisplayUnitsLoaded', eventName, event);
+	ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
+}
+
+
+
+
 const styles = StyleSheet.create({
 
   MainContainer: {
