@@ -511,7 +511,7 @@ pushevent = () => {
 
     //Recording an Event
     CleverTap.recordEvent('testEvent');
-    CleverTap.recordEvent('testEventWithProps', { 'start': new Date(), 'foo': 'bar' });
+    CleverTap.recordEvent('testEventWithProps', {'start': new Date(), 'foo': 'bar'});
 
 };
 
@@ -519,9 +519,9 @@ pushchargedevent = () => {
     alert('Charged Event Recorded');
 
     //Recording an Event
-    CleverTap.recordChargedEvent({ 'totalValue': 20, 'category': 'books', 'purchase_date': new Date() },
-        [{ 'title': 'book1', 'published_date': new Date('2010-12-12T06:35:31'), 'author': 'ABC' },
-            { 'title': 'book2', 'published_date': new Date('2000-12-12T06:35:31') },
+    CleverTap.recordChargedEvent({'totalValue': 20, 'category': 'books', 'purchase_date': new Date()},
+        [{'title': 'book1', 'published_date': new Date('2010-12-12T06:35:31'), 'author': 'ABC'},
+            {'title': 'book2', 'published_date': new Date('2000-12-12T06:35:31')},
             {
                 'title': 'book3', 'published_date': new Date(), 'author': 'XYZ'
             }]
@@ -651,7 +651,17 @@ delete_NCGroup = () => {
 pushFcmRegistrationId = () => {
     alert('Registered FCM Id for Push');
     //Setting up a Push Notification
-    //CleverTap.setPushToken("111056687894", CleverTap.FCM);
+    if (Platform.OS === 'android') {
+        // Use only during custom implementation and make sure that FCM credentials used to generate token are same as CleverTap
+        // or else two different tokens will be pushed to BackEnd resulting in unwanted behavior
+        // => https://github.com/CleverTap/clevertap-react-native/issues/166
+        // => https://developer.clevertap.com/docs/android#section-custom-android-push-notifications-handling
+        CleverTap.setPushToken("111056687894", CleverTap.FCM);
+        //CleverTap.setPushToken("111056687894", CleverTap.HMS);//for Huawei push
+        //CleverTap.setPushToken("111056687894", CleverTap.XPS);//for Xiaomi push
+        //CleverTap.setPushToken("111056687894", CleverTap.BPS);//for Baidu push
+
+    }
 
 };
 create_notification = () => {
