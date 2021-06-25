@@ -459,12 +459,8 @@ userProfile = () => {
     alert('User Profile Updated');
 
     CleverTap.profileSet({
-        "Identity": 11102008,
-        "Name": "React-Test Profile",
-        "Email": "r@gmail.com",
-        "Gender": "Male",
-        "DOB": "1995-10-14",
-        "custom": 1.73
+        'Name': 'testUserA1', 'Identity': '123456', 'Email': 'test@test.com', 'custom1': 123,
+        'birthdate': new Date('2020-03-03T06:35:31')
     });
 
 };
@@ -473,7 +469,11 @@ id_mngmt = () => {
     alert('User Profile Updated');
 
     //On user Login
-    CleverTap.onUserLogin({'Name': 'React-Test', 'Identity': '11102008', 'Email': 'r@gmail.com', 'custom1': 43});
+    CleverTap.onUserLogin({
+        'Name': 'testUserA1', 'Identity': new Date().getTime() + '',
+        'Email': new Date().getTime() + 'testmobile@test.com', 'custom1': 123,
+        'birthdate': new Date('1992-12-22T06:35:31')
+    })
 
 };
 rmvalskey = () => {
@@ -511,6 +511,7 @@ pushevent = () => {
 
     //Recording an Event
     CleverTap.recordEvent('testEvent');
+    CleverTap.recordEvent('testEventWithProps', { 'start': new Date(), 'foo': 'bar' });
 
 };
 
@@ -518,10 +519,13 @@ pushchargedevent = () => {
     alert('Charged Event Recorded');
 
     //Recording an Event
-    CleverTap.recordChargedEvent({
-        'totalValue': 20,
-        'category': 'books'
-    }, [{'title': 'book1'}, {'title': 'book2'}, {'title': 'book3'}]);
+    CleverTap.recordChargedEvent({ 'totalValue': 20, 'category': 'books', 'purchase_date': new Date() },
+        [{ 'title': 'book1', 'published_date': new Date('2010-12-12T06:35:31'), 'author': 'ABC' },
+            { 'title': 'book2', 'published_date': new Date('2000-12-12T06:35:31') },
+            {
+                'title': 'book3', 'published_date': new Date(), 'author': 'XYZ'
+            }]
+    );
 
 };
 //App Inbox

@@ -59,7 +59,6 @@ public class MainApplication extends Application implements ReactApplication, CT
 
   @Override
   public void onCreate() {
-      CleverTapAPI.setUIEditorConnectionEnabled(false);
       CleverTapAPI.getDefaultInstance(getApplicationContext()).enableDeviceNetworkInfoReporting(true);
 
       ActivityLifecycleCallback.register(this); // this done instead of android:name in your AndroidManifest.xml application tag to com.clevertap.android.sdk.Application
