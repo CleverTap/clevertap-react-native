@@ -2,12 +2,10 @@ package com.reactnct;
 
 import android.os.Bundle;
 import android.util.Log;
-
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.android.sdk.pushnotification.NotificationInfo;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-
 import java.util.Map;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -19,7 +17,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 for (Map.Entry<String, String> entry : message.getData().entrySet()) {
                     extras.putString(entry.getKey(), entry.getValue());
                 }
-                Log.e("TAG","onReceived Mesaage Called");
+                Log.e("TAG", "notification received with message = " + extras.toString());
                 NotificationInfo info = CleverTapAPI.getNotificationInfo(extras);
 
                 if (info.fromCleverTap) {

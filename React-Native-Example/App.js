@@ -665,9 +665,26 @@ pushFcmRegistrationId = () => {
 
 };
 create_notification = () => {
-    alert('');
-    //Setting up a Push Notification
-    //CleverTapReact.createNotification(extras);
+
+    // createNotification in your custom implementation => https://developer.clevertap.com/docs/android#section-custom-android-push-notifications-handling
+    
+    // Please note, extras passed in below method is just for showcase, you need to pass the one that you receive from FCM
+    CleverTap.createNotification({'wzrk_acct_id':'88R-R54-5Z6Z',
+        'nm':'Testing 1..2..3..',
+        'nt':'Test event',
+        'pr':'max',
+        'wzrk_pivot':'wzrk_default',
+        'wzrk_ttl_s':'2419200',
+        'wzrk_cid':'CtRNS',
+        'wzrk_pid':new Date().getTime(),
+        'wzrk_rnv':false,
+        'wzrk_ttl':'1627053990',
+        'wzrk_push_amp':false,
+        'wzrk_bc':'',
+        'wzrk_bi':'2',
+        'wzrk_dt':'FIREBASE',
+        'wzrk_id':'1624627506_20210625',
+        'wzrk_pn':true});
 
 };
 //Native Display
