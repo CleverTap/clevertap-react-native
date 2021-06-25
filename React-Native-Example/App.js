@@ -147,6 +147,9 @@ class Expandable_ListView extends Component {
             case 30:
                 create_notification();
                 break;
+            case 300:
+                createNotificationChannelWithSound();
+                break;
             case 31:
                 getUnitID();
                 break;
@@ -359,7 +362,7 @@ export default class App extends Component {
                         id: 28,
                         name: 'deleteNotificationChannelGroup'
                     },
-                    {id: 29, name: 'pushFcmRegistrationId'}, {id: 30, name: 'createNotification'}]
+                    {id: 29, name: 'pushFcmRegistrationId'}, {id: 30, name: 'createNotification'},{id:300,name:'createNotificationChannelWithSound'}]
             },
             {
                 expanded: false,
@@ -667,24 +670,26 @@ pushFcmRegistrationId = () => {
 create_notification = () => {
 
     // createNotification in your custom implementation => https://developer.clevertap.com/docs/android#section-custom-android-push-notifications-handling
-    
+
     // Please note, extras passed in below method is just for showcase, you need to pass the one that you receive from FCM
-    CleverTap.createNotification({'wzrk_acct_id':'88R-R54-5Z6Z',
-        'nm':'Testing 1..2..3..',
-        'nt':'Test event',
-        'pr':'max',
-        'wzrk_pivot':'wzrk_default',
-        'wzrk_ttl_s':'2419200',
-        'wzrk_cid':'CtRNS',
-        'wzrk_pid':new Date().getTime(),
-        'wzrk_rnv':false,
-        'wzrk_ttl':'1627053990',
-        'wzrk_push_amp':false,
-        'wzrk_bc':'',
-        'wzrk_bi':'2',
-        'wzrk_dt':'FIREBASE',
-        'wzrk_id':'1624627506_20210625',
-        'wzrk_pn':true});
+    CleverTap.createNotification({
+        'wzrk_acct_id': '88R-R54-5Z6Z',
+        'nm': 'Testing 1..2..3..',
+        'nt': 'Test event',
+        'pr': 'max',
+        'wzrk_pivot': 'wzrk_default',
+        'wzrk_ttl_s': '2419200',
+        'wzrk_cid': 'CtRNS',
+        'wzrk_pid': new Date().getTime(),
+        'wzrk_rnv': false,
+        'wzrk_ttl': '1627053990',
+        'wzrk_push_amp': false,
+        'wzrk_bc': '',
+        'wzrk_bi': '2',
+        'wzrk_dt': 'FIREBASE',
+        'wzrk_id': '1624627506_20210625',
+        'wzrk_pn': true
+    });
 
 };
 //Native Display
@@ -927,6 +932,13 @@ function addCleverTapAPIListeners(fromClick) {
     if (fromClick) {
         alert("Listeners added successfully");
     }
+}
+
+function createNotificationChannelWithSound() {
+    // https://developer.clevertap.com/docs/add-a-sound-file-to-your-android-app
+
+    CleverTap.createNotificationChannelWithSound("CtRNS", "Clever Tap React Native Testing",
+        "CT React Native Testing", 1, true, "glitch.mp3")
 }
 
 
