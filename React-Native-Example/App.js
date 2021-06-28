@@ -150,6 +150,12 @@ class Expandable_ListView extends Component {
             case 300:
                 createNotificationChannelWithSound();
                 break;
+            case 301:
+                createNotificationChannelWithGroupId();
+                break;
+            case 302:
+                createNotificationChannelWithGroupIdAndSound();
+                break;
             case 31:
                 getUnitID();
                 break;
@@ -362,7 +368,8 @@ export default class App extends Component {
                         id: 28,
                         name: 'deleteNotificationChannelGroup'
                     },
-                    {id: 29, name: 'pushFcmRegistrationId'}, {id: 30, name: 'createNotification'},{id:300,name:'createNotificationChannelWithSound'}]
+                    {id: 29, name: 'pushFcmRegistrationId'}, {id: 30, name: 'createNotification'},{id:300,name:'createNotificationChannelWithSound'},
+                    {id:301,name:'createNotificationChannelWithGroupId'},{id:302,name:'createNotificationChannelWithGroupIdAndSound'}]
             },
             {
                 expanded: false,
@@ -634,20 +641,20 @@ create_NC = () => {
 delete_NC = () => {
     alert('Notification Channel Deleted');
     //Delete Notification Channel
-    CleverTap.deleteNotificationChannel("RNTesting")
+    CleverTap.deleteNotificationChannel("CtRNS")
 
 };
 
 create_NCGroup = () => {
     alert('Notification Channel Group Created');
     //Creating a group notification channel
-    //CleverTap.createNotificationChannelGroup(String groupId, String groupName)
+    CleverTap.createNotificationChannelGroup("Offers","All Offers related notifications")
 
 };
 delete_NCGroup = () => {
     alert('Notification Channel Group Deleted');
     //Delete a group notification channel
-    //CleverTap.deleteNotificationChannelGroup(String groupId)
+    CleverTap.deleteNotificationChannelGroup("Offers")
 
 };
 
@@ -939,6 +946,26 @@ function createNotificationChannelWithSound() {
 
     CleverTap.createNotificationChannelWithSound("CtRNS", "Clever Tap React Native Testing",
         "CT React Native Testing", 1, true, "glitch.mp3")
+}
+
+function createNotificationChannelWithGroupId() {
+    // https://developer.clevertap.com/docs/android#section-push-notifications-for-android-o
+
+    CleverTap.createNotificationChannelWithGroupId("offersMonthly", "Monthly Offers",
+        "Offers given at every month", 1, "Offers", true)
+    CleverTap.createNotificationChannelWithGroupId("offersQuarterly", "Quarterly Offers",
+        "Offers given at every Quarter", 1, "Offers", true)
+}
+
+
+function createNotificationChannelWithGroupIdAndSound() {
+    // https://developer.clevertap.com/docs/android#section-push-notifications-for-android-o
+
+    CleverTap.createNotificationChannelWithGroupIdAndSound("offersMonthly", "Monthly Offers",
+        "Offers given at every month", 1, "Offers", true,"glitch.mp3")
+    CleverTap.createNotificationChannelWithGroupIdAndSound("offersQuarterly", "Quarterly Offers",
+        "Offers given at every Quarter", 1, "Offers", true,"glitch.mp3")
+
 }
 
 
