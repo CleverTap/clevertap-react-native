@@ -81,6 +81,7 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
+    nodeExecutableAndArgs:  ["/usr/local/bin/node"]
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -192,10 +193,10 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     //added from atlasian doc
-    implementation 'com.clevertap.android:clevertap-android-sdk:4.0.2'
+    implementation 'com.clevertap.android:clevertap-android-sdk:4.1.1'
 //    implementation 'com.google.android.gms:play-services-ads:19.0.1'
-    implementation 'com.google.android.gms:play-services-base:17.2.1'
-    implementation 'com.android.installreferrer:installreferrer:1.0'
+    implementation 'com.google.android.gms:play-services-base:17.4.0'
+    implementation 'com.android.installreferrer:installreferrer:2.1'
     implementation 'com.google.firebase:firebase-messaging:20.2.4'
     implementation project(':clevertap-react-native')
     //added from atlasian doc
@@ -205,6 +206,12 @@ dependencies {
     implementation 'com.google.android.material:material:1.3.0' //Mandatory for App Inbox
     implementation 'androidx.appcompat:appcompat:1.2.0' //Mandatory for App Inbox
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    implementation 'androidx.core:core:1.3.0'
+    implementation 'androidx.fragment:fragment:1.1.0' // InApp
+    implementation 'com.google.android.exoplayer:exoplayer:2.11.5' //Optional for Audio/Video
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.11.5' //Optional for Audio/Video
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.5' //Optional for Audio/Video
+    implementation 'com.android.support:multidex:1.0.3'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
