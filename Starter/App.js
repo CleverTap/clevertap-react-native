@@ -18,7 +18,11 @@ const instructions = Platform.select({
 });
 
 const sectionsList = [
-    { title: 'EVENTS', data: [{ id: '_recordEvent', title: 'Record Event' }, { id: '_recordChargedEvent', title: 'Record Charged Event' }] },
+    {
+        title: 'EVENTS', data: [{ id: '_recordEvent', title: 'Record Event' },
+            { id: '_recordEventWithProps', title: 'Record Event With Properties' },
+            { id: '_recordChargedEvent', title: 'Record Charged Event' }]
+    },
     {
         title: 'USER PROFILE', data: [{ id: '_updateUserProfile', title: 'Update User Profile' },
         { id: '_onUserLogin', title: 'On User Login, create new profile' },
@@ -26,7 +30,7 @@ const sectionsList = [
 
     },
     {
-        title: 'INBOX', data: [{ id: '_openInbox', title: 'Open Inbox' }, { id: '_showCounts', title: 'Show Counts' },
+        title: 'APP INBOX', data: [{ id: '_openInbox', title: 'Open Inbox' }, { id: '_showCounts', title: 'Show Counts' },
         { id: '_getAllInboxMessages', title: 'Get All Inbox Messages' }, { id: '_getUnreadInboxMessages', title: 'Get Unread Messages' },
         { id: '_customAppInboxAPI', title: 'Custom App Inbox API' }]
     },
@@ -138,10 +142,13 @@ export default class App extends Component<Props> {
 
     _recordEvent(event) {
         CleverTap.recordEvent('testEvent');
-        CleverTap.recordEvent('testEventWithProps', { 'start': new Date(), 'foo': 'bar' });
         if (Platform.OS === 'android') {
             CleverTap.setPushToken("FCM-Token", CleverTap.FCM);
         }
+    }
+
+    _recordEventWithProps(event) {
+        CleverTap.recordEvent('testEventWithProps', { 'start': new Date(), 'foo': 'bar' });
     }
 
     _recordChargedEvent(event) {
@@ -413,14 +420,13 @@ const styles = StyleSheet.create({
     },
     button: {
         marginBottom: 20,
-        fontSize: 28,
         backgroundColor: '#fcca03',
 
     },
     item: {
         padding: 14,
         justifyContent: 'center',
-        fontSize: 28,
+        fontSize: 18,
         fontWeight: 'bold',
         height: 54,
         marginBottom: 5,
