@@ -409,23 +409,32 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: '#333333',
         marginBottom: 5,
+
     },
     button: {
-        marginBottom: 20
+        marginBottom: 20,
+        fontSize: 28,
+        backgroundColor: '#fcca03',
+
     },
     item: {
-        padding: 10,
-        fontSize: 18,
-        height: 44
+        padding: 14,
+        justifyContent: 'center',
+        fontSize: 28,
+        fontWeight: 'bold',
+        height: 54,
+        marginBottom: 5,
+        backgroundColor: '#E5E7EB',
+
     },
     sectionHeader: {
-        paddingTop: 2,
+        padding: 18,
         paddingLeft: 10,
         paddingRight: 10,
-        paddingBottom: 2,
-        fontSize: 14,
+        paddingBottom: 18,
+        fontSize: 16,
         fontWeight: 'bold',
-        backgroundColor: '#4d94ff',
+        backgroundColor: '#EF4444',
         color: '#FFFFFF'
     },
     containerList: {
@@ -434,11 +443,11 @@ const styles = StyleSheet.create({
     },
     instructionsApi: {
         textAlign: 'center',
-        backgroundColor: '#ff3333',
+        backgroundColor: '#fcba03',
         color: '#FFFFFF',
         fontWeight: 'bold',
         marginBottom: 5,
         paddingBottom: 10,
-        paddingTop: 10
+        paddingTop: 64,
     }
 });
