@@ -25,14 +25,6 @@
 	};
     ```
     
-    3. The CleverTap SDK is not yet upgraded to AndroidX. Add the following to your gradle.properties file
-    
-    
-  
-    ```android.useAndroidX=true
-   	 android.enableJetifier=true
-    ```
-
   
   ## Steps for iOS ##
   
@@ -75,7 +67,7 @@ pod 'CleverTap-iOS-SDK', '3.9.2'
 ```gradle
 dependencies {
 	...
-    implementation 'com.clevertap.android:clevertap-android-sdk:4.0.0'
+    implementation 'com.clevertap.android:clevertap-android-sdk:4.2.0'
     implementation 'com.google.android.gms:play-services-base:17.4.0'
     implementation 'com.google.firebase:firebase-messaging:20.2.4'
     implementation 'com.google.android.exoplayer:exoplayer:2.11.5' //Optional for Audio/Video
