@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 0.5.2 *(19th July 2021)*
+Version 0.5.2 *(20th July 2021)*
 -------------------------------------------
 - Supports CleverTap Android SDK `v4.2.0`
 - Android SDK `v4.2.0` fixes NPE for `recordScreenView()` in Android
