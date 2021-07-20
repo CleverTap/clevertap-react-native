@@ -20,33 +20,56 @@ const instructions = Platform.select({
 const sectionsList = [
     {
         title: 'EVENTS', data: [{ id: '_recordEvent', title: 'Record Event' },
-            { id: '_recordEventWithProps', title: 'Record Event With Properties' },
-            { id: '_recordChargedEvent', title: 'Record Charged Event' }]
+        { id: '_recordEventWithProps', title: 'Record Event With Properties' },
+        { id: '_recordChargedEvent', title: 'Record Charged Event' }]
     },
     {
-        title: 'USER PROFILE', data: [{ id: '_updateUserProfile', title: 'Update User Profile' },
-        { id: '_onUserLogin', title: 'On User Login, create new profile' },
-        { id: '_getUserProfileProperty', title: 'Get User Profile Property' }]
-
+        title: 'USER PROFILE', data: [
+            { id: '_updateUserProfile', title: 'Profile Push' },
+            { id: '_onUserLogin', title: 'On User Login, create new profile' },
+            { id: '_setMultiValuesForKey', title: 'Set Multi Values For Key' },
+            { id: '_addMultiValuesForKey', title: 'Add Multi Values For Key' },
+            { id: '_addMultiValueForKey', title: 'Add Multi Value For Key' },
+            { id: '_removeMultiValueForKey', title: 'Remove Multi Value For Key' },
+            { id: '_removeMultiValuesForKey', title: 'Remove Multi Values For Key' },
+            { id: '_getUserProfileProperty', title: 'Get User Profile Property' }]
     },
     {
-        title: 'APP INBOX', data: [{ id: '_openInbox', title: 'Open Inbox' }, { id: '_showCounts', title: 'Show Counts' },
-        { id: '_getAllInboxMessages', title: 'Get All Inbox Messages' }, { id: '_getUnreadInboxMessages', title: 'Get Unread Messages' },
-        { id: '_customAppInboxAPI', title: 'Custom App Inbox API' }]
+        title: 'APP INBOX', data: [
+            { id: '_openInbox', title: 'Open Inbox' },
+            { id: '_showCounts', title: 'Show Counts' },
+            { id: '_getAllInboxMessages', title: 'Get All Inbox Messages' },
+            { id: '_getUnreadInboxMessages', title: 'Get Unread Messages' },
+            { id: '_customAppInboxAPI', title: 'Custom App Inbox API' }]
     },
     {
-        title: 'DISPLAY UNITS', data: [{ id: '_getDisplayUnitForId', title: 'Get Display Unit For Id' }, {
-            id: '_getAllDisplayUnits',
-            title: 'Get All Display Units'
-        }]
+        title: 'DISPLAY UNITS', data: [
+            { id: '_getDisplayUnitForId', title: 'Get Display Unit For Id' },
+            { id: '_getAllDisplayUnits', title: 'Get All Display Units' }]
     },
     {
-        title: 'PRODUCT CONFIGS', data: [{ id: '_setDefaultProductConfigs', title: 'Set Default Product Configs' },
-        { id: '_fetch', title: 'Fetch' }, { id: '_activate', title: 'Activate' }, { id: '_fetchAndActivate', title: 'Fetch And Activate' },
-        { id: '_resetProductConfig', title: 'Reset' }, { id: '_fetchWithMinimumIntervalInSeconds', title: 'Fetch With Minimum Fetch Interval In Seconds' },
-        { id: '_getProductConfigs', title: 'Get Product Configs' }]
+        title: 'PRODUCT CONFIGS', data: [
+            { id: '_setDefaultProductConfigs', title: 'Set Default Product Configs' },
+            { id: '_fetch', title: 'Fetch' },
+            { id: '_activate', title: 'Activate' },
+            { id: '_fetchAndActivate', title: 'Fetch And Activate' },
+            { id: '_resetProductConfig', title: 'Reset' },
+            { id: '_fetchWithMinimumIntervalInSeconds', title: 'Fetch With Minimum Fetch Interval In Seconds' },
+            { id: '_getProductConfigs', title: 'Get Product Configs' }]
     },
-    { title: 'FEATURE FLAGS', data: [{ id: '_getFeatureFlag', title: 'Get Feature Flag' }] }
+    {
+        title: 'FEATURE FLAGS', data: [
+            { id: '_getFeatureFlag', title: 'Get Feature Flag' }]
+    },
+    {
+        title: 'APP PERSONALISATION', data: [
+            { id: '_enablePersonalization', title: 'Enable Personalization' },
+            { id: '_disablePersonalization', title: 'Disable Personalization' }]
+    },
+    {
+        title: 'ENABLE DEBUGGING', data: [
+            { id: '_setDebugLevel', title: 'Set Debug Level' }]
+    }
 ]
 
 type Props = {};
@@ -168,11 +191,6 @@ export default class App extends Component<Props> {
             'Name': 'testUserA1', 'Identity': '123456', 'Email': 'test@test.com', 'custom1': 123,
             'birthdate': new Date('2020-03-03T06:35:31')
         });
-        CleverTap.profileSetMultiValuesForKey(['a', 'b', 'c'], 'letters');
-        CleverTap.profileAddMultiValueForKey('d', 'letters');
-        CleverTap.profileAddMultiValuesForKey(['e', 'f'], 'letters');
-        CleverTap.profileRemoveMultiValueForKey('b', 'letters');
-        CleverTap.profileRemoveMultiValuesForKey(['a', 'c'], 'letters');
         CleverTap.setLocation(34.15, -118.20);
     }
 
@@ -184,9 +202,29 @@ export default class App extends Component<Props> {
         })
     }
 
+    _setMultiValuesForKey(event) {
+        CleverTap.profileSetMultiValuesForKey(['a', 'b', 'c'], 'letters');
+    }
+
+    _addMultiValuesForKey(event) {
+        CleverTap.profileAddMultiValuesForKey(['e', 'f'], 'letters');
+
+    }
+
+    _addMultiValueForKey(event) {
+        CleverTap.profileAddMultiValueForKey('d', 'letters');
+    }
+
+    _removeMultiValuesForKey(event) {
+        CleverTap.profileRemoveMultiValuesForKey(['a', 'c'], 'letters');
+
+    }
+
+    _removeMultiValueForKey(event) {
+        CleverTap.profileRemoveMultiValueForKey('b', 'letters');
+    }
 
     _getUserProfileProperty(event) {
-        CleverTap.enablePersonalization();
 
         CleverTap.profileGetProperty('Name', (err, res) => {
             console.log('CleverTap Profile Name: ', res, err);
@@ -308,12 +346,29 @@ export default class App extends Component<Props> {
 
     }
 
-    //Feature flags
+    // Feature flags
 
     _getFeatureFlag(event) {
         CleverTap.getFeatureFlag('is_dark_mode', false, (err, res) => {
             console.log('FF is_dark_mode val in boolean :', res, err);
         });
+    }
+
+
+    // Personalization
+
+    _enablePersonalization() {
+        CleverTap.enablePersonalization();
+    }
+
+    _disablePersonalization() {
+        CleverTap.disablePersonalization();
+    }
+
+    // Enable Debugging
+
+    _setDebugLevel() {
+        CleverTap.setDebugLevel(3);
     }
 
     _onListItemClick(item) {
@@ -378,6 +433,33 @@ export default class App extends Component<Props> {
                 break;
             case "_getFeatureFlag":
                 this._getFeatureFlag();
+                break;
+            case "_setDebugLevel":
+                this._setDebugLevel();
+                break;
+            case "_recordEventWithProps":
+                this._recordEventWithProps();
+                break;
+            case "_setMultiValuesForKey":
+                this._setMultiValuesForKey();
+                break;
+            case "_addMultiValuesForKey":
+                this._addMultiValuesForKey();
+                break;
+            case "_removeMultiValuesForKey":
+                this._removeMultiValuesForKey();
+                break;
+            case "_addMultiValueForKey":
+                this._addMultiValueForKey();
+                break;
+            case "_removeMultiValueForKey":
+                this._removeMultiValueForKey();
+                break;
+            case "_enablePersonalization":
+                this._enablePersonalization();
+                break;
+            case "_disablePersonalization":
+                this._disablePersonalization();
                 break;
         }
     }
