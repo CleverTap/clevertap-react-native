@@ -35,7 +35,7 @@ public class CleverTapPackage implements ReactPackage {
 
     /**
      * @param reactContext
-     * @return a list of view managers that should be registered with {@link UIManagerModule}
+     * @return a list of view managers
      */
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
