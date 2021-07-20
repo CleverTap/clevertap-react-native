@@ -10,7 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "clevertap-react-native": "git+https://github.com/CleverTap/clevertap-react-native.git#develop",
+    "clevertap-react-native": "git+https://github.com/CleverTap/clevertap-react-native.git#task/update_core_4.2.0/SDK-958",
     "react": "16.9.0",
     "react-native": "^0.63.3"
   },
