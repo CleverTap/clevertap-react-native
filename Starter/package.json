@@ -12,7 +12,7 @@
   "dependencies": {
     "clevertap-react-native": "git+https://github.com/CleverTap/clevertap-react-native.git#task/update_core_4.2.0/SDK-958",
     "react": "16.9.0",
-    "react-native": "^0.63.3"
+    "react-native": "^0.64.1"
   },
   "devDependencies": {
     "@babel/core": "7.7.4",
