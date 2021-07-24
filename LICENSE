@@ -1,7 +1,7 @@
-Copyright (c) 2014-2017 CleverTap
+Copyright (c) 2014-2021 CleverTap
 All rights reserved.
 
-* Use of source code or binaries contained within CleverTap's iOS SDK is permitted only to enable use of the CleverTap platform by customers of CleverTap.
+* Use of source code or binaries contained within CleverTap's React SDK is permitted only to enable use of the CleverTap platform by customers of CleverTap.
 * Modification of source code and inclusion in mobile apps is explicitly allowed provided that all other conditions are met.
 * Neither the name of CleverTap nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 * Redistribution of source code or binaries is disallowed except with specific prior written permission. Any such redistribution must retain the above copyright notice, this list of conditions and the following disclaimer.
