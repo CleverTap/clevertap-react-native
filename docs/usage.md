@@ -1,5 +1,5 @@
 
-## Example JS Usage
+## Example Usage
 
 #### Grab a reference  
 ```javascript 
@@ -8,7 +8,7 @@ const CleverTap = require('clevertap-react-native');
 
 ## User Profiles
 
-#### Update User Profile(Push Profile )
+#### Update User Profile(Push Profile)
 ```javascript 
 CleverTap.profileSet({"Identity":11102008, "Name":"React-Test Profile","Email":"r@gmail.com","Gender":"Male","DOB":"1995-10-14", "custom":1.73});
 ```
@@ -210,71 +210,74 @@ CleverTap.fetchAndActivate();
 ```
 
 #### Fetch Minimum Time Interval
+
 ```javascript 
 CleverTap.fetchWithMinimumIntervalInSeconds(60);
 ```
 
 #### Set Minimum Time Interval for Fetch 
+
 ```javascript 
 CleverTap.setMinimumFetchIntervalInSeconds(60);
 ```
 
 #### Get Boolean key
+
 ```javascript 
 CleverTap.getProductConfigBoolean('is_shown', (err, res) => {
-		      console.log('PC is_shown val in boolean :', res, err);
-			  alert(`PC is_shown val in boolean : ${res}`);
+	console.log('PC is_shown val in boolean :', res, err);
 ```
 #### Get Long
+
 ```javascript 
 CleverTap.getNumber('msg_count', (err, res) => {
-		      console.log('PC is_shown val in number(long)  :', res, err);
-			  alert(`PC is_shown val in number(long) : ${res}`);
-		 });
+	console.log('PC is_shown val in number(long)  :', res, err);
+});
 ```
 #### Get Double
+
 ```javascript 
 CleverTap.getNumber('price', (err, res) => {
-		      console.log('PC price val in number :', res, err);
-			  alert(`PC is_shown val in number(double) : ${res}`);
-		 });		
+	console.log('PC price val in number :', res, err);
+});		
 ```
 #### Get String
+
 ```javascript 
 CleverTap.getProductConfigString('text_color', (err, res) => {
-              		console.log('PC text_color val in string :', res, err);
-					alert(`PC is_shown val in String : ${res}`);
-         	});	
+        console.log('PC text_color val in string :', res, err);
+});	
 ```
 #### Get String (JSON)
+
 ```javascript 
 CleverTap.getProductConfigString('json', (err, res) => {
-		      console.log('PC json val in string :', res, err);
-			  alert(`PC json val in String : ${res}`);
-		 });	
+	console.log('PC json val in string :', res, err);
+);	
 ```
 
 #### Delete all activated, fetched and defaults configs
+
 ```javascript 
 CleverTap.resetProductConfig();
 ```
 
 #### Get last fetched timestamp in millis
+
 ```javascript 
 CleverTap.getLastFetchTimeStampInMillis((err, res) => {
-               console.log('LastFetchTimeStampInMillis in string: ', res, err);
-			    alert(`LastFetchTimeStampInMillis in string: ${res}`);
-          });		
+        onsole.log('LastFetchTimeStampInMillis in string: ', res, err);
+});		
 ```
 
 ## Feature Flag
 
 #### Get Feature Flag
+
 ```javascript 
 CleverTap.getFeatureFlag('is_dark_mode', false, (err, res) => {
-			      console.log('FF is_dark_mode val in boolean :', res, err);
-				  alert(`FF is_dark_mode val in boolean :{res}`);
-		     });
+	console.log('FF is_dark_mode val in boolean :', res, err);
+});
 ```
 
 -----------
@@ -282,26 +285,23 @@ CleverTap.getFeatureFlag('is_dark_mode', false, (err, res) => {
 ## App Personalisation
 
 #### Enable Personalization
+
 ```javascript 
-CleverTap.enablePersonalization();
-			alert('Personalization Enabled');	
-		};
+CleverTap.enablePersonalization();		
 ```
 
 #### Disable Personalization
 
 ```javascript 
 CleverTap.disablePersonalization();
-			alert('Personalization Disabled');	
-		};
 ```
 
 #### Get Profile Name
+
 ```javascript 
 CleverTap.profileGetProperty('Name', (err, res) => {
-		    console.log('CleverTap Profile Name: ', res, err);
-		 			alert(`CleverTap Profile Name:${res}`);
-        });
+	console.log('CleverTap Profile Name: ', res, err);
+});
 ```
 
 -----------
@@ -309,13 +309,12 @@ CleverTap.profileGetProperty('Name', (err, res) => {
 ## Attributions
 
 #### Get CleverTap Attribution Identifier
+
 ```javascript 
 CleverTap.profileGetCleverTapAttributionIdentifier((err, res) => {
-            console.log('CleverTapAttributionIdentifier', res, err);
-			alert(`CleverTapAttributionIdentifier${res}`);
-        });
+         console.log('CleverTapAttributionIdentifier', res, err);
+});
 ```
-
 
 
 ### For more information,
