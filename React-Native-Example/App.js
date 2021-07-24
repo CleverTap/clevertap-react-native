@@ -252,9 +252,10 @@ class Expandable_ListView extends Component {
                         this.props.item.sub_Category.map((item, key) => (
 
                             <TouchableOpacity key={key} style={styles.sub_Category_Text}
+
                                 onPress={this.show_Selected_Category.bind(this, item.id)}>
 
-                                <Text> {item.name} </Text>
+                                <Text style={styles.setSubCategoryFontSizeOne}> {item.name} </Text>
 
                                 <View style={{ width: '100%', height: 1, backgroundColor: '#000' }} />
 
@@ -264,9 +265,7 @@ class Expandable_ListView extends Component {
                     }
 
                 </View>
-
             </View>
-
         );
     }
 }
@@ -307,7 +306,6 @@ export default class App extends Component {
                 console.log('CleverTap launch url', err);
             }
         });
-
 
         const array = [
             {
@@ -449,14 +447,13 @@ export default class App extends Component {
         return (
             <View style={styles.MainContainer}>
 
-                <ScrollView contentContainerStyle={{ paddingHorizontal: 10, paddingVertical: 5 }}>
+                <ScrollView contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 5 }}>
                     <TouchableOpacity
                         style={styles.button}>
-                        <Text style={styles.button_Text}>React-Native Demo</Text>
+                        <Text style={styles.button_Text}>CleverTap Example</Text>
 
                     </TouchableOpacity>
                     {
-
                         this.state.AccordionData.map((item, key) =>
                             (
                                 <Expandable_ListView key={item.category_Name}
@@ -529,7 +526,6 @@ pushevent = () => {
     //Recording an Event
     CleverTap.recordEvent('testEvent');
     CleverTap.recordEvent('testEventWithProps', { 'start': new Date(), 'foo': 'bar' });
-
 };
 
 pushChargedEvent = () => {
@@ -539,9 +535,7 @@ pushChargedEvent = () => {
     CleverTap.recordChargedEvent({ 'totalValue': 20, 'category': 'books', 'purchase_date': new Date() },
         [{ 'title': 'book1', 'published_date': new Date('2010-12-12T06:35:31'), 'author': 'ABC' },
         { 'title': 'book2', 'published_date': new Date('2000-12-12T06:35:31') },
-        {
-            'title': 'book3', 'published_date': new Date(), 'author': 'XYZ'
-        }]
+        { 'title': 'book3', 'published_date': new Date(), 'author': 'XYZ' }]
     );
 
 };
@@ -556,8 +550,7 @@ show_appInbox = () => {
         'navBarTitleColor': '#FF0000',
         'navBarColor': '#FFFFFF',
         'inboxBackgroundColor': '#AED6F1',
-        'backButtonColor': '#00FF00'
-        ,
+        'backButtonColor': '#00FF00',
         'unselectedTabColor': '#0000FF',
         'selectedTabColor': '#FF0000',
         'selectedTabIndicatorColor': '#000000',
@@ -993,22 +986,20 @@ const styles = StyleSheet.create({
     MainContainer: {
         flex: 1,
         justifyContent: 'center',
-        paddingTop: (Platform.OS === 'ios') ? 20 : 0,
+        paddingTop: (Platform.OS === 'ios') ? 44 : 0,
         backgroundColor: '#F5FCFF',
     },
 
     iconStyle: {
-
-        width: 30,
-        height: 30,
+        width: 22,
+        height: 22,
         justifyContent: 'flex-end',
         alignItems: 'center',
         tintColor: '#fff'
-
     },
 
     sub_Category_Text: {
-        fontSize: 18,
+        fontSize: 20,
         color: '#000',
         padding: 10
     },
@@ -1016,8 +1007,8 @@ const styles = StyleSheet.create({
     category_Text: {
         textAlign: 'left',
         color: '#fff',
-        fontSize: 21,
-        padding: 10
+        fontSize: 22,
+        padding: 12
     },
 
     category_View: {
@@ -1032,20 +1023,25 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#FF6F00'
     },
+
     button: {
         alignItems: "center",
         backgroundColor: "#FEFDFC",
         height: 64,
         color: '#fff',
-        fontSize: 100,
+        fontSize: 44,
         padding: 10
     },
 
     button_Text: {
         textAlign: 'left',
         color: '#000',
-        fontSize: 21,
+        fontSize: 26,
         padding: 10
+    },
+
+    setSubCategoryFontSizeOne: {
+        fontSize: 18 // Define font size here in Pixels
     },
 
 });
