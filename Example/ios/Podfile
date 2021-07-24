@@ -11,10 +11,5 @@ target 'Example' do
   
   pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
   pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
-      
-  target 'ExampleTests' do
-    inherit! :complete
-    # Pods for testing
-  end
 
 end
