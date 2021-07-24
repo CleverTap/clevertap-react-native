@@ -342,6 +342,6 @@ CleverTap.profileGetCleverTapAttributionIdentifier((err, res) => {
 
 
 ### For more information,
- - [See included Starter Application](https://github.com/CleverTap/clevertap-react-native/blob/master/Starter/App.js) 
+ - [See included Example Application](/Example/App.js) 
  - [See CleverTap JS interface](/index.js)
  - [See CleverTap TS interface](/index.d.ts)

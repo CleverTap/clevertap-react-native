@@ -29,7 +29,7 @@ To get started, sign up [here](https://clevertap.com/live-product-demo/).
 
 - [See the CleverTap React Native Usage Documentation](/docs/usage.md)
 
-- [See the included Example Project](/Starter/)
+- [See the included Example Project](/Example/)
 
 
 ## 🆕 Changelog
