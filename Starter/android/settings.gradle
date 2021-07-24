@@ -1,0 +1,5 @@
+rootProject.name = 'Starter'
+include ':clevertap-react-native'
+project(':clevertap-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/clevertap-react-native/android')
+
+include ':app'
