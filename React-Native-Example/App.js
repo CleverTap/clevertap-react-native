@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
 import {
     Alert,
@@ -54,7 +54,7 @@ class Expandable_ListView extends Component {
     }
 
 
-//In this Function You can write the items to be called w.r.t list id:
+    //In this Function You can write the items to be called w.r.t list id:
     show_Selected_Category = (item) => {
         switch (item) {
             case 1:
@@ -162,64 +162,64 @@ class Expandable_ListView extends Component {
             case 32:
                 getAllDisplayUnits();
                 break;
-            case 33    :
+            case 33:
                 fetch();
                 break;
-            case 34    :
+            case 34:
                 activate();
                 break;
-            case 35    :
+            case 35:
                 fetchAndActivate();
                 break;
-            case 36    :
+            case 36:
                 fetchwithMinIntervalinsec();
                 break;
-            case 37    :
+            case 37:
                 setMinimumFetchIntervalInSeconds();
                 break;
-            case 38    :
+            case 38:
                 getBoolean();
                 break;
-            case 39    :
+            case 39:
                 getDouble();
                 break;
-            case 40    :
+            case 40:
                 getLong();
                 break;
-            case 41    :
+            case 41:
                 getString();
                 break;
-            case 42    :
+            case 42:
                 getStrings();
                 break;
-            case 43    :
+            case 43:
                 reset_config();
                 break;
-            case 44    :
+            case 44:
                 getLastFetchTimeStampInMillis();
                 break;
-            case 45    :
+            case 45:
                 getFeatureFlag();
                 break;
-            case 46    :
+            case 46:
                 enablePersonalization();
                 break;
-            case 47    :
+            case 47:
                 profile_getProperty();
                 break;
-            case 48    :
+            case 48:
                 GetCleverTapAttributionIdentifier();
                 break;
-            case 49    :
+            case 49:
                 CleverTap.setOptOut(value);
                 break;
-            case 50    :
+            case 50:
                 CleverTap.enableDeviceNetworkInfoReporting(value);
                 break;
-            case 51    :
+            case 51:
                 CleverTap.enablePersonalization();
                 break;
-            case 52    :
+            case 52:
                 CleverTap.setOffline(value);
                 break;
             case 53:
@@ -233,10 +233,7 @@ class Expandable_ListView extends Component {
 
     render() {
         return (
-		
-		
-		
-		
+
             <View style={styles.Panel_Holder}>
 
                 <TouchableOpacity activeOpacity={0.8} onPress={this.props.onClickFunction} style={styles.category_View}>
@@ -244,22 +241,22 @@ class Expandable_ListView extends Component {
                     <Text style={styles.category_Text}>{this.props.item.category_Name} </Text>
 
                     <Image
-                        source={{uri: 'https://reactnativecode.com/wp-content/uploads/2019/02/arrow_right_icon.png'}}
-                        style={styles.iconStyle}/>
+                        source={{ uri: 'https://reactnativecode.com/wp-content/uploads/2019/02/arrow_right_icon.png' }}
+                        style={styles.iconStyle} />
 
                 </TouchableOpacity>
 
-                <View style={{height: this.state.layout_Height, overflow: 'hidden'}}>
+                <View style={{ height: this.state.layout_Height, overflow: 'hidden' }}>
 
                     {
                         this.props.item.sub_Category.map((item, key) => (
 
                             <TouchableOpacity key={key} style={styles.sub_Category_Text}
-                                              onPress={this.show_Selected_Category.bind(this, item.id)}>
+                                onPress={this.show_Selected_Category.bind(this, item.id)}>
 
                                 <Text> {item.name} </Text>
 
-                                <View style={{width: '100%', height: 1, backgroundColor: '#000'}}/>
+                                <View style={{ width: '100%', height: 1, backgroundColor: '#000' }} />
 
                             </TouchableOpacity>
 
@@ -296,7 +293,7 @@ export default class App extends Component {
         Linking.getInitialURL().then((url) => {
             if (url) {
                 console.log('launch url', url);
-                _handleOpenUrl({url});
+                _handleOpenUrl({ url });
             }
         }).catch(err => console.error('launch url error', err));
 
@@ -305,7 +302,7 @@ export default class App extends Component {
         CleverTap.getInitialUrl((err, url) => {
             if (url) {
                 console.log('CleverTap launch url', url);
-                _handleOpenUrl({url}, 'CleverTap');
+                _handleOpenUrl({ url }, 'CleverTap');
             } else if (err) {
                 console.log('CleverTap launch url', err);
             }
@@ -313,117 +310,116 @@ export default class App extends Component {
 
 
         const array = [
-		{
-                
+            {
 
-            
                 expanded: false,
                 category_Name: "User Properties",
-                sub_Category: [{id: 1, name: 'pushProfile'}, {id: 2, name: 'set Multi Values For Key'}, {
+                sub_Category: [{ id: 1, name: 'pushProfile' }, { id: 2, name: 'set Multi Values For Key' }, {
                     id: 3,
-                    name: 'removeMultiValueForKey'},{id: 4, name: 'removeValueForKey'}, {id: 5, name: 'addMultiValueForKey'}]
+                    name: 'removeMultiValueForKey'
+                }, { id: 4, name: 'removeValueForKey' }, { id: 5, name: 'addMultiValueForKey' }]
             },
 
             {
                 expanded: false,
                 category_Name: "Identity Management",
-                sub_Category: [{id: 6, name: 'onUserLogin'}, {id: 7, name: 'removeMultiValueForKey'}, {
+                sub_Category: [{ id: 6, name: 'onUserLogin' }, { id: 7, name: 'removeMultiValueForKey' }, {
                     id: 8,
                     name: 'removeValueForKey'
                 },
-                    {id: 9, name: 'getCleverTapID'}]
+                { id: 9, name: 'getCleverTapID' }]
             },
 
             {
-                expanded: false, category_Name: "Location ", sub_Category: [{id: 10, name: 'setLocation'}]
+                expanded: false, category_Name: "Location ", sub_Category: [{ id: 10, name: 'setLocation' }]
             },
 
             {
-                expanded: false, category_Name: "App Inbox", sub_Category: [{id: 11, name: 'initializeInbox'},
-                    {id: 12, name: 'showAppInbox'}, {id: 13, name: 'getInboxMessageCount'}, {
-                        id: 14,
-                        name: 'getInboxMessageUnreadCount'
-                    }, {id: 15, name: 'getAllInboxMessages'},
-                    {id: 16, name: 'getUnreadInboxMessages'}, {id: 16, name: 'getInboxMessageForId'}, {
-                        id: 18,
-                        name: 'deleteInboxMessage'
-                    }, {id: 19, name: 'markReadInboxMessage'},
-                    {id: 20, name: 'pushInboxNotificationViewedEvent'}, {
-                        id: 21,
-                        name: 'pushInboxNotificationClickedEvent'
-                    }]
+                expanded: false, category_Name: "App Inbox", sub_Category: [{ id: 11, name: 'initializeInbox' },
+                { id: 12, name: 'showAppInbox' }, { id: 13, name: 'getInboxMessageCount' }, {
+                    id: 14,
+                    name: 'getInboxMessageUnreadCount'
+                }, { id: 15, name: 'getAllInboxMessages' },
+                { id: 16, name: 'getUnreadInboxMessages' }, { id: 16, name: 'getInboxMessageForId' }, {
+                    id: 18,
+                    name: 'deleteInboxMessage'
+                }, { id: 19, name: 'markReadInboxMessage' },
+                { id: 20, name: 'pushInboxNotificationViewedEvent' }, {
+                    id: 21,
+                    name: 'pushInboxNotificationClickedEvent'
+                }]
             },
 
             {
                 expanded: false,
                 category_Name: "Events",
-                sub_Category: [{id: 22, name: 'pushEvent'}, {id: 23, name: 'pushChargedEvent'}]
+                sub_Category: [{ id: 22, name: 'pushEvent' }, { id: 23, name: 'pushChargedEvent' }]
             },
 
             {
-                expanded: false, category_Name: "Enable Debugging", sub_Category: [{id: 24, name: 'Set Debug Level'}]
+                expanded: false, category_Name: "Enable Debugging", sub_Category: [{ id: 24, name: 'Set Debug Level' }]
 
             },
             {
                 expanded: false,
                 category_Name: "Push Notifications",
-                sub_Category: [{id: 25, name: 'createNotificationChannelGroup'},
-                    {id: 26, name: 'createNotificationChannel'}, {id: 27, name: 'deleteNotificationChannel'}, {
-                        id: 28,
-                        name: 'deleteNotificationChannelGroup'
-                    },
-                    {id: 29, name: 'pushFcmRegistrationId'}, {id: 30, name: 'createNotification'},{id:300,name:'createNotificationChannelWithSound'},
-                    {id:301,name:'createNotificationChannelWithGroupId'},{id:302,name:'createNotificationChannelWithGroupIdAndSound'}]
+                sub_Category: [{ id: 25, name: 'createNotificationChannelGroup' },
+                { id: 26, name: 'createNotificationChannel' }, { id: 27, name: 'deleteNotificationChannel' }, {
+                    id: 28,
+                    name: 'deleteNotificationChannelGroup'
+                },
+                { id: 29, name: 'pushFcmRegistrationId' }, { id: 30, name: 'createNotification' }, { id: 300, name: 'createNotificationChannelWithSound' },
+                { id: 301, name: 'createNotificationChannelWithGroupId' }, { id: 302, name: 'createNotificationChannelWithGroupIdAndSound' }]
             },
             {
                 expanded: false,
                 category_Name: "Native Display",
-                sub_Category: [{id: 31, name: 'getUnitID'}, {id: 32, name: 'getAllDisplayUnits'},]
+                sub_Category: [{ id: 31, name: 'getUnitID' }, { id: 32, name: 'getAllDisplayUnits' },]
             },
             {
                 expanded: false,
                 category_Name: "Product Config",
-                sub_Category: [{id: 33, name: 'productConfig setDefault'}, {id: 34, name: 'fetch()'},
-                    {id: 35, name: 'activate'}, {id: 36, name: 'fetchAndActivate'}, {
-                        id: 37,
-                        name: 'setMinimumFetchIntervalInSeconds'
-                    },
-                    {id: 38, name: 'getBoolean'}, {id: 39, name: 'getDouble'}, {id: 40, name: 'getLong'}, {
-                        id: 41,
-                        name: 'getString'
-                    },
-                    {id: 42, name: 'getString'}, {id: 43, name: 'reset'}, , {
-                        id: 44,
-                        name: 'getLastFetchTimeStampInMillis'
-                    }]
+                sub_Category: [{ id: 33, name: 'productConfig setDefault' }, { id: 34, name: 'fetch()' },
+                { id: 35, name: 'activate' }, { id: 36, name: 'fetchAndActivate' }, {
+                    id: 37,
+                    name: 'setMinimumFetchIntervalInSeconds'
+                },
+                { id: 38, name: 'getBoolean' }, { id: 39, name: 'getDouble' }, { id: 40, name: 'getLong' }, {
+                    id: 41,
+                    name: 'getString'
+                },
+                { id: 42, name: 'getString' }, { id: 43, name: 'reset' }, , {
+                    id: 44,
+                    name: 'getLastFetchTimeStampInMillis'
+                }]
             },
             {
-                expanded: false, category_Name: "Feature Flag", sub_Category: [{id: 45, name: 'getFeatureFlag'}]
+                expanded: false, category_Name: "Feature Flag", sub_Category: [{ id: 45, name: 'getFeatureFlag' }]
             },
             {
                 expanded: false,
                 category_Name: "App Personalisation",
-                sub_Category: [{id: 46, name: 'enablePersonalization'}, {id: 47, name: 'get profile Property'}]
+                sub_Category: [{ id: 46, name: 'enablePersonalization' }, { id: 47, name: 'get profile Property' }]
             },
             {
                 expanded: false,
                 category_Name: "Attributions",
-                sub_Category: [{id: 48, name: 'get CleverTap Attribution Identifier'}]
+                sub_Category: [{ id: 48, name: 'get CleverTap Attribution Identifier' }]
             },
             {
                 expanded: false,
                 category_Name: "GDPR",
-                sub_Category: [{id: 49, name: 'setOptOut'}, {id: 50, name: 'enableDeviceNetworkInfoReporting'}]
+                sub_Category: [{ id: 49, name: 'setOptOut' }, { id: 50, name: 'enableDeviceNetworkInfoReporting' }]
             },
             {
                 expanded: false,
                 category_Name: "Multi-Instance",
-                sub_Category: [{id: 51, name: 'enablePersonalization'}, {id: 52, name: 'setOffline'}]
+                sub_Category: [{ id: 51, name: 'enablePersonalization' }, { id: 52, name: 'setOffline' }]
             },
             {
                 expanded: false,
                 category_Name: "Listeners",
-                sub_Category: [{id: 53, name: 'addCleverTapAPIListeners'}, {
+                sub_Category: [{ id: 53, name: 'addCleverTapAPIListeners' }, {
                     id: 54,
                     name: 'removeCleverTapAPIListeners'
                 }]
@@ -431,7 +427,7 @@ export default class App extends Component {
 
         ];
 
-        this.state = {AccordionData: [...array]}
+        this.state = { AccordionData: [...array] }
     }
 
     update_Layout = (index) => {
@@ -452,22 +448,22 @@ export default class App extends Component {
     render() {
         return (
             <View style={styles.MainContainer}>
-		
-                <ScrollView contentContainerStyle={{paddingHorizontal: 10, paddingVertical: 5}}>
-				<TouchableOpacity
-						style={styles.button}>
-						<Text style={styles.button_Text}>React-Native Demo</Text>
-						
-					</TouchableOpacity>
-                    {	
-						
+
+                <ScrollView contentContainerStyle={{ paddingHorizontal: 10, paddingVertical: 5 }}>
+                    <TouchableOpacity
+                        style={styles.button}>
+                        <Text style={styles.button_Text}>React-Native Demo</Text>
+
+                    </TouchableOpacity>
+                    {
+
                         this.state.AccordionData.map((item, key) =>
                             (
                                 <Expandable_ListView key={item.category_Name}
-                                                     onClickFunction={this.update_Layout.bind(this, key)} item={item}/>
+                                    onClickFunction={this.update_Layout.bind(this, key)} item={item} />
                             ))
                     }
-		
+
                 </ScrollView>
 
             </View>
@@ -532,7 +528,7 @@ pushevent = () => {
 
     //Recording an Event
     CleverTap.recordEvent('testEvent');
-    CleverTap.recordEvent('testEventWithProps', {'start': new Date(), 'foo': 'bar'});
+    CleverTap.recordEvent('testEventWithProps', { 'start': new Date(), 'foo': 'bar' });
 
 };
 
@@ -540,22 +536,18 @@ pushChargedEvent = () => {
     alert('Charged Event Recorded');
 
     //Recording an Event
-    CleverTap.recordChargedEvent({'totalValue': 20, 'category': 'books', 'purchase_date': new Date()},
-        [{'title': 'book1', 'published_date': new Date('2010-12-12T06:35:31'), 'author': 'ABC'},
-            {'title': 'book2', 'published_date': new Date('2000-12-12T06:35:31')},
-            {
-                'title': 'book3', 'published_date': new Date(), 'author': 'XYZ'
-            }]
+    CleverTap.recordChargedEvent({ 'totalValue': 20, 'category': 'books', 'purchase_date': new Date() },
+        [{ 'title': 'book1', 'published_date': new Date('2010-12-12T06:35:31'), 'author': 'ABC' },
+        { 'title': 'book2', 'published_date': new Date('2000-12-12T06:35:31') },
+        {
+            'title': 'book3', 'published_date': new Date(), 'author': 'XYZ'
+        }]
     );
 
 };
 //App Inbox
 
 show_appInbox = () => {
-
-
-    //console.log('Display on called: ', res, err);
-
 
     //Show Inbox
     CleverTap.showInbox({
@@ -659,7 +651,7 @@ delete_NotificationChannel = () => {
 create_NotificationChannelGroup = () => {
     alert('Notification Channel Group Created');
     //Creating a group notification channel
-    CleverTap.createNotificationChannelGroup("Offers","All Offers related notifications")
+    CleverTap.createNotificationChannelGroup("Offers", "All Offers related notifications")
 
 };
 delete_NotificationChannelGroup = () => {
@@ -973,9 +965,9 @@ function createNotificationChannelWithGroupIdAndSound() {
     // https://developer.clevertap.com/docs/android#section-push-notifications-for-android-o
 
     CleverTap.createNotificationChannelWithGroupIdAndSound("offersMonthly", "Monthly Offers",
-        "Offers given at every month", 1, "Offers", true,"glitch.mp3")
+        "Offers given at every month", 1, "Offers", true, "glitch.mp3")
     CleverTap.createNotificationChannelWithGroupIdAndSound("offersQuarterly", "Quarterly Offers",
-        "Offers given at every Quarter", 1, "Offers", true,"glitch.mp3")
+        "Offers given at every Quarter", 1, "Offers", true, "glitch.mp3")
 
 }
 
@@ -1040,20 +1032,20 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#FF6F00'
     },
-  button: {
-    alignItems: "center",
-    backgroundColor: "#FEFDFC",
-	height: 64,
-	color: '#fff',
-	fontSize: 100,
-    padding: 10
-  },
-  
-   button_Text: {
+    button: {
+        alignItems: "center",
+        backgroundColor: "#FEFDFC",
+        height: 64,
+        color: '#fff',
+        fontSize: 100,
+        padding: 10
+    },
+
+    button_Text: {
         textAlign: 'left',
         color: '#000',
         fontSize: 21,
         padding: 10
     },
-  
+
 });
