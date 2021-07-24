@@ -18,7 +18,7 @@ public class MainActivity<packages> extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "ReactnCT";
+    return "Example";
   }
 
   protected void onCreate(Bundle savedInstanceState) {

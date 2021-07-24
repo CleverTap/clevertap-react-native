@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '10.0'
 
-target 'ReactnCT' do
+target 'Example' do
     
   config = use_native_modules!
 
@@ -12,7 +12,7 @@ target 'ReactnCT' do
   pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
   pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
       
-  target 'ReactnCTTests' do
+  target 'ExampleTests' do
     inherit! :complete
     # Pods for testing
   end
