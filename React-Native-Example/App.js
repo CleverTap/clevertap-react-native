@@ -58,7 +58,7 @@ class Expandable_ListView extends Component {
     show_Selected_Category = (item) => {
         switch (item) {
             case 1:
-                userProfile();
+                set_userProfile();
                 break;
             case 2:
                 CleverTap.profileSetMultiValuesForKey(['a', 'b', 'c'], 'letters');
@@ -73,73 +73,73 @@ class Expandable_ListView extends Component {
                 CleverTap.profileAddMultiValueForKey('d', 'letters');
                 break;
             case 6:
-                id_mngmt();
+                onUser_Login();
                 break;
             case 7://Removing a Value from the Multiple Values
-                rmvalskey();
+                removeMultiValuesForKey();
                 break;
             case 8:
-                rmvalkey();
+                removeValueForKey();
                 break;
             case 9:
-                getCTid();
+                getCleverTap_id();
                 break;
             case 10:
-                userLocation();
+                set_userLocation();
                 break;
             case 11:
                 CleverTap.initializeInbox();
                 break;
             case 12:
-                appInbox();
+                show_appInbox();
                 break;
             case 13:
-                getTotmsg();
+                get_TotalMessageCount();
                 break;
             case 14:
-                unread();
+                get_UnreadMessageCount();
                 break;
             case 15:
-                allmsg();
+                Get_All_InboxMessages();
                 break;
             case 16:
-                allunreadmsg();
+                get_All_InboxUnreadMessages();
                 break;
             case 17:
-                inboxid();
+                Get_InboxMessageForId();
                 break;
             case 18:
-                deleteMsg();
+                delete_InboxMessageForId();
                 break;
             case 19:
-                markread();
+                markRead_InboxMessageForId();
                 break;
             case 20:
-                pnviewed();
+                pushInboxNotificationViewed();
                 break;
             case 21:
-                pnclicked();
+                pushInboxNotificationClicked();
                 break;
             case 22:
                 pushevent();
                 break;
             case 23:
-                pushchargedevent();
+                pushChargedEvent();
                 break;
             case 24:
                 CleverTap.setDebugLevel(3);
                 break;
             case 25:
-                create_NCGroup();
+                create_NotificationChannelGroup();
                 break;
             case 26:
-                create_NC();
+                create_NotificationChannel();
                 break;
             case 27:
-                delete_NC();
+                delete_NotificationChannel();
                 break;
             case 28:
-                delete_NCGroup();
+                delete_NotificationChannelGroup();
                 break;
             case 29:
                 pushFcmRegistrationId();
@@ -208,7 +208,7 @@ class Expandable_ListView extends Component {
                 profile_getProperty();
                 break;
             case 48    :
-                attri();
+                GetCleverTapAttributionIdentifier();
                 break;
             case 49    :
                 CleverTap.setOptOut(value);
@@ -233,6 +233,10 @@ class Expandable_ListView extends Component {
 
     render() {
         return (
+		
+		
+		
+		
             <View style={styles.Panel_Holder}>
 
                 <TouchableOpacity activeOpacity={0.8} onPress={this.props.onClickFunction} style={styles.category_View}>
@@ -309,15 +313,15 @@ export default class App extends Component {
 
 
         const array = [
+		{
+                
 
-            {
+            
                 expanded: false,
                 category_Name: "User Properties",
                 sub_Category: [{id: 1, name: 'pushProfile'}, {id: 2, name: 'set Multi Values For Key'}, {
                     id: 3,
-                    name: 'removeMultiValueForKey'
-                },
-                    {id: 4, name: 'removeValueForKey'}, {id: 5, name: 'addMultiValueForKey'}]
+                    name: 'removeMultiValueForKey'},{id: 4, name: 'removeValueForKey'}, {id: 5, name: 'addMultiValueForKey'}]
             },
 
             {
@@ -448,15 +452,22 @@ export default class App extends Component {
     render() {
         return (
             <View style={styles.MainContainer}>
-
+		
                 <ScrollView contentContainerStyle={{paddingHorizontal: 10, paddingVertical: 5}}>
-                    {
+				<TouchableOpacity
+						style={styles.button}>
+						<Text style={styles.button_Text}>React-Native Demo</Text>
+						
+					</TouchableOpacity>
+                    {	
+						
                         this.state.AccordionData.map((item, key) =>
                             (
                                 <Expandable_ListView key={item.category_Name}
                                                      onClickFunction={this.update_Layout.bind(this, key)} item={item}/>
                             ))
                     }
+		
                 </ScrollView>
 
             </View>
@@ -464,7 +475,7 @@ export default class App extends Component {
     }
 }
 
-userProfile = () => {
+set_userProfile = () => {
 
     alert('User Profile Updated');
 
@@ -475,7 +486,7 @@ userProfile = () => {
 
 };
 //Identity_Management
-id_mngmt = () => {
+onUser_Login = () => {
     alert('User Profile Updated');
 
     //On user Login
@@ -486,21 +497,21 @@ id_mngmt = () => {
     })
 
 };
-rmvalskey = () => {
+removeMultiValuesForKey = () => {
     alert('User Profile Updated');
 
     //Removing Multiple Values
     CleverTap.profileRemoveMultiValuesForKey(['a', 'c'], 'letters');
 
 };
-rmvalkey = () => {
+removeValueForKey = () => {
     alert('User Profile Updated');
 
     //Removing Value for key
     CleverTap.profileRemoveValueForKey("letters");
 
 };
-getCTid = () => {
+getCleverTap_id = () => {
 
     CleverTap.profileGetCleverTapID((err, res) => {
         console.log('CleverTapID', res, err);
@@ -508,7 +519,7 @@ getCTid = () => {
     });
 }
 // Location
-userLocation = () => {
+set_userLocation = () => {
     alert('User Location set');
 
     CleverTap.setLocation(34.15, -118.20);
@@ -525,7 +536,7 @@ pushevent = () => {
 
 };
 
-pushchargedevent = () => {
+pushChargedEvent = () => {
     alert('Charged Event Recorded');
 
     //Recording an Event
@@ -540,7 +551,7 @@ pushchargedevent = () => {
 };
 //App Inbox
 
-appInbox = () => {
+show_appInbox = () => {
 
 
     //console.log('Display on called: ', res, err);
@@ -565,7 +576,7 @@ appInbox = () => {
 
 };
 
-getTotmsg = () => {
+get_TotalMessageCount = () => {
     //Get Total messagecount
 
     CleverTap.getInboxMessageCount((err, res) => {
@@ -573,7 +584,7 @@ getTotmsg = () => {
         alert(`Total Messages: \n ${res}`);
     });
 };
-unread = () => {
+get_UnreadMessageCount = () => {
 
     //Get the count of unread messages
     CleverTap.getInboxMessageUnreadCount((err, res) => {
@@ -581,7 +592,7 @@ unread = () => {
         alert(`Unread Messages: \n ${res}`);
     });
 };
-allmsg = () => {
+Get_All_InboxMessages = () => {
 
     //Get All Inbox Messages
     CleverTap.getAllInboxMessages((err, res) => {
@@ -589,7 +600,7 @@ allmsg = () => {
         alert(`All Inbox Messages: \n ${res}`);
     });
 };
-allunreadmsg = () => {
+get_All_InboxUnreadMessages = () => {
 
     //get all Inbox unread messages
     CleverTap.getUnreadInboxMessages((err, res) => {
@@ -597,7 +608,7 @@ allunreadmsg = () => {
         alert(`Unread Inbox Messages: \n ${res}`);
     });
 };
-inboxid = () => {
+Get_InboxMessageForId = () => {
     //Get inbox Id
 
     CleverTap.getInboxMessageForId('Message Id', (err, res) => {
@@ -606,52 +617,52 @@ inboxid = () => {
     });
 };
 
-deleteMsg = () => {
+delete_InboxMessageForId = () => {
     //Get inbox Id
     alert('Check Console for values');
     CleverTap.deleteInboxMessageForId('Message Id');
 
 };
 
-markread = () => {
+markRead_InboxMessageForId = () => {
     //Get inbox Id
     alert('Check Console for values');
     CleverTap.markReadInboxMessageForId('Message Id');
 
 };
-pnviewed = () => {
+pushInboxNotificationViewed = () => {
     //Get inbox Id
     alert('Check Console for values');
     CleverTap.pushInboxNotificationViewedEventForId('Message Id');
 
 };
-pnclicked = () => {
+pushInboxNotificationClicked = () => {
     //Get inbox Id
     alert('Check Console for values');
     CleverTap.pushInboxNotificationClickedEventForId('Message Id');
 
 };
 ///Push Notification
-create_NC = () => {
+create_NotificationChannel = () => {
     alert('Notification Channel Created');
     //Creating Notification Channel
     CleverTap.createNotificationChannel("CtRNS", "Clever Tap React Native Testing", "CT React Native Testing", 1, true);
 
 };
-delete_NC = () => {
+delete_NotificationChannel = () => {
     alert('Notification Channel Deleted');
     //Delete Notification Channel
     CleverTap.deleteNotificationChannel("CtRNS")
 
 };
 
-create_NCGroup = () => {
+create_NotificationChannelGroup = () => {
     alert('Notification Channel Group Created');
     //Creating a group notification channel
     CleverTap.createNotificationChannelGroup("Offers","All Offers related notifications")
 
 };
-delete_NCGroup = () => {
+delete_NotificationChannelGroup = () => {
     alert('Notification Channel Group Deleted');
     //Delete a group notification channel
     CleverTap.deleteNotificationChannelGroup("Offers")
@@ -859,7 +870,7 @@ profile_getProperty = () => {
 
 };
 ///Attributions
-attri = () => {
+GetCleverTapAttributionIdentifier = () => {
 
 
     //Default Instance
@@ -1022,12 +1033,27 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#b300ea'
+        backgroundColor: '#DC2626'
     },
 
     Btn: {
         padding: 10,
         backgroundColor: '#FF6F00'
-    }
-
+    },
+  button: {
+    alignItems: "center",
+    backgroundColor: "#FEFDFC",
+	height: 64,
+	color: '#fff',
+	fontSize: 100,
+    padding: 10
+  },
+  
+   button_Text: {
+        textAlign: 'left',
+        color: '#000',
+        fontSize: 21,
+        padding: 10
+    },
+  
 });
