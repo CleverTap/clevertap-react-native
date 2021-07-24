@@ -34,7 +34,7 @@ To get started, sign up [here](https://clevertap.com/live-product-demo/).
 
 ## 🆕 Changelog
 
-Refer to the [CleverTap React Native SDK Change Log](https://github.com/CleverTap/clevertap-react-native/blob/master/CHANGELOG.md).
+Refer to the [CleverTap React Native SDK Change Log](/CHANGELOG.md).
 
 ## ⁉️ Help and Questions?
 
