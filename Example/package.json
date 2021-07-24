@@ -12,7 +12,7 @@
   "dependencies": {
     "@react-navigation/drawer": "^5.12.5",
     "@react-navigation/native": "^6.0.0-next.1",
-    "clevertap-react-native": "^0.5.1",
+    "clevertap-react-native": "^0.5.2",
     "react": "17.0.1",
     "react-native": "0.64.0",
     "react-native-drawer": "^2.5.1",
