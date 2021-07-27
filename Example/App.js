@@ -987,7 +987,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         paddingTop: (Platform.OS === 'ios') ? 44 : 0,
-        backgroundColor: '#F5FCFF',
+        backgroundColor: '#fff',
     },
 
     iconStyle: {
@@ -1026,7 +1026,7 @@ const styles = StyleSheet.create({
 
     button: {
         alignItems: "center",
-        backgroundColor: "#FEFDFC",
+        backgroundColor: "#fff",
         height: 64,
         color: '#fff',
         fontSize: 44,
@@ -1036,12 +1036,13 @@ const styles = StyleSheet.create({
     button_Text: {
         textAlign: 'left',
         color: '#000',
+        fontWeight: 'bold',
         fontSize: 26,
         padding: 10
     },
 
     setSubCategoryFontSizeOne: {
-        fontSize: 18 // Define font size here in Pixels
+        fontSize: 18 
     },
 
 });
