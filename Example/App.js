@@ -282,6 +282,8 @@ export default class App extends Component {
         }
 
         CleverTap.setDebugLevel(3);
+        // for iOS only: register for push notifications
+        CleverTap.registerForPush();
         addCleverTapAPIListeners(false);
         CleverTap.initializeInbox();
 
