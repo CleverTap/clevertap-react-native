@@ -193,7 +193,7 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     //added from atlasian doc
-    implementation 'com.clevertap.android:clevertap-android-sdk:4.1.1'
+    implementation 'com.clevertap.android:clevertap-android-sdk:4.2.0'
 //    implementation 'com.google.android.gms:play-services-ads:19.0.1'
     implementation 'com.google.android.gms:play-services-base:17.4.0'
     implementation 'com.android.installreferrer:installreferrer:2.1'
