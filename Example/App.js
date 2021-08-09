@@ -767,7 +767,7 @@ getBoolean = () => {
     //Boolean
     CleverTap.getProductConfigBoolean('is_shown', (err, res) => {
         console.log('PC is_shown val in boolean :', res, err);
-        alert(`PC is_shown val in boolean : ${res}`);
+        alert(`PC is_shown val in boolean: ${res}`);
     });
 
 
@@ -778,7 +778,7 @@ getLong = () => {
     //Number
     CleverTap.getNumber('msg_count', (err, res) => {
         console.log('PC is_shown val in number(long)  :', res, err);
-        alert(`PC is_shown val in number(long) : ${res}`);
+        alert(`PC is_shown val in number(long): ${res}`);
     });
 
 
@@ -807,7 +807,7 @@ getStrings = () => {
     //Set Minimum Interval
     CleverTap.getProductConfigString('json', (err, res) => {
         console.log('PC json val in string :', res, err);
-        alert(`PC json val in String : ${res}`);
+        alert(`PC json val in String: ${res}`);
     });
 
 };
@@ -831,9 +831,8 @@ getFeatureFlag = () => {
     //Feature flag
     CleverTap.getFeatureFlag('is_dark_mode', false, (err, res) => {
         console.log('FF is_dark_mode val in boolean :', res, err);
-        alert(`FF is_dark_mode val in boolean :{res}`);
+        alert(`FF is_dark_mode val in boolean: ${res}`);
     });
-
 };
 
 //App Personalisation
@@ -852,7 +851,7 @@ profile_getProperty = () => {
     //CleverTap Profile Name:
     CleverTap.profileGetProperty('Name', (err, res) => {
         console.log('CleverTap Profile Name: ', res, err);
-        alert(`CleverTap Profile Name:${res}`);
+        alert(`CleverTap Profile Name: ${res}`);
     });
 
 };
@@ -863,7 +862,7 @@ GetCleverTapAttributionIdentifier = () => {
     //Default Instance
     CleverTap.profileGetCleverTapAttributionIdentifier((err, res) => {
         console.log('CleverTapAttributionIdentifier', res, err);
-        alert(`CleverTapAttributionIdentifier${res}`);
+        alert(`CleverTapAttributionIdentifier: ${res}`);
     });
 
 };
