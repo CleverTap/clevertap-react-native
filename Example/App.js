@@ -2018,15 +2018,15 @@ const styles = StyleSheet.create({
     },
 
     iconStyle: {
-        width: 22,
-        height: 22,
+        width: 30,
+        height: 30,
         justifyContent: 'flex-end',
         alignItems: 'center',
         tintColor: '#fff'
     },
 
     sub_Category_Text: {
-        fontSize: 20,
+        fontSize: 18,
         color: '#000',
         padding: 10
     },
@@ -2034,8 +2034,8 @@ const styles = StyleSheet.create({
     category_Text: {
         textAlign: 'left',
         color: '#fff',
-        fontSize: 22,
-        padding: 12
+        fontSize: 21,
+        padding: 10
     },
 
     category_View: {
@@ -2051,22 +2051,22 @@ const styles = StyleSheet.create({
         backgroundColor: '#FF6F00'
     },
 
-    button: {
-        alignItems: "center",
-        backgroundColor: "#fff",
-        height: 64,
-        color: '#fff',
-        fontSize: 44,
-        padding: 10
-    },
-
-    button_Text: {
+     button: {
+    alignItems: "center",
+    backgroundColor: "#FEFDFC",
+	height: 64,
+	color: '#fff',
+	fontSize: 100,
+    padding: 10
+  },
+  
+   button_Text: {
         textAlign: 'left',
         color: '#000',
-        fontWeight: 'bold',
-        fontSize: 26,
+        fontSize: 21,
         padding: 10
     },
+  
 
     setSubCategoryFontSizeOne: {
         fontSize: 18 
