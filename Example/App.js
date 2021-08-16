@@ -988,7 +988,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         paddingTop: (Platform.OS === 'ios') ? 44 : 0,
-        backgroundColor: '#fff',
+        backgroundColor: '#fff'
     },
 
     iconStyle: {
@@ -1039,7 +1039,7 @@ const styles = StyleSheet.create({
         color: '#000',
         fontWeight: 'bold',
         fontSize: 26,
-        padding: 10
+        paddingBottom: 20
     },
 
     setSubCategoryFontSizeOne: {
