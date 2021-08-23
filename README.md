@@ -25,14 +25,16 @@ To get started, sign up [here](https://clevertap.com/live-product-demo/).
 - [CleverTap iOS SDK Integration guide](https://support.clevertap.com/docs/ios/getting-started.html)
 - [CleverTap Android SDK Integration guide](https://support.clevertap.com/docs/android/getting-started.html)
 
-## 💻 Example Usage
+## 📑 Documentation & Example
 
-View [Example Usage](https://github.com/CleverTap/clevertap-react-native/blob/master/docs/usage.md) to see how the CleverTap React Native can be implemented.
+- [See the CleverTap React Native Usage Documentation](/docs/usage.md)
+
+- [See the included Example Project](/Example/)
 
 
 ## 🆕 Changelog
 
-Refer to the [CleverTap React Native SDK Change Log](https://github.com/CleverTap/clevertap-react-native/blob/master/CHANGELOG.md).
+Refer to the [CleverTap React Native SDK Change Log](/CHANGELOG.md).
 
 ## ⁉️ Help and Questions?
 

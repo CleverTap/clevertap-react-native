@@ -44,7 +44,7 @@ end
 - Run `pod install` from your ios directory.
 
 ### iOS without podspec
-- Add `pod 'CleverTap-iOS-SDK'` as a dependency in your ios/Podfile.  [See an example Podfile here](https://github.com/CleverTap/clevertap-react-native/blob/master/Starter/ios/Podfile).
+- Add `pod 'CleverTap-iOS-SDK'` as a dependency in your ios/Podfile.
 - `cd ios; pod install --repo-update`
 - Note that after pod install, open your project using **[MyProject].xcworkspace** instead of the original .xcodeproj.
 
