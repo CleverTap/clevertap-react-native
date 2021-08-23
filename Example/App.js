@@ -1026,20 +1026,19 @@ const styles = StyleSheet.create({
     },
 
     button: {
-        alignItems: "center",
         backgroundColor: "#fff",
-        height: 64,
+        flexWrap: "wrap",
         color: '#fff',
         fontSize: 44,
         padding: 10
     },
 
     button_Text: {
-        textAlign: 'left',
+        width:'100%',
+        textAlign: 'center',
         color: '#000',
         fontWeight: 'bold',
-        fontSize: 26,
-        paddingBottom: 20
+        fontSize: 26
     },
 
     setSubCategoryFontSizeOne: {
