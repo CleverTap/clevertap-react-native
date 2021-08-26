@@ -6,6 +6,7 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import com.clevertap.android.sdk.CTFeatureFlagsListener;
 import com.clevertap.android.sdk.CTInboxListener;
@@ -21,6 +22,7 @@ import com.clevertap.android.sdk.displayunits.model.CleverTapDisplayUnit;
 import com.clevertap.android.sdk.events.EventDetail;
 import com.clevertap.android.sdk.featureFlags.CTFeatureFlagsController;
 import com.clevertap.android.sdk.inbox.CTInboxMessage;
+import com.clevertap.android.sdk.interfaces.OnInitCleverTapIDListener;
 import com.clevertap.android.sdk.product_config.CTProductConfigController;
 import com.clevertap.android.sdk.product_config.CTProductConfigListener;
 import com.clevertap.android.sdk.pushnotification.CTPushNotificationListener;
@@ -835,6 +837,21 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             error = "CleverTap not initialized";
         }
         callbackWithErrorAndResult(callback, error, result);
+    }
+
+    @ReactMethod
+    public void getCleverTapID(final Callback callback) {
+        final CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap != null) {
+            clevertap.getCleverTapID(new OnInitCleverTapIDListener() {
+                @Override
+                public void onInitCleverTapID(final String cleverTapID) {
+                    // Callback on main thread
+                    callbackWithErrorAndResult(callback, null, cleverTapID);
+                }
+
+            });
+        }
     }
 
     @ReactMethod

@@ -404,7 +404,7 @@ export default class App extends Component {
             {
                 expanded: false,
                 category_Name: "Attributions",
-                sub_Category: [{ id: 48, name: 'get CleverTap Attribution Identifier' }]
+                sub_Category: [{ id: 48, name: '(Deprecated) get CleverTap Attribution Identifier' }]
             },
             {
                 expanded: false,
@@ -507,8 +507,14 @@ removeValueForKey = () => {
 
 };
 getCleverTap_id = () => {
+    // Below method is deprecated since 0.6.0, please check index.js for deprecation, instead use CleverTap.getCleverTapID()
+    /*CleverTap.profileGetCleverTapID((err, res) => {
+        console.log('CleverTapID', res, err);
+        alert(`CleverTapID: \n ${res}`);
+    });*/
 
-    CleverTap.profileGetCleverTapID((err, res) => {
+    // Use below newly added method
+    CleverTap.getCleverTapID((err, res) => {
         console.log('CleverTapID', res, err);
         alert(`CleverTapID: \n ${res}`);
     });
@@ -858,7 +864,7 @@ profile_getProperty = () => {
 ///Attributions
 GetCleverTapAttributionIdentifier = () => {
 
-
+    // Below method is deprecated since 0.6.0, please check index.js for deprecation, use CleverTap.getCleverTapID(callback) instead
     //Default Instance
     CleverTap.profileGetCleverTapAttributionIdentifier((err, res) => {
         console.log('CleverTapAttributionIdentifier', res, err);
