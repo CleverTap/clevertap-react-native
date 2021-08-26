@@ -1212,6 +1212,24 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
+    // Increment/Decrement Operator
+
+    @ReactMethod
+    public void incrementValue(String key,Double value) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.incrementValue(key, value);
+        }
+    }
+
+    @ReactMethod
+    public void decrementValue(String key,Double value) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.decrementValue(key, value);
+        }
+    }
+
     /**
      * result must be primitive, String or com.facebook.react.bridge.WritableArray/WritableMap
      * see https://github.com/facebook/react-native/issues/3101#issuecomment-143954448
