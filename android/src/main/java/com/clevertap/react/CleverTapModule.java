@@ -1212,6 +1212,32 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
+    // InApp Controls
+
+    @ReactMethod
+    public void suspendInAppNotifications() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.suspendInAppNotifications();
+        }
+    }
+
+    @ReactMethod
+    public void discardInAppNotifications() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.discardInAppNotifications();
+        }
+    }
+
+    @ReactMethod
+    public void resumeInAppNotifications() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.resumeInAppNotifications();
+        }
+    }
+
     /**
      * result must be primitive, String or com.facebook.react.bridge.WritableArray/WritableMap
      * see https://github.com/facebook/react-native/issues/3101#issuecomment-143954448
