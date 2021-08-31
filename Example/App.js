@@ -73,14 +73,14 @@ class Expandable_ListView extends Component {
                 CleverTap.profileAddMultiValueForKey('d', 'letters');
                 break;
             case 500:
-                CleverTap.incrementValue('score', Number('10'));
-                CleverTap.incrementValue('PI_Float', 3.141);
-                CleverTap.incrementValue('PI_Double', 3.141592653589793);
+                CleverTap.profileIncrementValueForKey('score', Number('10'));
+                CleverTap.profileIncrementValueForKey('PI_Float', 3.141);
+                CleverTap.profileIncrementValueForKey('PI_Double', 3.141592653589793);
                 break;
             case 501:
-                CleverTap.decrementValue('score', 10);
-                CleverTap.decrementValue('PI_Float', 3.141);
-                CleverTap.decrementValue('PI_Double', 3.141592653589793);
+                CleverTap.profileDecrementValueForKey('score', 10);
+                CleverTap.profileDecrementValueForKey('PI_Float', 3.141);
+                CleverTap.profileDecrementValueForKey('PI_Double', 3.141592653589793);
                 break;
             case 6:
                 onUser_Login();

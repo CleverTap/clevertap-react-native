@@ -703,7 +703,7 @@ var CleverTap = {
      * @param key   {string} profile property
      * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
      */
-    incrementValue: function(key,value)
+    profileIncrementValueForKey: function(key,value)
     {
         CleverTapReact.incrementValue(key,value);
     },
@@ -714,7 +714,7 @@ var CleverTap = {
      * @param key   {string} profile property
      * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
      */
-    decrementValue: function(key,value)
+    profileDecrementValueForKey: function(key,value)
     {
         CleverTapReact.decrementValue(key,value);
     },
