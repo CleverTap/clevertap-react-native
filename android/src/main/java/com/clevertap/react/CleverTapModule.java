@@ -6,7 +6,6 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import com.clevertap.android.sdk.CTFeatureFlagsListener;
 import com.clevertap.android.sdk.CTInboxListener;
@@ -851,6 +850,9 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 }
 
             });
+        } else {
+            String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            callbackWithErrorAndResult(callback, error, null);
         }
     }
 
@@ -1035,9 +1037,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
         try {
             clevertap.recordScreen(screenName);
-        }catch (NullPointerException npe)
-        {
-            Log.e(TAG,"Something went wrong in native SDK!");
+        } catch (NullPointerException npe) {
+            Log.e(TAG, "Something went wrong in native SDK!");
             npe.printStackTrace();
         }
     }
