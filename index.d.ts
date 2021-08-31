@@ -544,6 +544,36 @@
     callback: Callback): void;
 
   /*******************
+   * InApp Controls
+   ******************/
+
+  /**
+   * Suspends display of InApp Notifications.
+   * The InApp Notifications are queued once this method is called
+   * and will be displayed once resumeInAppNotifications() is called.
+   */
+  export function suspendInAppNotifications(): void;
+
+  /**
+   * Suspends the display of InApp Notifications and discards any new InApp Notifications to be shown
+   * after this method is called.
+   * The InApp Notifications will be displayed only once resumeInAppNotifications() is called.
+   */
+  export function discardInAppNotifications(): void;
+
+  /**
+   * Resumes display of InApp Notifications.
+   *
+   * If suspendInAppNotifications() was called previously, calling this method will instantly show
+   * all queued InApp Notifications and also resume InApp Notifications on events raised after this
+   * method is called.
+   *
+   * If discardInAppNotifications() was called previously, calling this method will only resume
+   * InApp Notifications on events raised after this method is called.
+   */
+  export function resumeInAppNotifications(): void;
+
+  /*******************
    * Developer Options
    ******************/
   /**
