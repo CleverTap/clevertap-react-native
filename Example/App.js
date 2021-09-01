@@ -72,6 +72,16 @@ class Expandable_ListView extends Component {
             case 5:
                 CleverTap.profileAddMultiValueForKey('d', 'letters');
                 break;
+            case 500:
+                CleverTap.profileIncrementValueForKey('score', Number('10'));
+                CleverTap.profileIncrementValueForKey('PI_Float', 3.141);
+                CleverTap.profileIncrementValueForKey('PI_Double', 3.141592653589793);
+                break;
+            case 501:
+                CleverTap.profileDecrementValueForKey('score', 10);
+                CleverTap.profileDecrementValueForKey('PI_Float', 3.141);
+                CleverTap.profileDecrementValueForKey('PI_Double', 3.141592653589793);
+                break;
             case 6:
                 onUser_Login();
                 break;
@@ -317,7 +327,8 @@ export default class App extends Component {
                 sub_Category: [{ id: 1, name: 'pushProfile' }, { id: 2, name: 'set Multi Values For Key' }, {
                     id: 3,
                     name: 'removeMultiValueForKey'
-                }, { id: 4, name: 'removeValueForKey' }, { id: 5, name: 'addMultiValueForKey' }]
+                }, { id: 4, name: 'removeValueForKey' }, { id: 5, name: 'addMultiValueForKey' }
+                    , { id: 500, name: 'Increment Value' }, { id: 501, name: 'Decrement Value' }]
             },
 
             {

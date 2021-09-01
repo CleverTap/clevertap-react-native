@@ -698,6 +698,28 @@ var CleverTap = {
     },
 
     /**
+     * This method is used to increment the given value
+     *
+     * @param key   {string} profile property
+     * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
+     */
+    profileIncrementValueForKey: function(key,value)
+    {
+        CleverTapReact.incrementValue(key,value);
+    },
+
+    /**
+     * This method is used to decrement the given value
+     *
+     * @param key   {string} profile property
+     * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
+     */
+    profileDecrementValueForKey: function(key,value)
+    {
+        CleverTapReact.decrementValue(key,value);
+    },
+
+    /**
     * Set the SDK debug level
     * @param {int} 0 = off, 1 = on
     */

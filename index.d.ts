@@ -543,6 +543,26 @@
     defaultValue: boolean,
     callback: Callback): void;
 
+  /*******************************
+   * Increment/Decrement Operators
+   *******************************/
+
+  /**
+   * This method is used to increment the given value
+   *
+   * @param key   {string} profile property
+   * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
+   */
+  export function profileIncrementValueForKey(key:string,value:number): void;
+
+  /**
+   * This method is used to decrement the given value
+   *
+   * @param key   {string} profile property
+   * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
+   */
+  export function profileDecrementValueForKey(key:string,value:number): void;
+
   /*******************
    * Developer Options
    ******************/
