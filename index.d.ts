@@ -329,19 +329,19 @@
    * Increment/Decrement Operators
    *******************************/
 
-  /**
+   /**
    * This method is used to increment the given value
    *
-   * @param key   {string} profile property
    * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
+   * @param key   {string} profile property
    */
   export function profileIncrementValueForKey(value:number, key:string): void;
 
   /**
    * This method is used to decrement the given value
    *
-   * @param key   {string} profile property
    * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
+   * @param key   {string} profile property
    */
   export function profileDecrementValueForKey(value:number, key:string): void;
 
