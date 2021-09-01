@@ -729,6 +729,38 @@ var CleverTap = {
     },
 
     /**
+     * Suspends display of InApp Notifications.
+     * The InApp Notifications are queued once this method is called
+     * and will be displayed once resumeInAppNotifications() is called.
+     */
+    suspendInAppNotifications: function () {
+        CleverTapReact.suspendInAppNotifications();
+    },
+
+    /**
+     * Suspends the display of InApp Notifications and discards any new InApp Notifications to be shown
+     * after this method is called.
+     * The InApp Notifications will be displayed only once resumeInAppNotifications() is called.
+     */
+    discardInAppNotifications: function () {
+        CleverTapReact.discardInAppNotifications();
+    },
+
+    /**
+     * Resumes display of InApp Notifications.
+     *
+     * If suspendInAppNotifications() was called previously, calling this method will instantly show
+     * all queued InApp Notifications and also resume InApp Notifications on events raised after this
+     * method is called.
+     *
+     * If discardInAppNotifications() was called previously, calling this method will only resume
+     * InApp Notifications on events raised after this method is called.
+     */
+    resumeInAppNotifications: function () {
+        CleverTapReact.resumeInAppNotifications();
+    },
+
+    /**
     * Set the SDK debug level
     * @param {int} 0 = off, 1 = on
     */

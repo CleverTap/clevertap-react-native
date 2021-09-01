@@ -211,6 +211,15 @@ class Expandable_ListView extends Component {
             case 45:
                 getFeatureFlag();
                 break;
+            case 450:
+                CleverTap.suspendInAppNotifications();
+                break;
+            case 451:
+                CleverTap.discardInAppNotifications();
+                break;
+            case 452:
+                CleverTap.resumeInAppNotifications();
+                break;
             case 46:
                 enablePersonalization();
                 break;
@@ -406,6 +415,10 @@ export default class App extends Component {
             },
             {
                 expanded: false, category_Name: "Feature Flag", sub_Category: [{ id: 45, name: 'getFeatureFlag' }]
+            },
+            {
+                expanded: false, category_Name: "InApp Controls", sub_Category: [{ id: 450, name: 'suspendInAppNotifications' }
+                ,{ id: 451, name: 'discardInAppNotifications' },{ id: 452, name: 'resumeInAppNotifications' }]
             },
             {
                 expanded: false,
