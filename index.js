@@ -430,6 +430,26 @@ var CleverTap = {
     },
 
     /**
+    * This method is used to increment the given value
+    *
+    * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
+    * @param key   {string} profile property
+    */
+    profileIncrementValueForKey: function (value, key) {
+        CleverTapReact.profileIncrementValueForKey(value, key);
+    },
+
+    /**
+     * This method is used to decrement the given value
+     *
+     * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
+     * @param key   {string} profile property
+     */
+    profileDecrementValueForKey: function (value, key) {
+        CleverTapReact.profileDecrementValueForKey(value, key);
+    },
+
+    /**
     * Manually track the utm app install referrer
     * @param {string} the utm referrer source
     * @param {string} the utm referrer medium
@@ -695,28 +715,6 @@ var CleverTap = {
     */
     getFeatureFlag: function (name, defaultValue, callback) {
         callWithCallback('getFeatureFlag', [name, defaultValue], callback);
-    },
-
-    /**
-     * This method is used to increment the given value
-     *
-     * @param key   {string} profile property
-     * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
-     */
-    profileIncrementValueForKey: function(key,value)
-    {
-        CleverTapReact.incrementValue(key,value);
-    },
-
-    /**
-     * This method is used to decrement the given value
-     *
-     * @param key   {string} profile property
-     * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
-     */
-    profileDecrementValueForKey: function(key,value)
-    {
-        CleverTapReact.decrementValue(key,value);
     },
 
     /**
