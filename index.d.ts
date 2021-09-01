@@ -274,16 +274,25 @@
   export function profileGetProperty(propertyName: string, callback: Callback): void;
 
   /**
+   * Deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
    * Get a unique CleverTap identifier suitable for use with install attribution providers.
    * calls back with unique CleverTap attribution identifier
    */
   export function profileGetCleverTapAttributionIdentifier(callback: Callback): void;
 
   /**
+   * Deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
    * Get User Profile CleverTapID
    * calls back with CleverTapID or false
    */
   export function profileGetCleverTapID(callback: Callback): void;
+
+  /**
+   * Returns a unique identifier through callback by which CleverTap identifies this user
+   *
+   * @param {function(err, res)} non-null callback to retrieve identifier
+   */
+  export function getCleverTapID(callback: Callback): void;
 
   /**
    * Remove the property specified by key from the user profile
