@@ -432,7 +432,7 @@ var CleverTap = {
     },
 
     /**
-    * This method is used to increment the given value
+    * This method is used to increment the given profile value
     *
     * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
     * @param key   {string} profile property
@@ -442,7 +442,7 @@ var CleverTap = {
     },
 
     /**
-     * This method is used to decrement the given value
+     * This method is used to decrement the given profile value
      *
      * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
      * @param key   {string} profile property
