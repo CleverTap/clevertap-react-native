@@ -1233,7 +1233,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     // Increment/Decrement Operator
 
     @ReactMethod
-    public void incrementValue(String key,Double value) {
+    public void profileIncrementValueForKey(Double value,String key) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.incrementValue(key, value);
@@ -1241,7 +1241,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @ReactMethod
-    public void decrementValue(String key,Double value) {
+    public void profileDecrementValueForKey(Double value,String key) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.decrementValue(key, value);
