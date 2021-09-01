@@ -78,7 +78,7 @@ var CleverTap = {
     },
 
     /**
-    *  Deprecated - Since version 5.0.0. Use removeListener(eventName) instead
+    *  Deprecated - Since version 0.5.0. Use removeListener(eventName) instead
     *  Remove all event listeners
     */
     removeListeners: function () {
@@ -323,6 +323,7 @@ var CleverTap = {
     },
 
     /**
+     * Deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
     * Get a unique CleverTap identifier suitable for use with install attribution providers
     * @param {function(err, res)} callback that returns a string res
     */
@@ -331,6 +332,7 @@ var CleverTap = {
     },
 
     /**
+     * Deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
     * Get the user profile's CleverTap identifier value
     * @param {function(err, res)} callback that returns a string res
     */
@@ -717,6 +719,15 @@ var CleverTap = {
     profileDecrementValueForKey: function(key,value)
     {
         CleverTapReact.decrementValue(key,value);
+    },
+
+    /**
+     * Returns a unique identifier through callback by which CleverTap identifies this user
+     *
+     * @param {function(err, res)} non-null callback to retrieve identifier
+     */
+    getCleverTapID: function (callback) {
+        callWithCallback('getCleverTapID', null, callback);
     },
 
     /**
