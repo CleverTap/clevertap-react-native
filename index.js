@@ -78,7 +78,7 @@ var CleverTap = {
     },
 
     /**
-    *  Deprecated - Since version 5.0.0. Use removeListener(eventName) instead
+    *  Deprecated - Since version 0.5.0. Use removeListener(eventName) instead
     *  Remove all event listeners
     */
     removeListeners: function () {
@@ -323,6 +323,7 @@ var CleverTap = {
     },
 
     /**
+     * Deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
     * Get a unique CleverTap identifier suitable for use with install attribution providers
     * @param {function(err, res)} callback that returns a string res
     */
@@ -331,6 +332,7 @@ var CleverTap = {
     },
 
     /**
+     * Deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
     * Get the user profile's CleverTap identifier value
     * @param {function(err, res)} callback that returns a string res
     */
@@ -715,6 +717,35 @@ var CleverTap = {
     */
     getFeatureFlag: function (name, defaultValue, callback) {
         callWithCallback('getFeatureFlag', [name, defaultValue], callback);
+    },
+
+    /**
+     * This method is used to increment the given value
+     *
+     * @param key   {string} profile property
+     * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
+     */
+    profileIncrementValueForKey: function (key, value) {
+        CleverTapReact.incrementValue(key, value);
+    },
+
+    /**
+     * This method is used to decrement the given value
+     *
+     * @param key   {string} profile property
+     * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
+     */
+    profileDecrementValueForKey: function (key, value) {
+        CleverTapReact.decrementValue(key, value);
+    },
+
+    /**
+     * Returns a unique identifier through callback by which CleverTap identifies this user
+     *
+     * @param {function(err, res)} non-null callback to retrieve identifier
+     */
+    getCleverTapID: function (callback) {
+        callWithCallback('getCleverTapID', null, callback);
     },
 
     /**

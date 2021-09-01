@@ -21,6 +21,7 @@ import com.clevertap.android.sdk.displayunits.model.CleverTapDisplayUnit;
 import com.clevertap.android.sdk.events.EventDetail;
 import com.clevertap.android.sdk.featureFlags.CTFeatureFlagsController;
 import com.clevertap.android.sdk.inbox.CTInboxMessage;
+import com.clevertap.android.sdk.interfaces.OnInitCleverTapIDListener;
 import com.clevertap.android.sdk.product_config.CTProductConfigController;
 import com.clevertap.android.sdk.product_config.CTProductConfigListener;
 import com.clevertap.android.sdk.pushnotification.CTPushNotificationListener;
@@ -838,6 +839,24 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @ReactMethod
+    public void getCleverTapID(final Callback callback) {
+        final CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap != null) {
+            clevertap.getCleverTapID(new OnInitCleverTapIDListener() {
+                @Override
+                public void onInitCleverTapID(final String cleverTapID) {
+                    // Callback on main thread
+                    callbackWithErrorAndResult(callback, null, cleverTapID);
+                }
+
+            });
+        } else {
+            String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            callbackWithErrorAndResult(callback, error, null);
+        }
+    }
+
+    @ReactMethod
     public void profileGetProperty(String propertyName, Callback callback) {
         String error = null;
         Object result = null;
@@ -1018,9 +1037,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
         try {
             clevertap.recordScreen(screenName);
-        }catch (NullPointerException npe)
-        {
-            Log.e(TAG,"Something went wrong in native SDK!");
+        } catch (NullPointerException npe) {
+            Log.e(TAG, "Something went wrong in native SDK!");
             npe.printStackTrace();
         }
     }
