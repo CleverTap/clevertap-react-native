@@ -370,21 +370,18 @@ CleverTap.profileGetCleverTapAttributionIdentifier((err, res) => {
 
 ```javascript 
 CleverTap.suspendInAppNotifications();
-});
 ```
 
 #### Discard InApp Notifications
 
 ```javascript 
 CleverTap.discardInAppNotifications();
-});
 ```
 
 #### Resume InApp Notifications
 
 ```javascript 
 CleverTap.resumeInAppNotifications();
-});
 ```
 
 
