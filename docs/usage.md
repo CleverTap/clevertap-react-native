@@ -323,7 +323,7 @@ CleverTap.getFeatureFlag('is_dark_mode', false, (err, res) => {
 ```javascript 
 CleverTap.getCleverTapID((err, res) => {
         console.log('CleverTapID', res, err);
-	});
+});
 ```
 
 -----------
