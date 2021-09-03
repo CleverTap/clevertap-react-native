@@ -66,21 +66,21 @@ class Expandable_ListView extends Component {
             case 3:
                 CleverTap.profileRemoveMultiValueForKey('b', 'letters');
                 break;
-            case 4: //Removing a Value from the Multiple Values
+            case 4:
                 CleverTap.profileRemoveMultiValueForKey('b', 'letters');
                 break;
             case 5:
                 CleverTap.profileAddMultiValueForKey('d', 'letters');
                 break;
             case 500:
-                CleverTap.profileIncrementValueForKey(Number('10'),'score');
+                CleverTap.profileIncrementValueForKey(10, 'score');
                 CleverTap.profileIncrementValueForKey(3.141,'PI_Float');
                 CleverTap.profileIncrementValueForKey(3.141592653589793,'PI_Double');
                 break;
             case 501:
-                CleverTap.profileDecrementValueForKey(10,'score');
-                CleverTap.profileDecrementValueForKey(3.141,'PI_Float');
-                CleverTap.profileDecrementValueForKey(3.141592653589793,'PI_Double');
+                CleverTap.profileDecrementValueForKey(10, 'score');
+                CleverTap.profileDecrementValueForKey(3.141, 'PI_Float');
+                CleverTap.profileDecrementValueForKey(3.141592653589793, 'PI_Double');
                 break;
             case 6:
                 onUser_Login();
@@ -309,7 +309,7 @@ export default class App extends Component {
         // Listener to handle incoming deep links
         Linking.addEventListener('url', _handleOpenUrl);
 
-        // this handles the case where a deep link launches the application
+        /// this handles the case where a deep link launches the application
         Linking.getInitialURL().then((url) => {
             if (url) {
                 console.log('launch url', url);
@@ -418,7 +418,7 @@ export default class App extends Component {
             },
             {
                 expanded: false, category_Name: "InApp Controls", sub_Category: [{ id: 450, name: 'suspendInAppNotifications' }
-                ,{ id: 451, name: 'discardInAppNotifications' },{ id: 452, name: 'resumeInAppNotifications' }]
+                    , { id: 451, name: 'discardInAppNotifications' }, { id: 452, name: 'resumeInAppNotifications' }]
             },
             {
                 expanded: false,
@@ -1064,7 +1064,7 @@ const styles = StyleSheet.create({
     },
 
     button_Text: {
-        width:'100%',
+        width: '100%',
         textAlign: 'center',
         color: '#000',
         fontWeight: 'bold',
@@ -1072,7 +1072,7 @@ const styles = StyleSheet.create({
     },
 
     setSubCategoryFontSizeOne: {
-        fontSize: 18 
+        fontSize: 18
     },
 
 });
