@@ -52,6 +52,18 @@ CleverTap.profileGetCleverTapID((err, res) => {
 CleverTap.setLocation(34.15, -118.20);
 ```
 
+#### Increment a User Profile property
+
+```javascript 
+CleverTap.profileIncrementValueForKey(1, "score");
+```
+
+#### Decrement a User Profile property
+
+```javascript 
+CleverTap.profileDecrementValueForKey(1, "score");
+```
+
 -----------
 
 ## User Events
@@ -290,7 +302,7 @@ CleverTap.resetProductConfig();
 
 ```javascript 
 CleverTap.getLastFetchTimeStampInMillis((err, res) => {
-        onsole.log('LastFetchTimeStampInMillis in string: ', res, err);
+        console.log('LastFetchTimeStampInMillis in string: ', res, err);
 });		
 ```
 
@@ -301,6 +313,16 @@ CleverTap.getLastFetchTimeStampInMillis((err, res) => {
 ```javascript 
 CleverTap.getFeatureFlag('is_dark_mode', false, (err, res) => {
 	console.log('FF is_dark_mode val in boolean :', res, err);
+});
+```
+
+## CleverTap ID
+
+#### Get CleverTap ID
+
+```javascript 
+CleverTap.getCleverTapID((err, res) => {
+        console.log('CleverTapID', res, err);
 });
 ```
 
@@ -338,6 +360,28 @@ CleverTap.profileGetProperty('Name', (err, res) => {
 CleverTap.profileGetCleverTapAttributionIdentifier((err, res) => {
          console.log('CleverTapAttributionIdentifier', res, err);
 });
+```
+
+-----------
+
+## InApp Notification Controls
+
+#### Suspend InApp Notifications
+
+```javascript 
+CleverTap.suspendInAppNotifications();
+```
+
+#### Discard InApp Notifications
+
+```javascript 
+CleverTap.discardInAppNotifications();
+```
+
+#### Resume InApp Notifications
+
+```javascript 
+CleverTap.resumeInAppNotifications();
 ```
 
 
