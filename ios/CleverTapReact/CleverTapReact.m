@@ -13,6 +13,7 @@
 #import "CleverTap+DisplayUnit.h"
 #import "CleverTap+FeatureFlags.h"
 #import "CleverTap+ProductConfig.h"
+#import "CleverTap+InAppNotifications.h"
 
 static NSDateFormatter *dateFormatter;
 
@@ -200,6 +201,12 @@ RCT_EXPORT_METHOD(profileGetCleverTapID:(RCTResponseSenderBlock)callback) {
     [self returnResult:result withCallback:callback andError:nil];
 }
 
+RCT_EXPORT_METHOD(getCleverTapID:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getCleverTapID]");
+    NSString *result = [[CleverTap sharedInstance] profileGetCleverTapID];
+    [self returnResult:result withCallback:callback andError:nil];
+}
+
 RCT_EXPORT_METHOD(onUserLogin:(NSDictionary*)profile) {
     RCTLogInfo(@"[CleverTap onUserLogin: %@]", profile);
     NSDictionary *_profile = [self formatProfile:profile];
@@ -248,6 +255,15 @@ RCT_EXPORT_METHOD(profileRemoveMultiValues:(NSArray<NSString*>*)values forKey:(N
     [[CleverTap sharedInstance] profileRemoveMultiValues:values forKey:key];
 }
 
+RCT_EXPORT_METHOD(profileIncrementValueForKey:(NSNumber* _Nonnull)value forKey:(NSString* _Nonnull)key) {
+    RCTLogInfo(@"[CleverTap profileIncrementValueBy: %@ forKey: %@]", value, key);
+    [[CleverTap sharedInstance] profileIncrementValueBy:value forKey:key];
+}
+
+RCT_EXPORT_METHOD(profileDecrementValueForKey:(NSNumber* _Nonnull)value forKey:(NSString* _Nonnull)key) {
+    RCTLogInfo(@"[CleverTap profileDecrementValueBy: %@ forKey: %@]", value, key);
+    [[CleverTap sharedInstance] profileDecrementValueBy:value forKey:key];
+}
 
 #pragma mark - Session API
 
@@ -684,6 +700,23 @@ RCT_EXPORT_METHOD(getDouble:(NSString*)key callback:(RCTResponseSenderBlock)call
 RCT_EXPORT_METHOD(reset) {
     RCTLogInfo(@"[CleverTap ProductConfig Reset]");
     [[[CleverTap sharedInstance] productConfig] reset];
+}
+
+#pragma mark - InApp Notification Controls
+
+RCT_EXPORT_METHOD(suspendInAppNotifications) {
+    RCTLogInfo(@"[CleverTap suspendInAppNotifications");
+    [[CleverTap sharedInstance] suspendInAppNotifications];
+}
+
+RCT_EXPORT_METHOD(discardInAppNotifications) {
+    RCTLogInfo(@"[CleverTap discardInAppNotifications");
+    [[CleverTap sharedInstance] discardInAppNotifications];
+}
+
+RCT_EXPORT_METHOD(resumeInAppNotifications) {
+    RCTLogInfo(@"[CleverTap resumeInAppNotifications");
+    [[CleverTap sharedInstance] resumeInAppNotifications];
 }
 
 @end
