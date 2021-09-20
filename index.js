@@ -78,7 +78,7 @@ var CleverTap = {
     },
 
     /**
-    *  Deprecated - Since version 5.0.0. Use removeListener(eventName) instead
+    *  Deprecated - Since version 0.5.0. Use removeListener(eventName) instead
     *  Remove all event listeners
     */
     removeListeners: function () {
@@ -323,6 +323,7 @@ var CleverTap = {
     },
 
     /**
+     * Deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
     * Get a unique CleverTap identifier suitable for use with install attribution providers
     * @param {function(err, res)} callback that returns a string res
     */
@@ -331,6 +332,7 @@ var CleverTap = {
     },
 
     /**
+     * Deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
     * Get the user profile's CleverTap identifier value
     * @param {function(err, res)} callback that returns a string res
     */
@@ -427,6 +429,26 @@ var CleverTap = {
     */
     profileRemoveMultiValuesForKey: function (values, key) {
         CleverTapReact.profileRemoveMultiValues(values, key);
+    },
+
+    /**
+    * This method is used to increment the given value
+    *
+    * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
+    * @param key   {string} profile property
+    */
+    profileIncrementValueForKey: function (value, key) {
+        CleverTapReact.profileIncrementValueForKey(value, key);
+    },
+
+    /**
+     * This method is used to decrement the given value
+     *
+     * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
+     * @param key   {string} profile property
+     */
+    profileDecrementValueForKey: function (value, key) {
+        CleverTapReact.profileDecrementValueForKey(value, key);
     },
 
     /**
@@ -695,6 +717,47 @@ var CleverTap = {
     */
     getFeatureFlag: function (name, defaultValue, callback) {
         callWithCallback('getFeatureFlag', [name, defaultValue], callback);
+    },
+
+    /**
+     * Returns a unique identifier through callback by which CleverTap identifies this user
+     *
+     * @param {function(err, res)} non-null callback to retrieve identifier
+     */
+    getCleverTapID: function (callback) {
+        callWithCallback('getCleverTapID', null, callback);
+    },
+
+    /**
+     * Suspends display of InApp Notifications.
+     * The InApp Notifications are queued once this method is called
+     * and will be displayed once resumeInAppNotifications() is called.
+     */
+    suspendInAppNotifications: function () {
+        CleverTapReact.suspendInAppNotifications();
+    },
+
+    /**
+     * Suspends the display of InApp Notifications and discards any new InApp Notifications to be shown
+     * after this method is called.
+     * The InApp Notifications will be displayed only once resumeInAppNotifications() is called.
+     */
+    discardInAppNotifications: function () {
+        CleverTapReact.discardInAppNotifications();
+    },
+
+    /**
+     * Resumes display of InApp Notifications.
+     *
+     * If suspendInAppNotifications() was called previously, calling this method will instantly show
+     * all queued InApp Notifications and also resume InApp Notifications on events raised after this
+     * method is called.
+     *
+     * If discardInAppNotifications() was called previously, calling this method will only resume
+     * InApp Notifications on events raised after this method is called.
+     */
+    resumeInAppNotifications: function () {
+        CleverTapReact.resumeInAppNotifications();
     },
 
     /**

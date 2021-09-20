@@ -49,7 +49,6 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTapSDK/C
     @Override
     public void onCreate() {
 	    // Register the CleverTap ActivityLifecycleCallback; before calling super
-        CleverTapAPI.setUIEditorConnectionEnabled(false);
         ActivityLifecycleCallback.register(this);	
         super.onCreate();
     }
@@ -72,5 +71,5 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTapSDK/C
         // ...
     }
     ```
-[see the included Example Project](https://github.com/CleverTap/clevertap-react-native/blob/master/Starter/App.js) 
+[see the included Example Project](/Example/App.js) 
 

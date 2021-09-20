@@ -25,14 +25,6 @@
 	};
     ```
     
-    3. The CleverTap SDK is not yet upgraded to AndroidX. Add the following to your gradle.properties file
-    
-    
-  
-    ```android.useAndroidX=true
-   	 android.enableJetifier=true
-    ```
-
   
   ## Steps for iOS ##
   
@@ -52,7 +44,7 @@ end
 - Run `pod install` from your ios directory.
 
 ### iOS without podspec
-- Add `pod 'CleverTap-iOS-SDK'` as a dependency in your ios/Podfile.  [See an example Podfile here](https://github.com/CleverTap/clevertap-react-native/blob/master/Starter/ios/Podfile).
+- Add `pod 'CleverTap-iOS-SDK'` as a dependency in your ios/Podfile.
 - `cd ios; pod install --repo-update`
 - Note that after pod install, open your project using **[MyProject].xcworkspace** instead of the original .xcodeproj.
 
@@ -68,7 +60,7 @@ If you're on RN 0.60 or your project configuration doesn't allow to add `use_fra
 ```gradle
 dependencies {
 	...
-    implementation 'com.clevertap.android:clevertap-android-sdk:4.0.0'
+    implementation 'com.clevertap.android:clevertap-android-sdk:4.2.0'
     implementation 'com.google.android.gms:play-services-base:17.4.0'
     implementation 'com.google.firebase:firebase-messaging:20.2.4'
     implementation 'com.google.android.exoplayer:exoplayer:2.11.5' //Optional for Audio/Video

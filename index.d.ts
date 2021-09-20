@@ -274,16 +274,25 @@
   export function profileGetProperty(propertyName: string, callback: Callback): void;
 
   /**
+   * Deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
    * Get a unique CleverTap identifier suitable for use with install attribution providers.
    * calls back with unique CleverTap attribution identifier
    */
   export function profileGetCleverTapAttributionIdentifier(callback: Callback): void;
 
   /**
+   * Deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
    * Get User Profile CleverTapID
    * calls back with CleverTapID or false
    */
   export function profileGetCleverTapID(callback: Callback): void;
+
+  /**
+   * Returns a unique identifier through callback by which CleverTap identifies this user
+   *
+   * @param {function(err, res)} non-null callback to retrieve identifier
+   */
+  export function getCleverTapID(callback: Callback): void;
 
   /**
    * Remove the property specified by key from the user profile
@@ -324,6 +333,26 @@
    * @param values {any} array of strings
    */
   export function profileRemoveMultiValuesForKey(values: any, key: string): void;
+
+  /*******************************
+   * Increment/Decrement Operators
+   *******************************/
+
+   /**
+   * This method is used to increment the given value
+   *
+   * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
+   * @param key   {string} profile property
+   */
+  export function profileIncrementValueForKey(value:number, key:string): void;
+
+  /**
+   * This method is used to decrement the given value
+   *
+   * @param value {Number} can be int,double or float only (NaN,Infinity etc not supported)
+   * @param key   {string} profile property
+   */
+  export function profileDecrementValueForKey(value:number, key:string): void;
 
   /*******************
    * Session
@@ -542,6 +571,37 @@
     key: string,
     defaultValue: boolean,
     callback: Callback): void;
+
+
+  /*******************
+   * InApp Controls
+   ******************/
+
+  /**
+   * Suspends display of InApp Notifications.
+   * The InApp Notifications are queued once this method is called
+   * and will be displayed once resumeInAppNotifications() is called.
+   */
+  export function suspendInAppNotifications(): void;
+
+  /**
+   * Suspends the display of InApp Notifications and discards any new InApp Notifications to be shown
+   * after this method is called.
+   * The InApp Notifications will be displayed only once resumeInAppNotifications() is called.
+   */
+  export function discardInAppNotifications(): void;
+
+  /**
+   * Resumes display of InApp Notifications.
+   *
+   * If suspendInAppNotifications() was called previously, calling this method will instantly show
+   * all queued InApp Notifications and also resume InApp Notifications on events raised after this
+   * method is called.
+   *
+   * If discardInAppNotifications() was called previously, calling this method will only resume
+   * InApp Notifications on events raised after this method is called.
+   */
+  export function resumeInAppNotifications(): void;
 
   /*******************
    * Developer Options
