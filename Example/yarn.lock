@@ -1988,10 +1988,10 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-clevertap-react-native@^0.5.2:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/clevertap-react-native/-/clevertap-react-native-0.5.2.tgz#075a5d5001e845ce2064a9d106fb5383b5851e8f"
-  integrity sha512-1EV7AXp4Fqfz/VRsL1GgqnNEnsjtmCzaQZCuYUSq4YTzxI9IsHs16NUxB2VJVOC2oqbi8w5gsj1kwKMISC5WCw==
+"clevertap-react-native@git+https://github.com/CleverTap/clevertap-react-native.git#develop":
+  version "0.6.0"
+  uid "32903d8166137f0131b22ecebbe7eff13c8216e0"
+  resolved "git+https://github.com/CleverTap/clevertap-react-native.git#32903d8166137f0131b22ecebbe7eff13c8216e0"
   dependencies:
     extract-zip "^1.6.6"
 
@@ -6350,9 +6350,9 @@ through2@^2.0.1:
     xtend "~4.0.1"
 
 tmpl@1.0.x:
-  version "1.0.4"
-  resolved "https://registry.npmjs.org/tmpl/-/tmpl-1.0.4.tgz"
-  integrity sha1-I2QN17QtAEM5ERQIIOXPRA5SHdE=
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/tmpl/-/tmpl-1.0.5.tgz#8683e0b902bb9c20c4f726e3c0b69f36518c07cc"
+  integrity sha512-3f0uOEAQwIqGuWW2MVzYg8fV/QNnc/IpuJNG837rLuczAaLVHslWHZQj4IGiEl5Hs3kkbhwL9Ab7Hrsmuj+Smw==
 
 to-fast-properties@^2.0.0:
   version "2.0.0"
