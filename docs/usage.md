@@ -352,6 +352,12 @@ CleverTap.profileGetProperty('Name', (err, res) => {
 
 -----------
 
+## Debugging
+
+```javascript 
+CleverTap.setDebugLevel(3);
+```
+
 ## Attributions
 
 #### Get CleverTap Attribution Identifier
