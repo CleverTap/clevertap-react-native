@@ -17,7 +17,7 @@ NOTE:  Don't forget to add the CleverTap imports at the top of the file.
 
 Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTapSDK/CleverTap.h>** and **@import CleverTapReact;** instead of **#import <CleverTapReact/CleverTapReactManager.h>** in the AppDelegate class in case if using ```use_modular_headers!``` in the podfile.
 
-[See the Example Project](https://github.com/CleverTap/clevertap-react-native/blob/master/ExampleProject/ios/ExampleProject/AppDelegate.m).
+[See the Example Project](/Example/ios/Example/AppDelegate.m).
 
 ### Android
 1. Follow the integration instructions [starting with Step 2 here](https://support.clevertap.com/docs/android/getting-started.html).
