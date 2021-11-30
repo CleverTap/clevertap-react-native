@@ -60,21 +60,21 @@ If you're on RN 0.60 or your project configuration doesn't allow to add `use_fra
 ```gradle
 dependencies {
 	...
-    implementation 'com.clevertap.android:clevertap-android-sdk:4.2.0'
-    implementation 'com.google.android.gms:play-services-base:17.4.0'
+    implementation 'com.clevertap.android:clevertap-android-sdk:4.3.1'
+    implementation 'com.google.android.gms:play-services-base:17.6.0'
     implementation 'com.google.firebase:firebase-messaging:20.2.4'
-    implementation 'com.google.android.exoplayer:exoplayer:2.11.5' //Optional for Audio/Video
-    implementation 'com.google.android.exoplayer:exoplayer-hls:2.11.5' //Optional for Audio/Video
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.5' //Optional for Audio/Video
-    implementation 'com.github.bumptech.glide:glide:4.11.0' //Mandatory for App Inbox
-    implementation 'androidx.recyclerview:recyclerview:1.1.0' //Mandatory for App Inbox
+    implementation 'com.google.android.exoplayer:exoplayer:2.15.1' //Optional for Audio/Video
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.15.1' //Optional for Audio/Video
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.15.1' //Optional for Audio/Video
+    implementation 'com.github.bumptech.glide:glide:4.12.0' //Mandatory for App Inbox
+    implementation 'androidx.recyclerview:recyclerview:1.2.1' //Mandatory for App Inbox
     implementation 'androidx.viewpager:viewpager:1.0.0' //Mandatory for App Inbox
-    implementation 'com.google.android.material:material:1.2.1' //Mandatory for App Inbox
-    implementation 'androidx.appcompat:appcompat:1.2.0' //Mandatory for App Inbox
+    implementation 'com.google.android.material:material:1.4.0' //Mandatory for App Inbox
+    implementation 'androidx.appcompat:appcompat:1.3.1' //Mandatory for App Inbox
     implementation 'androidx.core:core:1.3.0'
-    implementation 'androidx.fragment:fragment:1.1.0' // InApp
+    implementation 'androidx.fragment:fragment:1.3.6' // InApp
     //Mandatory for React Native SDK v0.3.9 and above add the following -
-    implementation 'com.android.installreferrer:installreferrer:2.1'
+    implementation 'com.android.installreferrer:installreferrer:2.2'
 
     //Note - ExoPlayer dependencies are optional but all 3 are required for Audio/Video Inbox and InApp Messages
 }
