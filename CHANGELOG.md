@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Version 0.7.0 *(30th November 2021)*
+-------------------------------------------
+- Supports CleverTap Android SDK `v4.3.1` backing Android 12
+
 Version 0.6.0 *(3rd September 2021)*
 -------------------------------------------
 - Adds public methods for suspending/discarding & resuming InApp Notifications
