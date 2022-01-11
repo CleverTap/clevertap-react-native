@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import {
     Alert,
@@ -16,6 +18,7 @@ import {
 } from 'react-native';
 
 const CleverTap = require('clevertap-react-native');
+const Stack = createNativeStackNavigator();
 
 class Expandable_ListView extends Component {
 
@@ -56,7 +59,7 @@ class Expandable_ListView extends Component {
 
     //In this Function You can write the items to be called w.r.t list id:
     show_Selected_Category = (item) => {
-        switch (item) {
+        switch (item.id) {
             case 1:
                 set_userProfile();
                 break;
@@ -247,6 +250,28 @@ class Expandable_ListView extends Component {
             case 54:
                 removeCleverTapAPIListeners();
                 break;
+            case 60:
+            case 61:
+            case 62:
+            case 63:
+            case 64:
+            case 65:
+            case 66:
+            case 67:
+            case 68:
+            case 69:
+            case 690:
+            case 691:
+            case 692:
+            case 693:
+            case 694:
+            case 695:
+            case 696:
+            case 697:
+            case 698:
+            CleverTap.recordEvent(item.name);
+            break;
+
         }
     }
 
@@ -272,7 +297,7 @@ class Expandable_ListView extends Component {
 
                             <TouchableOpacity key={key} style={styles.sub_Category_Text}
 
-                                onPress={this.show_Selected_Category.bind(this, item.id)}>
+                                onPress={this.show_Selected_Category.bind(this, item)}>
 
                                 <Text style={styles.setSubCategoryFontSizeOne}> {item.name} </Text>
 
@@ -447,6 +472,21 @@ export default class App extends Component {
                     id: 54,
                     name: 'removeCleverTapAPIListeners'
                 }]
+            },
+            {
+                expanded: false,
+                category_Name: "Push Templates",
+                sub_Category: [{ id: 60, name: 'Send Basic Push' }, { id: 61, name: 'Send Carousel Push'},
+                { id: 62, name: 'Send Manual Carousel Push' }, { id: 63, name: 'Send Filmstrip Carousel Push' },
+                { id: 64, name: 'Send Rating Push' }, { id: 65, name: 'Send Product Display Notification' },
+                { id: 66, name: 'Send Linear Product Display Push' }, { id: 67, name: 'Send CTA Notification' },
+                { id: 68, name: 'Send Zero Bezel Notification' }, { id: 69, name: 'Send Zero Bezel Text Only Notification' },
+                { id: 690, name: 'Send Timer Notification' }, { id: 691, name: 'Send Input Box Notification' },
+                { id: 692, name: 'Send Input Box Reply with Event Notification' }, { id: 693, name: 'Send Input Box Reply with Auto Open Notification' },
+                { id: 694, name: 'Send Input Box Remind Notification DOC FALSE' }, { id: 695, name: 'Send Input Box CTA DOC true' },
+                { id: 696, name: 'Send Input Box CTA DOC false' }, { id: 697, name: 'Send Input Box Reminder DOC true' },
+                { id: 698, name: 'Send Input Box Reminder DOC false' }
+                ]
             }
 
         ];
@@ -557,6 +597,7 @@ pushevent = () => {
 
     //Recording an Event
     CleverTap.recordEvent('testEvent');
+    CleverTap.recordEvent('Send Basic Push');
     CleverTap.recordEvent('testEventWithProps', { 'start': new Date(), 'foo': 'bar' });
 };
 
@@ -664,6 +705,8 @@ create_NotificationChannel = () => {
     alert('Notification Channel Created');
     //Creating Notification Channel
     CleverTap.createNotificationChannel("CtRNS", "Clever Tap React Native Testing", "CT React Native Testing", 1, true);
+    CleverTap.createNotificationChannel("BRTesting", "Clever Tap BR Testing", "CT BR Testing", 1, true);
+    CleverTap.createNotificationChannel("PTTesting", "Clever Tap PT Testing", "CT PT Testing", 1, true);
 
 };
 delete_NotificationChannel = () => {
