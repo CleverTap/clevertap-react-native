@@ -60,9 +60,9 @@ If you're on RN 0.60 or your project configuration doesn't allow to add `use_fra
 ```gradle
 dependencies {
 	...
-    implementation 'com.clevertap.android:clevertap-android-sdk:4.3.1'
+    implementation 'com.clevertap.android:clevertap-android-sdk:4.4.0'
     implementation 'com.google.android.gms:play-services-base:17.6.0'
-    implementation 'com.google.firebase:firebase-messaging:20.2.4'
+    implementation 'com.google.firebase:firebase-messaging:21.0.0'
     implementation 'com.google.android.exoplayer:exoplayer:2.15.1' //Optional for Audio/Video
     implementation 'com.google.android.exoplayer:exoplayer-hls:2.15.1' //Optional for Audio/Video
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.15.1' //Optional for Audio/Video
