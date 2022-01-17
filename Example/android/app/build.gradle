@@ -193,11 +193,12 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     //added from atlasian doc
-    implementation 'com.clevertap.android:clevertap-android-sdk:4.3.1'
+    implementation 'com.clevertap.android:clevertap-android-sdk:4.4.0'
+    implementation "com.clevertap.android:push-templates:1.0.0"
 //    implementation 'com.google.android.gms:play-services-ads:19.0.1'
     implementation 'com.google.android.gms:play-services-base:17.6.0'
     implementation 'com.android.installreferrer:installreferrer:2.2'
-    implementation 'com.google.firebase:firebase-messaging:20.2.4'
+    implementation 'com.google.firebase:firebase-messaging:21.0.0'
     implementation project(':clevertap-react-native')
     //added from atlasian doc
 	implementation 'com.github.bumptech.glide:glide:4.12.0' //Mandatory for App Inbox
