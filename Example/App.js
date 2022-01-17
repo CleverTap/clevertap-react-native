@@ -233,16 +233,16 @@ class Expandable_ListView extends Component {
                 GetCleverTapAttributionIdentifier();
                 break;
             case 49:
-                CleverTap.setOptOut(value);
+                CleverTap.setOptOut(false);
                 break;
             case 50:
-                CleverTap.enableDeviceNetworkInfoReporting(value);
+                CleverTap.enableDeviceNetworkInfoReporting(true);
                 break;
             case 51:
                 CleverTap.enablePersonalization();
                 break;
             case 52:
-                CleverTap.setOffline(value);
+                CleverTap.setOffline(false);
                 break;
             case 53:
                 addCleverTapAPIListeners(true);
