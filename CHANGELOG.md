@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Version 0.8.0 *(17th January 2022)*
+-------------------------------------------
+- Supports [CleverTap Android SDK v4.4.0](https://github.com/CleverTap/clevertap-android-sdk/releases/tag/core-v4.4.0)
+
 Version 0.7.0 *(30th November 2021)*
 -------------------------------------------
 - Supports CleverTap Android SDK `v4.3.1` backing Android 12

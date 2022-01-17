@@ -19,6 +19,7 @@ build/
 .idea
 .gradle
 local.properties
+Example/android/app/google-services.json
 *.iml
 
 # Node
