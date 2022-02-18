@@ -1,7 +1,6 @@
 package com.reactnct;
 
 import android.app.Activity;
-import android.app.Application;
 import android.app.Application.ActivityLifecycleCallbacks;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -17,6 +16,7 @@ import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.android.sdk.CleverTapAPI.LogLevel;
 import com.clevertap.android.sdk.interfaces.NotificationHandler;
 import com.clevertap.android.sdk.pushnotification.CTPushNotificationListener;
+import com.clevertap.react.CleverTapApplication;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
 
-public class MainApplication extends Application
-        implements ActivityLifecycleCallbacks, ReactApplication, CTPushNotificationListener {
+public class MainApplication extends CleverTapApplication
+        implements ActivityLifecycleCallbacks, ReactApplication{
 
     private static final String TAG = "MainApplication";
 
@@ -72,18 +72,10 @@ public class MainApplication extends Application
         CleverTapAPI.setDebugLevel(LogLevel.VERBOSE);
         CleverTapAPI.setNotificationHandler((NotificationHandler) new PushTemplateNotificationHandler());
         CleverTapAPI.getDefaultInstance(getApplicationContext()).enableDeviceNetworkInfoReporting(true);
-
-        ActivityLifecycleCallback.register(
-                this); // this done instead of android:name in your AndroidManifest.xml application tag to com.clevertap.android.sdk.Application
         registerActivityLifecycleCallbacks(this);
         super.onCreate();
-
         SoLoader.init(this, /* native exopackage */ false);
         initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
-        CleverTapAPI.getDefaultInstance(this)
-                .setCTPushNotificationListener(this);// Workaround when app is in killed state
-
-
     }
 
     /**
@@ -111,75 +103,6 @@ public class MainApplication extends Application
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    //Push Notification Clicked callback workaround when app is in killed state
-    @Override
-    public void onNotificationClickedPayloadReceived(HashMap<String, Object> payload) {
-        Log.e("MainApplication", "onNotificationClickedPayloadReceived called");
-        final String CLEVERTAP_PUSH_NOTIFICATION_CLICKED = "CleverTapPushNotificationClicked";
-
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            public void run() {
-
-                // Construct and load our normal React JS code bundle
-                final ReactInstanceManager mReactInstanceManager = ((ReactApplication) getApplicationContext())
-                        .getReactNativeHost().getReactInstanceManager();
-                ReactContext context = mReactInstanceManager.getCurrentReactContext();
-                // If it's constructed, send a notification
-                if (context != null) {
-                    sendEvent(CLEVERTAP_PUSH_NOTIFICATION_CLICKED, getWritableMapFromMap(payload), context);
-                } else {
-                    // Otherwise wait for construction, then send the notification
-                    mReactInstanceManager
-                            .addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
-                                public void onReactContextInitialized(ReactContext context) {
-                                    sendEvent(CLEVERTAP_PUSH_NOTIFICATION_CLICKED, getWritableMapFromMap(payload),
-                                            context);
-                                    mReactInstanceManager.removeReactInstanceEventListener(this);
-                                }
-                            });
-                    if (!mReactInstanceManager.hasStartedCreatingInitialContext()) {
-                        // Construct it in the background
-                        mReactInstanceManager.createReactContextInBackground();
-                    }
-                }
-
-            }
-        });
-
-    }
-
-    private WritableMap getWritableMapFromMap(Map<String, ? extends Object> var1) {
-        JSONObject extras = var1 != null ? new JSONObject(var1) : new JSONObject();
-        WritableMap extrasParams = Arguments.createMap();
-        Iterator extrasKeys = extras.keys();
-        while (extrasKeys.hasNext()) {
-            String key = null;
-            String value = null;
-            try {
-                key = extrasKeys.next().toString();
-                value = extras.get(key).toString();
-            } catch (Throwable t) {
-                Log.e(TAG, t.getLocalizedMessage());
-            }
-
-            if (key != null && value != null) {
-                extrasParams.putString(key, value);
-            }
-        }
-        return extrasParams;
-    }
-
-    private void sendEvent(String eventName, Object params, ReactContext context) {
-
-        try {
-            context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit(eventName, params);
-        } catch (Throwable t) {
-            Log.e(TAG, t.getLocalizedMessage());
         }
     }
 
