@@ -71,5 +71,7 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTapSDK/C
         // ...
     }
     ```
+4. From clvevertap-react-native *v0.8.1* onwards developers can make their `Application` class extend `CleverTapApplication` to support Push Notification click callback out of the box and to register activity lifecycle events. Before v0.8.1 developers were forced to write logic for push click callback and register activity lifecycle to their `Application` class manually which is being abstract out in `CleverTapApplication` class.
+ 
 [see the included Example Project](/Example/App.js) 
 
