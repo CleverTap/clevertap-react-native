@@ -1,5 +1,7 @@
 package com.clevertap.react;
 
+import static com.clevertap.react.CleverTapUtils.getWritableMapFromMap;
+
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -62,27 +64,6 @@ public class CleverTapApplication extends Application implements CTPushNotificat
             }
         });
 
-    }
-
-    private WritableMap getWritableMapFromMap(Map<String, ? extends Object> var1) {
-        JSONObject extras = var1 != null ? new JSONObject(var1) : new JSONObject();
-        WritableMap extrasParams = Arguments.createMap();
-        Iterator extrasKeys = extras.keys();
-        while (extrasKeys.hasNext()) {
-            String key = null;
-            String value = null;
-            try {
-                key = extrasKeys.next().toString();
-                value = extras.get(key).toString();
-            } catch (Throwable t) {
-                Log.e(TAG, t.getLocalizedMessage());
-            }
-
-            if (key != null && value != null) {
-                extrasParams.putString(key, value);
-            }
-        }
-        return extrasParams;
     }
 
     private void sendEvent(String eventName, Object params, ReactContext context) {
