@@ -3,9 +3,6 @@ Change Log
 Version 0.8.1 *(7th March 2022)*
 -------------------------------------------
 - Supports CleverTap iOS SDK `v4.0.0`
-
-Version 0.8.1 *(8th March 2022)*
--------------------------------------------
 - abstract out notification click callback logic for killed state for Android.
 
 Version 0.8.0 *(17th January 2022)*
