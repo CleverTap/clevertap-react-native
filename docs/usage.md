@@ -74,6 +74,12 @@ CleverTap.profileDecrementValueForKey(1, "score");
 CleverTap.recordEvent('testEvent');
 ```
 
+#### Record an event with event Properties  
+
+```javascript 
+CleverTap.recordEvent('Product Viewed', {'Product Name': 'Dairy Milk','Category': 'Chocolate','Amount': 20.00});
+```
+
 #### Record Charged event
 
 ```javascript 
