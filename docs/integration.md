@@ -11,11 +11,11 @@ After [install](./install.md), you will need to integrate the CleverTap SDK into
 ```
 NOTE:  Don't forget to add the CleverTap imports at the top of the file.
 ```objc
-#import <CleverTapSDK/CleverTap.h>
-#import <CleverTapReact/CleverTapReactManager.h>
+#import <CleverTap-iOS-SDK/CleverTap.h>
+#import <clevertap-react-native/CleverTapReactManager.h>
 ```
 
-Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTapSDK/CleverTap.h>** and **@import CleverTapReact;** instead of **#import <CleverTapReact/CleverTapReactManager.h>** in the AppDelegate class in case if using ```use_modular_headers!``` in the podfile.
+Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-SDK/CleverTap.h>** and **@import CleverTapReact;** instead of **#import <clevertap-react-native/CleverTapReactManager.h>** in the AppDelegate class in case if using ```use_modular_headers!``` in the podfile.
 
 [See the Example Project](/Example/ios/Example/AppDelegate.m).
 
