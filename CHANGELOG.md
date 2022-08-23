@@ -1,5 +1,9 @@
 Change Log
 ==========
+Version 0.9.0 *(22nd August 2022)*
+-------------------------------------------
+- Supports [CleverTap Android SDK v4.6.0](https://github.com/CleverTap/clevertap-android-sdk/releases/tag/corev4.6.0_ptv1.0.4)
+
 Version 0.8.1 *(7th March 2022)*
 -------------------------------------------
 - Supports CleverTap iOS SDK `v4.0.0`

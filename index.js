@@ -379,7 +379,8 @@ var CleverTap = {
     },
 
     /**
-    * Remove a key-value from the user profile
+    * Remove a key-value from the user profile. Alternatively this method can also be used to remove PII data
+    * (for eg. Email,Name,Phone), locally from database and shared prefs
     * @param {string} the key to remove
     */
     profileRemoveValueForKey: function (key) {
