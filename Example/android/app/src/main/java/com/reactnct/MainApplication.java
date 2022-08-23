@@ -70,6 +70,9 @@ public class MainApplication extends CleverTapApplication
     @Override
     public void onCreate() {
         CleverTapAPI.setDebugLevel(LogLevel.VERBOSE);
+        // you can use below two xiaomi related methods from clevertap-react-native 0.9.0 onwards
+        //CleverTapAPI.changeXiaomiCredentials("your xiaomi app id","your xiaomi app key")
+        //CleverTapAPI.enableXiaomiPushOn(XIAOMI_MIUI_DEVICES)
         CleverTapAPI.setNotificationHandler((NotificationHandler) new PushTemplateNotificationHandler());
         CleverTapAPI.getDefaultInstance(getApplicationContext()).enableDeviceNetworkInfoReporting(true);
         registerActivityLifecycleCallbacks(this);
