@@ -16,6 +16,7 @@ import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.android.sdk.InAppNotificationButtonListener;
 import com.clevertap.android.sdk.InAppNotificationListener;
 import com.clevertap.android.sdk.InboxMessageButtonListener;
+import com.clevertap.android.sdk.InboxMessageListener;
 import com.clevertap.android.sdk.SyncListener;
 import com.clevertap.android.sdk.UTMDetail;
 import com.clevertap.android.sdk.displayunits.DisplayUnitListener;
@@ -55,7 +56,7 @@ import org.json.JSONObject;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class CleverTapModule extends ReactContextBaseJavaModule implements SyncListener,
         InAppNotificationListener, CTInboxListener,
-        InboxMessageButtonListener,
+        InboxMessageButtonListener, InboxMessageListener,
         InAppNotificationButtonListener, DisplayUnitListener, CTProductConfigListener,
         CTFeatureFlagsListener, CTPushNotificationListener {
 
@@ -114,6 +115,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     private static final String CLEVERTAP_INBOX_MESSAGES_DID_UPDATE = "CleverTapInboxMessagesDidUpdate";
 
     private static final String CLEVERTAP_ON_INBOX_BUTTON_CLICK = "CleverTapInboxMessageButtonTapped";
+    private static final String CLEVERTAP_ON_INBOX_MESSAGE_CLICK = "CleverTapInboxMessageTapped";
 
     private static final String CLEVERTAP_ON_INAPP_BUTTON_CLICK = "CleverTapInAppNotificationButtonTapped";
 
@@ -459,6 +461,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         constants.put(CLEVERTAP_INBOX_DID_INITIALIZE, CLEVERTAP_INBOX_DID_INITIALIZE);
         constants.put(CLEVERTAP_INBOX_MESSAGES_DID_UPDATE, CLEVERTAP_INBOX_MESSAGES_DID_UPDATE);
         constants.put(CLEVERTAP_ON_INBOX_BUTTON_CLICK, CLEVERTAP_ON_INBOX_BUTTON_CLICK);
+        constants.put(CLEVERTAP_ON_INBOX_MESSAGE_CLICK, CLEVERTAP_ON_INBOX_MESSAGE_CLICK);
         constants.put(CLEVERTAP_ON_DISPLAY_UNITS_LOADED, CLEVERTAP_ON_DISPLAY_UNITS_LOADED);
         constants.put(CLEVERTAP_ON_INAPP_BUTTON_CLICK, CLEVERTAP_ON_INAPP_BUTTON_CLICK);
         constants.put(CLEVERTAP_FEATURE_FLAGS_DID_UPDATE, CLEVERTAP_FEATURE_FLAGS_DID_UPDATE);
@@ -723,6 +726,14 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         sendEvent(CLEVERTAP_ON_INBOX_BUTTON_CLICK, getWritableMapFromMap(payload));
 
+    }
+    @Override
+    public void onInboxItemClicked(CTInboxMessage message){
+        WritableMap params = Arguments.createMap();
+        params.putString("data",message.getData().toString());
+        params.putString("customData",message.getCustomData().toString());
+        params.putString("wzrkParams",message.getWzrkParams().toString());
+        sendEvent(CLEVERTAP_ON_INBOX_MESSAGE_CLICK,params);
     }
 
     //Product Config Callback
@@ -1208,9 +1219,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             case FCM:
                 clevertap.pushFcmRegistrationId(token, true);
                 break;
-            case XPS:
-                clevertap.pushXiaomiRegistrationId(token, true);
-                break;
             case BPS:
                 clevertap.pushBaiduRegistrationId(token, true);
                 break;
@@ -1222,6 +1230,24 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 break;
         }
     }
+
+    @ReactMethod
+    public void setPushTokenAsString(String token, String type,String region) {
+        CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap == null || token == null || type == null) {
+            return;
+        }
+
+        switch (type) {
+            case XPS:
+                clevertap.pushXiaomiRegistrationId(token,region,true);
+                break;
+            default:
+                Log.e(TAG, "Unknown push token type " + type);
+                break;
+        }
+    }
+
 
     @ReactMethod
     public void showInbox(ReadableMap styleConfig) {
@@ -1350,6 +1376,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 clevertap.setSyncListener(this);
                 clevertap.setCTNotificationInboxListener(this);
                 clevertap.setInboxMessageButtonListener(this);
+                clevertap.setCTInboxMessageListener(this);
                 clevertap.setInAppNotificationButtonListener(this);
                 clevertap.setDisplayUnitListener(this);
                 clevertap.setCTProductConfigListener(this);
