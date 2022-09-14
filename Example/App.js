@@ -737,9 +737,9 @@ pushFcmRegistrationId = () => {
         // or else two different tokens will be pushed to BackEnd resulting in unwanted behavior
         // => https://github.com/CleverTap/clevertap-react-native/issues/166
         // => https://developer.clevertap.com/docs/android#section-custom-android-push-notifications-handling
-        CleverTap.setPushToken("111056687894", CleverTap.FCM);
+        CleverTap.setPushToken("1000test000token000fcm", CleverTap.FCM);
         //CleverTap.setPushToken("111056687894", CleverTap.HMS);//for Huawei push
-        //CleverTap.setPushToken("111056687894", CleverTap.XPS);//for Xiaomi push
+        CleverTap.setPushToken("1000test000token000xps", CleverTap.XPS,"Europe");//for Xiaomi push
         //CleverTap.setPushToken("111056687894", CleverTap.BPS);//for Baidu push
 
     }
