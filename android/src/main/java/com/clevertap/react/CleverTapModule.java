@@ -732,9 +732,11 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     @Override
     public void onInboxItemClicked(CTInboxMessage message){
         WritableMap params = Arguments.createMap();
-        params.putString("data",message.getData().toString());
-        params.putString("customData",message.getCustomData().toString());
-        params.putString("wzrkParams",message.getWzrkParams().toString());
+        JSONObject data = message.getData();
+        JSONObject customData = message.getCustomData();
+        if (data != null) {
+            params.putString("data", data.toString());
+        }
         sendEvent(CLEVERTAP_ON_INBOX_MESSAGE_CLICK,params);
     }
 
