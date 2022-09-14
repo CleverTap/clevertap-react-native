@@ -1,12 +1,9 @@
 Change Log
 ==========
 
-Version 0.9.1 *(13th September 2022)*
+Version 0.9.1 *(19th September 2022)*
 -------------------------------------------
-- Supports CleverTap Android SDK `v4.6.1`
-- Support for Inbox Item Click Listener
-- Support for Xiaomi Region changes and Android 12 enhancements
-
+- Supports CleverTap Android SDK [v4.6.2](https://github.com/CleverTap/clevertap-android-sdk/blob/corev4.6.2_ptv1.0.5/CHANGELOG.md) and associated enhancements
 
 Version 0.9.0 *(23rd August 2022)*
 -------------------------------------------

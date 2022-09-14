@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -984,6 +985,10 @@ function addCleverTapAPIListeners(fromClick) {
     CleverTap.addListener(CleverTap.CleverTapInboxMessageButtonTapped, (event) => {
         _handleCleverTapInbox(CleverTap.CleverTapInboxMessageButtonTapped, event);
     });
+    CleverTap.addListener(CleverTap.CleverTapInboxMessageTapped, (event) => {
+        _handleCleverTapInbox(CleverTap.CleverTapInboxMessageTapped, event);
+    });
+
     CleverTap.addListener(CleverTap.CleverTapDisplayUnitsLoaded, (event) => {
         _handleCleverTapDisplayUnitsLoaded(CleverTap.CleverTapDisplayUnitsLoaded, event);
     });
