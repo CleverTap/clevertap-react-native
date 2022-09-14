@@ -1233,6 +1233,10 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     @ReactMethod
     public void setPushTokenAsString(String token, String type,String region) {
+        Log.e(TAG, "setPushTokenAsString | received token :" + token);
+        Log.e(TAG, "setPushTokenAsString | received type :" + type);
+        Log.e(TAG, "setPushTokenAsString | received region :" + region);
+
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || token == null || type == null) {
             return;

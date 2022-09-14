@@ -112,9 +112,11 @@ var CleverTap = {
      */
     setPushToken: function (token, type,region="") {
         if(type === CleverTap.XPS){
+            console.log("CleverTap RN | setPushToken | received type is xps")
             CleverTapReact.setPushTokenAsString(token, type,region);
         }
         else {
+            console.log("CleverTap RN | setPushToken | received type is not xps, but:",type)
             CleverTapReact.setPushTokenAsString(token, type);
         }
     },
