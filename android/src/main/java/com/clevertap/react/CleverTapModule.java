@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.RequiresApi;
 import com.clevertap.android.sdk.CTFeatureFlagsListener;
@@ -17,6 +18,7 @@ import com.clevertap.android.sdk.InAppNotificationButtonListener;
 import com.clevertap.android.sdk.InAppNotificationListener;
 import com.clevertap.android.sdk.InboxMessageButtonListener;
 import com.clevertap.android.sdk.InboxMessageListener;
+import com.clevertap.android.sdk.Logger;
 import com.clevertap.android.sdk.SyncListener;
 import com.clevertap.android.sdk.UTMDetail;
 import com.clevertap.android.sdk.displayunits.DisplayUnitListener;
@@ -1210,6 +1212,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     @ReactMethod
     public void setPushTokenAsString(String token, String type) {
+        Logger.v("setPushTokenAsString() called with: token = [" + token + "], type = [" + type + "]");
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || token == null || type == null) {
             return;
@@ -1232,13 +1235,11 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @ReactMethod
-    public void setPushTokenAsString(String token, String type,String region) {
-        Log.e(TAG, "setPushTokenAsString | received token :" + token);
-        Log.e(TAG, "setPushTokenAsString | received type :" + type);
-        Log.e(TAG, "setPushTokenAsString | received region :" + region);
+    public void setPushTokenAsStringWithRegion(String token, String type,String region) {
+        Logger.v( "setPushTokenAsString() called with: token = [" + token + "], type = [" + type + "], region = [" + region + "]");
 
         CleverTapAPI clevertap = getCleverTapAPI();
-        if (clevertap == null || token == null || type == null) {
+        if (clevertap == null || token == null || type == null || TextUtils.isEmpty(region)) {
             return;
         }
 

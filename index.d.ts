@@ -64,10 +64,10 @@
   export function registerForPush(): void;
 
   /**
-   * Sets the device's push token
-   * @param token {string}
-   * @param type {string}
-   * @param region{string}
+   * Manually set the push token on the CleverTap user profile
+   * @param {string} token - the device token
+   * @param {string} type - for Android only, specifying the type of push service token. Values can be CleverTap.FCM for Firebase or CleverTap.XPS for Xiaomi or CleverTap.BPS for Baidu or CleverTap.HPS for Huawei,
+   * @param {string} region - for xps only ,to specify the region
    */
   export function setPushToken(token: string, type: string,region?:string): void;
 

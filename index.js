@@ -108,15 +108,14 @@ var CleverTap = {
      * Manually set the push token on the CleverTap user profile
      * @param {string} token - the device token
      * @param {string} type - for Android only, specifying the type of push service token. Values can be CleverTap.FCM for Firebase or CleverTap.XPS for Xiaomi or CleverTap.BPS for Baidu or CleverTap.HPS for Huawei,
-     * @param {string} region - for xps only ,specify the region
+     * @param {string} region - for xps only ,to specify the region
      */
     setPushToken: function (token, type,region="") {
+        console.log(`CleverTap RN | setPushToken | received : token: '${token}' | type:'${type}' | region:'${region}' `)
         if(type === CleverTap.XPS){
-            console.log("CleverTap RN | setPushToken | received type is xps")
-            CleverTapReact.setPushTokenAsString(token, type,region);
+            CleverTapReact.setPushTokenAsStringWithRegion(token, type,region);
         }
         else {
-            console.log("CleverTap RN | setPushToken | received type is not xps, but:",type)
             CleverTapReact.setPushTokenAsString(token, type);
         }
     },
