@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -737,9 +738,9 @@ pushFcmRegistrationId = () => {
         // or else two different tokens will be pushed to BackEnd resulting in unwanted behavior
         // => https://github.com/CleverTap/clevertap-react-native/issues/166
         // => https://developer.clevertap.com/docs/android#section-custom-android-push-notifications-handling
-        CleverTap.setPushToken("111056687894", CleverTap.FCM);
+        CleverTap.setPushToken("1000test000token000fcm", CleverTap.FCM);
         //CleverTap.setPushToken("111056687894", CleverTap.HMS);//for Huawei push
-        //CleverTap.setPushToken("111056687894", CleverTap.XPS);//for Xiaomi push
+        CleverTap.setPushToken("1000test000token000xps", CleverTap.XPS,"Europe");//for Xiaomi push
         //CleverTap.setPushToken("111056687894", CleverTap.BPS);//for Baidu push
 
     }
@@ -984,6 +985,10 @@ function addCleverTapAPIListeners(fromClick) {
     CleverTap.addListener(CleverTap.CleverTapInboxMessageButtonTapped, (event) => {
         _handleCleverTapInbox(CleverTap.CleverTapInboxMessageButtonTapped, event);
     });
+    CleverTap.addListener(CleverTap.CleverTapInboxMessageTapped, (event) => {
+        _handleCleverTapInbox(CleverTap.CleverTapInboxMessageTapped, event);
+    });
+
     CleverTap.addListener(CleverTap.CleverTapDisplayUnitsLoaded, (event) => {
         _handleCleverTapDisplayUnitsLoaded(CleverTap.CleverTapDisplayUnitsLoaded, event);
     });

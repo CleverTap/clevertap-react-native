@@ -1,5 +1,13 @@
 Change Log
 ==========
+
+Version 0.9.1 *(21 September 2022)*
+-------------------------------------------
+- Supports CleverTap Android Core SDK [v4.6.3](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md) and associated enhancements
+- Supports CleverTap Android Push Templates SDK [v1.0.5](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTPUSHTEMPLATESCHANGELOG.md) and associated enhancements
+- Supports CleverTap Android HMS SDK [v1.3.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTHUAWEIPUSHCHANGELOG.md) and associated enhancements
+- Supports CleverTap Android XPS SDK [v1.5.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTXIAOMIPUSHCHANGELOG.md) and associated Android 12, Region Changes and other enhancements
+
 Version 0.9.0 *(23rd August 2022)*
 -------------------------------------------
 - Supports [CleverTap Android SDK v4.6.0](https://github.com/CleverTap/clevertap-android-sdk/releases/tag/corev4.6.0_ptv1.0.4)
