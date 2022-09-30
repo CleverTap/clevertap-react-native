@@ -33,6 +33,7 @@ RCT_EXPORT_MODULE();
         kCleverTapInboxDidInitialize: kCleverTapInboxDidInitialize,
         kCleverTapInboxMessagesDidUpdate: kCleverTapInboxMessagesDidUpdate,
         kCleverTapInboxMessageButtonTapped: kCleverTapInboxMessageButtonTapped,
+        kCleverTapInboxMessageTapped: kCleverTapInboxMessageTapped,
         kCleverTapInAppNotificationButtonTapped: kCleverTapInAppNotificationButtonTapped,
         kCleverTapDisplayUnitsLoaded: kCleverTapDisplayUnitsLoaded,
         kCleverTapFeatureFlagsDidUpdate: kCleverTapFeatureFlagsDidUpdate,
@@ -598,6 +599,16 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
         body[@"customExtras"] = customExtras;
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessageButtonTapped object:nil userInfo:body];
+}
+
+- (void)messageDidSelect:(CleverTapInboxMessage *_Nonnull)message atIndex:(int)index withButtonIndex:(int)buttonIndex {
+    NSMutableDictionary *body = [NSMutableDictionary new];
+    if (message != nil) {
+        body[@"message"] = [message customData];
+    }
+    [self postNotificationWithName:kCleverTapInboxMessageTapped andBody:body];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessageTapped object:nil userInfo:body];
+
 }
 
 
