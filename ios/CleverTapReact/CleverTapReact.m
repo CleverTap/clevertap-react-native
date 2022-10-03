@@ -606,7 +606,6 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
     if (message != nil) {
         body[@"message"] = [message customData];
     }
-    [self postNotificationWithName:kCleverTapInboxMessageTapped andBody:body];
     [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessageTapped object:nil userInfo:body];
 
 }
