@@ -1,9 +1,9 @@
 Change Log
 ==========
 
-Version 0.9.2 *(4 October 2022)*
+Version 0.9.2 *(6 October 2022)*
 -------------------------------------------
-- * Supports [CleverTap iOS SDK v4.1.2](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-412-september-16-2022)
+- * Supports [CleverTap iOS SDK v4.1.2](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-412-september-16-2022) and associated enhancements
 
 Version 0.9.1 *(21 September 2022)*
 -------------------------------------------

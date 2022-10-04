@@ -596,27 +596,22 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
 - (void)messageButtonTappedWithCustomExtras:(NSDictionary *)customExtras {
     NSMutableDictionary *body = [NSMutableDictionary new];
     if (customExtras != nil) {
-        body[@"customExtras"] = customExtras;
+        body = [NSMutableDictionary dictionaryWithDictionary:customExtras];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessageButtonTapped object:nil userInfo:body];
 }
 
 - (void)messageDidSelect:(CleverTapInboxMessage *_Nonnull)message atIndex:(int)index withButtonIndex:(int)buttonIndex {
     NSMutableDictionary *body = [NSMutableDictionary new];
-    @try {
+    if ([message json] != nil) {
         NSError *error;
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[message json]
-                                                           options:0
-                                                             error:&error];
-
+                                                                   options:0
+                                                                   error:&error];
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         body[@"data"] = jsonString;
     }
-    @catch (NSException *exception) {
-        body[@"data"] = @"";
-    }
     [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessageTapped object:nil userInfo:body];
-
 }
 
 
