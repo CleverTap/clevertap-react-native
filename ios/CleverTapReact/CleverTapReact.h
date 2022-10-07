@@ -7,6 +7,7 @@ static NSString *const kCleverTapInAppNotificationButtonTapped = @"CleverTapInAp
 static NSString *const kCleverTapInboxDidInitialize          = @"CleverTapInboxDidInitialize";
 static NSString *const kCleverTapInboxMessagesDidUpdate      = @"CleverTapInboxMessagesDidUpdate";
 static NSString *const kCleverTapInboxMessageButtonTapped    = @"CleverTapInboxMessageButtonTapped";
+static NSString *const kCleverTapInboxMessageTapped          = @"CleverTapInboxMessageTapped";
 static NSString *const kCleverTapDisplayUnitsLoaded          = @"CleverTapDisplayUnitsLoaded";
 static NSString *const kCleverTapFeatureFlagsDidUpdate       = @"CleverTapFeatureFlagsDidUpdate";
 static NSString *const kCleverTapProductConfigDidFetch       = @"CleverTapProductConfigDidFetch";
