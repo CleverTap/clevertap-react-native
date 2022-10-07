@@ -91,6 +91,10 @@ RCT_EXPORT_METHOD(setPushTokenAsString:(NSString*)token withType:(NSString *)typ
     [[CleverTap sharedInstance] setPushTokenAsString:token];
 }
 
+// setPushTokenAsStringWithRegion is a no-op in iOS
+RCT_EXPORT_METHOD(setPushTokenAsStringWithRegion:(NSString*)token withType:(NSString *)type withRegion:(NSString *)region){
+    RCTLogInfo(@"[CleverTap setPushTokenAsStringWithRegion is no-op in iOS]");
+}
 
 #pragma mark - Personalization
 
