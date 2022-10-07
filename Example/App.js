@@ -107,6 +107,9 @@ class Expandable_ListView extends Component {
             case 12:
                 show_appInbox();
                 break;
+            case 55:
+                show_appInboxwithTabs();
+                break;
             case 13:
                 get_TotalMessageCount();
                 break;
@@ -382,7 +385,7 @@ export default class App extends Component {
 
             {
                 expanded: false, category_Name: "App Inbox", sub_Category: [{ id: 11, name: 'initializeInbox' },
-                { id: 12, name: 'showAppInbox' }, { id: 13, name: 'getInboxMessageCount' }, {
+                { id: 12, name: 'showAppInbox' }, { id: 55, name: 'showAppInboxwithTabs' }, { id: 13, name: 'getInboxMessageCount' }, {
                     id: 14,
                     name: 'getInboxMessageUnreadCount'
                 }, { id: 15, name: 'getAllInboxMessages' },
@@ -616,6 +619,25 @@ pushChargedEvent = () => {
 //App Inbox
 
 show_appInbox = () => {
+
+    //Show Inbox
+    CleverTap.showInbox({
+        'navBarTitle': 'My App Inbox',
+        'navBarTitleColor': '#FF0000',
+        'navBarColor': '#FFFFFF',
+        'inboxBackgroundColor': '#AED6F1',
+        'backButtonColor': '#00FF00',
+        'unselectedTabColor': '#0000FF',
+        'selectedTabColor': '#FF0000',
+        'selectedTabIndicatorColor': '#000000',
+        'noMessageText': 'No message(s)',
+        'noMessageTextColor': '#FF0000'
+    });
+
+
+};
+
+show_appInboxwithTabs = () => {
 
     //Show Inbox
     CleverTap.showInbox({

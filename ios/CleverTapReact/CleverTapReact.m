@@ -33,13 +33,15 @@ RCT_EXPORT_MODULE();
         kCleverTapInboxDidInitialize: kCleverTapInboxDidInitialize,
         kCleverTapInboxMessagesDidUpdate: kCleverTapInboxMessagesDidUpdate,
         kCleverTapInboxMessageButtonTapped: kCleverTapInboxMessageButtonTapped,
+        kCleverTapInboxMessageTapped: kCleverTapInboxMessageTapped,
         kCleverTapInAppNotificationButtonTapped: kCleverTapInAppNotificationButtonTapped,
         kCleverTapDisplayUnitsLoaded: kCleverTapDisplayUnitsLoaded,
         kCleverTapFeatureFlagsDidUpdate: kCleverTapFeatureFlagsDidUpdate,
         kCleverTapProductConfigDidFetch: kCleverTapProductConfigDidFetch,
         kCleverTapProductConfigDidActivate: kCleverTapProductConfigDidActivate,
         kCleverTapProductConfigDidInitialize: kCleverTapProductConfigDidInitialize,
-        kCleverTapPushNotificationClicked: kCleverTapPushNotificationClicked
+        kCleverTapPushNotificationClicked: kCleverTapPushNotificationClicked,
+        kXPS: kXPS
     };
 }
 
@@ -90,6 +92,10 @@ RCT_EXPORT_METHOD(setPushTokenAsString:(NSString*)token withType:(NSString *)typ
     [[CleverTap sharedInstance] setPushTokenAsString:token];
 }
 
+// setPushTokenAsStringWithRegion is a no-op in iOS
+RCT_EXPORT_METHOD(setPushTokenAsStringWithRegion:(NSString*)token withType:(NSString *)type withRegion:(NSString *)region){
+    RCTLogInfo(@"[CleverTap setPushTokenAsStringWithRegion is no-op in iOS]");
+}
 
 #pragma mark - Personalization
 
@@ -595,9 +601,22 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
 - (void)messageButtonTappedWithCustomExtras:(NSDictionary *)customExtras {
     NSMutableDictionary *body = [NSMutableDictionary new];
     if (customExtras != nil) {
-        body[@"customExtras"] = customExtras;
+        body = [NSMutableDictionary dictionaryWithDictionary:customExtras];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessageButtonTapped object:nil userInfo:body];
+}
+
+- (void)messageDidSelect:(CleverTapInboxMessage *_Nonnull)message atIndex:(int)index withButtonIndex:(int)buttonIndex {
+    NSMutableDictionary *body = [NSMutableDictionary new];
+    if ([message json] != nil) {
+        NSError *error;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[message json]
+                                                                   options:0
+                                                                   error:&error];
+        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        body[@"data"] = jsonString;
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessageTapped object:nil userInfo:body];
 }
 
 
