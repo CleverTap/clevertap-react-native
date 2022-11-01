@@ -276,25 +276,29 @@
   export function profileGetProperty(propertyName: string, callback: Callback): void;
 
   /**
-   * Deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
+   * @deprecated
+   * Since version 0.6.0. Use `getCleverTapID(callback)` instead.
+   *
    * Get a unique CleverTap identifier suitable for use with install attribution providers.
-   * calls back with unique CleverTap attribution identifier
+   * @param {function(err, res)} callback that returns a string res
    */
-  export function profileGetCleverTapAttributionIdentifier(callback: Callback): void;
+  export function profileGetCleverTapAttributionIdentifier(callback: CallbackString): void;
 
   /**
-   * Deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
+   * @deprecated
+   * Since version 0.6.0. Use `getCleverTapID(callback)` instead.
+   *
    * Get User Profile CleverTapID
-   * calls back with CleverTapID or false
+   * @param {function(err, res)} callback that returns a string res
    */
-  export function profileGetCleverTapID(callback: Callback): void;
+  export function profileGetCleverTapID(callback: CallbackString): void;
 
   /**
    * Returns a unique identifier through callback by which CleverTap identifies this user
    *
    * @param {function(err, res)} non-null callback to retrieve identifier
    */
-  export function getCleverTapID(callback: Callback): void;
+  export function getCleverTapID(callback: CallbackString): void;
 
   /**
    * Remove the property specified by key from the user profile. Alternatively this method
@@ -616,3 +620,9 @@
   export function setDebugLevel(level: number): void;
 
   type Callback = (err: object, res: object) => void;
+  type CallbackString = (err: object, res: string) => void;
+
+  export const FCM : string;
+  export const XPS : string;
+  export const BPS : string;
+  export const HPS : string;
