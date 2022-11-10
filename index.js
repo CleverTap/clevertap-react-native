@@ -775,6 +775,16 @@ var CleverTap = {
     */
     setDebugLevel: function (level) {
         CleverTapReact.setDebugLevel(level);
+    },
+
+    /**
+     * Change the native instance of CleverTapAPI by using the instance for
+     * specific account. Used by Leanplum RN SDK.
+     *
+     * @param accountId The ID of the account to use when switching instance.
+     */
+    setInstanceWithAccountId: function(accountId) {
+        CleverTapReact.setInstanceWithAccountId(accountId);
     }
 };
 

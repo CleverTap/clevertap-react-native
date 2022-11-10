@@ -1373,26 +1373,42 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         return props;
     }
 
+    private void registerListeners(CleverTapAPI clevertap) {
+        clevertap.setCTPushNotificationListener(this);
+        clevertap.setInAppNotificationListener(this);
+        clevertap.setSyncListener(this);
+        clevertap.setCTNotificationInboxListener(this);
+        clevertap.setInboxMessageButtonListener(this);
+        clevertap.setCTInboxMessageListener(this);
+        clevertap.setInAppNotificationButtonListener(this);
+        clevertap.setDisplayUnitListener(this);
+        clevertap.setCTProductConfigListener(this);
+        clevertap.setCTFeatureFlagsListener(this);
+        clevertap.setLibrary("React-Native"); // TODO change library when using from Leanplum?
+    }
+
     private CleverTapAPI getCleverTapAPI() {
         if (mCleverTap == null) {
             CleverTapAPI clevertap = CleverTapAPI.getDefaultInstance(this.context);
             if (clevertap != null) {
-                clevertap.setCTPushNotificationListener(this);
-                clevertap.setInAppNotificationListener(this);
-                clevertap.setSyncListener(this);
-                clevertap.setCTNotificationInboxListener(this);
-                clevertap.setInboxMessageButtonListener(this);
-                clevertap.setCTInboxMessageListener(this);
-                clevertap.setInAppNotificationButtonListener(this);
-                clevertap.setDisplayUnitListener(this);
-                clevertap.setCTProductConfigListener(this);
-                clevertap.setCTFeatureFlagsListener(this);
-                clevertap.setLibrary("React-Native");
+                registerListeners(clevertap);
             }
             mCleverTap = clevertap;
         }
 
         return mCleverTap;
+    }
+
+    @ReactMethod
+    public void setInstanceWithAccountId(String accountId) {
+        if (mCleverTap == null || !accountId.equals(mCleverTap.getAccountId())) {
+            CleverTapAPI cleverTap = CleverTapAPI.getGlobalInstance(this.context, accountId);
+            if (cleverTap != null) {
+                registerListeners(cleverTap);
+                mCleverTap = cleverTap;
+                Log.i(TAG, "CleverTap instance changed for accountId " + accountId);
+            }
+        }
     }
 
     private CTProductConfigController getCtProductConfigController() {
