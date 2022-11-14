@@ -1,6 +1,6 @@
-# Push Templates by CleverTap
+# iOS Push Templates integration with React Native
 
-CleverTap Push Templates SDK helps you engage with your users using fancy push notification templates built specifically to work with [CleverTap](https://www.clevertap.com).
+CleverTap Push Templates SDK helps you engage with your users using fancy push notification templates built specifically to work with [CleverTap](https://eu1.dashboard.clevertap.com/login.html).
 
 # Table of contents
 
@@ -14,6 +14,15 @@ CleverTap Push Templates SDK helps you engage with your users using fancy push n
 # Installation
 
 [(Back to top)](#table-of-contents)
+- Add Notification Content Extension (Push Templates) in a React Native iOS Project
+Notification Content Extension is an app extension that provides a custom interface when a user previews your notification in the notification center. To enable the functionality of CleverTap iOS Push templates, we need this extension in the project which act as subclass to our CTNotificationContent framework.
+
+Open Example.xcodeproj (or your app’s .xcodeproj file) in the ios folder of React Native project. Go to File > New > Target… and search with the name “Notification Content Extension“
+![NotificationContentTarget](https://github.com/CleverTap/clevertap-react-native/blob/task/SDK-2395-RN-pushtemplates-support/static/NotificationContentTarget.png)
+Add “Notification Content“ as target name.
+![NotificationContent](https://github.com/CleverTap/clevertap-react-native/blob/task/SDK-2395-RN-pushtemplates-support/static/NotificationContent.png)
+
+
 
 ### Out of the box
 
