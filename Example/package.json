@@ -7,8 +7,7 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint .",
-    "install": "npm install --f"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@react-navigation/drawer": "^5.12.5",
