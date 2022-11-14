@@ -8,8 +8,6 @@ CleverTap Push Templates SDK helps you engage with your users using fancy push n
 - [Dashboard Usage](#dashboard-usage)
 - [Template Types](#template-types)
 - [Template Keys](#template-keys)
-- [Developer Notes](#developer-notes)
-- [Sample App](#sample-app)
 
 # Installation
 
@@ -18,11 +16,128 @@ CleverTap Push Templates SDK helps you engage with your users using fancy push n
 Notification Content Extension is an app extension that provides a custom interface when a user previews your notification in the notification center. To enable the functionality of CleverTap iOS Push templates, we need this extension in the project which act as subclass to our CTNotificationContent framework.
 
 Open Example.xcodeproj (or your app’s .xcodeproj file) in the ios folder of React Native project. Go to File > New > Target… and search with the name “Notification Content Extension“
+
 ![NotificationContentTarget](https://github.com/CleverTap/clevertap-react-native/blob/task/SDK-2395-RN-pushtemplates-support/static/NotificationContentTarget.png)
+
 Add “Notification Content“ as target name.
+
 ![NotificationContent](https://github.com/CleverTap/clevertap-react-native/blob/task/SDK-2395-RN-pushtemplates-support/static/NotificationContent.png)
 
+Refer to https://github.com/CleverTap/CTNotificationContent#-setup for setting up Notification Content target so that it imports CTNotificationContent framework in the code. Make sure to add the necessary key-values in  the Info.plist file of NotificationContent target so that it recognises the identifier of the incoming notification.  
 
+Alternatively, go to finder and replace newly created NotificationContent  (or your content extension) folder with the NotificationContent folder in CTNotificationContent Example project repository.
+
+![Finder](https://github.com/CleverTap/clevertap-react-native/blob/task/SDK-2395-RN-pushtemplates-support/static/Finder.png)
+
+Add the following to a file named Podfile in the ios directory of your project.
+```
+use_frameworks!
+target 'NotificationContent' do
+    pod 'CTNotificationContent'
+end
+```
+
+The final Podfile should look something like this:
+```
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+platform :ios, '10.0'
+
+use_frameworks!
+target 'NotificationContent' do
+    pod 'CTNotificationContent'
+end
+
+target 'Example' do
+    
+  config = use_native_modules!
+
+  use_react_native!(:path => config["reactNativePath"])
+  
+  pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
+  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+
+  post_install do |installer|
+    react_native_post_install(installer)
+    # Apple Silicon builds require a library path tweak for Swift library discovery or "symbol not found" for swift things
+    installer.aggregate_targets.each do |aggregate_target|
+     aggregate_target.user_project.native_targets.each do |target|
+      target.build_configurations.each do |config|
+       config.build_settings['LIBRARY_SEARCH_PATHS'] = ['$(SDKROOT)/usr/lib/swift', '$(inherited)']
+      end
+     end
+     aggregate_target.user_project.save
+    end
+   end
+end
+```
+Now run the command pod install again. This will download and configure CTNotificationContent(iOS push templates) in your project.
+```
+For React Native 0.69 or below you need to change the build phase order so that React Native can use the iOS framework added with the help of podfile
+Please check your React-Native version of the project before proceeding further. Go to package.json file in your project and check react-native key and check for the version.
+
+If the react native version of your project is below 0.69 you need to drag the Generate Specs above Headers as explained below.
+```
+## For React Native version 0.69 or below:
+
+Open Example.xcworkspace (or your app’s .xcworkspace file). Go to the Pods section in Xcode -> select FBReactNativeSpec -> Build Phases -> drag Generate Specs above Headers .
+![GenerateSpecs](https://github.com/CleverTap/clevertap-react-native/blob/task/SDK-2395-RN-pushtemplates-support/static/GenerateSpecs.png)
+
+## For React Native version 0.70 or above:
+
+We must disable "hermes" and "flipper" from the Podfile since we are using use_frameworks and this causes build issues if both of them are enabled. 
+
+Please observe that hermes_enabled is set from its default true state to false  by adding :hermes_enabled => false inside  use_react_native! snippet.
+The podfile mentions this in comments:
+```
+Note that if you have use_frameworks! enabled, Flipper will not work and
+    # you should disable the next line.
+```
+so we have added a # to comment the line
+```
+:flipper_configuration => FlipperConfiguration.enabled
+```
+The new Podfile should look like this:
+```
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+platform :ios, '12.4'
+install! 'cocoapods', :deterministic_uuids => false
+use_frameworks!
+target 'NotificationContent' do
+    pod 'CTNotificationContent'
+end  
+target 'reactnativedemo' do
+  config = use_native_modules!
+  # Flags change depending on the env values.
+  flags = get_default_flags()
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # Hermes is now enabled by default. Disable by setting this flag to false.
+    # Upcoming versions of React Native may rely on get_default_flags(), but
+    # we make it explicit here to aid in the React Native upgrade process.
+    :hermes_enabled => false,
+    :fabric_enabled => flags[:fabric_enabled],
+    # Enables Flipper.
+    #
+    # Note that if you have use_frameworks! enabled, Flipper will not work and
+    # you should disable the next line.
+    # :flipper_configuration => FlipperConfiguration.enabled,
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+  post_install do |installer|
+    react_native_post_install(
+      installer,
+      # Set `mac_catalyst_enabled` to `true` in order to apply patches
+      # necessary for Mac Catalyst builds
+      :mac_catalyst_enabled => false
+    )
+    __apply_Xcode_12_5_M1_post_install_workaround(installer)
+  end
+end
+```
 
 ### Out of the box
 
@@ -30,83 +145,94 @@ Add “Notification Content“ as target name.
 # Dashboard Usage
 
 [(Back to top)](#table-of-contents)
-
 While creating a Push Notification campaign on CleverTap, just follow the steps below -
 
-1. On the "WHAT" section pass the desired values in the "title" and "message" fields (NOTE: We prioritise title and message provided in the key-value pair - as shown in step 2, over these fields)
-
-![Basic](https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/basic.png)
-
-2. Click on "Advanced" and then click on "Add pair" to add the [Template Keys](#template-keys)
-
-![KVs](https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/kv.png)
-
-3. You can also add the above keys into one JSON object and use the `pt_json` key to fill in the values
-
-![KVs in JSON](https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/json.png)
-
+1. On the "WHAT" section pass the desired required values in the "title" and "message" fields (NOTE: These are iOS alert title and body).
+![Dashboard alert](https://github.com/CleverTap/CTNotificationContent/blob/master/images/dashboard_alert.png)
+2. Click on "Advanced" and then click on "Rich Media" and select Single or Carousel template.
+![Dashboard Rich Media](https://github.com/CleverTap/CTNotificationContent/blob/master/images/dashboard_richMedia.png)
+3. For adding custom key-value pair, add the [template Keys](#template-keys) individually or into one JSON object and use the `pt_json` key to fill in the values.
+![Dashboard Custom Key individual](https://github.com/CleverTap/CTNotificationContent/blob/master/images/dashboard_customKeysIndividual.png)
+![Dashboard Custom Key JSON](https://github.com/CleverTap/CTNotificationContent/blob/master/images/dashboard_customKeyValue.png)
 4. Send a test push and schedule!
 
 # Template Types
 
 [(Back to top)](#table-of-contents)
 
-## Basic Template
+## Rich Media
+### Single Media
+Single media is for basic view with single image.
+![Single Media](https://github.com/CleverTap/CTNotificationContent/blob/master/images/SingleMedia.png)
 
-Basic Template is the basic push notification received on apps.
+### Content Slider
+Content Slider is for image slideshow view where user can add multiple images with different captions, sub-captions, and actions.
 
-(Expanded and unexpanded example)
+<img src="https://github.com/CleverTap/CTNotificationContent/blob/master/images/ContentSlider.gif" alt="Content slider" width="450" height="800"/>
 
-![Basic with color](https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/basic%20color.png)
+## Custom key-value pair
 
+### Basic Template
+Basic Template is the basic push notification received on apps where user can also update text colour, background colour.
 
-## Auto Carousel Template
+![Custom Basic template](https://github.com/CleverTap/CTNotificationContent/blob/master/images/CustomBasicTemplate.png)
 
-Auto carousel is an automatic revolving carousel push notification.
+### Auto Carousel Template
+Auto carousel is an automatic revolving carousel push notification where user can also update text colour, background colour.
 
-(Expanded and unexpanded example)
+<img src="https://github.com/CleverTap/CTNotificationContent/blob/master/images/CustomAutoCarousel.gif" alt="Auto carousel" width="450" height="800"/>
 
-<img src="https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/autocarouselv0.0.3.gif" alt="Auto-Carousel" width="450" height="800"/>
+### Manual Carousel Template
+This is the manual version of the carousel. The user can navigate to the next/previous image by clicking on the Next/Back buttons.
+---
+**NOTE:**
 
+For iOS 12 and above, you need to configure your Notification Content target Info.plist to reflect the category identifier you registered: `NSExtension -> NSExtensionAttributes -> UNNotificationExtensionCategory`.  In addition, set the `UNNotificationExtensionInitialContentSizeRatio -> 0.1` ,  `UNNotificationExtensionDefaultContentHidden -> true` and `UNNotificationExtensionUserInteractionEnabled -> 1`.
 
-## Manual Carousel Template
+For iOS 11 and below, the previous/next buttons will not work. Please use notification actions with identifiers `action_1` and `action_2` for this purpose.
 
-This is the manual version of the carousel. The user can navigate to the next image by clicking on the arrows.
+---
 
-(Expanded and unexpanded example)
+<img src="https://github.com/CleverTap/CTNotificationContent/blob/master/images/CustomManualCarousel.gif" alt="Manual carousel" width="450" height="800"/>
 
-<img src="https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/manual.gif" alt="Manual" width="450" height="800"/>
+### Timer Template
+This template features a live countdown timer. You can even choose to show different title, message, and background image after the timer expires.
 
-If only one image can be downloaded, this template falls back to the Basic Template
+<img src="https://github.com/CleverTap/CTNotificationContent/blob/master/images/CustomTimerTemplate.gif" alt="Timer template" width="450" height="800"/>
 
-### Filmstrip Variant
+### Zero Bezel Template
 
-The manual carousel has an extra variant called `filmstrip`. This can be used by adding the following key-value -
+The Zero Bezel template ensures that the background image covers the entire available surface area of the push notification. All the text is overlayed on the image.
 
-Template Key | Required | Value
----:|:---:|:---
-pt_manual_carousel_type | Optional | `filmstrip`
+![Zero Bezel template](https://github.com/CleverTap/CTNotificationContent/blob/master/images/ZeroBezel.png)
 
+### Rating Template
 
-(Expanded and unexpanded example)
+Rating template lets your users give you feedback.
 
-<img src="https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/filmstrip.gif" alt="Filmstrip" width="450" height="800"/>
+**NOTE:**
 
-## Rating Template
+For iOS 12 and above, you need to configure your Notification Content target Info.plist to reflect the category identifier you registered: `NSExtension -> NSExtensionAttributes -> UNNotificationExtensionCategory`.  In addition, set the `UNNotificationExtensionInitialContentSizeRatio -> 0.1` ,  `UNNotificationExtensionDefaultContentHidden -> true` and `UNNotificationExtensionUserInteractionEnabled -> 1`.
+For iOS 11 and below, it will fallback to a basic template.
 
-Rating template lets your users give you feedback, this feedback is captured in the event "Rating Submitted" with in the property `wzrk_c2a`.<br/>(Expanded and unexpanded example)<br/>
+---
 
-![Rating](https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/rating.gif)
+![Rating](https://github.com/CleverTap/CTNotificationContent/blob/master/images/Rating.gif)
 
-## Product Catalog Template
+### Product Catalog Template
 
 Product catalog template lets you show case different images of a product (or a product catalog) before the user can decide to click on the "BUY NOW" option which can take them directly to the product via deep links. This template has two variants.
 
-### Vertical View
+**NOTE:**
 
-(Expanded and unexpanded example)
+For iOS 12 and above, you need to configure your Notification Content target Info.plist to reflect the category identifier you registered: `NSExtension -> NSExtensionAttributes -> UNNotificationExtensionCategory`.  In addition, set the `UNNotificationExtensionInitialContentSizeRatio -> 0.1` ,  `UNNotificationExtensionDefaultContentHidden -> true` and `UNNotificationExtensionUserInteractionEnabled -> 1`.
+For iOS 11 and below, it will fallback to a basic template.
 
-![Product Display](https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/productdisplay.gif)
+---
+
+### Vertical View 
+
+![Product Display](https://github.com/CleverTap/CTNotificationContent/blob/master/images/ProductDisplayVertical.gif)
 
 ### Linear View
 
@@ -116,146 +242,77 @@ Template Key | Required | Value
 ---:|:---:|:---
 pt_product_display_linear | Optional | `true`
 
-![Product Display](https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/proddisplaylinear.gif)
+![Product Display](https://github.com/CleverTap/CTNotificationContent/blob/master/images/ProductDisplayLinear.gif)
 
+### WebView Template 
 
-## Five Icons Template
+WebView template lets you load a remote https URL.
 
-Five icons template is a sticky push notification with no text, just 5 icons and a close button which can help your users go directly to the functionality of their choice with a button's click.
+![WebView Template](https://github.com/CleverTap/CTNotificationContent/blob/master/images/WebView.gif)
 
-If at least 3 icons are not retrieved, the library doesn't render any notification. The bifurcation of each CTA is captured in the event Notification Clicked with in the property `wzrk_c2a`.
-
-If user clicks on any notification area except the five & close icons, then by default it will launch an activity intent.
-
-<img src="https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/fiveicon.png" width="412" height="100">
-
-## Timer Template
-
-This template features a live countdown timer. You can even choose to show different title, message, and background image after the timer expires.
-
-Timer notification is only supported for Android N (7) and above. For OS versions below N, the library falls back to the Basic Template.
-
-![Timer](https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/timer.gif)
-
-## Zero Bezel Template
-
-The Zero Bezel template ensures that the background image covers the entire available surface area of the push notification. All the text is overlayed on the image.
-
-The library will fallback to the Basic Template if the image can't be downloaded.
-
-![Zero Bezel](https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/zerobezel.gif)
-
-## Input Box Template
-
-The Input Box Template lets you collect any kind of input including feedback from your users. It has four variants.
-
-### With CTAs
-
-The CTA variant of the Input Box Template use action buttons on the notification to collect input from the user.
-
-To set the CTAs use the Advanced Options when setting up the campaign on the dashboard.
-
-![Input_Box_CTAs](https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/inputctabasicdismiss.gif)
-
-Template Key | Required | Value
----:|:---:|:---
-pt_dismiss_on_click | Optional | Dismisses the notification without opening the app
-
-*Note If `pt_dismiss_on_click` is false we'll have to add the below code to not dismiss the
-notification for Android 12 and above
-
-    fun dismissNotification(intent: Intent?, applicationContext: Context){
-        intent?.extras?.apply {
-            var autoCancel = true
-            var notificationId = -1
-
-            getString("actionId")?.let {
-                Log.d("ACTION_ID", it)
-                autoCancel = getBoolean("autoCancel", true)
-                notificationId = getInt("notificationId", -1)
-            }
-            /**
-             * If using InputBox template, add ptDismissOnClick flag to not dismiss notification
-             * if pt_dismiss_on_click is false in InputBox template payload. Alternatively if normal
-             * notification is raised then we dismiss notification.
-             */
-            val ptDismissOnClick = intent.extras!!.getString(PTConstants.PT_DISMISS_ON_CLICK,"")
-
-            if (autoCancel && notificationId > -1 && ptDismissOnClick.isNullOrEmpty()) {
-                val notifyMgr: NotificationManager =
-                    applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                notifyMgr.cancel(notificationId)
-            }
-        }
-    }
-
-### CTAs with Remind Later option
-
-This variant of the Input Box Template is particularly useful if the user wants to be reminded of the notification after sometime. Clicking on the remind later button raises an event to the user profiles, with a custom user property p2 whose value is a future time stamp. You can have a campaign running on the dashboard that will send a reminder notification at the timestamp in the event property.
-
-To set one of the CTAs as a Remind Later button set the action id to `remind` from the dashboard.
-
-Template Key | Required | Value
----:|:---:|:---
-pt_event_name | Required | for e.g. `Remind Later`,
-pt_event_property_<property_name_1> | Optional | for e.g. `<property_value>`,
-pt_event_property_<property_name_2> | Required | future epoch timestamp. For e.g., `$D_1592503813`
-pt_dismiss_on_click | Optional | Dismisses the notification without opening the app
-
-![Input_Box_CTA_Remind](https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/inputCtaRemind.gif)
-
-### Reply as an Event
-
-This variant raises an event capturing the user's input as an event property. The app is not opened after the user sends the reply.
-
-To use this variant, use the following values for the keys.
-
-Template Key | Required | Value
----:|:---:|:---
-pt_input_label | Required | for e.g., `Search`
-pt_input_feedback | Required | for e.g., `Thanks for your feedback`
-pt_event_name | Required | for e.g. `Searched`,
-pt_event_property_<property_name_1> | Optional | for e.g. `<property_value>`,
-pt_event_property_<property_name_2> | Required to capture input | fixed value - `pt_input_reply`
-
-![Input_Box_CTA_No_Open](https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/inputCtaNoOpen.gif)
-
-### Reply as an Intent
-
-This variant passes the reply to the app as an Intent. The app can then process the reply and take appropriate actions.
-
-To use this variant, use the following values for the keys.
-
-Template Key | Required | Value
----:|:---:|:---
-pt_input_label | Required | for e.g., `Search`
-pt_input_feedback | Required | for e.g., `Thanks for your feedback`
-pt_input_auto_open | Required | fixed value - `true`
-
-<br/> To capture the input, the app can get the `pt_input_reply` key from the Intent extras.
-
-![Input_Box_CTA_With_Open](https://github.com/CleverTap/clevertap-android-sdk/blob/master/static/inputCtaWithOpen.gif)
+**Note:** If any image can't be downloaded, the template falls back to basic template with caption and sub caption only.
 
 # Template Keys
 
 [(Back to top)](#table-of-contents)
 
-### Basic Template
+## Rich Media
+### Content Slider
+Configure your APNS payload:
 
+Then, when sending notifications via [APNS](https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/APNSOverview.html):
+- include the mutable-content flag in your payload aps entry (this key must be present in the aps payload or the system will not call your app extension) 
+- for the Image Slideshow view, add the `ct_ContentSlider` key with a json object value, see example below, to the payload, outside of the aps entry.
+
+
+
+```
+{
+
+    "aps": {
+        "alert": {
+            "body": "test message",
+            "title": "test title",
+        },
+        "category": "CTNotification",
+        "mutable-content": true,
+      },
+    "ct_ContentSlider": {
+        "orientation": "landscape", // landscape assumes 16:9 images, remove to display default square/portrait images
+        "showsPaging": true, // optional to display UIPageControl
+        "autoPlay": true, // optional to auto play the slideshow
+        "autoDismiss": true, // optional to auto dismiss the notification on item actionUrl launch
+        "items":[
+            {
+                "caption": "caption one",
+                "subcaption": "subcaption one",
+                "imageUrl": "https://s3.amazonaws.com/ct-demo-images/landscape-1.jpg",
+                "actionUrl": "com.clevertap.ctcontent.example://item/one"
+            }, 
+            {
+                "caption": "caption two", 
+                "subcaption": "subcaption two", 
+                "imageUrl": "https://s3.amazonaws.com/ct-demo-images/landscape-2.jpg",
+                "actionUrl": "com.clevertap.ctcontent.example://item/two"
+            }
+       ]
+   }
+}
+```
+## Custom key-value pair
+
+### Basic Template
 Basic Template Keys | Required | Description
  ---:|:---:|:---| 
 pt_id | Required | Value - `pt_basic`
 pt_title | Required | Title
 pt_msg | Required | Message
 pt_msg_summary | Required | Message line when Notification is expanded
-pt_subtitle | Optional  | Subtitle
 pt_bg | Required | Background Color in HEX
 pt_big_img | Optional | Image
-pt_ico | Optional | Large Icon
-pt_dl1 | Optional | One Deep Link (minimum)
+pt_dl1 | Optional | One Deep Link
 pt_title_clr | Optional | Title Color in HEX
 pt_msg_clr | Optional | Message Color in HEX
-pt_small_icon_clr | Optional | Small Icon Color in HEX
 pt_json | Optional | Above keys in JSON format
 
 ### Auto Carousel Template
@@ -266,17 +323,13 @@ pt_id | Required | Value - `pt_carousel`
 pt_title | Required | Title
 pt_msg | Required | Message
 pt_msg_summary | Optional | Message line when Notification is expanded
-pt_subtitle | Optional | Subtitle
-pt_dl1 | Required | Deep Link (Max one)
+pt_dl1 | Required | Deep Link
 pt_img1 | Required | Image One
 pt_img2 | Required | Image Two
 pt_img3 | Required | Image Three
-pt_img`n` | Optional | Image `N`
 pt_bg | Required | Background Color in HEX
-pt_ico | Optional | Large Icon
 pt_title_clr | Optional | Title Color in HEX
 pt_msg_clr | Optional | Message Color in HEX
-pt_small_icon_clr | Optional | Small Icon Color in HEX
 pt_json | Optional | Above keys in JSON format
 
 ### Manual Carousel Template
@@ -287,21 +340,50 @@ pt_id | Required | Value - `pt_manual_carousel`
 pt_title | Required | Title
 pt_msg | Required | Message
 pt_msg_summary | Optional | Message line when Notification is expanded
-pt_subtitle | Optional | Subtitle
 pt_dl1 | Required | Deep Link One
-pt_dl2 | Optional | Deep Link Two
-pt_dl`n` | Optional | Deep Link for the nth image
 pt_img1 | Required | Image One
 pt_img2 | Required | Image Two
 pt_img3 | Required | Image Three
-pt_img`n` | Optional | Image `N`
 pt_bg | Required | Background Color in HEX
-pt_ico | Optional | Large Icon
 pt_title_clr | Optional | Title Color in HEX
 pt_msg_clr | Optional | Message Color in HEX
-pt_small_icon_clr | Optional | Small Icon Color in HEX
 pt_json | Optional | Above keys in JSON format
-pt_manual_carousel_type | Optional | `filmstrip`
+
+### Timer Template
+
+Timer Template Keys | Required | Description
+  ---:|:---:|:--- 
+pt_id | Required | Value - `pt_timer`
+pt_title | Required | Title
+pt_title_alt | Optional | Title to show after timer expires
+pt_msg | Required | Message
+pt_msg_alt | Optional | Message to show after timer expires
+pt_msg_summary | Optional | Message line when Notification is expanded
+pt_dl1 | Required | Deep Link
+pt_big_img | Optional | Image
+pt_big_img_alt | Optional | Image to show when timer expires
+pt_bg | Required | Background Color in HEX
+pt_chrono_title_clr | Optional | Color for timer text in HEX
+pt_timer_threshold | Required | Timer duration in seconds. Will be given higher priority. 
+pt_timer_end | Optional | Epoch Timestamp to countdown to (for example, $D_1595871380 or 1595871380). Not needed if pt_timer_threshold is specified.
+pt_title_clr | Optional | Title Color in HEX
+pt_msg_clr | Optional | Message Color in HEX
+pt_json | Optional | Above keys in JSON format
+
+### Zero Bezel Template
+ 
+ Zero Bezel Template Keys | Required | Description 
+  ---:|:---:|:--- 
+  pt_id | Required | Value - `pt_zero_bezel`
+  pt_title | Required | Title 
+  pt_msg | Required | Message
+  pt_msg_summary | Optional | Message line when Notification is expanded
+  pt_subtitle | Optional | Subtitle
+  pt_big_img | Required | Image
+  pt_dl1 | Required | Deep Link
+  pt_title_clr | Optional | Title Color in HEX
+  pt_msg_clr | Optional | Message Color in HEX
+  pt_json | Optional | Above keys in JSON format
 
 ### Rating Template
 
@@ -323,7 +405,6 @@ pt_bg | Required  | Background Color in HEX
 pt_ico | Optional | Large Icon
 pt_title_clr | Optional | Title Color in HEX
 pt_msg_clr | Optional | Message Color in HEX
-pt_small_icon_clr | Optional | Small Icon Color in HEX
 pt_json | Optional | Above keys in JSON format
 
 ### Product Catalog Template
@@ -355,170 +436,14 @@ pt_product_display_linear | Optional  | Linear Layout Template ("true"/"false")
 pt_product_display_action_clr | Required  | Action Button Background Color in HEX
 pt_title_clr | Optional  | Title Color in HEX
 pt_msg_clr | Optional  | Message Color in HEX
-pt_small_icon_clr | Optional  | Small Icon Color in HEX
 pt_json | Optional  | Above keys in JSON format
 
-### Five Icons Template
+### WebView Template
 
-Five Icons Template Keys | Required | Description
-  ---:|:---:|:--- 
-pt_id | Required  | Value - `pt_five_icons`
-pt_img1 | Required  | Icon One
-pt_img2 | Required  | Icon Two
-pt_img3 | Required  | Icon Three
-pt_img4 | Optional  | Icon Four
-pt_img5 | Optional  | Icon Five
-pt_dl1 | Required  | Deep Link for first icon
-pt_dl2 | Required  | Deep Link for second icon
-pt_dl3 | Required  | Deep Link for third icon
-pt_dl4 | Optional  | Deep Link for fourth icon
-pt_dl5 | Optional  | Deep Link for fifth icon
-pt_bg | Required  | Background Color in HEX
-pt_small_icon_clr | Optional | Small Icon Color in HEX
-pt_json | Optional | Above keys in JSON format
-
-### Timer Template
-
-Timer Template Keys | Required | Description
-  ---:|:---:|:--- 
-pt_id | Required | Value - `pt_timer`
-pt_title | Required | Title
-pt_title_alt | Optional | Title to show after timer expires
-pt_msg | Required | Message
-pt_msg_alt | Optional | Message to show after timer expires
-pt_msg_summary | Optional | Message line when Notification is expanded
-pt_subtitle | Optional | Subtitle
-pt_dl1 | Required | Deep Link
-pt_big_img | Optional | Image
-pt_big_img_alt | Optional | Image to show when timer expires
-pt_bg | Required | Background Color in HEX
-pt_chrono_title_clr | Optional | Color for timer text in HEX
-pt_timer_threshold | Required | Timer duration in seconds (minimum 10). Will be given higher priority. 
-pt_timer_end | Optional | Epoch Timestamp to countdown to (for example, $D_1595871380 or 1595871380). Not needed if pt_timer_threshold is specified.
-pt_title_clr | Optional | Title Color in HEX
-pt_msg_clr | Optional | Message Color in HEX
-pt_small_icon_clr | Optional | Small Icon Color in HEX
-pt_json | Optional | Above keys in JSON format
-
-### Zero Bezel Template
-
-Zero Bezel Template Keys | Required | Description
-  ---:|:---:|:--- 
-pt_id | Required | Value - `pt_zero_bezel`
-pt_title | Required | Title
-pt_msg | Required | Message
-pt_msg_summary | Optional | Message line when Notification is expanded
-pt_subtitle | Optional | Subtitle
-pt_big_img | Required | Image
-pt_small_view | Optional | Select text-only small view layout (`text_only`)
-pt_dl1 | Optional | Deep Link
-pt_title_clr | Optional | Title Color in HEX
-pt_msg_clr | Optional | Message Color in HEX
-pt_small_icon_clr | Optional | Small Icon Color in HEX
-pt_ico | Optional | Large Icon
-pt_json | Optional | Above keys in JSON format
-
-### Input Box Template
-
-Input Box Template Keys | Required | Description
-  ---:|:---:|:--- 
-pt_id | Required | Value - `pt_input`
-pt_title | Required | Title
-pt_msg | Required | Message
-pt_msg_summary | Optional | Message line when Notification is expanded
-pt_subtitle | Optional | Subtitle
-pt_big_img | Required | Image
-pt_big_img_alt | Optional | Image to be shown after feedback is collected
-pt_event_name | Optional | Name of Event to be raised
-pt_event_property_<property_name_1> | Optional | Value for event property <property_name_1>
-pt_event_property_<property_name_2> | Optional | Value for event property <property_name_2>
-pt_event_property_<property_name_n> | Optional | Value for event property <property_name_n>
-pt_input_label | Required | Label text to be shown on the input
-pt_input_auto_open | Optional | Auto open the app after feedback
-pt_input_feedback | Required | Feedback
-pt_dl1 | Required | Deep Link
-pt_title_clr | Optional | Title Color in HEX
-pt_msg_clr | Optional | Message Color in HEX
-pt_small_icon_clr | Optional | Small Icon Color in HEX
-pt_ico | Optional | Large Icon
-pt_dismiss_on_click | Optional | Dismiss notification on click
-pt_json | Optional | Above keys in JSON format
-
-
-### NOTE
-* `pt_title` and `pt_msg` in all the templates support HTML elements like bold `<b>`, italics `<i>` and underline `<u>`
-
-# Developer Notes
-
-[(Back to top)](#table-of-contents)
-
-* Using images of 3 MB or lower are recommended for better performance under Android 11.
-* A silent notification channel with importance: `HIGH` is created every time on an interaction with the Rating, Manual Carousel, and Product Catalog templates with a silent sound file. This prevents the notification sound from playing when the notification is re-rendered.
-* The silent notification channel is deleted whenever the notification is dismissed or clicked.
-* For Android 11 and Android 12, please use images which are less than 100kb else notifications will not be rendered as advertised.
-* Due to Android 12 trampoline restrictions, the Input Box template with auto open of deeplink feature will fallback to simply raising the event for a reply.
-
-## Image Specifications
-
-Template | Aspect Ratios | File Type
-  ---:|:---:|:--- 
-Basic | 4:3 or 3:2 or 2:1 | .JPG
-Auto Carousel | 3:2 (Android 11 & 12) and 4:3 (Below Android 11) | .JPG
-Manual Carousel | 3:2 (Android 11 & 12) and 4:3 (Below Android 11) | .JPG
-Manual Carousel-FilmStrip| 1:1 | .JPG
-Rating | 4:3 | .JPG
-Five Icon | 1:1 | .JPG or .PNG
-Zero Bezel | 4:3 or 3:2 or 2:1 | .JPG
-Timer | 3:2 (Android 11 & 12) and 4:3 (Below Android 11) | .JPG
-Input Box | 4:3 or 2:1 | .JPG
-Product Catalog | 1:1 | .JPG
-
-* For Auto and Manual Carousel the image dimensions should not exceed more than 840x560 for Android 11 and Android 12 devices and with 3:2 image aspect ratio
-* For Product Catalog image aspect ratio should be 1:1 and image size should be less than 80kb for Android 11 and Android 12 devices
-* For Zero Bezel it's recommended that if your images have any text it should be present in the middle of the image.
-
-## Android 12 Trampoline restrictions
-
-With Android 12, the Rating and Product Display template push notifications do not get dismissed once the deeplink is opened.
-
-To handle this, you'll have to add the following code to the `onActivityResumed` or `onNewIntent` of your app
-
-#### Kotlin
-```kotlin
-        val payload = activity.intent?.extras
-        if (payload?.containsKey("pt_id") == true && payload["pt_id"] =="pt_rating")
-        {
-            val nm = activity.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            nm.cancel(payload["notificationId"] as Int)
-        }
-        if (payload?.containsKey("pt_id") == true && payload["pt_id"] =="pt_product_display")
-        {
-            val nm = activity.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            nm.cancel(payload["notificationId"] as Int)
-        }
-```
-
-#### JAVA
-```java
-    Bundle payload = activity.getIntent().getExtras();
-    if (payload.containsKey("pt_id")&& payload.getString("pt_id").equals("pt_rating"))
-    {
-        NotificationManager nm = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE); 
-        nm.cancel(payload.getInt("notificationId"));
-    }
-    if (payload.containsKey("pt_id")&& payload.getString("pt_id").equals("pt_product_display"))
-    {
-        NotificationManager nm = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE); 
-        nm.cancel(payload.getInt("notificationId"));
-    }
-```
-
-## Android 12 Screenshots
-
-You can see the renditions of all the Push Templates on an Android 12 devices [here](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTPUSHTEMPLATESANDROID12.md)
-
-# Sample App
-
-[(Back to top)](#table-of-contents)
-
-Check out the [Sample app](sample)
+WebView Template Keys | Required | Description
+ ---:|:---:|:--- 
+pt_id | Required  | Value - `pt_web_view`
+pt_dl1 | Required  | Deep Link
+pt_url | Required  | URL to load
+pt_orientation | Optional  | Value - `landscape` or `portrait`
+pt_json | Optional  | Above keys in JSON format
