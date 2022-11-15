@@ -63,7 +63,7 @@ RCT_EXPORT_MODULE();
     if (_cleverTapInstance != nil) {
         return _cleverTapInstance;
     }
-    return [self cleverTapInstance];
+    return [CleverTap sharedInstance];
 }
 
 - (void)setCleverTapInstance:(CleverTap *)instance {
@@ -76,10 +76,6 @@ RCT_EXPORT_METHOD(setInstanceWithAccountId:(NSString*)accountId) {
     // TODO: use [CleverTap getGlobalInstance:accountId] once available
     CleverTapInstanceConfig *config = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:@""];
     CleverTap *instance = [CleverTap instanceWithConfig:config];
-    
-    
-    RCTLogWarn(@"CleverTapInstance not found for accountId: %@", accountId);
-    
     if (instance == nil) {
         RCTLogWarn(@"CleverTapInstance not found for accountId: %@", accountId);
         return;
