@@ -73,9 +73,7 @@ RCT_EXPORT_MODULE();
 RCT_EXPORT_METHOD(setInstanceWithAccountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap setInstanceWithAccountId]");
     
-    // TODO: use [CleverTap getGlobalInstance:accountId] once available
-    CleverTapInstanceConfig *config = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:@""];
-    CleverTap *instance = [CleverTap instanceWithConfig:config];
+    CleverTap *instance = [CleverTap getGlobalInstance:accountId];
     if (instance == nil) {
         RCTLogWarn(@"CleverTapInstance not found for accountId: %@", accountId);
         return;
