@@ -1,6 +1,4 @@
-
 #import "CleverTapReactEventEmitter.h"
-#import "CleverTapReactManager.h"
 #import "CleverTapReact.h"
 
 #import <React/RCTLog.h>

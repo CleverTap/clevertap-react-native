@@ -611,6 +611,18 @@
   export function resumeInAppNotifications(): void;
 
   /*******************
+   * Instances
+   ******************/
+
+  /**
+    * Change the native instance of CleverTapAPI by using the instance for
+    * specific account. Used by Leanplum RN SDK.
+    *
+    * @param accountId {string} - The ID of the account to use when switching instance.
+    */
+  export function setInstanceWithAccountId(accountId: string): void;
+
+  /*******************
    * Developer Options
    ******************/
   /**
