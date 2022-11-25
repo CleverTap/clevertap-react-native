@@ -1384,7 +1384,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.setDisplayUnitListener(this);
         clevertap.setCTProductConfigListener(this);
         clevertap.setCTFeatureFlagsListener(this);
-        clevertap.setLibrary("React-Native"); // TODO change library when using from Leanplum?
+        clevertap.setLibrary("React-Native");
     }
 
     private CleverTapAPI getCleverTapAPI() {
