@@ -1,11 +1,9 @@
-
 #import "CleverTapReactManager.h"
 #import "CleverTapReact.h"
 
 #import <UIKit/UIKit.h>
 #import <React/RCTLog.h>
 
-#import "CleverTap.h"
 #import "CleverTap+Inbox.h"
 #import "CleverTapUTMDetail.h"
 #import "CleverTapEventDetail.h"
@@ -36,15 +34,19 @@
     self = [super init];
     if (self) {
         CleverTap *clevertap = [CleverTap sharedInstance];
-        [clevertap setSyncDelegate:self];
-        [clevertap setInAppNotificationDelegate:self];
-        [clevertap setDisplayUnitDelegate:self];
-        [clevertap setPushNotificationDelegate:self];
-        [[clevertap featureFlags] setDelegate:self];
-        [[clevertap productConfig] setDelegate:self];
-        [clevertap setLibrary:@"React-Native"];
+        [self setDelegates:clevertap];
     }
     return self;
+}
+
+- (void)setDelegates:(CleverTap *)cleverTapInstance {
+    [cleverTapInstance setSyncDelegate:self];
+    [cleverTapInstance setInAppNotificationDelegate:self];
+    [cleverTapInstance setDisplayUnitDelegate:self];
+    [cleverTapInstance setPushNotificationDelegate:self];
+    [[cleverTapInstance featureFlags] setDelegate:self];
+    [[cleverTapInstance productConfig] setDelegate:self];
+    [cleverTapInstance setLibrary:@"React-Native"];
 }
 
 - (void)applicationDidLaunchWithOptions:(NSDictionary *)options {
@@ -54,7 +56,6 @@
         RCTLogInfo(@"CleverTapReact: setting launch deeplink: %@", self.launchDeepLink);
     }
 }
-
 
 #pragma mark - Private
 

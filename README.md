@@ -25,6 +25,11 @@ To get started, sign up [here](https://clevertap.com/live-product-demo/).
 - [CleverTap iOS SDK Integration guide](https://support.clevertap.com/docs/ios/getting-started.html)
 - [CleverTap Android SDK Integration guide](https://support.clevertap.com/docs/android/getting-started.html)
 
+## 📲 CleverTap iOS Push Templates SDK
+
+CleverTap Push Templates SDK helps you engage with your users using fancy push notification templates built specifically to work with [CleverTap Push Templates SDK](https://github.com/CleverTap/CTNotificationContent).
+Find the integration steps for the CleverTap Push Templates SDK [here](./docs/iospushtemplates.md)
+
 ## 📑 Documentation & Example
 
 - [See the CleverTap React Native Usage Documentation](/docs/usage.md)

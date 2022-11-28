@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+Version 0.9.4 *(28 November 2022)*
+-------------------------------------------
+- Supports [CleverTap iOS SDK v4.1.5](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-415-november-15-2022)
+- Supports `setInstanceWithAccountId` method
+- Supports using specific CleverTap instance
+
+
 Version 0.9.3 *(1 November 2022)*
 -------------------------------------------
 - Supports CleverTap Android Core SDK [v4.6.6](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md) and associated enhancements
