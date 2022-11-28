@@ -37,6 +37,9 @@
   [CleverTap autoIntegrate];
   [[CleverTapReactManager sharedInstance] applicationDidLaunchWithOptions:launchOptions];
   
+  UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    center.delegate = self;
+  
   return YES;
 }
 
@@ -59,6 +62,12 @@
 // Universal links
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler {
   return [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
+}
+
+-(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
+{
+//  NSLog(@"User Info : %@",notification.request.content.userInfo);
+  completionHandler(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge);
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
