@@ -203,7 +203,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
     //react-native  libs
-    implementation "com.facebook.react:react-native:+"
+    //implementation "com.facebook.react:react-native:+"
 
     //com.google
     implementation 'com.google.android.gms:play-services-base:17.6.0'
