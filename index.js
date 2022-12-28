@@ -45,7 +45,7 @@ var CleverTap = {
     CleverTapInboxDidInitialize: CleverTapReact.CleverTapInboxDidInitialize,
     CleverTapInboxMessagesDidUpdate: CleverTapReact.CleverTapInboxMessagesDidUpdate,
     CleverTapInboxMessageButtonTapped: CleverTapReact.CleverTapInboxMessageButtonTapped,
-    CleverTapInboxMessageTapped:CleverTapReact.CleverTapInboxMessageTapped,
+    CleverTapInboxMessageTapped: CleverTapReact.CleverTapInboxMessageTapped,
     CleverTapDisplayUnitsLoaded: CleverTapReact.CleverTapDisplayUnitsLoaded,
     CleverTapInAppNotificationButtonTapped: CleverTapReact.CleverTapInAppNotificationButtonTapped,
     CleverTapFeatureFlagsDidUpdate: CleverTapReact.CleverTapFeatureFlagsDidUpdate,
@@ -110,10 +110,10 @@ var CleverTap = {
      * @param {string} type - for Android only, specifying the type of push service token. Values can be CleverTap.FCM for Firebase or CleverTap.XPS for Xiaomi or CleverTap.BPS for Baidu or CleverTap.HPS for Huawei,
      * @param {string} region - for xps only ,to specify the region
      */
-    setPushToken: function (token, type,region="") {
+    setPushToken: function (token, type, region = "") {
         console.log(`CleverTap RN | setPushToken | received : token: '${token}' | type:'${type}' | region:'${region}' `)
-        if(type === CleverTap.XPS){
-            CleverTapReact.setPushTokenAsStringWithRegion(token, type,region);
+        if (type === CleverTap.XPS) {
+            CleverTapReact.setPushTokenAsStringWithRegion(token, type, region);
         }
         else {
             CleverTapReact.setPushTokenAsString(token, type);
@@ -203,6 +203,14 @@ var CleverTap = {
     */
     createNotification: function (extras) {
         CleverTapReact.createNotification(extras);
+    },
+
+    /**
+    * Method to prompt the push primer for android 13 onwards.
+    * @param {object} extras - key-value profile properties.  keys and values are strings
+    */
+    promptPushPrimer: function (value) {
+        CleverTapReact.promptPushPrimer(value);
     },
 
     /**
@@ -783,7 +791,7 @@ var CleverTap = {
      *
      * @param accountId The ID of the account to use when switching instance.
      */
-    setInstanceWithAccountId: function(accountId) {
+    setInstanceWithAccountId: function (accountId) {
         CleverTapReact.setInstanceWithAccountId(accountId);
     }
 };

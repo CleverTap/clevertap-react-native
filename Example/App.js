@@ -78,8 +78,8 @@ class Expandable_ListView extends Component {
                 break;
             case 500:
                 CleverTap.profileIncrementValueForKey(10, 'score');
-                CleverTap.profileIncrementValueForKey(3.141,'PI_Float');
-                CleverTap.profileIncrementValueForKey(3.141592653589793,'PI_Double');
+                CleverTap.profileIncrementValueForKey(3.141, 'PI_Float');
+                CleverTap.profileIncrementValueForKey(3.141592653589793, 'PI_Double');
                 break;
             case 501:
                 CleverTap.profileDecrementValueForKey(10, 'score');
@@ -273,8 +273,8 @@ class Expandable_ListView extends Component {
             case 696:
             case 697:
             case 698:
-            CleverTap.recordEvent(item.name);
-            break;
+                CleverTap.recordEvent(item.name);
+                break;
 
         }
     }
@@ -480,7 +480,7 @@ export default class App extends Component {
             {
                 expanded: false,
                 category_Name: "Push Templates",
-                sub_Category: [{ id: 60, name: 'Send Basic Push' }, { id: 61, name: 'Send Carousel Push'},
+                sub_Category: [{ id: 60, name: 'Send Basic Push' }, { id: 61, name: 'Send Carousel Push' },
                 { id: 62, name: 'Send Manual Carousel Push' }, { id: 63, name: 'Send Filmstrip Carousel Push' },
                 { id: 64, name: 'Send Rating Push' }, { id: 65, name: 'Send Product Display Notification' },
                 { id: 66, name: 'Send Linear Product Display Push' }, { id: 67, name: 'Send CTA Notification' },
@@ -525,10 +525,10 @@ export default class App extends Component {
                     </TouchableOpacity>
                     {
                         this.state.AccordionData.map((item, key) =>
-                            (
-                                <Expandable_ListView key={item.category_Name}
-                                    onClickFunction={this.update_Layout.bind(this, key)} item={item} />
-                            ))
+                        (
+                            <Expandable_ListView key={item.category_Name}
+                                onClickFunction={this.update_Layout.bind(this, key)} item={item} />
+                        ))
                     }
 
                 </ScrollView>
@@ -547,7 +547,12 @@ set_userProfile = () => {
         'birthdate': new Date('2020-03-03T06:35:31')
     });
 
+    CleverTap.promptPushPrimer({
+        "inAppType": "alert"
+    });
+
 };
+
 //Identity_Management
 onUser_Login = () => {
     alert('User Profile Updated');
@@ -762,7 +767,7 @@ pushFcmRegistrationId = () => {
         // => https://developer.clevertap.com/docs/android#section-custom-android-push-notifications-handling
         CleverTap.setPushToken("1000test000token000fcm", CleverTap.FCM);
         //CleverTap.setPushToken("111056687894", CleverTap.HMS);//for Huawei push
-        CleverTap.setPushToken("1000test000token000xps", CleverTap.XPS,"Europe");//for Xiaomi push
+        CleverTap.setPushToken("1000test000token000xps", CleverTap.XPS, "Europe");//for Xiaomi push
         //CleverTap.setPushToken("111056687894", CleverTap.BPS);//for Baidu push
 
     }

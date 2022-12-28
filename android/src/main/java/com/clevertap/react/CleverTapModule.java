@@ -25,6 +25,8 @@ import com.clevertap.android.sdk.displayunits.DisplayUnitListener;
 import com.clevertap.android.sdk.displayunits.model.CleverTapDisplayUnit;
 import com.clevertap.android.sdk.events.EventDetail;
 import com.clevertap.android.sdk.featureFlags.CTFeatureFlagsController;
+import com.clevertap.android.sdk.inapp.CTInAppNotification;
+import com.clevertap.android.sdk.inapp.CTLocalInApp;
 import com.clevertap.android.sdk.inbox.CTInboxMessage;
 import com.clevertap.android.sdk.interfaces.OnInitCleverTapIDListener;
 import com.clevertap.android.sdk.product_config.CTProductConfigController;
@@ -161,6 +163,11 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         return true;
     }
 
+    @Override
+    public void onShow(CTInAppNotification ctInAppNotification) {
+        
+    }
+
     //Custom Push Notification
     @ReactMethod
     public void createNotification(ReadableMap extras) {
@@ -280,6 +287,18 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
         CleverTapAPI.deleteNotificationChannelGroup(this.context, groupId);
         Log.i(TAG, "Notification Channel Group Id " + groupId + " deleted");
+    }
+
+    @ReactMethod
+    public void promptPushPrimer(ReadableMap localInAppConfig) {
+        Log.i(TAG, "LocalInApp config for push primer " + localInAppConfig);
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            JSONObject jsonObject = localInAppConfigFromReadableMap(localInAppConfig);
+            cleverTap.promptPushPrimer(jsonObject);
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+        }
     }
 
     @ReactMethod
@@ -1517,6 +1536,70 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                     .emit(eventName, params);
         } catch (Throwable t) {
             Log.e(TAG, t.getLocalizedMessage());
+        }
+    }
+
+    private JSONObject localInAppConfigFromReadableMap(ReadableMap localInAppConfig) {
+        if (localInAppConfig == null) {
+            return null;
+        }
+        CTLocalInApp.InAppType inAppType = null;
+        String titleText = null, messageText = null, positiveBtnText = null, negativeBtnText = null;
+        boolean followDeviceOrientation = false;
+        CTLocalInApp.Builder builder = CTLocalInApp.builder();
+        ReadableMapKeySetIterator iterator = localInAppConfig.keySetIterator();
+        while (iterator.hasNextKey()) {
+            try {
+                String configKey = iterator.nextKey();
+                ReadableType readableType = localInAppConfig.getType(configKey);
+                if ("inAppType".equals(configKey) && readableType == ReadableType.String) {
+                    inAppType = inAppTypeFromString(localInAppConfig.getString(configKey));
+                }
+                if ("titleText".equals(configKey) && readableType == ReadableType.String) {
+                    titleText = localInAppConfig.getString(configKey);
+                }
+                if ("messageText".equals(configKey) && readableType == ReadableType.String) {
+                    messageText = localInAppConfig.getString(configKey);
+                }
+                if ("followDeviceOrientation".equals(configKey) && readableType == ReadableType.Boolean) {
+                    followDeviceOrientation = localInAppConfig.getBoolean(configKey);
+                }
+                if ("positiveBtnText".equals(configKey) && readableType == ReadableType.String) {
+                    positiveBtnText = localInAppConfig.getString(configKey);
+                }
+                if ("negativeBtnText".equals(configKey) && readableType == ReadableType.String) {
+                    negativeBtnText = localInAppConfig.getString(configKey);
+                }
+            } catch (Throwable t) {
+                Log.e(TAG, t.getLocalizedMessage());
+                return null;
+            }
+        }
+        if (inAppType == null || titleText == null || messageText == null || positiveBtnText == null
+                || negativeBtnText == null) {
+            throw new IllegalArgumentException("manda");
+        }
+
+        return builder.setInAppType(inAppType)
+                .setTitleText(titleText)
+                .setMessageText(messageText)
+                .followDeviceOrientation(followDeviceOrientation)
+                .setPositiveBtnText(positiveBtnText)
+                .setNegativeBtnText(negativeBtnText)
+                .build();
+    }
+
+    private CTLocalInApp.InAppType inAppTypeFromString(String inAppType) {
+        if(inAppType == null) {
+            return null;
+        }
+        switch (inAppType) {
+            case "half-interstitial":
+                return CTLocalInApp.InAppType.HALF_INTERSTITIAL;
+            case "alert":
+                return CTLocalInApp.InAppType.ALERT;
+            default:
+                return null;
         }
     }
 
