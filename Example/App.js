@@ -540,30 +540,32 @@ export default class App extends Component {
 
 set_userProfile = () => {
 
-    //alert('User Profile Update');
+    alert('User Profile Update');
 
-    // CleverTap.profileSet({
-    //     'Name': 'testUserA1', 'Identity': '123456', 'Email': 'test@test.com', 'custom1': 123,
-    //     'birthdate': new Date('2020-03-03T06:35:31')
+    // CleverTap.isPushPermissionGranted((err, res) => {
+    //     console.log('isPushPermissionGranted: ', res, err);
+    //     alert(`isPushPermissionGranted: ${res}`);
     // });
 
-    CleverTap.promptPushPrimer({
-        "inAppType": "half-interstitial",
-        "titleText": "Get Notified",
-        "messageText": "Please enable notifications on your device to use Push Notifications.",
-        "followDeviceOrientation": true,
-        "positiveBtnText": "Allow",
-        "negativeBtnText": "Cancel",
-        "backgroundColor": "#FFFFFF",
-        "btnBorderColor": "#0000FF",
-        "titleTextColor": "#0000FF",
-        "messageTextColor": "#000000",
-        "btnTextColor": "#FFFFFF",
-        //"imageUrl": "https://icons.iconarchive.com/icons/treetog/junior/64/camera-icon.png",
-        "btnBackgroundColor": "#0000FF",
-        "btnBorderRadius": "2",
-        "fallbackToSettings": true,
-    });
+    CleverTap.promptForPushPermission(true);
+
+    // CleverTap.promptPushPrimer({
+    //         "inAppType": "half-interstitial",
+    //         "titleText": "Get Notified",
+    //         "messageText": "Please enable notifications on your device to use Push Notifications.",
+    //         "followDeviceOrientation": true,
+    //         "positiveBtnText": "Allow",
+    //         "negativeBtnText": "Cancel",
+    //         "backgroundColor": "#FFFFFF",
+    //         "btnBorderColor": "#0000FF",
+    //         "titleTextColor": "#0000FF",
+    //         "messageTextColor": "#000000",
+    //         "btnTextColor": "#FFFFFF",
+    //         //"imageUrl": "https://icons.iconarchive.com/icons/treetog/junior/64/camera-icon.png",
+    //         "btnBackgroundColor": "#0000FF",
+    //         "btnBorderRadius": "2",
+    //         "fallbackToSettings": true,
+    //     });
 };
 
 //Identity_Management
@@ -1002,6 +1004,7 @@ function removeCleverTapAPIListeners() {
     CleverTap.removeListener(CleverTap.CleverTapProductConfigDidFetch);
     CleverTap.removeListener(CleverTap.CleverTapProductConfigDidActivate);
     CleverTap.removeListener(CleverTap.CleverTapPushNotificationClicked);
+    CleverTap.removeListener(CleverTap.CleverTapPushPermissionResponseReceived);
     alert("Listeners removed successfully");
 }
 
@@ -1049,6 +1052,9 @@ function addCleverTapAPIListeners(fromClick) {
     });
     CleverTap.addListener(CleverTap.CleverTapPushNotificationClicked, (event) => {
         _handleCleverTapEvent(CleverTap.CleverTapPushNotificationClicked, event);
+    });
+    CleverTap.addListener(CleverTap.CleverTapPushPermissionResponseReceived, (event) => {
+        _handleCleverTapEvent(CleverTap.CleverTapPushPermissionResponseReceived, event);
     });
 
     if (fromClick) {
