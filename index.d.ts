@@ -172,10 +172,23 @@ export function deleteNotificationChannelGroup(groupID: string): void;
 export function createNotification(extras: any): void;
 
 /**
- * Call this method prompt the push primer for android 13 onwards
+ * Call this method to prompt the hard permission dialog directly, if the push primer is not required.
+ * @param showFallbackSettings : {boolean} - Pass true to show an alert dialog which routes to app's notification settings page. 
+ */
+export function promptForPushPermission(showFallbackSettings: boolean): void;
+
+/**
+ * Call this method to prompt the push primer flow
  * @param localInAppConfig : {any}  object
  */
 export function promptPushPrimer(localInAppConfig: any): void;
+
+/**
+ * Returns a unique identifier through callback by which CleverTap identifies this user
+ *
+ * @param {function(err, res)} non-null callback to retrieve the result
+ */
+export function isPushPermissionGranted(callback: CallbackString): void;
 
 /*******************
  * Events

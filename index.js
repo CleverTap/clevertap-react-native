@@ -53,6 +53,7 @@ var CleverTap = {
     CleverTapProductConfigDidFetch: CleverTapReact.CleverTapProductConfigDidFetch,
     CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate,
     CleverTapPushNotificationClicked: CleverTapReact.CleverTapPushNotificationClicked,
+    CleverTapPushPermissionResponseReceived: CleverTapReact.CleverTapPushPermissionResponseReceived,
 
     /**
     * Add a CleverTap event listener
@@ -206,11 +207,28 @@ var CleverTap = {
     },
 
     /**
+    * Method to prompt the hard permission dialog directly, if the push primer is not required.
+     * @param {string} showFallbackSettings - If the value is true then SDK shows an alert dialog which routes to app's notification settings page.
+    */
+    promptForPushPermission: function (showFallbackSettings) {
+        CleverTapReact.promptForPushPermission(showFallbackSettings);
+    },
+
+    /**
     * Method to prompt the push primer for android 13 onwards.
-    * @param {object} extras - key-value profile properties.  keys and values are strings
+    * @param {object} value - key-value profile properties.  keys and values are strings
     */
     promptPushPrimer: function (value) {
         CleverTapReact.promptPushPrimer(value);
+    },
+
+    /**
+    * Returns true/false based on whether push permission is granted or denied.
+    *
+    * @param {function(err, res)} non-null callback to retrieve the result
+    */
+    isPushPermissionGranted: function (callback) {
+        callWithCallback('isPushPermissionGranted', null, callback);
     },
 
     /**

@@ -19,6 +19,7 @@ import com.clevertap.android.sdk.InAppNotificationListener;
 import com.clevertap.android.sdk.InboxMessageButtonListener;
 import com.clevertap.android.sdk.InboxMessageListener;
 import com.clevertap.android.sdk.Logger;
+import com.clevertap.android.sdk.PushPermissionResponseListener;
 import com.clevertap.android.sdk.SyncListener;
 import com.clevertap.android.sdk.UTMDetail;
 import com.clevertap.android.sdk.displayunits.DisplayUnitListener;
@@ -62,7 +63,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         InAppNotificationListener, CTInboxListener,
         InboxMessageButtonListener, InboxMessageListener,
         InAppNotificationButtonListener, DisplayUnitListener, CTProductConfigListener,
-        CTFeatureFlagsListener, CTPushNotificationListener {
+        CTFeatureFlagsListener, CTPushNotificationListener, PushPermissionResponseListener {
 
     @SuppressWarnings("FieldCanBeLocal")
     private enum InBoxMessages {
@@ -135,6 +136,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     private static final String CLEVERTAP_PUSH_NOTIFICATION_CLICKED = "CleverTapPushNotificationClicked";
 
+    private static final String CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE = "CleverTapPushPermissionResponseReceived";
+
     private final ReactApplicationContext context;
 
     private CleverTapAPI mCleverTap;
@@ -165,7 +168,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     @Override
     public void onShow(CTInAppNotification ctInAppNotification) {
-        
+       //TODO: sendEvent(CLEVERTAP_IN_APP_NOTIFICATION_SHOWED, params);
     }
 
     //Custom Push Notification
@@ -289,9 +292,21 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         Log.i(TAG, "Notification Channel Group Id " + groupId + " deleted");
     }
 
+    //Push permission methods
+    @ReactMethod
+    public void promptForPushPermission(boolean showFallbackSettings) {
+        Log.i(TAG, "inside promptForPushPermission method with fallbackSettings:" + showFallbackSettings);
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.promptForPushPermission(showFallbackSettings);
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+        }
+    }
+
     @ReactMethod
     public void promptPushPrimer(ReadableMap localInAppConfig) {
-        Log.i(TAG, "LocalInApp config for push primer " + localInAppConfig);
+        Log.i(TAG, "inside promptPushPrimer method with config:" + localInAppConfig);
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             JSONObject jsonObject = localInAppConfigFromReadableMap(localInAppConfig);
@@ -299,6 +314,48 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         } else {
             Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
         }
+    }
+
+    @ReactMethod
+    public void isPushPermissionGranted(final Callback callback) {
+        final CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap != null) {
+            boolean isPushPermissionGranted = clevertap.isPushPermissionGranted();
+            callbackWithErrorAndResult(callback, null, isPushPermissionGranted);
+        } else {
+            String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            callbackWithErrorAndResult(callback, error, null);
+        }
+    }
+
+    // @ReactMethod
+    // public void registerPushPermissionNotificationResponseListener() {
+    //     Log.i(TAG, "inside registerPushPermissionNotificationResponseListener");
+    //     CleverTapAPI cleverTap = getCleverTapAPI();
+    //     if (cleverTap != null) {
+    //         cleverTap.registerPushPermissionNotificationResponseListener(this);
+    //     } else {
+    //         Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+    //     }
+    // }
+
+    // @ReactMethod
+    // public void unregisterPushPermissionNotificationResponseListener() {
+    //     Log.i(TAG, "inside unregisterPushPermissionNotificationResponseListener");
+    //     CleverTapAPI cleverTap = getCleverTapAPI();
+    //     if (cleverTap != null) {
+    //         cleverTap.unregisterPushPermissionNotificationResponseListener(this);
+    //     } else {
+    //         Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+    //     }
+    // }
+
+    @Override
+    public void onPushPermissionResponse(boolean accepted) {
+        Log.i(TAG, "onPushPermissionResponse result: " + accepted);
+        WritableMap params = Arguments.createMap();
+        params.putBoolean("accepted", accepted);
+        sendEvent(CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE, params);
     }
 
     @ReactMethod
@@ -490,6 +547,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         constants.put(CLEVERTAP_PRODUCT_CONFIG_DID_FETCH, CLEVERTAP_PRODUCT_CONFIG_DID_FETCH);
         constants.put(CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE, CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE);
         constants.put(CLEVERTAP_PUSH_NOTIFICATION_CLICKED, CLEVERTAP_PUSH_NOTIFICATION_CLICKED);
+        constants.put(CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE, CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE);
         return constants;
     }
 
@@ -1393,6 +1451,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     private void registerListeners(CleverTapAPI clevertap) {
+        clevertap.registerPushPermissionNotificationResponseListener(this);
         clevertap.setCTPushNotificationListener(this);
         clevertap.setInAppNotificationListener(this);
         clevertap.setSyncListener(this);
@@ -1539,54 +1598,116 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
-    private JSONObject localInAppConfigFromReadableMap(ReadableMap localInAppConfig) {
-        if (localInAppConfig == null) {
+    private JSONObject localInAppConfigFromReadableMap(ReadableMap readableMap) {
+        if (readableMap == null) {
             return null;
         }
         CTLocalInApp.InAppType inAppType = null;
-        String titleText = null, messageText = null, positiveBtnText = null, negativeBtnText = null;
-        boolean followDeviceOrientation = false;
+        String titleText = null, messageText = null, positiveBtnText = null, negativeBtnText = null,
+                backgroundColor = null, btnBorderColor = null, titleTextColor = null, messageTextColor = null,
+                btnTextColor = null, imageUrl = null, btnBackgroundColor = null, btnBorderRadius = null;
+        boolean fallbackToSettings = false, followDeviceOrientation = false;
+
         CTLocalInApp.Builder builder = CTLocalInApp.builder();
-        ReadableMapKeySetIterator iterator = localInAppConfig.keySetIterator();
+        ReadableMapKeySetIterator iterator = readableMap.keySetIterator();
         while (iterator.hasNextKey()) {
             try {
                 String configKey = iterator.nextKey();
-                ReadableType readableType = localInAppConfig.getType(configKey);
+                ReadableType readableType = readableMap.getType(configKey);
                 if ("inAppType".equals(configKey) && readableType == ReadableType.String) {
-                    inAppType = inAppTypeFromString(localInAppConfig.getString(configKey));
+                    inAppType = inAppTypeFromString(readableMap.getString(configKey));
                 }
                 if ("titleText".equals(configKey) && readableType == ReadableType.String) {
-                    titleText = localInAppConfig.getString(configKey);
+                    titleText = readableMap.getString(configKey);
                 }
                 if ("messageText".equals(configKey) && readableType == ReadableType.String) {
-                    messageText = localInAppConfig.getString(configKey);
+                    messageText = readableMap.getString(configKey);
                 }
                 if ("followDeviceOrientation".equals(configKey) && readableType == ReadableType.Boolean) {
-                    followDeviceOrientation = localInAppConfig.getBoolean(configKey);
+                    followDeviceOrientation = readableMap.getBoolean(configKey);
                 }
                 if ("positiveBtnText".equals(configKey) && readableType == ReadableType.String) {
-                    positiveBtnText = localInAppConfig.getString(configKey);
+                    positiveBtnText = readableMap.getString(configKey);
                 }
                 if ("negativeBtnText".equals(configKey) && readableType == ReadableType.String) {
-                    negativeBtnText = localInAppConfig.getString(configKey);
+                    negativeBtnText = readableMap.getString(configKey);
+                }
+                if ("fallbackToSettings".equals(configKey) && readableType == ReadableType.Boolean) {
+                    fallbackToSettings = readableMap.getBoolean(configKey);
+                }
+                if ("backgroundColor".equals(configKey) && readableType == ReadableType.String) {
+                    backgroundColor = readableMap.getString(configKey);
+                }
+                if ("btnBorderColor".equals(configKey) && readableType == ReadableType.String) {
+                    btnBorderColor = readableMap.getString(configKey);
+                }
+                if ("titleTextColor".equals(configKey) && readableType == ReadableType.String) {
+                    titleTextColor = readableMap.getString(configKey);
+                }
+                if ("messageTextColor".equals(configKey) && readableType == ReadableType.String) {
+                    messageTextColor = readableMap.getString(configKey);
+                }
+                if ("btnTextColor".equals(configKey) && readableType == ReadableType.String) {
+                    btnTextColor = readableMap.getString(configKey);
+                }
+                if ("imageUrl".equals(configKey) && readableType == ReadableType.String) {
+                    imageUrl = readableMap.getString(configKey);
+                }
+                if ("btnBackgroundColor".equals(configKey) && readableType == ReadableType.String) {
+                    btnBackgroundColor = readableMap.getString(configKey);
+                }
+                if ("btnBorderRadius".equals(configKey) && readableType == ReadableType.String) {
+                    btnBorderRadius = readableMap.getString(configKey);
                 }
             } catch (Throwable t) {
-                Log.e(TAG, t.getLocalizedMessage());
+                Log.e(TAG, "invalid parameters in push primer config" + t.getLocalizedMessage());
                 return null;
             }
         }
+        //throws exception if any of the required parameter is missing
         if (inAppType == null || titleText == null || messageText == null || positiveBtnText == null
                 || negativeBtnText == null) {
-            throw new IllegalArgumentException("manda");
+            throw new IllegalArgumentException("mandatory parameters are missing in push primer config");
         }
 
-        return builder.setInAppType(inAppType)
+        //creates the builder instance with all the required parameters
+        CTLocalInApp.Builder.Builder6 builderWithRequiredParam = builder.setInAppType(inAppType)
                 .setTitleText(titleText)
                 .setMessageText(messageText)
                 .followDeviceOrientation(followDeviceOrientation)
                 .setPositiveBtnText(positiveBtnText)
-                .setNegativeBtnText(negativeBtnText)
-                .build();
+                .setNegativeBtnText(negativeBtnText);
+
+        //adds optional parameters to the builder instance
+        if(backgroundColor != null) {
+            builderWithRequiredParam.setBackgroundColor(backgroundColor);
+        }
+        if(btnBorderColor != null) {
+            builderWithRequiredParam.setBtnBorderColor(btnBorderColor);
+        }
+        if(titleTextColor != null) {
+            builderWithRequiredParam.setTitleTextColor(titleTextColor);
+        }
+        if(messageTextColor != null) {
+            builderWithRequiredParam.setMessageTextColor(messageTextColor);
+        }
+        if(btnTextColor != null) {
+            builderWithRequiredParam.setBtnTextColor(btnTextColor);
+        }
+        if(imageUrl != null) {
+            builderWithRequiredParam.setImageUrl(imageUrl);
+        }
+        if(btnBackgroundColor != null) {
+            builderWithRequiredParam.setBtnBackgroundColor(btnBackgroundColor);
+        }
+        if(btnBorderRadius != null) {
+            builderWithRequiredParam.setBtnBorderRadius(btnBorderRadius);
+        }
+        builderWithRequiredParam.setFallbackToSettings(fallbackToSettings);
+
+        JSONObject localInAppConfig = builderWithRequiredParam.build();
+        Log.i(TAG, "LocalInAppConfig for push primer prompt: " + localInAppConfig);
+        return localInAppConfig;
     }
 
     private CTLocalInApp.InAppType inAppTypeFromString(String inAppType) {
