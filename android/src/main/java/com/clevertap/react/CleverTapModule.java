@@ -107,6 +107,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     private static final String CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED = "CleverTapInAppNotificationDismissed";
 
+    private static final String CLEVERTAP_IN_APP_NOTIFICATION_SHOWED = "CleverTapInAppNotificationShowed";
+
     private static final String FCM = "FCM";
 
     private static final String XPS = "XPS";
@@ -168,7 +170,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     @Override
     public void onShow(CTInAppNotification ctInAppNotification) {
-       //TODO: sendEvent(CLEVERTAP_IN_APP_NOTIFICATION_SHOWED, params);
+        WritableMap params = Arguments.createMap();
+        sendEvent(CLEVERTAP_IN_APP_NOTIFICATION_SHOWED, params); //passing empty map
     }
 
     //Custom Push Notification
@@ -326,29 +329,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
             callbackWithErrorAndResult(callback, error, null);
         }
-    }
-
-    // @ReactMethod
-    // public void registerPushPermissionNotificationResponseListener() {
-    //     Log.i(TAG, "inside registerPushPermissionNotificationResponseListener");
-    //     CleverTapAPI cleverTap = getCleverTapAPI();
-    //     if (cleverTap != null) {
-    //         cleverTap.registerPushPermissionNotificationResponseListener(this);
-    //     } else {
-    //         Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
-    //     }
-    // }
-
-    // @ReactMethod
-    // public void unregisterPushPermissionNotificationResponseListener() {
-    //     Log.i(TAG, "inside unregisterPushPermissionNotificationResponseListener");
-    //     CleverTapAPI cleverTap = getCleverTapAPI();
-    //     if (cleverTap != null) {
-    //         cleverTap.unregisterPushPermissionNotificationResponseListener(this);
-    //     } else {
-    //         Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
-    //     }
-    // }
+    }   
 
     @Override
     public void onPushPermissionResponse(boolean accepted) {
@@ -532,6 +513,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         constants.put(CLEVERTAP_PROFILE_DID_INITIALIZE, CLEVERTAP_PROFILE_DID_INITIALIZE);
         constants.put(CLEVERTAP_PROFILE_SYNC, CLEVERTAP_PROFILE_SYNC);
         constants.put(CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED, CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED);
+        constants.put(CLEVERTAP_IN_APP_NOTIFICATION_SHOWED, CLEVERTAP_IN_APP_NOTIFICATION_SHOWED);
         constants.put(FCM, FCM);
         constants.put(XPS, XPS);
         constants.put(BPS, BPS);
