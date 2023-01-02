@@ -216,7 +216,7 @@ var CleverTap = {
 
     /**
     * Method to prompt the push primer for android 13 onwards.
-    * @param {object} value - key-value profile properties.  keys and values are strings
+    * @param {object} value - key-value belongs to the localInApp properties. Refer documentation for details.
     */
     promptPushPrimer: function (value) {
         CleverTapReact.promptPushPrimer(value);

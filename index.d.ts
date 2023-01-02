@@ -178,13 +178,13 @@ export function createNotification(extras: any): void;
 export function promptForPushPermission(showFallbackSettings: boolean): void;
 
 /**
- * Call this method to prompt the push primer flow
+ * Call this method to prompt the push primer flow.
  * @param localInAppConfig : {any}  object
  */
 export function promptPushPrimer(localInAppConfig: any): void;
 
 /**
- * Returns a unique identifier through callback by which CleverTap identifies this user
+ * Returns true/false based on whether push permission is granted or denied.
  *
  * @param {function(err, res)} non-null callback to retrieve the result
  */
