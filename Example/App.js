@@ -1190,6 +1190,7 @@ function removeCleverTapAPIListeners() {
     CleverTap.removeListener(CleverTap.CleverTapProfileDidInitialize);
     CleverTap.removeListener(CleverTap.CleverTapProfileSync);
     CleverTap.removeListener(CleverTap.CleverTapInAppNotificationDismissed);
+    CleverTap.removeListener(CleverTap.CleverTapInAppNotificationShowed);
     CleverTap.removeListener(CleverTap.CleverTapInboxDidInitialize);
     CleverTap.removeListener(CleverTap.CleverTapInboxMessagesDidUpdate);
     CleverTap.removeListener(CleverTap.CleverTapInboxMessageButtonTapped);
@@ -1214,6 +1215,9 @@ function addCleverTapAPIListeners(fromClick) {
     });
     CleverTap.addListener(CleverTap.CleverTapInAppNotificationDismissed, (event) => {
         _handleCleverTapEvent(CleverTap.CleverTapInAppNotificationDismissed, event);
+    });
+  CleverTap.addListener(CleverTap.CleverTapInAppNotificationShowed, (event) => {
+        _handleCleverTapEvent(CleverTap.CleverTapInAppNotificationShowed, event);
     });
     CleverTap.addListener(CleverTap.CleverTapInboxDidInitialize, (event) => {
         _handleCleverTapInbox(CleverTap.CleverTapInboxDidInitialize, event);

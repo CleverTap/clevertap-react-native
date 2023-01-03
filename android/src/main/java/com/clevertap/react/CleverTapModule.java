@@ -2,6 +2,7 @@ package com.clevertap.react;
 
 import static com.clevertap.react.CleverTapUtils.getWritableMapFromMap;
 
+import android.annotation.SuppressLint;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build.VERSION;
@@ -168,10 +169,15 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         return true;
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
-    public void onShow(CTInAppNotification ctInAppNotification) {
+    public void onShow(CTInAppNotification inAppNotification) {
         WritableMap params = Arguments.createMap();
-        sendEvent(CLEVERTAP_IN_APP_NOTIFICATION_SHOWED, params); //passing empty map
+        JSONObject data = inAppNotification.getJsonDescription();
+        if (data != null) {
+            params.putString("data", data.toString());
+        }
+        sendEvent(CLEVERTAP_IN_APP_NOTIFICATION_SHOWED, params);
     }
 
     //Custom Push Notification
