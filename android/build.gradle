@@ -19,7 +19,7 @@ android {
     buildToolsVersion '33.0.0'
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 33
         versionCode 93
         versionName "0.9.3"
