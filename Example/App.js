@@ -368,16 +368,21 @@ class Expandable_ListView extends Component {
               negativeBtnText: 'Cancel',
               fallbackToSettings: true,
             });
+            break;
           case 76:
             CleverTap.isPushPermissionGranted((err, res) => {
               console.log('isPushPermissionGranted', res, err);
-              CleverTap.promptForPushPermission(false);
+              if (res == false) {
+                CleverTap.promptForPushPermission(false);
+              }
             });
             break;
           case 77:
             CleverTap.isPushPermissionGranted((err, res) => {
               console.log('isPushPermissionGranted', res, err);
-              CleverTap.promptForPushPermission(true);
+              if (res == false) {
+                CleverTap.promptForPushPermission(true);
+              }
             });
             break;
         }
