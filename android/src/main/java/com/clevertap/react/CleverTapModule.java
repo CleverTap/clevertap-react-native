@@ -304,7 +304,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     //Push permission methods
     @ReactMethod
     public void promptForPushPermission(boolean showFallbackSettings) {
-        Log.i(TAG, "inside promptForPushPermission method with fallbackSettings:" + showFallbackSettings);
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.promptForPushPermission(showFallbackSettings);
@@ -315,7 +314,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     @ReactMethod
     public void promptPushPrimer(ReadableMap localInAppConfig) {
-        Log.i(TAG, "inside promptPushPrimer method with config:" + localInAppConfig);
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             JSONObject jsonObject = localInAppConfigFromReadableMap(localInAppConfig);
@@ -1586,6 +1584,11 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
+    /**
+     * retrieves the localInAppConfig from the given ReadableMap.
+     * @param readableMap - the map config, received from the host application
+     * @return the Json of the localInAppConfig
+     */
     private JSONObject localInAppConfigFromReadableMap(ReadableMap readableMap) {
         if (readableMap == null) {
             return null;
@@ -1596,7 +1599,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 btnTextColor = null, imageUrl = null, btnBackgroundColor = null, btnBorderRadius = null;
         boolean fallbackToSettings = false, followDeviceOrientation = false;
 
-        CTLocalInApp.Builder builder = CTLocalInApp.builder();
         ReadableMapKeySetIterator iterator = readableMap.keySetIterator();
         while (iterator.hasNextKey()) {
             try {
@@ -1652,52 +1654,70 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 return null;
             }
         }
+
+        //creates the builder instance of localInApp with all the required parameters
+        CTLocalInApp.Builder.Builder6 builderWithRequiredParams = getLocalInAppBuilderWithRequiredParam(
+                inAppType, titleText, messageText, followDeviceOrientation, positiveBtnText, negativeBtnText
+        );
+
+        //adds the optional parameters to the builder instance
+        if(backgroundColor != null) {
+            builderWithRequiredParams.setBackgroundColor(backgroundColor);
+        }
+        if(btnBorderColor != null) {
+            builderWithRequiredParams.setBtnBorderColor(btnBorderColor);
+        }
+        if(titleTextColor != null) {
+            builderWithRequiredParams.setTitleTextColor(titleTextColor);
+        }
+        if(messageTextColor != null) {
+            builderWithRequiredParams.setMessageTextColor(messageTextColor);
+        }
+        if(btnTextColor != null) {
+            builderWithRequiredParams.setBtnTextColor(btnTextColor);
+        }
+        if(imageUrl != null) {
+            builderWithRequiredParams.setImageUrl(imageUrl);
+        }
+        if(btnBackgroundColor != null) {
+            builderWithRequiredParams.setBtnBackgroundColor(btnBackgroundColor);
+        }
+        if(btnBorderRadius != null) {
+            builderWithRequiredParams.setBtnBorderRadius(btnBorderRadius);
+        }
+        builderWithRequiredParams.setFallbackToSettings(fallbackToSettings);
+
+        JSONObject localInAppConfig = builderWithRequiredParams.build();
+        Log.i(TAG, "LocalInAppConfig for push primer prompt: " + localInAppConfig);
+        return localInAppConfig;
+    }
+
+    /**
+     * Creates an instance of the {@link CTLocalInApp.Builder.Builder6} with the required parameters.
+     * @return the {@link CTLocalInApp.Builder.Builder6} instance
+     */
+    private CTLocalInApp.Builder.Builder6 getLocalInAppBuilderWithRequiredParam(CTLocalInApp.InAppType inAppType,
+                                                                                String titleText,
+                                                                                String messageText,
+                                                                                boolean followDeviceOrientation,
+                                                                                String positiveBtnText,
+                                                                                String negativeBtnText) {
         //throws exception if any of the required parameter is missing
         if (inAppType == null || titleText == null || messageText == null || positiveBtnText == null
                 || negativeBtnText == null) {
             throw new IllegalArgumentException("mandatory parameters are missing in push primer config");
         }
 
-        //creates the builder instance with all the required parameters
-        CTLocalInApp.Builder.Builder6 builderWithRequiredParam = builder.setInAppType(inAppType)
+        CTLocalInApp.Builder builder = CTLocalInApp.builder();
+        return builder.setInAppType(inAppType)
                 .setTitleText(titleText)
                 .setMessageText(messageText)
                 .followDeviceOrientation(followDeviceOrientation)
                 .setPositiveBtnText(positiveBtnText)
                 .setNegativeBtnText(negativeBtnText);
-
-        //adds optional parameters to the builder instance
-        if(backgroundColor != null) {
-            builderWithRequiredParam.setBackgroundColor(backgroundColor);
-        }
-        if(btnBorderColor != null) {
-            builderWithRequiredParam.setBtnBorderColor(btnBorderColor);
-        }
-        if(titleTextColor != null) {
-            builderWithRequiredParam.setTitleTextColor(titleTextColor);
-        }
-        if(messageTextColor != null) {
-            builderWithRequiredParam.setMessageTextColor(messageTextColor);
-        }
-        if(btnTextColor != null) {
-            builderWithRequiredParam.setBtnTextColor(btnTextColor);
-        }
-        if(imageUrl != null) {
-            builderWithRequiredParam.setImageUrl(imageUrl);
-        }
-        if(btnBackgroundColor != null) {
-            builderWithRequiredParam.setBtnBackgroundColor(btnBackgroundColor);
-        }
-        if(btnBorderRadius != null) {
-            builderWithRequiredParam.setBtnBorderRadius(btnBorderRadius);
-        }
-        builderWithRequiredParam.setFallbackToSettings(fallbackToSettings);
-
-        JSONObject localInAppConfig = builderWithRequiredParam.build();
-        Log.i(TAG, "LocalInAppConfig for push primer prompt: " + localInAppConfig);
-        return localInAppConfig;
     }
 
+    //returns InAppType type from the given string
     private CTLocalInApp.InAppType inAppTypeFromString(String inAppType) {
         if(inAppType == null) {
             return null;
