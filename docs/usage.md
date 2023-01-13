@@ -170,6 +170,10 @@ CleverTap.pushInboxNotificationClickedEventForId('Message Id');
 
 -----------
 
+## Push primer for notification Permission (Android and iOS)
+Follow the [Push Primer integration doc](pushprimer.md).
+
+-----------
 ## Push Notifications
 
 #### Creating Notification Channel
