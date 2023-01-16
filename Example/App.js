@@ -282,21 +282,29 @@ class Expandable_ListView extends Component {
             CleverTap.recordEvent(item.name);
             break;
           case 70:
-            CleverTap.promptPushPrimer({
-              inAppType: 'half-interstitial',
-              titleText: 'Get Notified',
-              messageText:
-                'Please enable notifications on your device to use Push Notifications.',
-              followDeviceOrientation: true,
-              positiveBtnText: 'Allow',
-              negativeBtnText: 'Cancel',
-              backgroundColor: '#FFFFFF',
-              btnBorderColor: '#0000FF',
-              titleTextColor: '#0000FF',
-              messageTextColor: '#000000',
-              btnTextColor: '#FFFFFF',
-              btnBackgroundColor: '#0000FF',
-              btnBorderRadius: '2',
+            CleverTap.isPushPermissionGranted((err, res) => {
+              console.log('isPushPermissionGranted', res, err);
+              if (res == true) {
+                alert('Push Notification permission is already granted');
+              }
+              else {
+                CleverTap.promptPushPrimer({
+                  inAppType: 'half-interstitial',
+                  titleText: 'Get Notified',
+                  messageText:
+                    'Please enable notifications on your device to use Push Notifications.',
+                  followDeviceOrientation: true,
+                  positiveBtnText: 'Allow',
+                  negativeBtnText: 'Cancel',
+                  backgroundColor: '#FFFFFF',
+                  btnBorderColor: '#0000FF',
+                  titleTextColor: '#0000FF',
+                  messageTextColor: '#000000',
+                  btnTextColor: '#FFFFFF',
+                  btnBackgroundColor: '#0000FF',
+                  btnBorderRadius: '2',
+                });
+              }
             });
             break;
           case 71:
@@ -320,53 +328,85 @@ class Expandable_ListView extends Component {
             });
             break;
           case 72:
-            CleverTap.promptPushPrimer({
-              inAppType: 'half-interstitial',
-              titleText: 'Get Notified',
-              messageText:
-                'Please enable notifications on your device to use Push Notifications.',
-              followDeviceOrientation: true,
-              positiveBtnText: 'Allow',
-              negativeBtnText: 'Cancel',
-              backgroundColor: '#FFFFFF',
-              btnBorderColor: '#0000FF',
-              titleTextColor: '#0000FF',
-              messageTextColor: '#000000',
-              btnTextColor: '#FFFFFF',
-              btnBackgroundColor: '#0000FF',
-              btnBorderRadius: '2',
-              fallbackToSettings: true,
+            CleverTap.isPushPermissionGranted((err, res) => {
+              console.log('isPushPermissionGranted', res, err);
+              if (res == true) {
+                alert('Push Notification permission is already granted');
+              }
+              else {
+                CleverTap.promptPushPrimer({
+                  inAppType: 'half-interstitial',
+                  titleText: 'Get Notified',
+                  messageText:
+                    'Please enable notifications on your device to use Push Notifications.',
+                  followDeviceOrientation: true,
+                  positiveBtnText: 'Allow',
+                  negativeBtnText: 'Cancel',
+                  backgroundColor: '#FFFFFF',
+                  btnBorderColor: '#0000FF',
+                  titleTextColor: '#0000FF',
+                  messageTextColor: '#000000',
+                  btnTextColor: '#FFFFFF',
+                  btnBackgroundColor: '#0000FF',
+                  btnBorderRadius: '2',
+                  fallbackToSettings: true,
+                });
+              }
             });
             break;
           case 73:
-            CleverTap.promptPushPrimer({
-              inAppType: 'alert',
-              titleText: 'Get Notified',
-              messageText: 'Enable Notification permission',
-              followDeviceOrientation: true,
-              positiveBtnText: 'Allow',
-              negativeBtnText: 'Cancel',
+            CleverTap.isPushPermissionGranted((err, res) => {
+              console.log('isPushPermissionGranted', res, err);
+              if (res == true) {
+                alert('Push Notification permission is already granted');
+              }
+              else {
+                CleverTap.promptPushPrimer({
+                  inAppType: 'alert',
+                  titleText: 'Get Notified',
+                  messageText: 'Enable Notification permission',
+                  followDeviceOrientation: true,
+                  positiveBtnText: 'Allow',
+                  negativeBtnText: 'Cancel',
+                });
+              }
             });
             break;
           case 74:
-            CleverTap.promptPushPrimer({
-              inAppType: 'alert',
-              titleText: 'Get Notified',
-              messageText: 'Enable Notification permission',
-              followDeviceOrientation: false,
-              positiveBtnText: 'Allow',
-              negativeBtnText: 'Cancel',
+            CleverTap.isPushPermissionGranted((err, res) => {
+              console.log('isPushPermissionGranted', res, err);
+              if (res == true) {
+                alert('Push Notification permission is already granted');
+              }
+              else {
+                CleverTap.promptPushPrimer({
+                  inAppType: 'alert',
+                  titleText: 'Get Notified',
+                  messageText: 'Enable Notification permission',
+                  followDeviceOrientation: false,
+                  positiveBtnText: 'Allow',
+                  negativeBtnText: 'Cancel',
+                });
+              }
             });
             break;
           case 75:
-            CleverTap.promptPushPrimer({
-              inAppType: 'alert',
-              titleText: 'Get Notified',
-              messageText: 'Enable Notification permission',
-              followDeviceOrientation: false,
-              positiveBtnText: 'Allow',
-              negativeBtnText: 'Cancel',
-              fallbackToSettings: true,
+            CleverTap.isPushPermissionGranted((err, res) => {
+              console.log('isPushPermissionGranted', res, err);
+              if (res == true) {
+                alert('Push Notification permission is already granted');
+              }
+              else {
+                CleverTap.promptPushPrimer({
+                  inAppType: 'alert',
+                  titleText: 'Get Notified',
+                  messageText: 'Enable Notification permission',
+                  followDeviceOrientation: false,
+                  positiveBtnText: 'Allow',
+                  negativeBtnText: 'Cancel',
+                  fallbackToSettings: true,
+                });
+              }
             });
             break;
           case 76:
@@ -375,6 +415,9 @@ class Expandable_ListView extends Component {
               if (res == false) {
                 CleverTap.promptForPushPermission(false);
               }
+              else {
+                alert('Push Notification permission is already granted');
+              }
             });
             break;
           case 77:
@@ -382,6 +425,9 @@ class Expandable_ListView extends Component {
               console.log('isPushPermissionGranted', res, err);
               if (res == false) {
                 CleverTap.promptForPushPermission(true);
+              }
+              else{
+                alert('Push Notification permission is already granted');
               }
             });
             break;
