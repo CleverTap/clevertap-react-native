@@ -15,6 +15,8 @@
 #import "CleverTap+ProductConfig.h"
 #import "CleverTap+InAppNotifications.h"
 #import "CleverTapInstanceConfig.h"
+#import "CTLocalInApp.h"
+#import "Clevertap+PushPermission.h"
 
 static NSDateFormatter *dateFormatter;
 
@@ -48,6 +50,7 @@ RCT_EXPORT_MODULE();
         kCleverTapProductConfigDidActivate: kCleverTapProductConfigDidActivate,
         kCleverTapProductConfigDidInitialize: kCleverTapProductConfigDidInitialize,
         kCleverTapPushNotificationClicked: kCleverTapPushNotificationClicked,
+        kCleverTapPushPermissionResponseReceived: kCleverTapPushPermissionResponseReceived,
         kXPS: kXPS
     };
 }
@@ -769,4 +772,110 @@ RCT_EXPORT_METHOD(resumeInAppNotifications) {
     [[self cleverTapInstance] resumeInAppNotifications];
 }
 
+#pragma mark - Push Permission
+
+- (CTLocalInApp*)_localInAppConfigFromReadableMap: (NSDictionary *)json {
+    CTLocalInApp *inAppBuilder;
+    CTLocalInAppType inAppType = HALF_INTERSTITIAL;
+    //Required parameters
+    NSString *titleText = nil, *messageText = nil, *followDeviceOrientation = nil, *positiveBtnText = nil, *negativeBtnText = nil;
+    //Additional parameters
+    NSString *fallbackToSettings = nil, *backgroundColor = nil, *btnBorderColor = nil, *titleTextColor = nil, *messageTextColor = nil, *btnTextColor = nil, *imageUrl = nil, *btnBackgroundColor = nil, *btnBorderRadius = nil;
+    
+    if ([json[@"inAppType"]  isEqual: @"half-interstitial"]){
+        inAppType = HALF_INTERSTITIAL;
+    }
+    else {
+        inAppType = ALERT;
+    }
+    if (json[@"titleText"]) {
+        titleText = [json valueForKey:@"titleText"];
+    }
+    if (json[@"messageText"]) {
+        messageText = [json valueForKey:@"messageText"];
+    }
+    if (json[@"followDeviceOrientation"]) {
+        followDeviceOrientation = [json valueForKey:@"followDeviceOrientation"];
+    }
+    if (json[@"positiveBtnText"]) {
+        positiveBtnText = [json valueForKey:@"positiveBtnText"];
+    }
+    
+    if (json[@"negativeBtnText"]) {
+        negativeBtnText = [json valueForKey:@"negativeBtnText"];
+    }
+    
+    //creates the builder instance with all the required parameters
+    inAppBuilder = [[CTLocalInApp alloc] initWithInAppType:inAppType
+                                                 titleText:titleText
+                                               messageText:messageText
+                                   followDeviceOrientation:followDeviceOrientation
+                                           positiveBtnText:positiveBtnText
+                                           negativeBtnText:negativeBtnText];
+    
+    //adds optional parameters to the builder instance
+    if (json[@"fallbackToSettings"]) {
+        fallbackToSettings = [json valueForKey:@"fallbackToSettings"];
+        [inAppBuilder setFallbackToSettings:fallbackToSettings];
+    }
+    if (json[@"backgroundColor"]) {
+        backgroundColor = [json valueForKey:@"backgroundColor"];
+        [inAppBuilder setBackgroundColor:backgroundColor];
+    }
+    if (json[@"btnBorderColor"]) {
+        btnBorderColor = [json valueForKey:@"btnBorderColor"];
+        [inAppBuilder setBtnBorderColor:btnBorderColor];
+    }
+    if (json[@"titleTextColor"]) {
+        titleTextColor = [json valueForKey:@"titleTextColor"];
+        [inAppBuilder setTitleTextColor:titleTextColor];
+    }
+    if (json[@"messageTextColor"]) {
+        messageTextColor = [json valueForKey:@"messageTextColor"];
+        [inAppBuilder setMessageTextColor:messageTextColor];
+    }
+    if (json[@"btnTextColor"]) {
+        btnTextColor = [json valueForKey:@"btnTextColor"];
+        [inAppBuilder setBtnTextColor:btnTextColor];
+    }
+    if (json[@"imageUrl"]) {
+        imageUrl = [json valueForKey:@"imageUrl"];
+        [inAppBuilder setImageUrl:imageUrl];
+    }
+    if (json[@"btnBackgroundColor"]) {
+        btnBackgroundColor = [json valueForKey:@"btnBackgroundColor"];
+        [inAppBuilder setBtnBackgroundColor:btnBackgroundColor];
+    }
+    if (json[@"btnBorderRadius"]) {
+        btnBorderRadius = [json valueForKey:@"btnBorderRadius"];
+        [inAppBuilder setBtnBorderRadius:btnBorderRadius];
+    }
+    return inAppBuilder;
+}
+
+RCT_EXPORT_METHOD(promptForPushPermission:(BOOL)showFallbackSettings){
+    RCTLogInfo(@"[CleverTap promptForPushPermission: %i]", showFallbackSettings);
+    [[self cleverTapInstance] promptForPushPermission:showFallbackSettings];
+}
+
+RCT_EXPORT_METHOD(promptPushPrimer:(NSDictionary *_Nonnull)json){
+    RCTLogInfo(@"[CleverTap promptPushPrimer]");
+    CTLocalInApp *localInAppBuilder = [self _localInAppConfigFromReadableMap:json];
+    [[self cleverTapInstance] promptPushPrimer:localInAppBuilder.getLocalInAppSettings];
+}
+
+RCT_EXPORT_METHOD(isPushPermissionGranted:(RCTResponseSenderBlock)callback){
+    if (@available(iOS 10.0, *)) {
+        [[self cleverTapInstance] getNotificationPermissionStatusWithCompletionHandler:^(UNAuthorizationStatus status) {
+                BOOL result = (status == UNAuthorizationStatusAuthorized);
+                RCTLogInfo(@"[CleverTap isPushPermissionGranted: %i]", result);
+                [self returnResult:@(result) withCallback:callback andError:nil];
+            }];
+    } else {
+        // Fallback on earlier versions
+        RCTLogInfo(@"Push Notification is available from iOS v10.0 or later");
+    }
+}
+
 @end
+
