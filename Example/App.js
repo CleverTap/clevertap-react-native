@@ -308,23 +308,31 @@ class Expandable_ListView extends Component {
             });
             break;
           case 71:
-            CleverTap.promptPushPrimer({
-              inAppType: 'half-interstitial',
-              titleText: 'Get Notified',
-              messageText:
-                'Please enable notifications on your device to use Push Notifications.',
-              followDeviceOrientation: true,
-              positiveBtnText: 'Allow',
-              negativeBtnText: 'Cancel',
-              backgroundColor: '#FFFFFF',
-              btnBorderColor: '#0000FF',
-              titleTextColor: '#0000FF',
-              messageTextColor: '#000000',
-              btnTextColor: '#FFFFFF',
-              btnBackgroundColor: '#0000FF',
-              imageUrl:
-                'https://icons.iconarchive.com/icons/treetog/junior/64/camera-icon.png',
-              btnBorderRadius: '2',
+            CleverTap.isPushPermissionGranted((err, res) => {
+              console.log('isPushPermissionGranted', res, err);
+              if (res == true) {
+                alert('Push Notification permission is already granted');
+              }
+              else {
+                CleverTap.promptPushPrimer({
+                  inAppType: 'half-interstitial',
+                  titleText: 'Get Notified',
+                  messageText:
+                    'Please enable notifications on your device to use Push Notifications.',
+                  followDeviceOrientation: true,
+                  positiveBtnText: 'Allow',
+                  negativeBtnText: 'Cancel',
+                  backgroundColor: '#FFFFFF',
+                  btnBorderColor: '#0000FF',
+                  titleTextColor: '#0000FF',
+                  messageTextColor: '#000000',
+                  btnTextColor: '#FFFFFF',
+                  btnBackgroundColor: '#0000FF',
+                  imageUrl:
+                    'https://icons.iconarchive.com/icons/treetog/junior/64/camera-icon.png',
+                  btnBorderRadius: '2',
+                });
+              }
             });
             break;
           case 72:
