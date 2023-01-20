@@ -38,6 +38,7 @@ var CleverTap = {
     CleverTapProfileDidInitialize: CleverTapReact.CleverTapProfileDidInitialize,
     CleverTapProfileSync: CleverTapReact.CleverTapProfileSync,
     CleverTapInAppNotificationDismissed: CleverTapReact.CleverTapInAppNotificationDismissed,
+    CleverTapInAppNotificationShowed: CleverTapReact.CleverTapInAppNotificationShowed,
     FCM: CleverTapReact.FCM,
     XPS: CleverTapReact.XPS,
     BPS: CleverTapReact.BPS,
@@ -45,7 +46,7 @@ var CleverTap = {
     CleverTapInboxDidInitialize: CleverTapReact.CleverTapInboxDidInitialize,
     CleverTapInboxMessagesDidUpdate: CleverTapReact.CleverTapInboxMessagesDidUpdate,
     CleverTapInboxMessageButtonTapped: CleverTapReact.CleverTapInboxMessageButtonTapped,
-    CleverTapInboxMessageTapped:CleverTapReact.CleverTapInboxMessageTapped,
+    CleverTapInboxMessageTapped: CleverTapReact.CleverTapInboxMessageTapped,
     CleverTapDisplayUnitsLoaded: CleverTapReact.CleverTapDisplayUnitsLoaded,
     CleverTapInAppNotificationButtonTapped: CleverTapReact.CleverTapInAppNotificationButtonTapped,
     CleverTapFeatureFlagsDidUpdate: CleverTapReact.CleverTapFeatureFlagsDidUpdate,
@@ -53,6 +54,7 @@ var CleverTap = {
     CleverTapProductConfigDidFetch: CleverTapReact.CleverTapProductConfigDidFetch,
     CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate,
     CleverTapPushNotificationClicked: CleverTapReact.CleverTapPushNotificationClicked,
+    CleverTapPushPermissionResponseReceived: CleverTapReact.CleverTapPushPermissionResponseReceived,
 
     /**
     * Add a CleverTap event listener
@@ -110,10 +112,10 @@ var CleverTap = {
      * @param {string} type - for Android only, specifying the type of push service token. Values can be CleverTap.FCM for Firebase or CleverTap.XPS for Xiaomi or CleverTap.BPS for Baidu or CleverTap.HPS for Huawei,
      * @param {string} region - for xps only ,to specify the region
      */
-    setPushToken: function (token, type,region="") {
+    setPushToken: function (token, type, region = "") {
         console.log(`CleverTap RN | setPushToken | received : token: '${token}' | type:'${type}' | region:'${region}' `)
-        if(type === CleverTap.XPS){
-            CleverTapReact.setPushTokenAsStringWithRegion(token, type,region);
+        if (type === CleverTap.XPS) {
+            CleverTapReact.setPushTokenAsStringWithRegion(token, type, region);
         }
         else {
             CleverTapReact.setPushTokenAsString(token, type);
@@ -203,6 +205,31 @@ var CleverTap = {
     */
     createNotification: function (extras) {
         CleverTapReact.createNotification(extras);
+    },
+
+    /**
+    * Method to prompt the hard permission dialog directly, if the push primer is not required.
+     * @param {string} showFallbackSettings - If the value is true then SDK shows an alert dialog which routes to app's notification settings page.
+    */
+    promptForPushPermission: function (showFallbackSettings) {
+        CleverTapReact.promptForPushPermission(showFallbackSettings);
+    },
+
+    /**
+    * Method to prompt the push primer for android 13 onwards.
+    * @param {object} value - key-value belongs to the localInApp properties. Refer documentation for details.
+    */
+    promptPushPrimer: function (value) {
+        CleverTapReact.promptPushPrimer(value);
+    },
+
+    /**
+    * Returns true/false based on whether push permission is granted or denied.
+    *
+    * @param {function(err, res)} non-null callback to retrieve the result
+    */
+    isPushPermissionGranted: function (callback) {
+        callWithCallback('isPushPermissionGranted', null, callback);
     },
 
     /**
@@ -783,7 +810,7 @@ var CleverTap = {
      *
      * @param accountId The ID of the account to use when switching instance.
      */
-    setInstanceWithAccountId: function(accountId) {
+    setInstanceWithAccountId: function (accountId) {
         CleverTapReact.setInstanceWithAccountId(accountId);
     }
 };

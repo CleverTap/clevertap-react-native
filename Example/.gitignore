@@ -35,6 +35,10 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+# yalc local package files
+.yalc
+yalc.lock
+
 # BUCK
 buck-out/
 \.buckd/

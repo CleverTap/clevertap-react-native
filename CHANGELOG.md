@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+Version 1.0.0 *(20 January 2023)*
+-------------------------------------------
+- Adds below new public APIs to support [CleverTap Android SDK v4.7.2](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-472-december-16-2022) and [CleverTap iOS SDK v4.2.0](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-420-december-13-2022)
+  - `isPushPermissionGranted()`, `promptPushPrimer(object)`, `promptForPushPermission(boolean)` 
+- Adds push permission callback method which returns true/false after user allow/deny the notification permission.
+- Refer [Push Primer doc](./docs/pushprimer.md) for more details.
+
+
 Version 0.9.4 *(28 November 2022)*
 -------------------------------------------
 - Supports [CleverTap iOS SDK v4.1.5](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-415-november-15-2022)

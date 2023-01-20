@@ -171,6 +171,25 @@
    */
   export function createNotification(extras: any): void;
 
+  /**
+ * Call this method to prompt the hard permission dialog directly, if the push primer is not required.
+ * @param showFallbackSettings : {boolean} - Pass true to show an alert dialog which routes to app's notification settings page. 
+ */
+export function promptForPushPermission(showFallbackSettings: boolean): void;
+
+/**
+ * Call this method to prompt the push primer flow.
+ * @param localInAppConfig : {any}  object
+ */
+export function promptPushPrimer(localInAppConfig: any): void;
+
+/**
+ * Returns true/false based on whether push permission is granted or denied.
+ *
+ * @param {function(err, res)} non-null callback to retrieve the result
+ */
+export function isPushPermissionGranted(callback: CallbackString): void;
+
   /*******************
    * Events
    ******************/
@@ -634,7 +653,23 @@
   type Callback = (err: object, res: object) => void;
   type CallbackString = (err: object, res: string) => void;
 
-  export const FCM : string;
-  export const XPS : string;
-  export const BPS : string;
-  export const HPS : string;
+  export const FCM: string;
+  export const XPS: string;
+  export const BPS: string;
+  export const HPS: string;
+  export const CleverTapProfileDidInitialize: string;
+  export const CleverTapProfileSync: string;
+  export const CleverTapInAppNotificationDismissed: string;
+  export const CleverTapInAppNotificationShowed: string;
+  export const CleverTapInboxDidInitialize: string;
+  export const CleverTapInboxMessagesDidUpdate: string;
+  export const CleverTapInboxMessageButtonTapped: string;
+  export const CleverTapInboxMessageTapped: string;
+  export const CleverTapDisplayUnitsLoaded: string;
+  export const CleverTapInAppNotificationButtonTapped: string;
+  export const CleverTapFeatureFlagsDidUpdate: string;
+  export const CleverTapProductConfigDidInitialize: string;
+  export const CleverTapProductConfigDidFetch: string;
+  export const CleverTapProductConfigDidActivate: string;
+  export const CleverTapPushNotificationClicked: string;
+  export const CleverTapPushPermissionResponseReceived: string;
