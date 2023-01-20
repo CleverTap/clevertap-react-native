@@ -203,7 +203,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
     //react-native  libs
-    implementation "com.facebook.react:react-native:+"
+    //implementation "com.facebook.react:react-native:+"
 
     //com.google
     implementation 'com.google.android.gms:play-services-base:17.6.0'
@@ -216,8 +216,8 @@ dependencies {
 
 
     //clevertap
-    implementation 'com.clevertap.android:clevertap-android-sdk:4.6.6'
-    implementation "com.clevertap.android:push-templates:1.0.5"
+    implementation 'com.clevertap.android:clevertap-android-sdk:4.7.2'
+    implementation "com.clevertap.android:push-templates:1.0.7"
     implementation project(':clevertap-react-native')
 
 

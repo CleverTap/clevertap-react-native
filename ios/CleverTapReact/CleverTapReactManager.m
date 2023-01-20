@@ -13,8 +13,10 @@
 #import "CleverTap+ProductConfig.h"
 #import "CleverTapPushNotificationDelegate.h"
 #import "CleverTapInAppNotificationDelegate.h"
+#import "CleverTap+PushPermission.h"
 
-@interface CleverTapReactManager() <CleverTapSyncDelegate, CleverTapInAppNotificationDelegate, CleverTapDisplayUnitDelegate,  CleverTapFeatureFlagsDelegate, CleverTapProductConfigDelegate, CleverTapPushNotificationDelegate> {
+
+@interface CleverTapReactManager() <CleverTapSyncDelegate, CleverTapInAppNotificationDelegate, CleverTapDisplayUnitDelegate,  CleverTapFeatureFlagsDelegate, CleverTapProductConfigDelegate, CleverTapPushNotificationDelegate, CleverTapPushPermissionDelegate> {
 }
 
 @end
@@ -46,6 +48,7 @@
     [cleverTapInstance setPushNotificationDelegate:self];
     [[cleverTapInstance featureFlags] setDelegate:self];
     [[cleverTapInstance productConfig] setDelegate:self];
+    [cleverTapInstance setPushPermissionDelegate:self];
     [cleverTapInstance setLibrary:@"React-Native"];
 }
 
@@ -147,6 +150,14 @@
 
 - (void)ctProductConfigInitialized {
     [self postNotificationWithName:kCleverTapProductConfigDidInitialize andBody:nil];
+}
+
+#pragma mark - CleverTapPushPermissionDelegate
+
+- (void)onPushPermissionResponse:(BOOL)accepted {
+    NSMutableDictionary *body = [NSMutableDictionary new];
+    body[@"isPermissionGranted"] = [NSNumber numberWithBool:accepted];
+    [self postNotificationWithName:kCleverTapPushPermissionResponseReceived andBody:body];
 }
 
 @end
