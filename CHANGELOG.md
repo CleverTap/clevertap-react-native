@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 1.0.1 *(8th March 2023)*
+-------------------------------------------
+- Supports [CleverTap Android SDK v4.7.5](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-475-march-6-2023)
+- Supports [CleverTap RenderMax SDK v1.0.3](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTRENDERMAXCHANGELOG.md#version-103-march-6-2023)
+
+
 Version 1.0.0 *(20 January 2023)*
 -------------------------------------------
 - Adds below new public APIs to support [CleverTap Android SDK v4.7.2](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-472-december-16-2022) and [CleverTap iOS SDK v4.2.0](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-420-december-13-2022)
