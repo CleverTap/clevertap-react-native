@@ -188,7 +188,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation fileTree(dir: "libs", include: ["*.aar"])
 
     //androidx
     implementation 'androidx.core:core:1.9.0'
@@ -217,7 +217,7 @@ dependencies {
 
     //clevertap
     implementation 'com.clevertap.android:clevertap-android-sdk:4.7.5'
-    implementation "com.clevertap.android:push-templates:1.0.7"
+    implementation "com.clevertap.android:push-templates:1.0.8"
     implementation project(':clevertap-react-native')
 
 
