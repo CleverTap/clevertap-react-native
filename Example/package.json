@@ -13,7 +13,7 @@
     "@react-navigation/drawer": "^5.12.5",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
-    "clevertap-react-native": "git+https://github.com/CleverTap/clevertap-react-native#task/update_core/SDK-2768",
+    "clevertap-react-native": "git+https://github.com/CleverTap/clevertap-react-native#task/SDK-2822/Add-a-public-method-to-dismiss-App-Inbox",
     "react": "17.0.1",
     "react-native": "0.64.1",
     "react-native-drawer": "^2.5.1",
