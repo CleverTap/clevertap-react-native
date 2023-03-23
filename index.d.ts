@@ -485,6 +485,11 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    */
   export function pushInboxNotificationViewedEventForId(messageId: string): void;
 
+   /**
+   * Call this method to dismiss the inbox controller
+   */
+  export function dismissAppInbox(): void;
+
   /****************************
   * Native Display Methods
   ****************************/

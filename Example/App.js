@@ -143,6 +143,9 @@ class Expandable_ListView extends Component {
           case 21:
             pushInboxNotificationClicked();
             break;
+          case 60:
+            CleverTap.dismissAppInbox();
+            break;
           case 22:
             pushevent();
             break;
@@ -260,7 +263,6 @@ class Expandable_ListView extends Component {
           case 54:
             removeCleverTapAPIListeners();
             break;
-          case 60:
           case 61:
           case 62:
           case 63:
@@ -582,6 +584,10 @@ export default class App extends Component {
               {
                 id: 21,
                 name: 'pushInboxNotificationClickedEvent',
+              },
+              {
+                id: 60,
+                name: 'dismissAppInbox',
               },
             ],
           },
@@ -998,6 +1004,7 @@ pushInboxNotificationClicked = () => {
     CleverTap.pushInboxNotificationClickedEventForId('Message Id');
 
 };
+
 ///Push Notification
 create_NotificationChannel = () => {
     alert('Notification Channel Created');
