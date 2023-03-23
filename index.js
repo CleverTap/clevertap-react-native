@@ -624,6 +624,15 @@ var CleverTap = {
         CleverTapReact.pushInboxNotificationViewedEventForId(messageId);
     },
 
+
+    /**
+     * Deletes Inbox Message that belongs to the given message id
+     * @param {string} message id of inbox message of type CTInboxMessage
+     */
+    dismissAppInbox: function () {
+        CleverTapReact.dismissAppInbox();
+    },
+
     /**
      * Get all display units
      * @param {function(err, res)} callback that returns a list of json string representation of CleverTapDisplayUnit

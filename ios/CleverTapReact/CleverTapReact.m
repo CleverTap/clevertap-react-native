@@ -557,6 +557,11 @@ RCT_EXPORT_METHOD(initializeInbox) {
     }];
 }
 
+RCT_EXPORT_METHOD(dismissAppInbox) {
+    RCTLogInfo(@"[CleverTap dismissAppInbox]");
+    [[self cleverTapInstance] dismissAppInbox];
+}
+
 RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
     RCTLogInfo(@"[CleverTap Show Inbox]");
     CleverTapInboxViewController *inboxController = [[self cleverTapInstance] newInboxViewControllerWithConfig:[self _dictToInboxStyleConfig:styleConfig? styleConfig : nil] andDelegate:(id <CleverTapInboxViewControllerDelegate>)self];
