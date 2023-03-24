@@ -13,7 +13,7 @@
     "@react-navigation/drawer": "^5.12.5",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
-    "clevertap-react-native": "0.9.5",
+    "clevertap-react-native": "file:.yalc/clevertap-react-native",
     "react": "17.0.1",
     "react-native": "0.64.4",
     "react-native-drawer": "^2.5.1",
