@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+Version 1.0.2 *(24 March 2023)*
+-------------------------------------------
+- Supports [CleverTap Android SDK v4.6.8](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-468-march-22-2023)
+- Supports [CleverTap iOS SDK v4.2.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-421-march-22-2023)
+- Updated `CleverTapInboxNotificationMessageClickedHandler` method signature to pass index and buttonIndex argument also to make consistent with native side - for iOS.
+
+
 Version 1.0.1 *(8th March 2023)*
 -------------------------------------------
 - Supports [CleverTap Android SDK v4.7.5](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-475-march-6-2023)
