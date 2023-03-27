@@ -735,7 +735,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         WritableMap params = Arguments.createMap();
         JSONObject data = message.getData();
         if (data != null) {
-            params.putString("message", data.toString());
+            params.putString("data", data.toString());
         }
         params.putInt("itemIndex", itemIndex);
         params.putInt("buttonIndex", buttonIndex);
