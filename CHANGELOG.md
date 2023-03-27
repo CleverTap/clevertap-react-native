@@ -1,24 +1,18 @@
 Change Log
 ==========
-
-Version 0.9.6 *(27 March 2023)*
+Version 0.9.5 *(27 March 2023)*
 -------------------------------------------
 - Supports [CleverTap Android SDK v4.6.8](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-468-march-22-2023)
 - Supports [CleverTap iOS SDK v4.2.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-421-march-22-2023)
-- Adds `itemIndex` and `buttonIndex` arguments to the payload sent via App Inbox Message tapped listener: `CleverTap.CleverTapInboxMessageTapped`. The `itemIndex` corresponds the index of the item clicked in the list whereas the `buttonIndex` for the App Inbox button clicked (0, 1, or 2). A value of -1 in `buttonIndex` indicates the App Inbox item is clicked.
-- **[Android Platform] Behavioral change of `CleverTap.CleverTapInboxMessageTapped` listener**:
-Previously, the callback was raised when the App Inbox item is clicked. Now, it is also raised when the App Inbox button is clicked. It matches the behavior in iOS platform.
-
-
-Version 0.9.5 *(15 March 2023)*
--------------------------------------------
-- Supports [CleverTap Android SDK v4.6.7](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-467-march-15-2023)
 - Supports [CleverTap Android RenderMax SDK v1.0.3](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTRENDERMAXCHANGELOG.md#version-103-march-6-2023)
 - Supports [CleverTap Push Templates SDK v1.0.5.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTPUSHTEMPLATESCHANGELOG.md#version-1051-march-15-2023).
-- Make sure you update all three above versions for compatibility and smooth working.
+- Make sure you update all four above versions for compatibility and smooth working.
 - **Note:** This release is being done for Android 12 targeted users, satisfying below points.
   * Targeting Android 12 and
   * Using RenderMax and/or using Push Templates
+- Adds `itemIndex` and `buttonIndex` arguments to the payload sent via App Inbox Message tapped listener: `CleverTap.CleverTapInboxMessageTapped`. The `itemIndex` corresponds the index of the item clicked in the list whereas the `buttonIndex` for the App Inbox button clicked (0, 1, or 2). A value of -1 in `buttonIndex` indicates the App Inbox item is clicked.
+- **[Android Platform] Behavioral change of `CleverTap.CleverTapInboxMessageTapped` listener**:
+Previously, the callback was raised when the App Inbox item is clicked. Now, it is also raised when the App Inbox button is clicked. It matches the behavior in iOS platform.  
 
 Version 0.9.4 *(28 November 2022)*
 -------------------------------------------
