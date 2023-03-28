@@ -41,6 +41,10 @@ buck-out/
 *.keystore
 !debug.keystore
 
+# yalc local package files
+.yalc
+yalc.lock
+
 # fastlane
 #
 # It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the

@@ -45,7 +45,7 @@ var CleverTap = {
     CleverTapInboxDidInitialize: CleverTapReact.CleverTapInboxDidInitialize,
     CleverTapInboxMessagesDidUpdate: CleverTapReact.CleverTapInboxMessagesDidUpdate,
     CleverTapInboxMessageButtonTapped: CleverTapReact.CleverTapInboxMessageButtonTapped,
-    CleverTapInboxMessageTapped:CleverTapReact.CleverTapInboxMessageTapped,
+    CleverTapInboxMessageTapped: CleverTapReact.CleverTapInboxMessageTapped,
     CleverTapDisplayUnitsLoaded: CleverTapReact.CleverTapDisplayUnitsLoaded,
     CleverTapInAppNotificationButtonTapped: CleverTapReact.CleverTapInAppNotificationButtonTapped,
     CleverTapFeatureFlagsDidUpdate: CleverTapReact.CleverTapFeatureFlagsDidUpdate,
@@ -523,6 +523,13 @@ var CleverTap = {
     */
     showInbox: function (styleConfig) {
         CleverTapReact.showInbox(styleConfig);
+    },
+
+    /**
+     * Method to dismiss the App Inbox
+     */
+    dismissInbox: function () {
+        CleverTapReact.dismissInbox();
     },
 
     /**

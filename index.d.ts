@@ -430,6 +430,11 @@
    * @param styleConfig : any or empty object
    */
   export function showInbox(styleConfig: any): void;
+  
+  /**
+   * Call this method to dismiss the App Inbox
+   */
+  export function dismissInbox(): void;
 
   /**
    * Call this method to get all inbox messages

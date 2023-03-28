@@ -104,6 +104,11 @@ CleverTap.showInbox({'tabs':['Offers','Promotions'],'navBarTitle':'My App Inbox'
                                 'noMessageText':'No message(s)','noMessageTextColor':'#FF0000'});
  ```
 
+#### Dismiss the App Inbox
+```javascript
+CleverTap.dismissInbox();
+```
+
 #### Get Total message count
 
 ```javascript 

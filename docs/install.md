@@ -86,7 +86,9 @@ dependencies {
 
 
     //clevertap
-    implementation 'com.clevertap.android:clevertap-android-sdk:4.6.6'
+    implementation 'com.clevertap.android:clevertap-android-sdk:4.6.8'
+    implementation "com.clevertap.android:push-templates:1.0.5.1" //Optional for push templates SDK support
+    implementation "com.clevertap.android:clevertap-rendermax-sdk:1.0.3" //Optional for renderMax SDK support
 
 
     // other libs

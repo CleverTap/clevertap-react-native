@@ -1072,7 +1072,14 @@ function _handleCleverTapEvent(eventName, event) {
 }
 
 function _handleCleverTapInbox(eventName, event) {
-    console.log('handleCleverTapInbox', eventName, event);
+    if (eventName == CleverTap.CleverTapInboxMessageTapped){
+      console.log("Item index : " + event.itemIndex);
+      console.log("Button index : " + event.buttonIndex);
+      console.log("App Inbox item : ", event.data);
+    }
+    else {
+      console.log('handleCleverTapInbox', eventName, event);
+    }
     ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
 }
 
