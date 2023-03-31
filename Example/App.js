@@ -1073,7 +1073,7 @@ function _handleCleverTapEvent(eventName, event) {
 
 function _handleCleverTapInbox(eventName, event) {
     if (eventName == CleverTap.CleverTapInboxMessageTapped){
-      console.log("Item index : " + event.itemIndex);
+      console.log('Content page index : ' + event.contentPageIndex);
       console.log("Button index : " + event.buttonIndex);
       console.log("App Inbox item : ", event.data);
     }
