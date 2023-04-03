@@ -1076,7 +1076,13 @@ function _handleCleverTapInbox(eventName, event) {
     if (eventName == CleverTap.CleverTapInboxMessageTapped) {
         let contentPageIndex = event.contentPageIndex;
         let buttonIndex = event.buttonIndex;
-        let data = JSON.parse(event.data); 
+        var data;
+        if (Platform.OS === 'android') {
+            //parses the stringified json to the json format
+          data = JSON.parse(event.data); 
+        } else if (Platform.OS === 'ios') {
+            data = event.data; 
+        }
         let inboxMessageClicked = data.msg;
         console.log(appInboxTag, 'InboxItemClicked at page-index ' + contentPageIndex + ' with button-index ' + buttonIndex) ;
         
