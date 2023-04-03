@@ -4,6 +4,7 @@ Change Log
 Version 0.9.6 *(3 April 2023)*
 -------------------------------------------
 - Supports [CleverTap Android SDK v4.6.9](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-468-march-22-2023)
+- Supports [CleverTap iOS SDK v4.2.2](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-422-april-03-2023)
 - **[Breaking Change]**: Renames the `itemIndex` field with the `contentPageIndex` field in the payload of the `CleverTap.CleverTapInboxMessageTapped` callback.
 - **[Parity with iOS platform]**:
   The `CleverTap.CleverTapInboxMessageTapped` callback now provides a different value for `contentPageIndex`(ex-`itemIndex`) compared to before. Previously, it used to indicate the position of the clicked item within the list container of the App Inbox. However, now it indicates the page index of the content, which ranges from 0 to the total number of pages for carousel templates. For non-carousel templates, the value is always 0, as they only have one page of content.
