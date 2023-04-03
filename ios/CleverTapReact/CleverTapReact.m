@@ -647,7 +647,7 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
     if ([message json] != nil) {
         body[@"data"] = [NSMutableDictionary dictionaryWithDictionary:[message json]];
     }
-    body[@"itemIndex"] = @(index);
+    body[@"contentPageIndex"] = @(index);
     body[@"buttonIndex"] = @(buttonIndex);
 
     [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessageTapped object:nil userInfo:body];

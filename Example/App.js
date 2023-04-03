@@ -20,6 +20,7 @@ import {
 
 const CleverTap = require('clevertap-react-native');
 const Stack = createNativeStackNavigator();
+const appInboxTag = "App Inbox ->";
 
 class Expandable_ListView extends Component {
 
@@ -1072,15 +1073,62 @@ function _handleCleverTapEvent(eventName, event) {
 }
 
 function _handleCleverTapInbox(eventName, event) {
-    if (eventName == CleverTap.CleverTapInboxMessageTapped){
-      console.log("Item index : " + event.itemIndex);
-      console.log("Button index : " + event.buttonIndex);
-      console.log("App Inbox item : ", event.data);
+    if (eventName == CleverTap.CleverTapInboxMessageTapped) {
+        let contentPageIndex = event.contentPageIndex;
+        let buttonIndex = event.buttonIndex;
+        var data;
+        if (Platform.OS === 'android') {
+            //parses the stringified json to the json format
+          data = JSON.parse(event.data); 
+        } else if (Platform.OS === 'ios') {
+            data = event.data; 
+        }
+        let inboxMessageClicked = data.msg;
+        console.log(appInboxTag, 'InboxItemClicked at page-index ' + contentPageIndex + ' with button-index ' + buttonIndex) ;
+        
+        //The contentPageIndex corresponds to the page index of the content, which ranges from 0 to the total number of pages for carousel templates. For non-carousel templates, the value is always 0, as they only have one page of content.
+        let messageContentObject = inboxMessageClicked.content[contentPageIndex];
+        
+        //The buttonIndex corresponds to the CTA button clicked (0, 1, or 2). A value of -1 indicates the app inbox body/message clicked.
+        if (buttonIndex != -1) {
+          //button is clicked
+            let buttonObject = messageContentObject.action.links[buttonIndex];
+            let buttonType = buttonObject.type;
+            switch (buttonType) {
+                case "copy":
+                    //this type copies the associated text to the clipboard
+                    let copiedText = buttonObject.copyText.text;
+                    console.log(appInboxTag, 'copied text to Clipboard: ' + copiedText)
+                    //_dismissAppInbox()
+                    break;
+                
+                case "url":
+                    //this type fires the DeepLink
+                    let firedDeepLinkUrl = buttonObject.url.android.text;
+                    console.log(appInboxTag, 'fired DeepLink url: ' + firedDeepLinkUrl);
+                    //_dismissAppInbox();
+                    break
+                case "kv":
+                    //this type contains the custom key-value pairs
+                    let kvPair = buttonObject.kv
+                    console.log(appInboxTag, 'custom key-value pair: ', kvPair)
+                    //_dismissAppInbox();
+                    break
+            }
+        } else {
+            //Item's body is clicked
+            console.log(appInboxTag, 'type/template of App Inbox item: ' + inboxMessageClicked.type)
+            //_dismissAppInbox();
+        }
     }
     else {
-      console.log('handleCleverTapInbox', eventName, event);
+      console.log(appInboxTag, eventName, event);
     }
     ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
+}
+
+function _dismissAppInbox() {
+    CleverTap.dismissInbox();
 }
 
 function _handleCleverTapDisplayUnitsLoaded(eventName, event) {

@@ -1,5 +1,15 @@
 Change Log
 ==========
+
+Version 0.9.6 *(3 April 2023)*
+-------------------------------------------
+- Supports [CleverTap Android SDK v4.6.9](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-468-march-22-2023)
+- Supports [CleverTap iOS SDK v4.2.2](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-422-april-03-2023)
+- **[Breaking Change]**: Renames the `itemIndex` field with the `contentPageIndex` field in the payload of the `CleverTap.CleverTapInboxMessageTapped` callback.
+- **[Parity with iOS platform]**:
+  The `CleverTap.CleverTapInboxMessageTapped` callback now provides a different value for `contentPageIndex`(ex-`itemIndex`) compared to before. Previously, it used to indicate the position of the clicked item within the list container of the App Inbox. However, now it indicates the page index of the content, which ranges from 0 to the total number of pages for carousel templates. For non-carousel templates, the value is always 0, as they only have one page of content.
+- **[Type Definitions support in typescript]**: Supports type definitions for the event names that are available for Javascript.
+
 Version 0.9.5 *(27 March 2023)*
 -------------------------------------------
 - Supports [CleverTap Android SDK v4.6.8](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-468-march-22-2023)
@@ -8,7 +18,7 @@ Version 0.9.5 *(27 March 2023)*
 - Supports [CleverTap Push Templates SDK v1.0.5.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTPUSHTEMPLATESCHANGELOG.md#version-1051-march-15-2023).
 - Make sure you update all four above versions for compatibility and smooth working.
 - **Note:** This release is being done for Android 12 targeted users.
-- **[Android and iOS Platforms]**:
+- **[Android and iOS platforms]**:
 Adds `itemIndex` and `buttonIndex` arguments to the payload sent via App Inbox Message tapped listener: `CleverTap.CleverTapInboxMessageTapped`. The `itemIndex` corresponds the index of the item clicked in the list whereas the `buttonIndex` for the App Inbox button clicked (0, 1, or 2). A value of -1 in `buttonIndex` indicates the App Inbox item is clicked.
 - **[Android Platform] Behavioral change of `CleverTap.CleverTapInboxMessageTapped` listener**:
 Previously, the callback was raised when the App Inbox item is clicked. Now, it is also raised when the App Inbox button is clicked. It matches the behavior in iOS platform. 
