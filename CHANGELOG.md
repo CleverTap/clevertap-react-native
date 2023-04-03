@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 0.9.6 *(31 March 2023)*
+Version 0.9.6 *(3 April 2023)*
 -------------------------------------------
 - Supports [CleverTap Android SDK v4.6.9](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-468-march-22-2023)
 - **[Breaking Change]**: Renames the `itemIndex` field with the `contentPageIndex` field in the payload of the `CleverTap.CleverTapInboxMessageTapped` callback.
