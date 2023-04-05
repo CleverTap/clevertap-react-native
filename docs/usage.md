@@ -104,6 +104,27 @@ CleverTap.showInbox({'tabs':['Offers','Promotions'],'navBarTitle':'My App Inbox'
                                 'noMessageText':'No message(s)','noMessageTextColor':'#FF0000'});
  ```
 
+#### App Inbox Item Click Callback
+
+```javascript 
+CleverTap.addListener(CleverTap.CleverTapInboxMessageTapped, (event) => {
+    console.log("App Inbox item: ", event.data);
+    //following contentPageIndex and buttonIndex fields are available from CleverTap React Native SDK v0.9.6 onwards and below v1.0.0 
+    console.log("Content Page index: " + event.contentPageIndex);
+    console.log("Button index: " + event.buttonIndex);
+});
+```
+
+#### App Inbox Button Click Callback
+```javascript
+CleverTap.addListener(CleverTap.CleverTapInboxMessageButtonTapped, (event) => {/*consume the payload*/});
+```
+
+#### Dismiss the App Inbox
+```javascript
+CleverTap.dismissInbox();
+```
+
 #### Get Total message count
 
 ```javascript 
