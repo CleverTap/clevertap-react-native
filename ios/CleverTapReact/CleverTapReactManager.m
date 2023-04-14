@@ -18,7 +18,8 @@
 
 @interface CleverTapReactManager() <CleverTapSyncDelegate, CleverTapInAppNotificationDelegate, CleverTapDisplayUnitDelegate,  CleverTapFeatureFlagsDelegate, CleverTapProductConfigDelegate, CleverTapPushNotificationDelegate, CleverTapPushPermissionDelegate> {
 }
-
+@property(nonatomic, strong) NSMutableDictionary *pendingPushNotificationExtras;
+@property(nonatomic, assign) BOOL hasLaunchedFromPushNotification;
 @end
 
 @implementation CleverTapReactManager
@@ -54,6 +55,9 @@
 
 - (void)applicationDidLaunchWithOptions:(NSDictionary *)options {
     NSDictionary *notification = [options valueForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+    if (notification) {
+        _hasLaunchedFromPushNotification = YES;
+    }
     if (notification && notification[@"wzrk_dl"]) {
         self.launchDeepLink = notification[@"wzrk_dl"];
         RCTLogInfo(@"CleverTapReact: setting launch deeplink: %@", self.launchDeepLink);
@@ -75,6 +79,11 @@
     }
     
     [self postNotificationWithName:kCleverTapProfileDidInitialize andBody:@{@"CleverTapID":cleverTapID}];
+    if (_pendingPushNotificationExtras && _pendingPushNotificationExtras.count > 0) {
+        [self postNotificationWithName:kCleverTapPushNotificationClicked andBody:_pendingPushNotificationExtras];
+        _pendingPushNotificationExtras = nil;
+        _hasLaunchedFromPushNotification = NO;
+    }
 }
 
 - (void)profileDataUpdated:(NSDictionary *)updates {
@@ -92,7 +101,15 @@
     if (customExtras != nil) {
         pushNotificationExtras[@"customExtras"] = customExtras;
     }
-    [self postNotificationWithName:kCleverTapPushNotificationClicked andBody:pushNotificationExtras];
+    if (_hasLaunchedFromPushNotification) {
+        if (!_pendingPushNotificationExtras) {
+            _pendingPushNotificationExtras = [NSMutableDictionary dictionary];
+        }
+        _pendingPushNotificationExtras = pushNotificationExtras;
+    }
+    else {
+        [self postNotificationWithName:kCleverTapPushNotificationClicked andBody:pushNotificationExtras];
+    }
 }
 
 

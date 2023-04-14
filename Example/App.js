@@ -1100,26 +1100,26 @@ productConfig = () => {
 
 };
 fetch = () => {
-    alert('Check Console for update result');
+    // alert('Check Console for update result');
     //Fetch
     CleverTap.fetch();
 
 };
 activate = () => {
-    alert('Check Console for update result');
+    // alert('Check Console for update result');
     //Activate
     CleverTap.activate();
 
 };
 fetchAndActivate = () => {
-    alert('Check Console for update result');
+    // alert('Check Console for update result');
 
     //Fetch And Activate
     CleverTap.fetchAndActivate();
 
 };
 fetchwithMinIntervalinsec = () => {
-    alert('Check Console for update result');
+    // alert('Check Console for update result');
 
     //Fetch Minimum Time Interval
     CleverTap.fetchWithMinimumIntervalInSeconds(60);
@@ -1127,7 +1127,7 @@ fetchwithMinIntervalinsec = () => {
 };
 
 setMinimumFetchIntervalInSeconds = () => {
-    alert('Check Console for update result');
+    // alert('Check Console for update result');
 
     //Set Minimum Interval
     CleverTap.setMinimumFetchIntervalInSeconds(60);
@@ -1310,7 +1310,7 @@ function addCleverTapAPIListeners(fromClick) {
         _handleCleverTapEvent(CleverTap.CleverTapProductConfigDidActivate, event);
     });
     CleverTap.addListener(CleverTap.CleverTapPushNotificationClicked, (event) => {
-        _handleCleverTapEvent(CleverTap.CleverTapPushNotificationClicked, event);
+        pushClicked(CleverTap.CleverTapPushNotificationClicked, event);
     });
     CleverTap.addListener(CleverTap.CleverTapPushPermissionResponseReceived, (event) => {
         _handleCleverTapEvent(CleverTap.CleverTapPushPermissionResponseReceived, event);
@@ -1347,6 +1347,10 @@ function createNotificationChannelWithGroupIdAndSound() {
 
 }
 
+function pushClicked(eventName, event) {
+    alert(`push clicked with extras: ${JSON.stringify(event)}`);
+    console.log('pushClicked', eventName, event);
+}
 
 function _handleCleverTapEvent(eventName, event) {
     console.log('handleCleverTapEvent', eventName, event);
