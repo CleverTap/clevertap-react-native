@@ -1353,7 +1353,7 @@ function pushClicked(eventName, event) {
 }
 
 function _handleCleverTapEvent(eventName, event) {
-    console.log('handleCleverTapEvent', eventName, event);
+    // console.log('handleCleverTapEvent', eventName, event);
     ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
 }
 
