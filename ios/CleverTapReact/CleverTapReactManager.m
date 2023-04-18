@@ -79,11 +79,6 @@
     }
     
     [self postNotificationWithName:kCleverTapProfileDidInitialize andBody:@{@"CleverTapID":cleverTapID}];
-    if (_pendingPushNotificationExtras && _pendingPushNotificationExtras.count > 0) {
-        [self postNotificationWithName:kCleverTapPushNotificationClicked andBody:_pendingPushNotificationExtras];
-        _pendingPushNotificationExtras = nil;
-        _hasLaunchedFromPushNotification = NO;
-    }
 }
 
 - (void)profileDataUpdated:(NSDictionary *)updates {
@@ -152,6 +147,12 @@
 
 - (void)ctFeatureFlagsUpdated {
     [self postNotificationWithName:kCleverTapFeatureFlagsDidUpdate andBody:nil];
+    
+    if (_pendingPushNotificationExtras && _pendingPushNotificationExtras.count > 0) {
+        [self postNotificationWithName:kCleverTapPushNotificationClicked andBody:[_pendingPushNotificationExtras copy]];
+        _pendingPushNotificationExtras = nil;
+        _hasLaunchedFromPushNotification = NO;
+    }
 }
 
 
