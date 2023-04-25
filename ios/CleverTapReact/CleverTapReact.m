@@ -97,7 +97,6 @@ RCT_EXPORT_METHOD(getInitialUrl:(RCTResponseSenderBlock)callback) {
     }
 }
 
-
 #pragma mark - Push Notifications
 
 RCT_EXPORT_METHOD(registerForPush) {
@@ -130,6 +129,16 @@ RCT_EXPORT_METHOD(setPushTokenAsString:(NSString*)token withType:(NSString *)typ
 // setPushTokenAsStringWithRegion is a no-op in iOS
 RCT_EXPORT_METHOD(setPushTokenAsStringWithRegion:(NSString*)token withType:(NSString *)type withRegion:(NSString *)region){
     RCTLogInfo(@"[CleverTap setPushTokenAsStringWithRegion is no-op in iOS]");
+}
+
+RCT_EXPORT_METHOD(getPushCallback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getPushCallback]");
+    NSDictionary *pendingPushNotificationExtras =  [CleverTapReactManager sharedInstance].pendingPushNotificationExtras;
+    if (pendingPushNotificationExtras != nil) {
+        [self returnResult:pendingPushNotificationExtras withCallback:callback andError:nil];
+    } else {
+        [self returnResult:nil withCallback:callback andError:@"CleverTap initialUrl is nil"];
+    }
 }
 
 #pragma mark - Personalization

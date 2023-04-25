@@ -64,6 +64,12 @@
   export function registerForPush(): void;
 
   /**
+  * If an application is launched from a push notification click, returns the CleverTap callback values in the push notification
+  * @param {function(err, res)} callback that return the notification payload as dictionary in res or a string error in err
+  */
+  export function getPushCallback(callback: Callback): void;
+
+  /**
    * Manually set the push token on the CleverTap user profile
    * @param {string} token - the device token
    * @param {string} type - for Android only, specifying the type of push service token. Values can be CleverTap.FCM for Firebase or CleverTap.XPS for Xiaomi or CleverTap.BPS for Baidu or CleverTap.HPS for Huawei,
