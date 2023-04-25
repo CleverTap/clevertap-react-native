@@ -133,9 +133,11 @@ RCT_EXPORT_METHOD(setPushTokenAsStringWithRegion:(NSString*)token withType:(NSSt
 
 RCT_EXPORT_METHOD(getPushCallback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getPushCallback]");
-    NSDictionary *pendingPushNotificationExtras =  [CleverTapReactManager sharedInstance].pendingPushNotificationExtras;
-    if (pendingPushNotificationExtras != nil) {
-        [self returnResult:pendingPushNotificationExtras withCallback:callback andError:nil];
+    NSMutableDictionary *pushNotificationExtras = [NSMutableDictionary new];
+    NSDictionary *customExtras =  [CleverTapReactManager sharedInstance].pendingPushNotificationExtras;
+    if (customExtras != nil) {
+        pushNotificationExtras[@"customExtras"] = customExtras;
+        [self returnResult:pushNotificationExtras withCallback:callback andError:nil];
     } else {
         [self returnResult:nil withCallback:callback andError:@"CleverTap initialUrl is nil"];
     }
