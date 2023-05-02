@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Version 1.0.3 *(2nd May 2023)*
+-------------------------------------------
+- Fixes a bug where notification clicked callbacks were not working for killed state in iOS.
+
 Version 1.0.2 *(3rd April 2023)*
 -------------------------------------------
 - Supports [CleverTap iOS SDK v4.2.2](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-422-april-03-2023)

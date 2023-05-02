@@ -97,7 +97,6 @@ RCT_EXPORT_METHOD(getInitialUrl:(RCTResponseSenderBlock)callback) {
     }
 }
 
-
 #pragma mark - Push Notifications
 
 RCT_EXPORT_METHOD(registerForPush) {
