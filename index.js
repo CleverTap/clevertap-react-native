@@ -123,14 +123,6 @@ var CleverTap = {
     },
 
     /**
-     * If an application is launched from a push notification click, returns the CleverTap callback values in the push notification
-     * @param {function(err, res)} callback that return the notification payload as dictionary in res or a string error in err
-     */
-    getPushCallback: function (callback) {
-        callWithCallback('getPushCallback', null, callback);
-    },
-
-    /**
     * Method to create Notification Channels in Android O
     * @param {string} channelId - A String for setting the id of the notification channel
     * @param {string} channelName - A String for setting the name of the notification channel
