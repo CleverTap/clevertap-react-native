@@ -520,15 +520,6 @@ export default class App extends Component {
             }
         });
 
-         // handles the case where the app is launched from a push notification and recording the push notification clicked event
-        CleverTap.getPushCallback((err, notification) => {
-          if (notification) {
-              _handleCleverTapEvent(CleverTap.CleverTapPushNotificationClicked, notification);
-          } else if (err) {
-              console.log('CleverTap killed state push callback', err);
-          }
-      });
-
         const array = [
           {
             expanded: false,

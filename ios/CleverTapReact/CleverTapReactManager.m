@@ -3,6 +3,9 @@
 
 #import <UIKit/UIKit.h>
 #import <React/RCTLog.h>
+#import <React/RCTBridge.h>
+#import <React/RCTEventDispatcher.h>
+#import <React/RCTRootView.h>
 
 #import "CleverTap+Inbox.h"
 #import "CleverTapUTMDetail.h"
@@ -32,9 +35,15 @@
     return sharedInstance;
 }
 
+
 - (instancetype)init {
     self = [super init];
     if (self) {
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleContentDidAppearNotification:)
+                                                     name:RCTContentDidAppearNotification
+                                                   object:nil];
         CleverTap *clevertap = [CleverTap sharedInstance];
         [self setDelegates:clevertap];
     }
@@ -51,6 +60,7 @@
     [cleverTapInstance setPushPermissionDelegate:self];
     [cleverTapInstance setLibrary:@"React-Native"];
 }
+
 
 - (void)applicationDidLaunchWithOptions:(NSDictionary *)options {
     NSDictionary *notification = [options valueForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
@@ -161,6 +171,17 @@
     NSMutableDictionary *body = [NSMutableDictionary new];
     body[@"isPermissionGranted"] = [NSNumber numberWithBool:accepted];
     [self postNotificationWithName:kCleverTapPushPermissionResponseReceived andBody:body];
+}
+
+- (void)handleContentDidAppearNotification:(NSNotification *)notification {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    NSMutableDictionary *pushNotificationExtras = [NSMutableDictionary new];
+    NSDictionary *customExtras = self.pendingPushNotificationExtras;
+    if (customExtras != nil) {
+        pushNotificationExtras[@"customExtras"] = customExtras;
+        [self  postNotificationWithName:kCleverTapPushNotificationClicked andBody:pushNotificationExtras];
+    }
 }
 
 @end

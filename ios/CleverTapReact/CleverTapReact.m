@@ -131,18 +131,6 @@ RCT_EXPORT_METHOD(setPushTokenAsStringWithRegion:(NSString*)token withType:(NSSt
     RCTLogInfo(@"[CleverTap setPushTokenAsStringWithRegion is no-op in iOS]");
 }
 
-RCT_EXPORT_METHOD(getPushCallback:(RCTResponseSenderBlock)callback) {
-    RCTLogInfo(@"[CleverTap getPushCallback]");
-    NSMutableDictionary *pushNotificationExtras = [NSMutableDictionary new];
-    NSDictionary *customExtras =  [CleverTapReactManager sharedInstance].pendingPushNotificationExtras;
-    if (customExtras != nil) {
-        pushNotificationExtras[@"customExtras"] = customExtras;
-        [self returnResult:pushNotificationExtras withCallback:callback andError:nil];
-    } else {
-        [self returnResult:nil withCallback:callback andError:@"CleverTap initialUrl is nil"];
-    }
-}
-
 #pragma mark - Personalization
 
 RCT_EXPORT_METHOD(enablePersonalization) {
