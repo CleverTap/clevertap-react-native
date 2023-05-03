@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Version 1.0.3 *(3rd May 2023)*
+-------------------------------------------
+- Fixes a bug where notification clicked callbacks were not working for killed state in iOS.
+
 Version 1.0.2 *(3rd April 2023)*
 -------------------------------------------
 - Supports [CleverTap iOS SDK v4.2.2](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-422-april-03-2023)
@@ -12,13 +16,17 @@ Version 1.0.1 *(8th March 2023)*
 - Supports [CleverTap Android Push Templates SDK v1.0.8](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTPUSHTEMPLATESCHANGELOG.md#version-108-march-8-2023)
 - Make sure you update all three above versions for compatibility and smooth working.
 
-
 Version 1.0.0 *(20 January 2023)*
 -------------------------------------------
 - Adds below new public APIs to support [CleverTap Android SDK v4.7.2](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-472-december-16-2022) and [CleverTap iOS SDK v4.2.0](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-420-december-13-2022)
   - `isPushPermissionGranted()`, `promptPushPrimer(object)`, `promptForPushPermission(boolean)` 
 - Adds push permission callback method which returns true/false after user allow/deny the notification permission.
 - Refer [Push Primer doc](./docs/pushprimer.md) for more details.
+
+Version 0.9.7 *(3rd May 2023)*
+-------------------------------------------
+- Fixes a bug where notification clicked callbacks were not working for killed state in iOS. 
+- [Android] Make sure the maximum deployment version is Android 12.
 
 Version 0.9.6 *(3 April 2023)*
 -------------------------------------------
