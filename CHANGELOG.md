@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 1.0.3 *(2nd May 2023)*
+Version 1.0.3 *(3rd May 2023)*
 -------------------------------------------
 - Fixes a bug where notification clicked callbacks were not working for killed state in iOS.
 
