@@ -3,6 +3,9 @@
 
 #import <UIKit/UIKit.h>
 #import <React/RCTLog.h>
+#import <React/RCTBridge.h>
+#import <React/RCTEventDispatcher.h>
+#import <React/RCTRootView.h>
 
 #import "CleverTap+Inbox.h"
 #import "CleverTapUTMDetail.h"
@@ -33,6 +36,10 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleContentDidAppearNotification:)
+                                                     name:RCTContentDidAppearNotification
+                                                   object:nil];
         CleverTap *clevertap = [CleverTap sharedInstance];
         [self setDelegates:clevertap];
     }
@@ -51,9 +58,12 @@
 
 - (void)applicationDidLaunchWithOptions:(NSDictionary *)options {
     NSDictionary *notification = [options valueForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-    if (notification && notification[@"wzrk_dl"]) {
-        self.launchDeepLink = notification[@"wzrk_dl"];
-        RCTLogInfo(@"CleverTapReact: setting launch deeplink: %@", self.launchDeepLink);
+    if (notification){
+        self.pendingPushNotificationExtras = notification;
+        if (notification[@"wzrk_dl"]) {
+            self.launchDeepLink = notification[@"wzrk_dl"];
+            RCTLogInfo(@"CleverTapReact: setting launch deeplink: %@", self.launchDeepLink);
+        }
     }
 }
 
@@ -147,6 +157,17 @@
 
 - (void)ctProductConfigInitialized {
     [self postNotificationWithName:kCleverTapProductConfigDidInitialize andBody:nil];
+}
+
+- (void)handleContentDidAppearNotification:(NSNotification *)notification {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    NSMutableDictionary *pushNotificationExtras = [NSMutableDictionary new];
+    NSDictionary *customExtras = self.pendingPushNotificationExtras;
+    if (customExtras != nil) {
+        pushNotificationExtras[@"customExtras"] = customExtras;
+        [self  postNotificationWithName:kCleverTapPushNotificationClicked andBody:pushNotificationExtras];
+    }
 }
 
 @end
