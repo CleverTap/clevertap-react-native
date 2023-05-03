@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Version 0.9.7 *(3rd May 2023)*
+-------------------------------------------
+- Fixes a bug where notification clicked callbacks were not working for killed state in iOS.
+
 Version 0.9.6 *(3 April 2023)*
 -------------------------------------------
 - Supports [CleverTap Android SDK v4.6.9](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-468-march-22-2023)
