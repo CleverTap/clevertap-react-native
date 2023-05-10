@@ -812,6 +812,48 @@ var CleverTap = {
      */
     setInstanceWithAccountId: function (accountId) {
         CleverTapReact.setInstanceWithAccountId(accountId);
+    },
+
+    /**
+    * Uploads variables to the server. Requires Development/Debug build/configuration.
+    */
+    syncVariables: function () {
+        CleverTapReact.syncVariables();
+    },
+
+    /**
+    * Uploads variables to the server.
+    *
+    * @param isProduction Provide `true` if variables must be sync in Productuon build/configuration.
+    */
+    syncVariables: function (isProduction, callback) {
+        callWithCallback('syncVariables', [isProduction], callback);
+    },
+
+    /**
+    * Get a variable for the provided name.
+    *
+    * @param name The name of the variable or the group.
+    */
+    getVariable: function (name, callback) {
+        callWithCallback('getVariable', [name], callback);
+    },
+
+    /**
+    * Get a copy of the current value of a variable or a group.
+    *
+    * @param name The name of the variable or the group.
+    */
+    getVariableValue: function (name) {
+        callWithCallback('getVariableValue', [name], callback);
+    },
+
+    /**
+    * Get a variable for the provided name.
+    *
+    */
+    fetchVariables: function (callback) {
+        callWithCallback('fetchVariables', null, callback);
     }
 };
 

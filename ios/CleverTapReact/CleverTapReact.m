@@ -877,5 +877,40 @@ RCT_EXPORT_METHOD(isPushPermissionGranted:(RCTResponseSenderBlock)callback){
     }
 }
 
+#pragma mark - Product Experiences: Vars
+
+RCT_EXPORT_METHOD(syncVariables) {
+    RCTLogInfo(@"[CleverTap syncVariables]");
+    [[self cleverTapInstance]syncVariables];
+}
+
+RCT_EXPORT_METHOD(syncVariables:(BOOL)isProduction) {
+    RCTLogInfo(@"[CleverTap syncVariables:isProduction]");
+    [[self cleverTapInstance]syncVariables:isProduction];
+}
+
+RCT_EXPORT_METHOD(getVariable:(NSString * _Nonnull)name callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getVariable:name]");
+    CTVar *var = [[self cleverTapInstance]getVariable:name];
+    NSDictionary *varResult = @{
+        @"varData": var.description
+    };
+    [self returnResult:varResult withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(getVariableValue:(NSString * _Nonnull)name callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getVariableValue:name]");
+    id varValue = [[self cleverTapInstance]getVariableValue:name];
+    [self returnResult:varValue withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(fetchVariables:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap fetchVariables]");
+    [[self cleverTapInstance]fetchVariables:^(BOOL success) {
+        [self returnResult:@(success) withCallback:callback andError:nil];
+    }];
+}
+
+
 @end
 

@@ -439,6 +439,8 @@ class Expandable_ListView extends Component {
               }
             });
             break;
+          case 80:
+            CleverTap.syncVariables()
         }
     }
 
@@ -767,6 +769,28 @@ export default class App extends Component {
               },
             ],
           },
+          {
+            expanded: false,
+            category_Name: 'Product Experiences: Vars',
+            sub_Category: [
+              {
+                id: 80, 
+                name: 'Sync Variables'
+              },
+              {
+                id: 81,
+                name: 'Get Variable for name \'lmao\''
+              },
+              {
+                id: 82,
+                name: 'Get Variable Value for name \'lmao\''
+              },
+              {
+                id: 83,
+                name: 'Fetch Variables'
+              }
+            ],
+          }
         ];
 
         this.state = { AccordionData: [...array] }

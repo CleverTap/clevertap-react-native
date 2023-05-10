@@ -642,6 +642,43 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function setInstanceWithAccountId(accountId: string): void;
 
   /*******************
+   * Product Experiences: Vars
+   ******************/
+
+  /**
+   * Uploads variables to the server. Requires Development/Debug build/configuration.
+   */
+  export function syncVariables(): void;
+
+  /**
+   * Uploads variables to the server.
+   * 
+   * @param isProduction Provide `true` if variables must be sync in Productuon build/configuration.
+   */
+  export function syncVariables(isProduction: boolean): void;
+
+  /**
+   * Get a variable for the provided name.
+   * 
+   * @param name The name of the variable or the group.
+   */
+  export function getVariable(name: string, callback: Callback): void;
+
+  /**
+   * Get a copy of the current value of a variable or a group.
+   * 
+   * @param name The name of the variable or the group.
+   */
+  export function getVariableValue(name: string, callback: Callback): void;
+
+  /**
+   *  Forces variables to update from the server.
+   *
+   * @param {function(err, res)} a callback with a boolean flag whether the update was successful.
+   */
+  export function fetchVariables(callback: Callback): void;
+
+  /*******************
    * Developer Options
    ******************/
   /**
