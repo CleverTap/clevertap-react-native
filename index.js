@@ -856,12 +856,12 @@ var CleverTap = {
         callWithCallback('fetchVariables', null, callback);
     },
 
-    /**
-    * 
-    *
-    */
-    defineVar: function (name, defaultValue, callback) {
-        callWithCallback('defineVar', [name,defaultValue], callback);
+    defineStringVar: function (name, defaultValue, callback) {
+        callWithCallback('defineStringVar', [name,defaultValue], callback);
+    },
+
+    defineIntVar: function (name, defaultValue, callback) {
+        callWithCallback('defineIntVar', [name,defaultValue], callback);
     }
 };
 

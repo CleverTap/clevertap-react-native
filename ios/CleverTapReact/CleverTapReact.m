@@ -893,15 +893,10 @@ RCT_EXPORT_METHOD(syncVariablesinProd:(BOOL)isProduction) {
 RCT_EXPORT_METHOD(getVariable:(NSString * _Nonnull)name callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getVariable:name]");
     CTVar *var = [[self cleverTapInstance]getVariable:name];
-    if (!var) {
-        [self returnResult:nil withCallback:callback andError:nil];
-    }
-    else {
-        NSDictionary *varResult = @{
-            @"varData": var
-        };
-        [self returnResult:varResult withCallback:callback andError:nil];
-    }
+    NSDictionary *varResult = @{
+        @"varData": var.description
+    };
+    [self returnResult:varResult withCallback:callback andError:nil];
 }
 
 RCT_EXPORT_METHOD(getVariableValue:(NSString * _Nonnull)name callback:(RCTResponseSenderBlock)callback) {
@@ -917,9 +912,19 @@ RCT_EXPORT_METHOD(fetchVariables:(RCTResponseSenderBlock)callback) {
     }];
 }
 
-RCT_EXPORT_METHOD(defineVar:(NSString *)name withString:(nullable NSString *)defaultValue callback:(RCTResponseSenderBlock)callback) {
-    RCTLogInfo(@"[CleverTap getFeatureFlag]");
+RCT_EXPORT_METHOD(defineStringVar:(NSString *)name withString:(nullable NSString *)defaultValue callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap defineVar]");
     CTVar *var = [[self cleverTapInstance]defineVar:name withString:defaultValue];
+    NSDictionary *result = @{
+        @"name": var.name,
+        @"value": var.value
+    };
+    [self returnResult:result withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(defineIntVar:(NSString *)name withInt:(int)defaultValue callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap defineVar]");
+    CTVar *var = [[self cleverTapInstance]defineVar:name withInt:defaultValue];
     NSDictionary *result = @{
         @"name": var.name,
         @"value": var.value

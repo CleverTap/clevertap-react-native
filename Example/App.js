@@ -447,8 +447,13 @@ class Expandable_ListView extends Component {
             break;
           case 84:
             console.log(`Creating var with name: reactnative_var_string`);
-            CleverTap.defineVar("reactnative_var_string", 'reactnative_var_string_value', (err, res) => {
-              console.log('var: ', res, err);
+            CleverTap.defineStringVar("reactnative_var_string", 'reactnative_var_string_value', (err, res) => {
+              console.log('string var: ', res, err);
+          });
+          case 85:
+            console.log(`Creating var with name: reactnative_var_string`);
+            CleverTap.defineIntVar("reactnative_var_number", 6, (err, res) => {
+              console.log('number var: ', res, err);
           });
             break;
         }
@@ -556,6 +561,10 @@ export default class App extends Component {
               {
                 id: 84,
                 name: 'Create string Variable'
+              },
+              {
+                id: 85,
+                name: 'Create int Variable'
               }
             ],
           },
