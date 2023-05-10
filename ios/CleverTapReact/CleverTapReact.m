@@ -17,6 +17,7 @@
 #import "CleverTapInstanceConfig.h"
 #import "CTLocalInApp.h"
 #import "Clevertap+PushPermission.h"
+#import "CleverTap+CTVar.h"
 
 static NSDateFormatter *dateFormatter;
 
@@ -916,6 +917,15 @@ RCT_EXPORT_METHOD(fetchVariables:(RCTResponseSenderBlock)callback) {
     }];
 }
 
+RCT_EXPORT_METHOD(defineVar:(NSString *)name withString:(nullable NSString *)defaultValue callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getFeatureFlag]");
+    CTVar *var = [[self cleverTapInstance]defineVar:name withString:defaultValue];
+    NSDictionary *result = @{
+        @"name": var.name,
+        @"value": var.value
+    };
+    [self returnResult:result withCallback:callback andError:nil];
+}
 
 @end
 

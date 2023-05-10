@@ -678,6 +678,13 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    */
   export function fetchVariables(callback: Callback): void;
 
+  /**
+   * 
+   * 
+   * 
+   */
+  export function defineVar(name: string, defaultValue: string, callback: Callback): void;
+
   /*******************
    * Developer Options
    ******************/
