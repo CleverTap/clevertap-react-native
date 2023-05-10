@@ -449,13 +449,26 @@ class Expandable_ListView extends Component {
             console.log(`Creating var with name: reactnative_var_string`);
             CleverTap.defineStringVar("reactnative_var_string", 'reactnative_var_string_value', (err, res) => {
               console.log('string var: ', res, err);
-          });
-          case 85:
-            console.log(`Creating var with name: reactnative_var_string`);
-            CleverTap.defineIntVar("reactnative_var_number", 6, (err, res) => {
-              console.log('number var: ', res, err);
-          });
+            });
             break;
+          case 85:
+            console.log(`Creating var with name: reactnative_var_int`);
+            CleverTap.defineIntVar("reactnative_var_int", 6, (err, res) => {
+              console.log('int var: ', res, err);
+            });
+            break;
+          case 86:
+            console.log(`Creating var with name: reactnative_var_float`);
+            CleverTap.defineFloatVar("reactnative_var_float", 6.9, (err, res) => {
+              console.log('float var: ', res, err);
+            });
+            break;
+          case 87:
+            console.log(`Creating var with name: reactnative_var_json_object`);
+            CleverTap.defineJSONObjectVar("reactnative_var_json_object", {'json_key': 'json_value'}, (err, res) => {
+              console.log('json object var: ', res, err);
+            });
+            break;   
         }
     }
 
@@ -565,6 +578,14 @@ export default class App extends Component {
               {
                 id: 85,
                 name: 'Create int Variable'
+              },
+              {
+                id: 86,
+                name: 'Create float Variable'
+              },
+              {
+                id: 87,
+                name: 'Create JSON Object Variable'
               }
             ],
           },

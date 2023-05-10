@@ -681,6 +681,10 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function defineStringVar(name: string, defaultValue: string, callback: Callback): void;
 
   export function defineIntVar(name: string, defaultValue: number, callback: Callback): void;
+  
+  export function defineFloatVar(name: string, defaultValue: number, callback: Callback): void;
+
+  export function defineJSONObjectVar(name: string, defaultValue: number, callback: Callback): void;
 
   /*******************
    * Developer Options

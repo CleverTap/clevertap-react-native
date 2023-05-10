@@ -862,6 +862,14 @@ var CleverTap = {
 
     defineIntVar: function (name, defaultValue, callback) {
         callWithCallback('defineIntVar', [name,defaultValue], callback);
+    },
+
+    defineFloatVar: function (name, defaultValue, callback) {
+        callWithCallback('defineFloatVar', [name,defaultValue], callback);
+    },
+
+    defineJSONObjectVar: function (name, defaultValue, callback) {
+        callWithCallback('defineJSONObjectVar', [name,defaultValue], callback);
     }
 };
 
