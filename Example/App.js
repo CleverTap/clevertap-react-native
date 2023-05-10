@@ -441,6 +441,10 @@ class Expandable_ListView extends Component {
             break;
           case 80:
             CleverTap.syncVariables()
+            break;
+          case 81:
+            console.log(`variable with lmao: ${CleverTap.getVariable('lmao')}`)
+            break;
         }
     }
 
@@ -523,6 +527,28 @@ export default class App extends Component {
         });
 
         const array = [
+          {
+            expanded: false,
+            category_Name: 'Product Experiences: Vars',
+            sub_Category: [
+              {
+                id: 80, 
+                name: 'Sync Variables'
+              },
+              {
+                id: 81,
+                name: 'Get Variable for name \'lmao\''
+              },
+              {
+                id: 82,
+                name: 'Get Variable Value for name \'lmao\''
+              },
+              {
+                id: 83,
+                name: 'Fetch Variables'
+              }
+            ],
+          },
           {
             expanded: false,
             category_Name: 'User Properties',
@@ -767,28 +793,6 @@ export default class App extends Component {
                 id: 77,
                 name: 'Hard permission dialog with fallbackToSettings - true',
               },
-            ],
-          },
-          {
-            expanded: false,
-            category_Name: 'Product Experiences: Vars',
-            sub_Category: [
-              {
-                id: 80, 
-                name: 'Sync Variables'
-              },
-              {
-                id: 81,
-                name: 'Get Variable for name \'lmao\''
-              },
-              {
-                id: 82,
-                name: 'Get Variable Value for name \'lmao\''
-              },
-              {
-                id: 83,
-                name: 'Fetch Variables'
-              }
             ],
           }
         ];

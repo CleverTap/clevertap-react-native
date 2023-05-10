@@ -826,8 +826,8 @@ var CleverTap = {
     *
     * @param isProduction Provide `true` if variables must be sync in Productuon build/configuration.
     */
-    syncVariables: function (isProduction, callback) {
-        callWithCallback('syncVariables', [isProduction], callback);
+    syncVariablesinProd: function (isProduction, callback) {
+        callWithCallback('syncVariablesinProd', [isProduction], callback);
     },
 
     /**

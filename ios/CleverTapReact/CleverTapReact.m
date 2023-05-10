@@ -884,7 +884,7 @@ RCT_EXPORT_METHOD(syncVariables) {
     [[self cleverTapInstance]syncVariables];
 }
 
-RCT_EXPORT_METHOD(syncVariables:(BOOL)isProduction) {
+RCT_EXPORT_METHOD(syncVariablesinProd:(BOOL)isProduction) {
     RCTLogInfo(@"[CleverTap syncVariables:isProduction]");
     [[self cleverTapInstance]syncVariables:isProduction];
 }
@@ -892,10 +892,15 @@ RCT_EXPORT_METHOD(syncVariables:(BOOL)isProduction) {
 RCT_EXPORT_METHOD(getVariable:(NSString * _Nonnull)name callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getVariable:name]");
     CTVar *var = [[self cleverTapInstance]getVariable:name];
-    NSDictionary *varResult = @{
-        @"varData": var.description
-    };
-    [self returnResult:varResult withCallback:callback andError:nil];
+    if (!var) {
+        [self returnResult:nil withCallback:callback andError:nil];
+    }
+    else {
+        NSDictionary *varResult = @{
+            @"varData": var
+        };
+        [self returnResult:varResult withCallback:callback andError:nil];
+    }
 }
 
 RCT_EXPORT_METHOD(getVariableValue:(NSString * _Nonnull)name callback:(RCTResponseSenderBlock)callback) {

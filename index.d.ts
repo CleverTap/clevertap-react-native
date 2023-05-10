@@ -655,7 +655,7 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    * 
    * @param isProduction Provide `true` if variables must be sync in Productuon build/configuration.
    */
-  export function syncVariables(isProduction: boolean): void;
+  export function syncVariablesinProd(isProduction: boolean): void;
 
   /**
    * Get a variable for the provided name.
