@@ -662,14 +662,14 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    * 
    * @param name The name of the variable or the group.
    */
-  export function getVariable(name: string, callback: Callback): void;
+  // export function getVariable(name: string, callback: Callback): void;
 
   /**
    * Get a copy of the current value of a variable or a group.
    * 
    * @param name The name of the variable or the group.
    */
-  export function getVariableValue(name: string, callback: Callback): void;
+  // export function getVariableValue(name: string, callback: Callback): void;
 
   /**
    *  Forces variables to update from the server.
@@ -678,13 +678,19 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    */
   export function fetchVariables(callback: Callback): void;
 
-  export function defineStringVar(name: string, defaultValue: string, callback: Callback): void;
-
-  export function defineIntVar(name: string, defaultValue: number, callback: Callback): void;
+  export function setVariables(variables: object): void;
   
-  export function defineFloatVar(name: string, defaultValue: number, callback: Callback): void;
+  export function getVariables(callback: Callback): void;
 
-  export function defineJSONObjectVar(name: string, defaultValue: number, callback: Callback): void;
+  export function getVariable(name: string, callback: Callback): void;
+
+  // export function defineStringVar(name: string, defaultValue: string, callback: Callback): void;
+
+  // export function defineIntVar(name: string, defaultValue: number, callback: Callback): void;
+  
+  // export function defineFloatVar(name: string, defaultValue: number, callback: Callback): void;
+
+  // export function defineJSONObjectVar(name: string, defaultValue: number, callback: Callback): void;
 
   /*******************
    * Developer Options

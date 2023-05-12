@@ -835,18 +835,18 @@ var CleverTap = {
     *
     * @param name The name of the variable or the group.
     */
-    getVariable: function (name, callback) {
-        callWithCallback('getVariable', [name], callback);
-    },
+    // getVariable: function (name, callback) {
+    //     callWithCallback('getVariable', [name], callback);
+    // },
 
     /**
     * Get a copy of the current value of a variable or a group.
     *
     * @param name The name of the variable or the group.
     */
-    getVariableValue: function (name) {
-        callWithCallback('getVariableValue', [name], callback);
-    },
+    // getVariableValue: function (name) {
+    //     callWithCallback('getVariableValue', [name], callback);
+    // },
 
     /**
     * Get a variable for the provided name.
@@ -856,21 +856,45 @@ var CleverTap = {
         callWithCallback('fetchVariables', null, callback);
     },
 
-    defineStringVar: function (name, defaultValue, callback) {
-        callWithCallback('defineStringVar', [name,defaultValue], callback);
+    /**
+     * .
+     * @param {object} variables - variables.
+     */
+    setVariables: function (variables) {
+        CleverTapReact.setVariables(variables);
     },
 
-    defineIntVar: function (name, defaultValue, callback) {
-        callWithCallback('defineIntVar', [name,defaultValue], callback);
+    /**
+     * .
+     * @param {string} name - name.
+     */
+    getVariable: function (name, callback) {
+        callWithCallback('getVariable', [name], callback);
     },
 
-    defineFloatVar: function (name, defaultValue, callback) {
-        callWithCallback('defineFloatVar', [name,defaultValue], callback);
-    },
-
-    defineJSONObjectVar: function (name, defaultValue, callback) {
-        callWithCallback('defineJSONObjectVar', [name,defaultValue], callback);
+    /**
+     * .
+     * 
+     */
+    getVariables: function (callback) {
+        callWithCallback('getVariables', null, callback);
     }
+
+    // defineStringVar: function (name, defaultValue, callback) {
+    //     callWithCallback('defineStringVar', [name,defaultValue], callback);
+    // },
+
+    // defineIntVar: function (name, defaultValue, callback) {
+    //     callWithCallback('defineIntVar', [name,defaultValue], callback);
+    // },
+
+    // defineFloatVar: function (name, defaultValue, callback) {
+    //     callWithCallback('defineFloatVar', [name,defaultValue], callback);
+    // },
+
+    // defineJSONObjectVar: function (name, defaultValue, callback) {
+    //     callWithCallback('defineJSONObjectVar', [name,defaultValue], callback);
+    // }
 };
 
 function convertDateToEpochInProperties(map) {

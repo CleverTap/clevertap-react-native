@@ -443,32 +443,49 @@ class Expandable_ListView extends Component {
             CleverTap.syncVariables()
             break;
           case 81:
-            console.log(`variable with lmao: ${CleverTap.getVariable('lmao')}`);
-            break;
-          case 84:
-            console.log(`Creating var with name: reactnative_var_string`);
-            CleverTap.defineStringVar("reactnative_var_string", 'reactnative_var_string_value', (err, res) => {
-              console.log('string var: ', res, err);
+            CleverTap.getVariables((err, variables) => {
+              console.log('getVariables: ', variables, err);
             });
             break;
-          case 85:
-            console.log(`Creating var with name: reactnative_var_int`);
-            CleverTap.defineIntVar("reactnative_var_int", 6, (err, res) => {
-              console.log('int var: ', res, err);
+          case 82:
+            CleverTap.getVariable('reactnative_var_string', (err, variable) => {
+              console.log(`variable value for key \'reactnative_var_string\': ${variable}`);
             });
             break;
-          case 86:
-            console.log(`Creating var with name: reactnative_var_float`);
-            CleverTap.defineFloatVar("reactnative_var_float", 6.9, (err, res) => {
-              console.log('float var: ', res, err);
-            });
+          case 83:
+            let variables = {
+              'reactnative_var_string': 'reactnative_var_string_value',
+              'reactnative_var_map': {
+                'reactnative_var_map_string': 'reactnative_var_map_value'
+              },
+              'reactnative_var_int': 6,
+              'reactnative_var_float': 6.9,
+              'reactnative_var_boolean': true
+            };
+            console.log(`Creating variables: ${JSON.stringify(variables)}`);
+            CleverTap.setVariables(variables);
+            // CleverTap.defineStringVar("reactnative_var_string", 'reactnative_var_string_value', (err, res) => {
+            //   console.log('string var: ', res, err);
+            // });
             break;
-          case 87:
-            console.log(`Creating var with name: reactnative_var_json_object`);
-            CleverTap.defineJSONObjectVar("reactnative_var_json_object", {'json_key': 'json_value'}, (err, res) => {
-              console.log('json object var: ', res, err);
-            });
-            break;   
+          // case 85:
+          //   console.log(`Creating var with name: reactnative_var_int`);
+          //   CleverTap.defineIntVar("reactnative_var_int", 6, (err, res) => {
+          //     console.log('int var: ', res, err);
+          //   });
+          //   break;
+          // case 86:
+          //   console.log(`Creating var with name: reactnative_var_float`);
+          //   CleverTap.defineFloatVar("reactnative_var_float", 6.9, (err, res) => {
+          //     console.log('float var: ', res, err);
+          //   });
+          //   break;
+          // case 87:
+          //   console.log(`Creating var with name: reactnative_var_json_object`);
+          //   CleverTap.defineJSONObjectVar("reactnative_var_json_object", {'json_key': 'json_value'}, (err, res) => {
+          //     console.log('json object var: ', res, err);
+          //   });
+          //   break;   
         }
     }
 
@@ -561,32 +578,33 @@ export default class App extends Component {
               },
               {
                 id: 81,
-                name: 'Get Variable for name \'lmao\''
+                name: 'Get Variables'
               },
               {
                 id: 82,
-                name: 'Get Variable Value for name \'lmao\''
+                name: 'Get Variable Value for name \'reactnative_var_string\''
               },
               {
-                id: 83,
+                id: 82,
                 name: 'Fetch Variables'
               },
               {
-                id: 84,
-                name: 'Create string Variable'
-              },
-              {
-                id: 85,
-                name: 'Create int Variable'
-              },
-              {
-                id: 86,
-                name: 'Create float Variable'
-              },
-              {
-                id: 87,
-                name: 'Create JSON Object Variable'
+                id: 83,
+                name: 'Define Variables'
               }
+              // ,
+              // {
+              //   id: 85,
+              //   name: 'Create int Variable'
+              // },
+              // {
+              //   id: 86,
+              //   name: 'Create float Variable'
+              // },
+              // {
+              //   id: 87,
+              //   name: 'Create JSON Object Variable'
+              // }
             ],
           },
           {
