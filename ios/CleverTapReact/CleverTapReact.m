@@ -54,6 +54,8 @@ RCT_EXPORT_MODULE();
         kCleverTapPushNotificationClicked: kCleverTapPushNotificationClicked,
         kCleverTapPushPermissionResponseReceived: kCleverTapPushPermissionResponseReceived,
         kCleverTapInAppNotificationShowed: kCleverTapInAppNotificationShowed,
+        kCleverTapOnVariablesChanged:
+            kCleverTapOnVariablesChanged,
         kXPS: kXPS
     };
 }
@@ -512,6 +514,14 @@ RCT_EXPORT_METHOD(setDebugLevel:(int)level) {
     return (numID == boolID);
 }
 
+- (NSMutableDictionary *)getVariableValues {
+    NSMutableDictionary *varValues = [NSMutableDictionary dictionary];
+    [self.allVariables enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, CTVar*  _Nonnull var, BOOL * _Nonnull stop) {
+        varValues[key] = var.value;
+    }];
+    return varValues;
+}
+
 #pragma mark - App Inbox
 
 RCT_EXPORT_METHOD(getInboxMessageCount:(RCTResponseSenderBlock)callback) {
@@ -931,11 +941,7 @@ RCT_EXPORT_METHOD(getVariable:(NSString * _Nonnull)name callback:(RCTResponseSen
 RCT_EXPORT_METHOD(getVariables:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getVariables]");
     
-    NSMutableDictionary *varValues = [NSMutableDictionary dictionary];
-    [self.allVariables enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, CTVar*  _Nonnull var, BOOL * _Nonnull stop) {
-        varValues[key] = var.value;
-    }];
-    
+    NSMutableDictionary *varValues = [self getVariableValues];
     [self returnResult:varValues withCallback:callback andError:nil];
 }
 
@@ -957,6 +963,13 @@ RCT_EXPORT_METHOD(setVariables:(NSDictionary*)variables) {
         if (var) {
             self.allVariables[key] = var;
         }
+    }];
+}
+
+RCT_EXPORT_METHOD(onVariablesChanged) {
+    RCTLogInfo(@"[CleverTap onVariablesChanged]");
+    [[self cleverTapInstance]onVariablesChanged:^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnVariablesChanged object:nil userInfo:[self getVariableValues]];
     }];
 }
 

@@ -55,6 +55,7 @@ var CleverTap = {
     CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate,
     CleverTapPushNotificationClicked: CleverTapReact.CleverTapPushNotificationClicked,
     CleverTapPushPermissionResponseReceived: CleverTapReact.CleverTapPushPermissionResponseReceived,
+    CleverTapOnVariablesChanged: CleverTapReact.CleverTapOnVariablesChanged,
 
     /**
     * Add a CleverTap event listener
@@ -878,6 +879,15 @@ var CleverTap = {
      */
     getVariables: function (callback) {
         callWithCallback('getVariables', null, callback);
+    },
+
+    /**
+     * .
+     * 
+     */
+    onVariablesChanged: function (handler) {
+        CleverTapReact.onVariablesChanged();
+        this.addListener(CleverTapReact.CleverTapOnVariablesChanged, handler);
     }
 
     // defineStringVar: function (name, defaultValue, callback) {

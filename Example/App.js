@@ -468,6 +468,11 @@ class Expandable_ListView extends Component {
             //   console.log('string var: ', res, err);
             // });
             break;
+          case 85:
+              CleverTap.onVariablesChanged((variables) => {
+                console.log('onVariablesChanged: ', variables);
+              });
+              break;  
           // case 85:
           //   console.log(`Creating var with name: reactnative_var_int`);
           //   CleverTap.defineIntVar("reactnative_var_int", 6, (err, res) => {
@@ -585,12 +590,17 @@ export default class App extends Component {
                 name: 'Get Variable Value for name \'reactnative_var_string\''
               },
               {
-                id: 82,
-                name: 'Fetch Variables'
-              },
-              {
                 id: 83,
                 name: 'Define Variables'
+              },
+              {
+                id: 84,
+                name: 'Fetch Variables'
+              },
+              ,
+              {
+                id: 85,
+                name: 'Add \'OnVariablesChanged\' listener'
               }
               // ,
               // {

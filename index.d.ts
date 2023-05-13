@@ -684,6 +684,8 @@ export function isPushPermissionGranted(callback: CallbackString): void;
 
   export function getVariable(name: string, callback: Callback): void;
 
+  export function onVariablesChanged(handler: Function): void;
+
   // export function defineStringVar(name: string, defaultValue: string, callback: Callback): void;
 
   // export function defineIntVar(name: string, defaultValue: number, callback: Callback): void;
@@ -724,3 +726,4 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export const CleverTapProductConfigDidActivate: string;
   export const CleverTapPushNotificationClicked: string;
   export const CleverTapPushPermissionResponseReceived: string;
+  export const CleverTapOnVariablesChanged: string;
