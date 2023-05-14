@@ -658,41 +658,46 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function syncVariablesinProd(isProduction: boolean): void;
 
   /**
-   * Get a variable for the provided name.
-   * 
-   * @param name The name of the variable or the group.
-   */
-  // export function getVariable(name: string, callback: Callback): void;
-
-  /**
-   * Get a copy of the current value of a variable or a group.
-   * 
-   * @param name The name of the variable or the group.
-   */
-  // export function getVariableValue(name: string, callback: Callback): void;
-
-  /**
    *  Forces variables to update from the server.
    *
    * @param {function(err, res)} a callback with a boolean flag whether the update was successful.
    */
   export function fetchVariables(callback: Callback): void;
 
-  export function setVariables(variables: object): void;
+  /**
+   *  Create variables. 
+   * 
+   * @param {object} variables The JSON Object specifying the varibles to be created.
+   */
+  export function defineVariables(variables: object): void;
   
+  /**
+   * Get all variables via a JSON object.
+   * 
+   */
   export function getVariables(callback: Callback): void;
 
+  /**
+   * Get a variable or a group for the specified name.
+   * 
+   * @param {string} name - name.
+   */
   export function getVariable(name: string, callback: Callback): void;
 
+  /**
+    *  Adds a callback to be invoked when variables are initialised with server values. Will be called each time new values are fetched.
+    * 
+    * @param {function} handler The callback to add
+    */
   export function onVariablesChanged(handler: Function): void;
 
-  // export function defineStringVar(name: string, defaultValue: string, callback: Callback): void;
-
-  // export function defineIntVar(name: string, defaultValue: number, callback: Callback): void;
-  
-  // export function defineFloatVar(name: string, defaultValue: number, callback: Callback): void;
-
-  // export function defineJSONObjectVar(name: string, defaultValue: number, callback: Callback): void;
+  /**
+    * Called when the value of the variable changes.
+    * 
+    * @param {name} string the name of the variable
+    * @param {function} handler The callback to add
+    */
+  export function onValueChanged(name: string, handler: Function): void;
 
   /*******************
    * Developer Options

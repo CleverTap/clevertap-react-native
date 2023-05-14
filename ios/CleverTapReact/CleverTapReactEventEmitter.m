@@ -8,11 +8,12 @@
 RCT_EXPORT_MODULE();
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[kCleverTapProfileDidInitialize, kCleverTapProfileSync, kCleverTapInAppNotificationDismissed, kCleverTapInboxDidInitialize, kCleverTapInboxMessagesDidUpdate, kCleverTapInAppNotificationButtonTapped, kCleverTapInboxMessageButtonTapped, kCleverTapInboxMessageTapped, kCleverTapDisplayUnitsLoaded,  kCleverTapFeatureFlagsDidUpdate, kCleverTapProductConfigDidFetch, kCleverTapProductConfigDidActivate, kCleverTapProductConfigDidInitialize, kCleverTapPushNotificationClicked, kCleverTapPushPermissionResponseReceived, kCleverTapInAppNotificationShowed, kCleverTapOnVariablesChanged];
+    return @[kCleverTapProfileDidInitialize, kCleverTapProfileSync, kCleverTapInAppNotificationDismissed, kCleverTapInboxDidInitialize, kCleverTapInboxMessagesDidUpdate, kCleverTapInAppNotificationButtonTapped, kCleverTapInboxMessageButtonTapped, kCleverTapInboxMessageTapped, kCleverTapDisplayUnitsLoaded,  kCleverTapFeatureFlagsDidUpdate, kCleverTapProductConfigDidFetch, kCleverTapProductConfigDidActivate, kCleverTapProductConfigDidInitialize, kCleverTapPushNotificationClicked, kCleverTapPushPermissionResponseReceived, kCleverTapInAppNotificationShowed, kCleverTapOnVariablesChanged, kCleverTapOnValueChanged];
 }
 
 
 - (void)startObserving {
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(emitEventInternal:)
                                                  name:kCleverTapProfileDidInitialize
@@ -92,7 +93,10 @@ RCT_EXPORT_MODULE();
                                              selector:@selector(emitEventInternal:)
                                                  name:kCleverTapOnVariablesChanged
                                                object:nil];
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(emitEventInternal:)
+                                                 name:kCleverTapOnValueChanged
+                                               object:nil];
 }
 
 - (void)stopObserving {
@@ -102,6 +106,5 @@ RCT_EXPORT_MODULE();
 - (void)emitEventInternal:(NSNotification *)notification {
     [self sendEventWithName:notification.name body:notification.userInfo];
 }
-
 
 @end

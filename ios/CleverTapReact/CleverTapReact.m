@@ -18,6 +18,7 @@
 #import "CTLocalInApp.h"
 #import "Clevertap+PushPermission.h"
 #import "CleverTap+CTVar.h"
+#import "CTVar.h"
 
 static NSDateFormatter *dateFormatter;
 
@@ -56,6 +57,8 @@ RCT_EXPORT_MODULE();
         kCleverTapInAppNotificationShowed: kCleverTapInAppNotificationShowed,
         kCleverTapOnVariablesChanged:
             kCleverTapOnVariablesChanged,
+        kCleverTapOnValueChanged:
+            kCleverTapOnValueChanged,
         kXPS: kXPS
     };
 }
@@ -952,8 +955,8 @@ RCT_EXPORT_METHOD(fetchVariables:(RCTResponseSenderBlock)callback) {
     }];
 }
 
-RCT_EXPORT_METHOD(setVariables:(NSDictionary*)variables) {
-    RCTLogInfo(@"[CleverTap setVariables]");
+RCT_EXPORT_METHOD(defineVariables:(NSDictionary*)variables) {
+    RCTLogInfo(@"[CleverTap defineVariables]");
     
     if (!variables) return;
     
@@ -973,45 +976,18 @@ RCT_EXPORT_METHOD(onVariablesChanged) {
     }];
 }
 
-//RCT_EXPORT_METHOD(defineStringVar:(NSString *)name withString:(nullable NSString *)defaultValue callback:(RCTResponseSenderBlock)callback) {
-//    RCTLogInfo(@"[CleverTap defineVar:withString]");
-//    CTVar *var = [[self cleverTapInstance]defineVar:name withString:defaultValue];
-//    NSDictionary *result = @{
-//        @"name": var.name,
-//        @"value": var.value
-//    };
-//    [self returnResult:result withCallback:callback andError:nil];
-//}
-//
-//RCT_EXPORT_METHOD(defineIntVar:(NSString *)name withInt:(int)defaultValue callback:(RCTResponseSenderBlock)callback) {
-//    RCTLogInfo(@"[CleverTap defineVar:withInt]");
-//    CTVar *var = [[self cleverTapInstance]defineVar:name withInt:defaultValue];
-//    NSDictionary *result = @{
-//        @"name": var.name,
-//        @"value": var.value
-//    };
-//    [self returnResult:result withCallback:callback andError:nil];
-//}
-//
-//RCT_EXPORT_METHOD(defineFloatVar:(NSString *)name withFloat:(float)defaultValue callback:(RCTResponseSenderBlock)callback) {
-//    RCTLogInfo(@"[CleverTap defineVar:withFloat]");
-//    CTVar *var = [[self cleverTapInstance]defineVar:name withFloat:defaultValue];
-//    NSDictionary *result = @{
-//        @"name": var.name,
-//        @"value": var.value
-//    };
-//    [self returnResult:result withCallback:callback andError:nil];
-//}
-//
-//RCT_EXPORT_METHOD(defineJSONObjectVar:(NSString *)name withJSONObject:(NSDictionary*)defaultValue callback:(RCTResponseSenderBlock)callback) {
-//    RCTLogInfo(@"[CleverTap defineVar:withDictionary]");
-//    CTVar *var = [[self cleverTapInstance]defineVar:name withDictionary:defaultValue];
-//    NSDictionary *result = @{
-//        @"name": var.name,
-//        @"value": var.value
-//    };
-//    [self returnResult:result withCallback:callback andError:nil];
-//}
+RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
+    RCTLogInfo(@"[CleverTap onValueChanged]");
+    CTVar *var = self.allVariables[name];
+    if (var) {
+        [var onValueChanged:^{
+            NSDictionary *varResult = @{
+                @"name": name,
+                @"value": var.value
+            };
+            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnValueChanged object:nil userInfo:varResult];
+        }];
+    }
+}
 
 @end
-

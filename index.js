@@ -56,6 +56,7 @@ var CleverTap = {
     CleverTapPushNotificationClicked: CleverTapReact.CleverTapPushNotificationClicked,
     CleverTapPushPermissionResponseReceived: CleverTapReact.CleverTapPushPermissionResponseReceived,
     CleverTapOnVariablesChanged: CleverTapReact.CleverTapOnVariablesChanged,
+    CleverTapOnValueChanged: CleverTapReact.CleverTapOnValueChanged,
 
     /**
     * Add a CleverTap event listener
@@ -825,32 +826,14 @@ var CleverTap = {
     /**
     * Uploads variables to the server.
     *
-    * @param isProduction Provide `true` if variables must be sync in Productuon build/configuration.
+    * @param {boolean} isProduction Provide `true` if variables must be sync in Productuon build/configuration.
     */
     syncVariablesinProd: function (isProduction, callback) {
         callWithCallback('syncVariablesinProd', [isProduction], callback);
     },
 
     /**
-    * Get a variable for the provided name.
-    *
-    * @param name The name of the variable or the group.
-    */
-    // getVariable: function (name, callback) {
-    //     callWithCallback('getVariable', [name], callback);
-    // },
-
-    /**
-    * Get a copy of the current value of a variable or a group.
-    *
-    * @param name The name of the variable or the group.
-    */
-    // getVariableValue: function (name) {
-    //     callWithCallback('getVariableValue', [name], callback);
-    // },
-
-    /**
-    * Get a variable for the provided name.
+    * Forces variables to update from the server.
     *
     */
     fetchVariables: function (callback) {
@@ -858,15 +841,17 @@ var CleverTap = {
     },
 
     /**
-     * .
-     * @param {object} variables - variables.
+     * Create variables. 
+     * 
+     * @param {object} variables The JSON Object specifying the varibles to be created.
      */
-    setVariables: function (variables) {
-        CleverTapReact.setVariables(variables);
+    defineVariables: function (variables) {
+        CleverTapReact.defineVariables(variables);
     },
 
     /**
-     * .
+     * Get a variable or a group for the specified name.
+     * 
      * @param {string} name - name.
      */
     getVariable: function (name, callback) {
@@ -874,7 +859,7 @@ var CleverTap = {
     },
 
     /**
-     * .
+     * Get all variables via a JSON object.
      * 
      */
     getVariables: function (callback) {
@@ -882,29 +867,25 @@ var CleverTap = {
     },
 
     /**
-     * .
+     *  Adds a callback to be invoked when variables are initialised with server values. Will be called each time new values are fetched.
      * 
+     * @param {function} handler The callback to add
      */
     onVariablesChanged: function (handler) {
         CleverTapReact.onVariablesChanged();
         this.addListener(CleverTapReact.CleverTapOnVariablesChanged, handler);
+    },
+
+    /**
+     * Called when the value of the variable changes.
+     * 
+     * @param {name} string the name of the variable
+     * @param {function} handler The callback to add
+     */
+    onValueChanged: function (name, handler) {
+        CleverTapReact.onValueChanged(name);
+        this.addListener(CleverTapReact.CleverTapOnValueChanged, handler);
     }
-
-    // defineStringVar: function (name, defaultValue, callback) {
-    //     callWithCallback('defineStringVar', [name,defaultValue], callback);
-    // },
-
-    // defineIntVar: function (name, defaultValue, callback) {
-    //     callWithCallback('defineIntVar', [name,defaultValue], callback);
-    // },
-
-    // defineFloatVar: function (name, defaultValue, callback) {
-    //     callWithCallback('defineFloatVar', [name,defaultValue], callback);
-    // },
-
-    // defineJSONObjectVar: function (name, defaultValue, callback) {
-    //     callWithCallback('defineJSONObjectVar', [name,defaultValue], callback);
-    // }
 };
 
 function convertDateToEpochInProperties(map) {

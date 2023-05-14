@@ -17,6 +17,7 @@ static NSString *const kCleverTapPushNotificationClicked     = @"CleverTapPushNo
 static NSString *const kCleverTapPushPermissionResponseReceived    = @"CleverTapPushPermissionResponseReceived";
 static NSString *const kCleverTapInAppNotificationShowed           = @"CleverTapInAppNotificationShowed";
 static NSString *const kCleverTapOnVariablesChanged           = @"CleverTapOnVariablesChanged";
+static NSString *const kCleverTapOnValueChanged           = @"CleverTapOnValueChanged";
 static NSString *const kXPS = @"XPS";
 
 

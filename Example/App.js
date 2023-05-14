@@ -463,34 +463,23 @@ class Expandable_ListView extends Component {
               'reactnative_var_boolean': true
             };
             console.log(`Creating variables: ${JSON.stringify(variables)}`);
-            CleverTap.setVariables(variables);
-            // CleverTap.defineStringVar("reactnative_var_string", 'reactnative_var_string_value', (err, res) => {
-            //   console.log('string var: ', res, err);
-            // });
+            CleverTap.defineVariables(variables);
             break;
+          case 84:
+            CleverTap.fetchVariables((err, success) => {
+              console.log('fetchVariables result: ', success);
+            });
+            break;   
           case 85:
               CleverTap.onVariablesChanged((variables) => {
                 console.log('onVariablesChanged: ', variables);
               });
-              break;  
-          // case 85:
-          //   console.log(`Creating var with name: reactnative_var_int`);
-          //   CleverTap.defineIntVar("reactnative_var_int", 6, (err, res) => {
-          //     console.log('int var: ', res, err);
-          //   });
-          //   break;
-          // case 86:
-          //   console.log(`Creating var with name: reactnative_var_float`);
-          //   CleverTap.defineFloatVar("reactnative_var_float", 6.9, (err, res) => {
-          //     console.log('float var: ', res, err);
-          //   });
-          //   break;
-          // case 87:
-          //   console.log(`Creating var with name: reactnative_var_json_object`);
-          //   CleverTap.defineJSONObjectVar("reactnative_var_json_object", {'json_key': 'json_value'}, (err, res) => {
-          //     console.log('json object var: ', res, err);
-          //   });
-          //   break;   
+              break;
+          case 86:
+              CleverTap.onValueChanged('reactnative_var_string', (variable) => {
+                console.log('onValueChanged: ', variable);
+                });
+              break;        
         }
     }
 
@@ -597,24 +586,14 @@ export default class App extends Component {
                 id: 84,
                 name: 'Fetch Variables'
               },
-              ,
               {
                 id: 85,
                 name: 'Add \'OnVariablesChanged\' listener'
+              },
+              {
+                id: 86,
+                name: 'Add \'OnValueChanged\' listener for name \'reactnative_var_string\''
               }
-              // ,
-              // {
-              //   id: 85,
-              //   name: 'Create int Variable'
-              // },
-              // {
-              //   id: 86,
-              //   name: 'Create float Variable'
-              // },
-              // {
-              //   id: 87,
-              //   name: 'Create JSON Object Variable'
-              // }
             ],
           },
           {
