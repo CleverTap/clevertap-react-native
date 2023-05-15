@@ -471,9 +471,19 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function deleteInboxMessageForId(messageId: string): void;
 
   /**
+   * Call this method to delete multiple inbox messages that belongs to the given message ids
+   */
+  export function deleteInboxMessagesForIDs(messageIds: any): void;
+
+  /**
    * Call this method to mark inbox message as read
    */
   export function markReadInboxMessageForId(messageId: string): void;
+
+  /**
+   * Call this method to mark multiple inbox messages as read
+   */
+  export function markReadInboxMessagesForIDs(messageIds: any): void;
 
   /**
    * Call this method to push the Notification Clicked event for App Inbox to CleverTap

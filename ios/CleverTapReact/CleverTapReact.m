@@ -588,6 +588,18 @@ RCT_EXPORT_METHOD(deleteInboxMessageForId:(NSString*)messageId) {
     [[self cleverTapInstance] deleteInboxMessageForID:messageId];
 }
 
+RCT_EXPORT_METHOD(markReadInboxMessagesForIDs:(NSArray*)messageIds) {
+    if (!messageIds) return;
+    RCTLogInfo(@"[CleverTap markReadInboxMessagesForIDs]");
+    [[self cleverTapInstance] markReadInboxMessagesForIDs:messageIds];
+}
+
+RCT_EXPORT_METHOD(deleteInboxMessagesForIDs:(NSArray*)messageIds) {
+    if (!messageIds) return;
+    RCTLogInfo(@"[CleverTap deleteInboxMessagesForIDs]");
+    [[self cleverTapInstance] deleteInboxMessagesForIDs:messageIds];
+}
+
 RCT_EXPORT_METHOD(initializeInbox) {
     RCTLogInfo(@"[CleverTap Inbox Initialize]");
     [[self cleverTapInstance] initializeInboxWithCallback:^(BOOL success) {

@@ -603,11 +603,27 @@ var CleverTap = {
     },
 
     /**
+     * Deletes multiple Inbox Messages that belongs to the given message ids
+     * @param {array} messageIds a collection of ids of inbox messages
+     */
+    deleteInboxMessagesForIDs: function (messageIds) {
+        CleverTapReact.deleteInboxMessagesForIDs(messageIds);
+    },
+
+    /**
      * Marks Inbox Message that belongs to the given message id as read
      * @param {string} message id of inbox message of type CTInboxMessage
      */
     markReadInboxMessageForId: function (messageId) {
         CleverTapReact.markReadInboxMessageForId(messageId);
+    },
+
+    /**
+     * Marks multiple Inbox Messages that belongs to the given message ids as read
+     * @param {array} messageIds a collection of ids of inbox messages
+     */
+    markReadInboxMessagesForIDs: function (messageIds) {
+        CleverTapReact.markReadInboxMessagesForIDs(messageIds);
     },
 
     /**
