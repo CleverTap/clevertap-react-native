@@ -55,6 +55,8 @@ var CleverTap = {
     CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate,
     CleverTapPushNotificationClicked: CleverTapReact.CleverTapPushNotificationClicked,
     CleverTapPushPermissionResponseReceived: CleverTapReact.CleverTapPushPermissionResponseReceived,
+    CleverTapOnVariablesChanged: CleverTapReact.CleverTapOnVariablesChanged,
+    CleverTapOnValueChanged: CleverTapReact.CleverTapOnValueChanged,
 
     /**
     * Add a CleverTap event listener
@@ -601,11 +603,27 @@ var CleverTap = {
     },
 
     /**
+     * Deletes multiple Inbox Messages that belongs to the given message ids
+     * @param {array} messageIds a collection of ids of inbox messages
+     */
+    deleteInboxMessagesForIDs: function (messageIds) {
+        CleverTapReact.deleteInboxMessagesForIDs(messageIds);
+    },
+
+    /**
      * Marks Inbox Message that belongs to the given message id as read
      * @param {string} message id of inbox message of type CTInboxMessage
      */
     markReadInboxMessageForId: function (messageId) {
         CleverTapReact.markReadInboxMessageForId(messageId);
+    },
+
+    /**
+     * Marks multiple Inbox Messages that belongs to the given message ids as read
+     * @param {array} messageIds a collection of ids of inbox messages
+     */
+    markReadInboxMessagesForIDs: function (messageIds) {
+        CleverTapReact.markReadInboxMessagesForIDs(messageIds);
     },
 
     /**
@@ -812,6 +830,77 @@ var CleverTap = {
      */
     setInstanceWithAccountId: function (accountId) {
         CleverTapReact.setInstanceWithAccountId(accountId);
+    },
+
+    /**
+    * Uploads variables to the server. Requires Development/Debug build/configuration.
+    */
+    syncVariables: function () {
+        CleverTapReact.syncVariables();
+    },
+
+    /**
+    * Uploads variables to the server.
+    *
+    * @param {boolean} isProduction Provide `true` if variables must be sync in Productuon build/configuration.
+    */
+    syncVariablesinProd: function (isProduction, callback) {
+        callWithCallback('syncVariablesinProd', [isProduction], callback);
+    },
+
+    /**
+    * Forces variables to update from the server.
+    *
+    */
+    fetchVariables: function (callback) {
+        callWithCallback('fetchVariables', null, callback);
+    },
+
+    /**
+     * Create variables. 
+     * 
+     * @param {object} variables The JSON Object specifying the varibles to be created.
+     */
+    defineVariables: function (variables) {
+        CleverTapReact.defineVariables(variables);
+    },
+
+    /**
+     * Get a variable or a group for the specified name.
+     * 
+     * @param {string} name - name.
+     */
+    getVariable: function (name, callback) {
+        callWithCallback('getVariable', [name], callback);
+    },
+
+    /**
+     * Get all variables via a JSON object.
+     * 
+     */
+    getVariables: function (callback) {
+        callWithCallback('getVariables', null, callback);
+    },
+
+    /**
+     *  Adds a callback to be invoked when variables are initialised with server values. Will be called each time new values are fetched.
+     * 
+     * @param {function} handler The callback to add
+     */
+    onVariablesChanged: function (handler) {
+        CleverTapReact.onVariablesChanged();
+        this.addListener(CleverTapReact.CleverTapOnVariablesChanged, handler);
+    },
+
+    /**
+     * Called when the value of the variable changes.
+     * 
+     * @param {name} string the name of the variable
+     * @param {function} handler The callback to add
+     */
+    onValueChanged: function (name, handler) {
+        CleverTapReact.onValueChanged(name);
+        this.addListener(CleverTapReact.CleverTapOnValueChanged, handler);
     }
 };
 

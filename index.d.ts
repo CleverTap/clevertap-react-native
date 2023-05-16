@@ -471,9 +471,19 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function deleteInboxMessageForId(messageId: string): void;
 
   /**
+   * Call this method to delete multiple inbox messages that belongs to the given message ids
+   */
+  export function deleteInboxMessagesForIDs(messageIds: any): void;
+
+  /**
    * Call this method to mark inbox message as read
    */
   export function markReadInboxMessageForId(messageId: string): void;
+
+  /**
+   * Call this method to mark multiple inbox messages as read
+   */
+  export function markReadInboxMessagesForIDs(messageIds: any): void;
 
   /**
    * Call this method to push the Notification Clicked event for App Inbox to CleverTap
@@ -642,6 +652,64 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function setInstanceWithAccountId(accountId: string): void;
 
   /*******************
+   * Product Experiences: Vars
+   ******************/
+
+  /**
+   * Uploads variables to the server. Requires Development/Debug build/configuration.
+   */
+  export function syncVariables(): void;
+
+  /**
+   * Uploads variables to the server.
+   * 
+   * @param isProduction Provide `true` if variables must be sync in Productuon build/configuration.
+   */
+  export function syncVariablesinProd(isProduction: boolean): void;
+
+  /**
+   *  Forces variables to update from the server.
+   *
+   * @param {function(err, res)} a callback with a boolean flag whether the update was successful.
+   */
+  export function fetchVariables(callback: Callback): void;
+
+  /**
+   *  Create variables. 
+   * 
+   * @param {object} variables The JSON Object specifying the varibles to be created.
+   */
+  export function defineVariables(variables: object): void;
+  
+  /**
+   * Get all variables via a JSON object.
+   * 
+   */
+  export function getVariables(callback: Callback): void;
+
+  /**
+   * Get a variable or a group for the specified name.
+   * 
+   * @param {string} name - name.
+   */
+  export function getVariable(name: string, callback: Callback): void;
+
+  /**
+    *  Adds a callback to be invoked when variables are initialised with server values. Will be called each time new values are fetched.
+    * 
+    * @param {function} handler The callback to add
+    */
+  export function onVariablesChanged(handler: Function): void;
+
+  /**
+    * Called when the value of the variable changes.
+    * 
+    * @param {name} string the name of the variable
+    * @param {function} handler The callback to add
+    */
+  export function onValueChanged(name: string, handler: Function): void;
+
+  /*******************
    * Developer Options
    ******************/
   /**
@@ -673,3 +741,4 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export const CleverTapProductConfigDidActivate: string;
   export const CleverTapPushNotificationClicked: string;
   export const CleverTapPushPermissionResponseReceived: string;
+  export const CleverTapOnVariablesChanged: string;
