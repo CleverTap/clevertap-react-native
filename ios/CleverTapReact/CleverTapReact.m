@@ -994,8 +994,7 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
     if (var) {
         [var onValueChanged:^{
             NSDictionary *varResult = @{
-                @"name": name,
-                @"value": var.value
+                var.name: var.value
             };
             [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnValueChanged object:nil userInfo:varResult];
         }];
