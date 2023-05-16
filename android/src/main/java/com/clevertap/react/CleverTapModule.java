@@ -170,6 +170,18 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         return true;
     }
 
+    @Override
+    public void onInboxItemClicked(final CTInboxMessage message, final int contentPageIndex, final int buttonIndex) {
+        WritableMap params = Arguments.createMap();
+        JSONObject data = message.getData();
+        if (data != null) {
+            params.putString("data", data.toString());
+            params.putInt("contentPageIndex", contentPageIndex);
+            params.putInt("buttonIndex", buttonIndex);
+        }
+        sendEvent(CLEVERTAP_ON_INBOX_MESSAGE_CLICK, params);
+    }
+
     @SuppressLint("RestrictedApi")
     @Override
     public void onShow(CTInAppNotification inAppNotification) {
@@ -812,15 +824,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         sendEvent(CLEVERTAP_ON_INBOX_BUTTON_CLICK, getWritableMapFromMap(payload));
 
-    }
-    @Override
-    public void onInboxItemClicked(CTInboxMessage message){
-        WritableMap params = Arguments.createMap();
-        JSONObject data = message.getData();
-        if (data != null) {
-            params.putString("data", data.toString());
-        }
-        sendEvent(CLEVERTAP_ON_INBOX_MESSAGE_CLICK,params);
     }
 
     //Product Config Callback
