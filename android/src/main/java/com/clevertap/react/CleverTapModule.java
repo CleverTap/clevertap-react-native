@@ -123,6 +123,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     private static final String CLEVERTAP_INBOX_MESSAGES_DID_UPDATE = "CleverTapInboxMessagesDidUpdate";
 
     private static final String CLEVERTAP_ON_INBOX_BUTTON_CLICK = "CleverTapInboxMessageButtonTapped";
+
     private static final String CLEVERTAP_ON_INBOX_MESSAGE_CLICK = "CleverTapInboxMessageTapped";
 
     private static final String CLEVERTAP_ON_INAPP_BUTTON_CLICK = "CleverTapInAppNotificationButtonTapped";
@@ -333,7 +334,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
             callbackWithErrorAndResult(callback, error, null);
         }
-    }   
+    }
 
     @Override
     public void onPushPermissionResponse(boolean accepted) {
@@ -744,6 +745,26 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.markReadInboxMessage(messageId);
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+        }
+    }
+
+    @ReactMethod
+    public void markReadInboxMessagesForIDs(final ReadableArray messageIDs) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.markReadInboxMessagesForIDs(arrayListStringFromReadableArray(messageIDs));
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+        }
+    }
+
+    @ReactMethod
+    public void deleteInboxMessagesForIDs(final ReadableArray messageIDs) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.deleteInboxMessagesForIDs(arrayListStringFromReadableArray(messageIDs));
         } else {
             Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
         }
@@ -1299,8 +1320,9 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @ReactMethod
-    public void setPushTokenAsStringWithRegion(String token, String type,String region) {
-        Logger.v( "setPushTokenAsString() called with: token = [" + token + "], type = [" + type + "], region = [" + region + "]");
+    public void setPushTokenAsStringWithRegion(String token, String type, String region) {
+        Logger.v("setPushTokenAsString() called with: token = [" + token + "], type = [" + type + "], region = ["
+                + region + "]");
 
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || token == null || type == null || TextUtils.isEmpty(region)) {
@@ -1309,7 +1331,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         switch (type) {
             case XPS:
-                clevertap.pushXiaomiRegistrationId(token,region,true);
+                clevertap.pushXiaomiRegistrationId(token, region, true);
                 break;
             default:
                 Log.e(TAG, "Unknown push token type " + type);
@@ -1330,7 +1352,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     // Increment/Decrement Operator
 
     @ReactMethod
-    public void profileIncrementValueForKey(Double value,String key) {
+    public void profileIncrementValueForKey(Double value, String key) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.incrementValue(key, value);
@@ -1338,7 +1360,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @ReactMethod
-    public void profileDecrementValueForKey(Double value,String key) {
+    public void profileDecrementValueForKey(Double value, String key) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.decrementValue(key, value);
@@ -1586,6 +1608,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     /**
      * retrieves the localInAppConfig from the given ReadableMap.
+     *
      * @param readableMap - the map config, received from the host application
      * @return the Json of the localInAppConfig
      */
@@ -1661,28 +1684,28 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         );
 
         //adds the optional parameters to the builder instance
-        if(backgroundColor != null) {
+        if (backgroundColor != null) {
             builderWithRequiredParams.setBackgroundColor(backgroundColor);
         }
-        if(btnBorderColor != null) {
+        if (btnBorderColor != null) {
             builderWithRequiredParams.setBtnBorderColor(btnBorderColor);
         }
-        if(titleTextColor != null) {
+        if (titleTextColor != null) {
             builderWithRequiredParams.setTitleTextColor(titleTextColor);
         }
-        if(messageTextColor != null) {
+        if (messageTextColor != null) {
             builderWithRequiredParams.setMessageTextColor(messageTextColor);
         }
-        if(btnTextColor != null) {
+        if (btnTextColor != null) {
             builderWithRequiredParams.setBtnTextColor(btnTextColor);
         }
-        if(imageUrl != null) {
+        if (imageUrl != null) {
             builderWithRequiredParams.setImageUrl(imageUrl);
         }
-        if(btnBackgroundColor != null) {
+        if (btnBackgroundColor != null) {
             builderWithRequiredParams.setBtnBackgroundColor(btnBackgroundColor);
         }
-        if(btnBorderRadius != null) {
+        if (btnBorderRadius != null) {
             builderWithRequiredParams.setBtnBorderRadius(btnBorderRadius);
         }
         builderWithRequiredParams.setFallbackToSettings(fallbackToSettings);
@@ -1694,14 +1717,15 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     /**
      * Creates an instance of the {@link CTLocalInApp.Builder.Builder6} with the required parameters.
+     *
      * @return the {@link CTLocalInApp.Builder.Builder6} instance
      */
     private CTLocalInApp.Builder.Builder6 getLocalInAppBuilderWithRequiredParam(CTLocalInApp.InAppType inAppType,
-                                                                                String titleText,
-                                                                                String messageText,
-                                                                                boolean followDeviceOrientation,
-                                                                                String positiveBtnText,
-                                                                                String negativeBtnText) {
+            String titleText,
+            String messageText,
+            boolean followDeviceOrientation,
+            String positiveBtnText,
+            String negativeBtnText) {
         //throws exception if any of the required parameter is missing
         if (inAppType == null || titleText == null || messageText == null || positiveBtnText == null
                 || negativeBtnText == null) {
@@ -1719,7 +1743,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     //returns InAppType type from the given string
     private CTLocalInApp.InAppType inAppTypeFromString(String inAppType) {
-        if(inAppType == null) {
+        if (inAppType == null) {
             return null;
         }
         switch (inAppType) {
