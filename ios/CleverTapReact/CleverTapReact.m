@@ -707,6 +707,8 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
                                                                    error:&error];
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         body[@"data"] = jsonString;
+        body[@"contentPageIndex"] = @(index);
+        body[@"buttonIndex"] = @(buttonIndex);
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessageTapped object:nil userInfo:body];
 }
