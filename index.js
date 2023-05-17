@@ -867,7 +867,7 @@ var CleverTap = {
     *
     * @param {boolean} isProduction Provide `true` if variables must be sync in Productuon build/configuration.
     */
-    syncVariablesinProd: function (isProduction, callback) {
+    syncVariablesinProd: function (isProduction) {
         CleverTapReact.syncVariablesinProd(isProduction)
     },
 
