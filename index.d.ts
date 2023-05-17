@@ -523,44 +523,68 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    * Product Configs
    ******************/ 
   /**
+   * @deprecated
+   * Since version 1.0.4 and will be removed in the future versions of this SDK.
+   *
    * Sets default product config params using the given object.
    * @param productConfigMap {any} key-value product config properties. keys are strings and values can be string, double, integer, boolean or json in string format.
    */
   export function setDefaultsMap(productConfigMap: any): void;
 
   /**
+   * @deprecated
+   * Since version 1.0.4 and will be removed in the future versions of this SDK.
+   *
    * Starts fetching product configs, adhering to the default minimum fetch interval.
    */
   export function fetch(): void;
 
   /**
+   * @deprecated
+   * Since version 1.0.4 and will be removed in the future versions of this SDK.
+   *
    * Starts fetching product configs, adhering to the default minimum fetch interval.
    * @param intervalInSecs {number}  minimum fetch interval in seconds.
    */
   export function fetchWithMinimumIntervalInSeconds(intervalInSecs: number): void;
 
   /**
+   * @deprecated
+   * Since version 1.0.4 and will be removed in the future versions of this SDK.
+   *
    * Activates the most recently fetched product configs, so that the fetched key value pairs take effect.
    */
   export function activate(): void;
 
   /**
+   * @deprecated
+   * Since version 1.0.4 and will be removed in the future versions of this SDK.
+   *
    * Asynchronously fetches and then activates the fetched product configs.
    */
   export function fetchAndActivate(): void;
 
   /**
+   * @deprecated
+   * Since version 1.0.4 and will be removed in the future versions of this SDK.
+   *
    * Sets the minimum interval in seconds between successive fetch calls.
    * @param intervalInSecs {number} interval in seconds between successive fetch calls.
    */
   export function setMinimumFetchIntervalInSeconds(intervalInSecs: number): void;
 
   /**
+   * @deprecated
+   * Since version 1.0.4 and will be removed in the future versions of this SDK.
+   *
    * Deletes all activated, fetched and defaults configs as well as all Product Config settings.
    */
   export function resetProductConfig(): void;
 
   /**
+   * @deprecated
+   * Since version 1.0.4 and will be removed in the future versions of this SDK.
+   *
    * Returns the product config parameter value for the given key as a String.
    * @param key {string} - the name of the key
    * @param callback {Callback} - callback that returns a value of type string if present else blank
@@ -570,6 +594,9 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     callback: Callback): void;
 
   /**
+   * @deprecated
+   * Since version 1.0.4 and will be removed in the future versions of this SDK.
+   *
    * Returns the product config parameter value for the given key as a boolean.
    * @param key {string} - the name of the key
    * @param callback {Callback} - callback that returns a value of type boolean if present else false
@@ -579,6 +606,9 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     callback: Callback): void;
 
   /**
+   * @deprecated
+   * Since version 1.0.4 and will be removed in the future versions of this SDK.
+   *
    * Returns the product config parameter value for the given key as a number.
    * @param key {string} - the name of the key
    * @param callback {Callback} - callback that returns a value of type number if present else 0
@@ -588,6 +618,9 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     callback: Callback): void;
 
   /**
+   * @deprecated
+   * Since version 1.0.4 and will be removed in the future versions of this SDK.
+   *
    * Returns the last fetched timestamp in millis.
    * @param callback {Callback} - callback that returns value of timestamp in millis as a string.
    */
@@ -598,6 +631,9 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    ******************/
 
   /**
+   * @deprecated
+   * Since version 1.0.4 and will be removed in the future versions of this SDK.
+   *
    * Getter to return the feature flag configured at the dashboard
    * @param key {string} - the name of the key
    * @param defaultValue {boolean} - default value of the key, in case we don't find any feature flag with the key.
