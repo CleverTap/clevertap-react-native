@@ -97,6 +97,12 @@ RCT_EXPORT_METHOD(getInitialUrl:(RCTResponseSenderBlock)callback) {
     }
 }
 
+RCT_EXPORT_METHOD(setLibrary:(NSString*)name andVersion:(int)version) {
+    RCTLogInfo(@"[CleverTap setLibrary:%@ andVersion:%d]", name, version);
+    [[self cleverTapInstance] setLibrary:name];
+    [[self cleverTapInstance] setCustomSdkVersion:name version:version];
+}
+
 #pragma mark - Push Notifications
 
 RCT_EXPORT_METHOD(registerForPush) {

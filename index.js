@@ -3,6 +3,15 @@ import { DeviceEventEmitter, NativeEventEmitter, NativeModules } from 'react-nat
 const CleverTapReact = NativeModules.CleverTapReact;
 const EventEmitter = NativeModules.CleverTapReactEventEmitter ? new NativeEventEmitter(NativeModules.CleverTapReactEventEmitter) : DeviceEventEmitter;
 
+/**
+* Set the CleverTap React-Native library name with current version
+* @param {string} libName - Library name will be "React-Native"
+* @param {int} libVersion - The updated library version. If current version is 1.0.3 then pass as 10103  
+*/
+const libName = 'React-Native';
+const libVersion = 10103; 
+CleverTapReact.setLibrary(libName,libVersion);
+
 function defaultCallback(method, err, res) {
     if (err) {
         console.log('CleverTap ' + method + ' default callback error', err);
