@@ -17,6 +17,7 @@ import {
     Linking,
     ToastAndroid
 } from 'react-native';
+import { acc } from 'react-native-reanimated';
 
 const CleverTap = require('clevertap-react-native');
 const Stack = createNativeStackNavigator();
@@ -1082,6 +1083,7 @@ getAllDisplayUnits = () => {
     CleverTap.getAllDisplayUnits((err, res) => {
         console.log('All Display Units: ', res, err);
         alert(`All Display Units: ${res}`);
+        printDisplayUnitsPayload(res);
     });
 
 };
@@ -1273,29 +1275,29 @@ function addCleverTapAPIListeners(fromClick) {
         _handleCleverTapEvent(CleverTap.CleverTapProfileSync, event);
     });
     CleverTap.addListener(CleverTap.CleverTapInAppNotificationDismissed, (event) => {
-        _handleCleverTapEvent(CleverTap.CleverTapInAppNotificationDismissed, event);
+      _handleCleverTapInAppEvent(CleverTap.CleverTapInAppNotificationDismissed, event);
     });
   CleverTap.addListener(CleverTap.CleverTapInAppNotificationShowed, (event) => {
         _handleCleverTapEvent(CleverTap.CleverTapInAppNotificationShowed, event);
     });
     CleverTap.addListener(CleverTap.CleverTapInboxDidInitialize, (event) => {
-        _handleCleverTapInbox(CleverTap.CleverTapInboxDidInitialize, event);
+      _handleCleverTapInboxEvent(CleverTap.CleverTapInboxDidInitialize, event);
     });
     CleverTap.addListener(CleverTap.CleverTapInboxMessagesDidUpdate, (event) => {
-        _handleCleverTapInbox(CleverTap.CleverTapInboxMessagesDidUpdate, event);
+      _handleCleverTapInboxEvent(CleverTap.CleverTapInboxMessagesDidUpdate, event);
     });
     CleverTap.addListener(CleverTap.CleverTapInboxMessageButtonTapped, (event) => {
-        _handleCleverTapInbox(CleverTap.CleverTapInboxMessageButtonTapped, event);
+      _handleCleverTapInboxEvent(CleverTap.CleverTapInboxMessageButtonTapped, event);
     });
     CleverTap.addListener(CleverTap.CleverTapInboxMessageTapped, (event) => {
-        _handleCleverTapInbox(CleverTap.CleverTapInboxMessageTapped, event);
+      _handleCleverTapInboxEvent(CleverTap.CleverTapInboxMessageTapped, event);
     });
 
     CleverTap.addListener(CleverTap.CleverTapDisplayUnitsLoaded, (event) => {
         _handleCleverTapDisplayUnitsLoaded(CleverTap.CleverTapDisplayUnitsLoaded, event);
     });
     CleverTap.addListener(CleverTap.CleverTapInAppNotificationButtonTapped, (event) => {
-        _handleCleverTapEvent(CleverTap.CleverTapInAppNotificationButtonTapped, event);
+        _handleCleverTapInAppEvent(CleverTap.CleverTapInAppNotificationButtonTapped, event);
     });
     CleverTap.addListener(CleverTap.CleverTapFeatureFlagsDidUpdate, (event) => {
         _handleCleverTapEvent(CleverTap.CleverTapFeatureFlagsDidUpdate, event);
@@ -1310,10 +1312,10 @@ function addCleverTapAPIListeners(fromClick) {
         _handleCleverTapEvent(CleverTap.CleverTapProductConfigDidActivate, event);
     });
     CleverTap.addListener(CleverTap.CleverTapPushNotificationClicked, (event) => {
-        _handleCleverTapEvent(CleverTap.CleverTapPushNotificationClicked, event);
+        _handleCleverTapPushEvent(CleverTap.CleverTapPushNotificationClicked, event);
     });
     CleverTap.addListener(CleverTap.CleverTapPushPermissionResponseReceived, (event) => {
-        _handleCleverTapEvent(CleverTap.CleverTapPushPermissionResponseReceived, event);
+        _handleCleverTapPushEvent(CleverTap.CleverTapPushPermissionResponseReceived, event);
     });
     if (fromClick) {
         alert("Listeners added successfully");
@@ -1351,16 +1353,109 @@ function createNotificationChannelWithGroupIdAndSound() {
 function _handleCleverTapEvent(eventName, event) {
     console.log('handleCleverTapEvent', eventName, event);
     ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
+
+    // Uncomment to access payload for each events.
+    // if (eventName == 'CleverTapProfileDidInitialize') {
+    //   console.log('Profile did initialized with cleverTapID: '+ event['CleverTapID']);
+    // }
+    // if (eventName == 'CleverTapProfileSync') {
+    //   console.log('Profile data updated with updates: ', event['updates']);
+    // }
 }
 
-function _handleCleverTapInbox(eventName, event) {
+function _handleCleverTapInboxEvent(eventName, event) {
     console.log('handleCleverTapInbox', eventName, event);
     ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
+
+    // Uncomment to access payload for each events.
+    // if (eventName == 'CleverTapInboxMessageTapped') {
+    //   let data = JSON.parse(event['data']);
+    //   console.log('Inbox message tapped with id: '+ data['_id']);
+    //   let msg = data['msg'];
+    //   let content = msg['content'];
+    //   content.forEach(element => {
+    //     let title = element['title'];
+    //     let message = element['message'];
+    //     console.log('Title text of inbox msg is: '+ title['text']);
+    //     console.log('Message text of inbox msg is: '+ message['text']);
+    //   });
+    // }
+    // if (eventName == 'CleverTapInboxMessageButtonTapped') {
+    //   console.log('Inbox message button tapped with customExtras:');
+    //   for (const key of Object.keys(event)) {
+    //     console.log('Value for key: '+ key + ' is:' + event[key]);
+    //   }
+    // }
+}
+
+function _handleCleverTapInAppEvent(eventName, event) {
+  console.log('handleCleverTapInApp', eventName, event);
+  ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
+
+  // Uncomment to access payload for each events.
+  // if (eventName == 'CleverTapInAppNotificationButtonTapped') {
+  //   console.log('InApp button tapped with key-value pair:');
+  //   for (const key of Object.keys(event)) {
+  //     console.log('Value for key: '+ key + ' is:' + event[key]);
+  //   }
+  // }
+  // if (eventName == 'CleverTapInAppNotificationDismissed') {
+  //   let extras = event['extras'];
+  //   let actionExtras = event['actionExtras'];
+  //   console.log('InApp dismissed with extras: ', extras ,' and actionExtras: ', actionExtras);
+  //   for (const key of Object.keys(extras)) {
+  //     console.log('Value for extras key: '+ key + ' is:' + extras[key]);
+  //   }
+  //   for (const key of Object.keys(actionExtras)) {
+  //     console.log('Value for actionExtras key: '+ key + ' is:' + actionExtras[key]);
+  //   }
+  // }
+}
+
+function _handleCleverTapPushEvent(eventName, event) {
+  console.log('handleCleverTapPush', eventName, event);
+  ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
+
+  // Uncomment to access payload for each events.
+  // if (eventName == 'CleverTapPushNotificationClicked') {
+  //   if (event['wzrk_dl'] != null) {
+  //     let deepLink = event['wzrk_dl'];
+  //     console.log('Push Notification clicked with deeplink: ' + deepLink);
+  //   }
+  // }
+  // if (eventName == 'CleverTapPushPermissionResponseReceived') {
+  //   let accepted = event['accepted'];
+  //   console.log('Push Permission accepted:', accepted);
+  // }
 }
 
 function _handleCleverTapDisplayUnitsLoaded(eventName, event) {
     console.log('handleCleverTapDisplayUnitsLoaded', eventName, event);
     ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
+    let data = event['displayUnits'];
+    printDisplayUnitsPayload(data);
+}
+
+function printDisplayUnitsPayload(data) {
+  // Uncomment to access payload.
+  // if (data != null) {
+  //   data.forEach(element => {
+  //     let content = element['content'];
+  //     content.forEach(contentElement => {
+  //       let title = contentElement['title'];
+  //       let message = contentElement['message'];
+  //       console.log('Title text of display unit is: '+ title['text']);
+  //       console.log('Message text of display unit is: '+ message['text']);
+  //     });
+  //     let customKV = element['custom_kv'];
+  //     if (customKV != null) {
+  //       console.log('Display units custom key-values: ', customKV);
+  //       for (const key of Object.keys(customKV)) {
+  //         console.log('Value for key: '+ key + ' is:' + customKV[key]);
+  //       }
+  //     }
+  //   });
+  // }
 }
 
 

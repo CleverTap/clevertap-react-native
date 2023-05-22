@@ -547,10 +547,11 @@ RCT_EXPORT_METHOD(initializeInbox) {
     [[self cleverTapInstance] initializeInboxWithCallback:^(BOOL success) {
         if (success) {
             RCTLogInfo(@"[Inbox initialized]");
-            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxDidInitialize object:nil userInfo:nil];
+            NSMutableDictionary *body = [NSMutableDictionary new];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxDidInitialize object:nil userInfo:body];
             [[self cleverTapInstance] registerInboxUpdatedBlock:^{
                 RCTLogInfo(@"[Inbox updated]");
-                [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessagesDidUpdate object:nil userInfo:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessagesDidUpdate object:nil userInfo:body];
             }];
         }
     }];
