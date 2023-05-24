@@ -64,8 +64,8 @@
                 <action android:name="com.clevertap.PUSH_EVENT" />
             </intent-filter>
         </service>
-        <meta-data android:name="CLEVERTAP_ACCOUNT_ID" android:value="TEST-R78-ZZK-955Z" />
-        <meta-data android:name="CLEVERTAP_TOKEN" android:value="TEST-311-ba2" />
+        <meta-data android:name="CLEVERTAP_ACCOUNT_ID" android:value="W9R-486-4W5Z" />
+        <meta-data android:name="CLEVERTAP_TOKEN" android:value="6b4-2c0" />
         <meta-data android:name="CLEVERTAP_USE_GOOGLE_AD_ID" android:value="1"/>
     </application>
 
