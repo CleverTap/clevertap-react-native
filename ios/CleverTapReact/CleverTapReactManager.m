@@ -58,7 +58,6 @@
     [[cleverTapInstance featureFlags] setDelegate:self];
     [[cleverTapInstance productConfig] setDelegate:self];
     [cleverTapInstance setPushPermissionDelegate:self];
-    [cleverTapInstance setLibrary:@"React-Native"];
 }
 
 
