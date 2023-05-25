@@ -34,6 +34,11 @@ import com.clevertap.android.sdk.interfaces.OnInitCleverTapIDListener;
 import com.clevertap.android.sdk.product_config.CTProductConfigController;
 import com.clevertap.android.sdk.product_config.CTProductConfigListener;
 import com.clevertap.android.sdk.pushnotification.CTPushNotificationListener;
+import com.clevertap.android.sdk.variables.CTVariableUtils;
+import com.clevertap.android.sdk.variables.Var;
+import com.clevertap.android.sdk.variables.callbacks.FetchVariablesCallback;
+import com.clevertap.android.sdk.variables.callbacks.VariableCallback;
+import com.clevertap.android.sdk.variables.callbacks.VariablesChangedCallback;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -142,9 +147,15 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     private static final String CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE = "CleverTapPushPermissionResponseReceived";
 
+    private static final String CLEVERTAP_ON_VARIABLES_CHANGED = "CleverTapOnVariablesChanged";
+
+    private static final String CLEVERTAP_ON_VALUE_CHANGED = "CleverTapOnValueChanged";
+
     private final ReactApplicationContext context;
 
     private CleverTapAPI mCleverTap;
+
+    public static Map<String, Object> variables = new HashMap<>();
 
     public static void setInitialUri(final Uri uri) {
         mlaunchURI = uri;
@@ -1396,6 +1407,125 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
+    /**************************************************
+     *  Product Experience Remote Config methods starts
+     *************************************************/
+    @ReactMethod
+    public void syncVariables() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.syncVariables();
+        }
+    }
+
+    @ReactMethod
+    public void syncVariablesinProd(boolean isProduction, Callback callback) {
+        Log.i(TAG, "CleverTap syncVariablesinProd is no-op in Android");
+    }
+
+    @ReactMethod
+    public void fetchVariables() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.fetchVariables();
+        }
+    }
+
+    @ReactMethod
+    public void defineVariables(ReadableMap object) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            for (Map.Entry<String, Object> entry : object.toHashMap().entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                variables.put(key, cleverTap.defineVariable(key, value));
+            }
+        }
+    }
+
+    @ReactMethod
+    public void fetchVariables(final Callback callback) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.fetchVariables(new FetchVariablesCallback() {
+                @Override
+                public void onVariablesFetched(final boolean isSuccess) {
+                    callbackWithErrorAndResult(callback, null, isSuccess);
+                }
+            });
+        } else {
+            String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            callbackWithErrorAndResult(callback, error, null);
+        }
+    }
+
+    @ReactMethod
+    public void getVariable(String key, final Callback callback) {
+        String error = null;
+        Object result = null;
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            try {
+                result = getVariableValue(key);
+            } catch (IllegalArgumentException e) {
+                error = e.getLocalizedMessage();
+            }
+        } else {
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+        }
+        callbackWithErrorAndResult(callback, error, result);
+    }
+
+    @ReactMethod
+    public void getVariables(final Callback callback) {
+        callbackWithErrorAndResult(callback, null, getVariablesValues());
+    }
+
+    @ReactMethod
+    public void onValueChanged(final String name) {
+        if (variables.containsKey(name)) {
+
+            Var<Object> var = (Var<Object>) variables.get(name);
+            if (var != null) {
+                var.addValueChangedCallback(new VariableCallback<Object>() {
+                    @SuppressLint("RestrictedApi")
+                    @Override
+                    public void onValueChanged(final Var<Object> variable) {
+                        WritableMap result = null;
+                        try {
+                            result = getVariableValueAsWritableMap(name);
+                        } catch (IllegalArgumentException e) {
+                            Log.e(TAG, e.getLocalizedMessage());
+                        }
+                        sendEvent(CLEVERTAP_ON_VALUE_CHANGED, result);
+                    }
+                });
+            } else {
+                Log.d(TAG, "Variable value with name = " + name + " contains null value. Not setting onValueChanged callback.");
+            }
+        } else {
+            Log.e(TAG, "Variable name = " + name + " does not exist. Make sure you set variable first.");
+        }
+    }
+
+    @ReactMethod
+    public void onVariablesChanged() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.addVariablesChangedCallback(new VariablesChangedCallback() {
+                @Override
+                public void variablesChanged() {
+                    sendEvent(CLEVERTAP_ON_VARIABLES_CHANGED, getVariablesValues());
+                }
+            });
+        }
+    }
+
+    /************************************************
+     *  Product Experience Remote Config methods ends
+     ************************************************/
+
+
     /**
      * result must be primitive, String or com.facebook.react.bridge.WritableArray/WritableMap
      * see https://github.com/facebook/react-native/issues/3101#issuecomment-143954448
@@ -1412,6 +1542,47 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
+    @SuppressLint("RestrictedApi")
+    private Object getVariableValue(String name) {
+        if (variables.containsKey(name)) {
+            Var<?> variable = (Var<?>) variables.get(name);
+            Object variableValue = variable.value();
+            Object value;
+            switch (variable.kind()) {
+                case CTVariableUtils.DICTIONARY:
+                    value = CleverTapUtils.MapUtil.toWritableMap((Map<String, Object>) variableValue);
+                    break;
+                default:
+                    value = variableValue;
+            }
+            return value;
+        }
+        throw new IllegalArgumentException(
+                "Variable name = " + name + " does not exist. Make sure you set variable first.");
+    }
+
+    @SuppressLint("RestrictedApi")
+    private WritableMap getVariableValueAsWritableMap(String name) {
+        if (variables.containsKey(name)) {
+            Var<?> variable = (Var<?>) variables.get(name);
+            Object variableValue = variable.value();
+            return CleverTapUtils.MapUtil.addValue(name, variable.value());
+        }
+        throw new IllegalArgumentException(
+                "Variable name = " + name + " does not exist.");
+    }
+
+    private WritableMap getVariablesValues() {
+        WritableMap writableMap = Arguments.createMap();
+        for (Map.Entry<String, Object> entry : variables.entrySet()) {
+            String key = entry.getKey();
+            Var<?> variable = (Var<?>) entry.getValue();
+
+            WritableMap variableWritableMap = CleverTapUtils.MapUtil.addValue(key, variable.value());
+            writableMap.merge(variableWritableMap);
+        }
+        return writableMap;
+    }
     // Listeners
 
     private boolean checkKitkatVersion(String methodName) {
