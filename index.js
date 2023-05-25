@@ -49,10 +49,10 @@ var CleverTap = {
     CleverTapInboxMessageTapped: CleverTapReact.CleverTapInboxMessageTapped,
     CleverTapDisplayUnitsLoaded: CleverTapReact.CleverTapDisplayUnitsLoaded,
     CleverTapInAppNotificationButtonTapped: CleverTapReact.CleverTapInAppNotificationButtonTapped,
-    CleverTapFeatureFlagsDidUpdate: CleverTapReact.CleverTapFeatureFlagsDidUpdate,
-    CleverTapProductConfigDidInitialize: CleverTapReact.CleverTapProductConfigDidInitialize,
-    CleverTapProductConfigDidFetch: CleverTapReact.CleverTapProductConfigDidFetch,
-    CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate,
+    CleverTapFeatureFlagsDidUpdate: CleverTapReact.CleverTapFeatureFlagsDidUpdate, // Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapProductConfigDidInitialize: CleverTapReact.CleverTapProductConfigDidInitialize, // Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapProductConfigDidFetch: CleverTapReact.CleverTapProductConfigDidFetch, // Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate, // Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
     CleverTapPushNotificationClicked: CleverTapReact.CleverTapPushNotificationClicked,
     CleverTapPushPermissionResponseReceived: CleverTapReact.CleverTapPushPermissionResponseReceived,
     CleverTapOnVariablesChanged: CleverTapReact.CleverTapOnVariablesChanged,
