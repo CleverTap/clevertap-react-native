@@ -1330,6 +1330,14 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
+    @ReactMethod
+    public void dismissInbox() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.dismissAppInbox();
+        }
+    }
+
     // Increment/Decrement Operator
 
     @ReactMethod

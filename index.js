@@ -553,6 +553,13 @@ var CleverTap = {
     },
 
     /**
+     * Method to dismiss the App Inbox
+     */
+    dismissInbox: function () {
+        CleverTapReact.dismissInbox();
+    },
+
+    /**
      * Get the total number of Inbox Messages
      * @param {function(err, res)} callback that returns a res of count of inbox messages or -1
      */
