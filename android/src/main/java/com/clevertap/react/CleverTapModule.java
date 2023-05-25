@@ -788,18 +788,19 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     public void onInboxButtonClick(HashMap<String, String> payload) {
-
         sendEvent(CLEVERTAP_ON_INBOX_BUTTON_CLICK, getWritableMapFromMap(payload));
-
     }
+    
     @Override
-    public void onInboxItemClicked(CTInboxMessage message){
+    public void onInboxItemClicked(CTInboxMessage message, int contentPageIndex, int buttonIndex) {
         WritableMap params = Arguments.createMap();
         JSONObject data = message.getData();
         if (data != null) {
             params.putString("data", data.toString());
         }
-        sendEvent(CLEVERTAP_ON_INBOX_MESSAGE_CLICK,params);
+        params.putInt("contentPageIndex", contentPageIndex);
+        params.putInt("buttonIndex", buttonIndex);
+        sendEvent(CLEVERTAP_ON_INBOX_MESSAGE_CLICK, params);
     }
 
     //Product Config Callback
