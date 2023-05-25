@@ -1,5 +1,6 @@
 package com.clevertap.react;
 
+import static com.clevertap.react.CleverTapUtils.convertObjectToWritableMap;
 import static com.clevertap.react.CleverTapUtils.getWritableArrayFromDisplayUnitList;
 import static com.clevertap.react.CleverTapUtils.getWritableMapFromMap;
 
@@ -543,13 +544,13 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     @ReactMethod
     public void getDisplayUnitForId(String unitID, Callback callback) {
         String error = null;
-        String result = null;
+        WritableMap result = null;
 
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             CleverTapDisplayUnit displayUnit = cleverTap.getDisplayUnitForId(unitID);
             if (displayUnit != null && displayUnit.getJsonObject() != null) {
-                result = displayUnit.getJsonObject().toString();
+                result = convertObjectToWritableMap(displayUnit.getJsonObject());
             }
         } else {
             error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
@@ -628,14 +629,14 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     @ReactMethod
     public void getInboxMessageForId(String messageId, Callback callback) {
         String error = null;
-        String result = null;
+        WritableMap result = null;
 
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             CTInboxMessage inboxMessage = cleverTap.getInboxMessageForId(messageId);
 
             if (inboxMessage != null && inboxMessage.getData() != null) {
-                result = inboxMessage.getData().toString();
+                result = convertObjectToWritableMap(inboxMessage.getData());
             }
         } else {
             error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
@@ -1330,14 +1331,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
-    @ReactMethod
-    public void dismissInbox() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.dismissAppInbox();
-        }
-    }
-
     // Increment/Decrement Operator
 
     @ReactMethod
@@ -1511,7 +1504,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
             for (CTInboxMessage message : inboxMessages) {
                 if (message != null && message.getData() != null) {
-                    result.pushString(message.getData().toString());
+                    result.pushMap(convertObjectToWritableMap(message.getData()));
                 }
             }
         } else {

@@ -555,7 +555,7 @@ export default class App extends Component {
           },
           {id: 15, name: 'getAllInboxMessages'},
           {id: 16, name: 'getUnreadInboxMessages'},
-          {id: 16, name: 'getInboxMessageForId'},
+          {id: 17, name: 'getInboxMessageForId'},
           {
             id: 18,
             name: 'deleteInboxMessage',
