@@ -167,6 +167,15 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         getCleverTapAPI();
     }
 
+    @SuppressLint("RestrictedApi")
+    @ReactMethod
+    public void setLibrary(String libName, int libVersion) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.setCustomSdkVersion(libName,libVersion);
+        }
+    }
+
     @ReactMethod
     public void activate() {
         CTProductConfigController productConfigController = getCtProductConfigController();
