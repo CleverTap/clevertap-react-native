@@ -9,7 +9,7 @@ const EventEmitter = NativeModules.CleverTapReactEventEmitter ? new NativeEventE
 * @param {int} libVersion - The updated library version. If current version is 1.0.3 then pass as 10103  
 */
 const libName = 'React-Native';
-const libVersion = 10103; 
+const libVersion = 10100; 
 CleverTapReact.setLibrary(libName,libVersion);
 
 function defaultCallback(method, err, res) {
