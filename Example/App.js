@@ -1483,7 +1483,7 @@ function _handleCleverTapInAppEvent(eventName, event) {
 
 function _handleCleverTapPushEvent(eventName, event) {
   console.log('handleCleverTapPush', eventName, event);
-  ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
+  ToastAndroid.show(`${JSON.stringify(eventName)} called!`, ToastAndroid.SHORT);
 
   // Uncomment to access payload for each events.
   // if (eventName == 'CleverTapPushNotificationClicked') {
@@ -1507,24 +1507,24 @@ function _handleCleverTapDisplayUnitsLoaded(eventName, event) {
 
 function printDisplayUnitsPayload(data) {
   // Uncomment to access payload.
-  // if (data != null) {
-  //   data.forEach(element => {
-  //     let content = element['content'];
-  //     content.forEach(contentElement => {
-  //       let title = contentElement['title'];
-  //       let message = contentElement['message'];
-  //       console.log('Title text of display unit is: '+ title['text']);
-  //       console.log('Message text of display unit is: '+ message['text']);
-  //     });
-  //     let customKV = element['custom_kv'];
-  //     if (customKV != null) {
-  //       console.log('Display units custom key-values: ', customKV);
-  //       for (const key of Object.keys(customKV)) {
-  //         console.log('Value for key: '+ key + ' is:' + customKV[key]);
-  //       }
-  //     }
-  //   });
-  // }
+  if (data != null) {
+    data.forEach(element => {
+      let content = element['content'];
+      content.forEach(contentElement => {
+        let title = contentElement['title'];
+        let message = contentElement['message'];
+        console.log('Title text of display unit is: '+ title['text']);
+        console.log('Message text of display unit is: '+ message['text']);
+      });
+      let customKV = element['custom_kv'];
+      if (customKV != null) {
+        console.log('Display units custom key-values: ', customKV);
+        for (const key of Object.keys(customKV)) {
+          console.log('Value for key: '+ key + ' is:' + customKV[key]);
+        }
+      }
+    });
+  }
 }
 
 const styles = StyleSheet.create({

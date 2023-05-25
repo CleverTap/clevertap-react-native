@@ -1,5 +1,6 @@
 package com.clevertap.react;
 
+import static com.clevertap.react.CleverTapUtils.getWritableArrayFromDisplayUnitList;
 import static com.clevertap.react.CleverTapUtils.getWritableMapFromMap;
 
 import android.annotation.SuppressLint;
@@ -479,7 +480,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
-            result = getWritableArrayFromList(cleverTap.getAllDisplayUnits());
+            result = getWritableArrayFromDisplayUnitList(cleverTap.getAllDisplayUnits());
         } else {
             error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
         }
@@ -770,7 +771,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     //Native Display callback
     public void onDisplayUnitsLoaded(ArrayList<CleverTapDisplayUnit> units) {
         WritableMap params = Arguments.createMap();
-        params.putArray("displayUnits", getWritableArrayFromList(units));
+
+        params.putArray("displayUnits", getWritableArrayFromDisplayUnitList(units));
         sendEvent(CLEVERTAP_ON_DISPLAY_UNITS_LOADED, params);
     }
 
@@ -790,7 +792,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     public void onInboxButtonClick(HashMap<String, String> payload) {
         sendEvent(CLEVERTAP_ON_INBOX_BUTTON_CLICK, getWritableMapFromMap(payload));
     }
-    
+
     @Override
     public void onInboxItemClicked(CTInboxMessage message, int contentPageIndex, int buttonIndex) {
         WritableMap params = Arguments.createMap();
@@ -1508,18 +1510,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             error = "CleverTap not initialized";
         }
         callbackWithErrorAndResult(callback, error, result);
-    }
-
-    private WritableArray getWritableArrayFromList(List<CleverTapDisplayUnit> list) {
-        WritableArray writableArray = Arguments.createArray();
-        if (list != null) {
-            for (CleverTapDisplayUnit item : list) {
-                if (item != null && item.getJsonObject() != null) {
-                    writableArray.pushString(item.getJsonObject().toString());
-                }
-            }
-        }
-        return writableArray;
     }
 
     private HashMap<String, Object> profileFromReadableMap(ReadableMap profileMap) {
