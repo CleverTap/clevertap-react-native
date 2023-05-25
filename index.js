@@ -49,10 +49,10 @@ var CleverTap = {
     CleverTapInboxMessageTapped: CleverTapReact.CleverTapInboxMessageTapped,
     CleverTapDisplayUnitsLoaded: CleverTapReact.CleverTapDisplayUnitsLoaded,
     CleverTapInAppNotificationButtonTapped: CleverTapReact.CleverTapInAppNotificationButtonTapped,
-    CleverTapFeatureFlagsDidUpdate: CleverTapReact.CleverTapFeatureFlagsDidUpdate,
-    CleverTapProductConfigDidInitialize: CleverTapReact.CleverTapProductConfigDidInitialize,
-    CleverTapProductConfigDidFetch: CleverTapReact.CleverTapProductConfigDidFetch,
-    CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate,
+    CleverTapFeatureFlagsDidUpdate: CleverTapReact.CleverTapFeatureFlagsDidUpdate, // Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapProductConfigDidInitialize: CleverTapReact.CleverTapProductConfigDidInitialize, // Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapProductConfigDidFetch: CleverTapReact.CleverTapProductConfigDidFetch, // Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate, // Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
     CleverTapPushNotificationClicked: CleverTapReact.CleverTapPushNotificationClicked,
     CleverTapPushPermissionResponseReceived: CleverTapReact.CleverTapPushPermissionResponseReceived,
     CleverTapOnVariablesChanged: CleverTapReact.CleverTapOnVariablesChanged,
@@ -677,6 +677,8 @@ var CleverTap = {
 
 
     /**
+     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
      * Sets default product config params using the given object.
      * @param {object} productConfigMap - key-value product config properties.  keys are strings and values can be string, double, integer, boolean or json in string format.
      */
@@ -685,6 +687,8 @@ var CleverTap = {
     },
 
     /**
+     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
      * Starts fetching product configs, adhering to the default minimum fetch interval.
      */
     fetch: function () {
@@ -692,6 +696,8 @@ var CleverTap = {
     },
 
     /**
+     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
      * Starts fetching product configs, adhering to the specified minimum fetch interval in seconds.
      * @param {int} intervalInSecs - minimum fetch interval in seconds.
      */
@@ -700,6 +706,8 @@ var CleverTap = {
     },
 
     /**
+     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
      * Activates the most recently fetched product configs, so that the fetched key value pairs take effect.
      */
     activate: function () {
@@ -707,6 +715,8 @@ var CleverTap = {
     },
 
     /**
+     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
      * Asynchronously fetches and then activates the fetched product configs.
      */
     fetchAndActivate: function () {
@@ -714,6 +724,8 @@ var CleverTap = {
     },
 
     /**
+     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
      * Sets the minimum interval in seconds between successive fetch calls.
      * @param {int} intervalInSecs - interval in seconds between successive fetch calls.
      */
@@ -722,6 +734,8 @@ var CleverTap = {
     },
 
     /**
+     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
      * Deletes all activated, fetched and defaults configs as well as all Product Config settings.
      */
     resetProductConfig: function () {
@@ -729,33 +743,40 @@ var CleverTap = {
     },
 
     /**
-    * Returns the product config parameter value for the given key as a String.
-    * @param {string} the property key
-    * @param {function(err, res)} callback that returns a value of type string if present else blank
-    */
+     * 
+     * Returns the product config parameter value for the given key as a String.
+     * @param {string} the property key
+     * @param {function(err, res)} callback that returns a value of type string if present else blank
+     */
     getProductConfigString: function (key, callback) {
         callWithCallback('getString', [key], callback);
     },
 
     /**
-    * Returns the product config parameter value for the given key as a boolean.
-    * @param {string} the property key
-    * @param {function(err, res)} callback that returns a value of type boolean if present else false
-    */
+     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
+     * Returns the product config parameter value for the given key as a boolean.
+     * @param {string} the property key
+     * @param {function(err, res)} callback that returns a value of type boolean if present else false
+     */
     getProductConfigBoolean: function (key, callback) {
         callWithCallback('getBoolean', [key], callback);
     },
 
     /**
-    * Returns the product config parameter value for the given key as a number.
-    * @param {string} the property key
-    * @param {function(err, res)} callback that returns a value of type number if present else 0
-    */
+     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
+     * Returns the product config parameter value for the given key as a number.
+     * @param {string} the property key
+     * @param {function(err, res)} callback that returns a value of type number if present else 0
+     */
     getNumber: function (key, callback) {
         callWithCallback('getDouble', [key], callback);
     },
 
     /**
+     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
      * Returns the last fetched timestamp in millis.
      * @param {function(err, res)} callback that returns value of timestamp in millis as a string.
      */
@@ -764,11 +785,13 @@ var CleverTap = {
     },
 
     /**
-    * Getter to return the feature flag configured at the dashboard
-    * @param {string} key of the feature flag
-    * @param {string} default value of the key, in case we don't find any feature flag with the key.
-    * @param {function(err, res)} callback that returns a feature flag value of type boolean if present else provided default value
-    */
+     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
+     * Getter to return the feature flag configured at the dashboard
+     * @param {string} key of the feature flag
+     * @param {string} default value of the key, in case we don't find any feature flag with the key.
+     * @param {function(err, res)} callback that returns a feature flag value of type boolean if present else provided default value
+     */
     getFeatureFlag: function (name, defaultValue, callback) {
         callWithCallback('getFeatureFlag', [name, defaultValue], callback);
     },
@@ -844,8 +867,8 @@ var CleverTap = {
     *
     * @param {boolean} isProduction Provide `true` if variables must be sync in Productuon build/configuration.
     */
-    syncVariablesinProd: function (isProduction, callback) {
-        callWithCallback('syncVariablesinProd', [isProduction], callback);
+    syncVariablesinProd: function (isProduction) {
+        CleverTapReact.syncVariablesinProd(isProduction)
     },
 
     /**
