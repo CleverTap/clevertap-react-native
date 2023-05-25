@@ -1390,7 +1390,7 @@ function _handleCleverTapInboxEvent(eventName, event) {
   if (eventName == CleverTap.CleverTapInboxMessageTapped) {
     let contentPageIndex = event.contentPageIndex;
     let buttonIndex = event.buttonIndex;
-    var data = JSON.parse(event.data);
+    var data = event.data;
     let inboxMessageClicked = data.msg;
     console.log(
       'App Inbox ->',

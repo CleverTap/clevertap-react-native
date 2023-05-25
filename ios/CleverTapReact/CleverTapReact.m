@@ -542,6 +542,11 @@ RCT_EXPORT_METHOD(deleteInboxMessageForId:(NSString*)messageId) {
     [[self cleverTapInstance] deleteInboxMessageForID:messageId];
 }
 
+RCT_EXPORT_METHOD(dismissInbox) {
+    RCTLogInfo(@"[CleverTap dismissAppInbox]");
+    [[self cleverTapInstance] dismissAppInbox];
+}
+
 RCT_EXPORT_METHOD(initializeInbox) {
     RCTLogInfo(@"[CleverTap Inbox Initialize]");
     [[self cleverTapInstance] initializeInboxWithCallback:^(BOOL success) {
@@ -644,13 +649,13 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
 - (void)messageDidSelect:(CleverTapInboxMessage *_Nonnull)message atIndex:(int)index withButtonIndex:(int)buttonIndex {
     NSMutableDictionary *body = [NSMutableDictionary new];
     if ([message json] != nil) {
-        NSError *error;
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[message json]
-                                                                   options:0
-                                                                   error:&error];
-        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        body[@"data"] = jsonString;
+        body[@"data"] = [NSMutableDictionary dictionaryWithDictionary:[message json]];
+    } else {
+        body[@"data"] = [NSMutableDictionary new];
     }
+    body[@"contentPageIndex"] = @(index);
+    body[@"buttonIndex"] = @(buttonIndex);
+
     [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessageTapped object:nil userInfo:body];
 }
 
