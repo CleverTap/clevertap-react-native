@@ -1,5 +1,5 @@
 # Overview
-You can define variables using the CleverTap iOS SDK. When you define a variable in your code, you can sync them to the CleverTap Dashboard via the provided SDK methods.
+You can define variables using the CleverTap React Native SDK. When you define a variable in your code, you can sync them to the CleverTap Dashboard via the provided SDK methods.
 
 # Supported Variable Types
 
