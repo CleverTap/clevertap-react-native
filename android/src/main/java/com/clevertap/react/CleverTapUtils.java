@@ -55,7 +55,7 @@ public class CleverTapUtils {
         return writableArray;
     }
 
-    private static WritableMap convertObjectToWritableMap(JSONObject jsonObject) {
+    public static WritableMap convertObjectToWritableMap(JSONObject jsonObject) {
         WritableMap writableMap = Arguments.createMap();
 
         Iterator<String> keys = jsonObject.keys();
