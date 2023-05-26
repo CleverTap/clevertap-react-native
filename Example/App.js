@@ -1280,7 +1280,7 @@ function addCleverTapAPIListeners(fromClick) {
     },
   );
   CleverTap.addListener(CleverTap.CleverTapInAppNotificationShowed, event => {
-    _handleCleverTapEvent(CleverTap.CleverTapInAppNotificationShowed, event);
+    _handleCleverTapInAppEvent(CleverTap.CleverTapInAppNotificationShowed, event);
   });
   CleverTap.addListener(CleverTap.CleverTapInboxDidInitialize, event => {
     _handleCleverTapInboxEvent(CleverTap.CleverTapInboxDidInitialize, event);
@@ -1520,6 +1520,11 @@ function _handleCleverTapInAppEvent(eventName, event) {
   //   for (const key of Object.keys(actionExtras)) {
   //     console.log('Value for actionExtras key: '+ key + ' is:' + actionExtras[key]);
   //   }
+  // }
+  // Following event is only applicable for the android platform
+  // if (eventName == 'CleverTapInAppNotificationShowed') {
+  //    let type = event.data.type;
+  //    console.log('Value for inApp type:', type);
   // }
 }
 

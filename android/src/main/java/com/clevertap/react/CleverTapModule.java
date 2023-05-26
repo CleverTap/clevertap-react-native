@@ -177,7 +177,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         WritableMap params = Arguments.createMap();
         JSONObject data = inAppNotification.getJsonDescription();
         if (data != null) {
-            params.putString("data", data.toString());
+            params.putMap("data", convertObjectToWritableMap(data));
         }
         sendEvent(CLEVERTAP_IN_APP_NOTIFICATION_SHOWED, params);
     }
@@ -1329,8 +1329,15 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
-    // Increment/Decrement Operator
+    @ReactMethod
+    public void dismissInbox() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.dismissAppInbox();
+        }
+    }
 
+    // Increment/Decrement Operator
     @ReactMethod
     public void profileIncrementValueForKey(Double value,String key) {
         CleverTapAPI cleverTap = getCleverTapAPI();
