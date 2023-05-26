@@ -78,26 +78,6 @@ public class CleverTapUtils {
             return jsonObject;
         }
 
-        public static Map<String, Object> toMap(JSONObject jsonObject) throws JSONException {
-            Map<String, Object> map = new HashMap<>();
-            Iterator<String> iterator = jsonObject.keys();
-
-            while (iterator.hasNext()) {
-                String key = iterator.next();
-                Object value = jsonObject.get(key);
-
-                if (value instanceof JSONObject) {
-                    value = MapUtil.toMap((JSONObject) value);
-                }
-                if (value instanceof JSONArray) {
-                    value = ArrayUtil.toArray((JSONArray) value);
-                }
-
-                map.put(key, value);
-            }
-
-            return map;
-        }
 
         public static Map<String, Object> toMap(ReadableMap readableMap) {
             Map<String, Object> map = new HashMap<>();
@@ -165,146 +145,101 @@ public class CleverTapUtils {
             return writableMap;
         }
 
-        public static WritableMap jsonVariableToWritableMap(JSONObject jsonObject) throws JSONException {
-            WritableMap writableMap = Arguments.createMap();
-            Iterator<String> keys = jsonObject.keys();
+        public static class ArrayUtil {
 
-            while(keys.hasNext()) {
-                String key = keys.next();
-                Object value = jsonObject.get(key);
+            public static JSONArray toJSONArray(ReadableArray readableArray) throws JSONException {
+                JSONArray jsonArray = new JSONArray();
 
-                if (value instanceof Boolean) {
-                    writableMap.putBoolean(key, (Boolean) value);
-                } else if (value instanceof Double) {
-                    writableMap.putDouble(key, (Double) value);
-                } else if (value instanceof Integer) {
-                    writableMap.putInt(key, (Integer) value);
-                } else if (value instanceof String) {
-                    writableMap.putString(key, (String) value);
-                } else if (value instanceof JSONObject) {
-                    WritableMap valueMap = jsonVariableToWritableMap((JSONObject) value);
-                    writableMap.putMap(key, valueMap);
-                } else {
-                    writableMap.putString(key, value.toString());
+                for (int i = 0; i < readableArray.size(); i++) {
+                    ReadableType type = readableArray.getType(i);
+
+                    switch (type) {
+                        case Null:
+                            jsonArray.put(i, null);
+                            break;
+                        case Boolean:
+                            jsonArray.put(i, readableArray.getBoolean(i));
+                            break;
+                        case Number:
+                            jsonArray.put(i, readableArray.getDouble(i));
+                            break;
+                        case String:
+                            jsonArray.put(i, readableArray.getString(i));
+                            break;
+                        case Map:
+                            jsonArray.put(i, MapUtil.toJSONObject(readableArray.getMap(i)));
+                            break;
+                        case Array:
+                            jsonArray.put(i, ArrayUtil.toJSONArray(readableArray.getArray(i)));
+                            break;
+                    }
                 }
-            }
-            return writableMap;
-        }
-    }
 
-    public static class ArrayUtil {
-
-        public static JSONArray toJSONArray(ReadableArray readableArray) throws JSONException {
-            JSONArray jsonArray = new JSONArray();
-
-            for (int i = 0; i < readableArray.size(); i++) {
-                ReadableType type = readableArray.getType(i);
-
-                switch (type) {
-                    case Null:
-                        jsonArray.put(i, null);
-                        break;
-                    case Boolean:
-                        jsonArray.put(i, readableArray.getBoolean(i));
-                        break;
-                    case Number:
-                        jsonArray.put(i, readableArray.getDouble(i));
-                        break;
-                    case String:
-                        jsonArray.put(i, readableArray.getString(i));
-                        break;
-                    case Map:
-                        jsonArray.put(i, MapUtil.toJSONObject(readableArray.getMap(i)));
-                        break;
-                    case Array:
-                        jsonArray.put(i, ArrayUtil.toJSONArray(readableArray.getArray(i)));
-                        break;
-                }
+                return jsonArray;
             }
 
-            return jsonArray;
-        }
+            public static Object[] toArray(ReadableArray readableArray) {
+                Object[] array = new Object[readableArray.size()];
 
-        public static Object[] toArray(JSONArray jsonArray) throws JSONException {
-            Object[] array = new Object[jsonArray.length()];
+                for (int i = 0; i < readableArray.size(); i++) {
+                    ReadableType type = readableArray.getType(i);
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                Object value = jsonArray.get(i);
-
-                if (value instanceof JSONObject) {
-                    value = MapUtil.toMap((JSONObject) value);
+                    switch (type) {
+                        case Null:
+                            array[i] = null;
+                            break;
+                        case Boolean:
+                            array[i] = readableArray.getBoolean(i);
+                            break;
+                        case Number:
+                            array[i] = readableArray.getDouble(i);
+                            break;
+                        case String:
+                            array[i] = readableArray.getString(i);
+                            break;
+                        case Map:
+                            array[i] = MapUtil.toMap(readableArray.getMap(i));
+                            break;
+                        case Array:
+                            array[i] = ArrayUtil.toArray(readableArray.getArray(i));
+                            break;
+                    }
                 }
-                if (value instanceof JSONArray) {
-                    value = ArrayUtil.toArray((JSONArray) value);
-                }
 
-                array[i] = value;
+                return array;
             }
 
-            return array;
-        }
+            public static WritableArray toWritableArray(ArrayList arrayList) {
+                WritableArray writableArray = Arguments.createArray();
 
-        public static Object[] toArray(ReadableArray readableArray) {
-            Object[] array = new Object[readableArray.size()];
+                for (int i = 0; i < arrayList.size(); i++) {
+                    Object value = arrayList.get(i);
 
-            for (int i = 0; i < readableArray.size(); i++) {
-                ReadableType type = readableArray.getType(i);
-
-                switch (type) {
-                    case Null:
-                        array[i] = null;
-                        break;
-                    case Boolean:
-                        array[i] = readableArray.getBoolean(i);
-                        break;
-                    case Number:
-                        array[i] = readableArray.getDouble(i);
-                        break;
-                    case String:
-                        array[i] = readableArray.getString(i);
-                        break;
-                    case Map:
-                        array[i] = MapUtil.toMap(readableArray.getMap(i));
-                        break;
-                    case Array:
-                        array[i] = ArrayUtil.toArray(readableArray.getArray(i));
-                        break;
+                    if (value == null) {
+                        writableArray.pushNull();
+                    }
+                    if (value instanceof Boolean) {
+                        writableArray.pushBoolean((Boolean) value);
+                    }
+                    if (value instanceof Double) {
+                        writableArray.pushDouble((Double) value);
+                    }
+                    if (value instanceof Integer) {
+                        writableArray.pushInt((Integer) value);
+                    }
+                    if (value instanceof String) {
+                        writableArray.pushString((String) value);
+                    }
+                    if (value instanceof Map) {
+                        writableArray.pushMap(MapUtil.toWritableMap((Map<String, Object>) value));
+                    }
+                    if (value.getClass().isArray()) {
+                        writableArray.pushArray(ArrayUtil.toWritableArray((ArrayList) value));
+                    }
                 }
+
+                return writableArray;
             }
-
-            return array;
-        }
-
-        public static WritableArray toWritableArray(ArrayList arrayList) {
-            WritableArray writableArray = Arguments.createArray();
-
-            for (int i = 0; i < arrayList.size(); i++) {
-                Object value = arrayList.get(i);
-
-                if (value == null) {
-                    writableArray.pushNull();
-                }
-                if (value instanceof Boolean) {
-                    writableArray.pushBoolean((Boolean) value);
-                }
-                if (value instanceof Double) {
-                    writableArray.pushDouble((Double) value);
-                }
-                if (value instanceof Integer) {
-                    writableArray.pushInt((Integer) value);
-                }
-                if (value instanceof String) {
-                    writableArray.pushString((String) value);
-                }
-                if (value instanceof Map) {
-                    writableArray.pushMap(MapUtil.toWritableMap((Map<String, Object>) value));
-                }
-                if (value.getClass().isArray()) {
-                    writableArray.pushArray(ArrayUtil.toWritableArray((ArrayList) value));
-                }
-            }
-
-            return writableArray;
         }
     }
 }
