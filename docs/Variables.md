@@ -72,8 +72,6 @@ After defining your variables in the code, you must send/sync variables to the s
 After marking the profile as a test profile, you must sync the app variables in DEBUG mode:
 
 ```javascript
-// Swift
-
 // 1. Define CleverTap variables 
 // …
 // 2. Add variables/values changed callbacks
