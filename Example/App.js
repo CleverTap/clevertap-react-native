@@ -929,6 +929,9 @@ Get_All_InboxMessages = () => {
   CleverTap.getAllInboxMessages((err, res) => {
     console.log('All Inbox Messages: ', res, err);
     alert(`All Inbox Messages: \n ${res}`);
+
+    // Uncomment to print payload data.
+    // printInboxMessagesArray(res);
   });
 };
 get_All_InboxUnreadMessages = () => {
@@ -936,6 +939,9 @@ get_All_InboxUnreadMessages = () => {
   CleverTap.getUnreadInboxMessages((err, res) => {
     console.log('Unread Inbox Messages: ', res, err);
     alert(`Unread Inbox Messages: \n ${res}`);
+
+    // Uncomment to print payload data.
+    // printInboxMessagesArray(res);
   });
 };
 Get_InboxMessageForId = () => {
@@ -944,6 +950,9 @@ Get_InboxMessageForId = () => {
   CleverTap.getInboxMessageForId('Message Id', (err, res) => {
     console.log('marking message read = ' + res);
     alert(`marking message read: \n ${res}`);
+
+    // Uncomment to print payload data.
+    // printInboxMessageMap(res);
   });
 };
 
@@ -1056,13 +1065,18 @@ getUnitID = () => {
   CleverTap.getDisplayUnitForId('Unit Id', (err, res) => {
     console.log('Get Display Unit for Id:', res, err);
     alert(`Get Display Unit for Id: ${res}`);
+
+    // Uncomment to access payload.
+    // printDisplayUnit(res);
   });
 };
 getAllDisplayUnits = () => {
   CleverTap.getAllDisplayUnits((err, res) => {
     console.log('All Display Units: ', res, err);
     alert(`All Display Units: ${res}`);
-    printDisplayUnitsPayload(res);
+
+    // Uncomment to access payload.
+    // printDisplayUnitsPayload(res);
   });
 };
 // Product Config
@@ -1193,6 +1207,34 @@ GetCleverTapAttributionIdentifier = () => {
     alert(`CleverTapAttributionIdentifier: ${res}`);
   });
 };
+
+function printInboxMessagesArray(data) {
+  if (data != null) {
+    console.log('Total Inbox Message count = ' + data.length);
+    data.forEach(inboxMessage => {
+      printInboxMessageMap(inboxMessage);
+    });
+  }
+}
+
+function printInboxMessageMap(inboxMessage) {
+  if (inboxMessage != null) {
+    console.log('Inbox Message wzrk_id = ' + inboxMessage['wzrk_id']);
+    let msg = inboxMessage['msg'];
+    console.log('Type of Inbox = ' + msg['type']);
+    let content = msg['content'];
+    content.forEach(element => {
+      let title = element['title'];
+      let message = element['message'];
+      console.log('Inbox Message Title = ' + title['text'] + ' and message = ' + message['text']);
+      let action = element['action'];
+      let links = action['links'];
+      links.forEach(link => {
+        console.log('Inbox Message have link type = ' + link['type']);
+      });
+    });
+  }
+}
 
 function _handleOpenUrl(event, from) {
   console.log('handleOpenUrl', event.url, from);
@@ -1387,75 +1429,75 @@ function _handleCleverTapInboxEvent(eventName, event) {
   ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
 
   // Uncomment to access payload for each events.
-  if (eventName == CleverTap.CleverTapInboxMessageTapped) {
-    let contentPageIndex = event.contentPageIndex;
-    let buttonIndex = event.buttonIndex;
-    var data = event.data;
-    let inboxMessageClicked = data.msg;
-    console.log(
-      'App Inbox ->',
-      'InboxItemClicked at page-index ' +
-        contentPageIndex +
-        ' with button-index ' +
-        buttonIndex,
-    );
+  // if (eventName == CleverTap.CleverTapInboxMessageTapped) {
+  //   let contentPageIndex = event.contentPageIndex;
+  //   let buttonIndex = event.buttonIndex;
+  //   var data = event.data;
+  //   let inboxMessageClicked = data.msg;
+  //   console.log(
+  //     'App Inbox ->',
+  //     'InboxItemClicked at page-index ' +
+  //       contentPageIndex +
+  //       ' with button-index ' +
+  //       buttonIndex,
+  //   );
 
-    //The contentPageIndex corresponds to the page index of the content, which ranges from 0 to the total number of pages for carousel templates. For non-carousel templates, the value is always 0, as they only have one page of content.
-    let messageContentObject = inboxMessageClicked.content[contentPageIndex];
+  //   //The contentPageIndex corresponds to the page index of the content, which ranges from 0 to the total number of pages for carousel templates. For non-carousel templates, the value is always 0, as they only have one page of content.
+  //   let messageContentObject = inboxMessageClicked.content[contentPageIndex];
 
-    //The buttonIndex corresponds to the CTA button clicked (0, 1, or 2). A value of -1 indicates the app inbox body/message clicked.
-    if (buttonIndex != -1) {
-      //button is clicked
-      let buttonObject = messageContentObject.action.links[buttonIndex];
-      let buttonType = buttonObject.type;
-      switch (buttonType) {
-        case 'copy':
-          //this type copies the associated text to the clipboard
-          let copiedText = buttonObject.copyText.text;
-          console.log(
-            'App Inbox ->',
-            'copied text to Clipboard: ' + copiedText,
-          );
-          //_dismissAppInbox()
-          break;
+  //   //The buttonIndex corresponds to the CTA button clicked (0, 1, or 2). A value of -1 indicates the app inbox body/message clicked.
+  //   if (buttonIndex != -1) {
+  //     //button is clicked
+  //     let buttonObject = messageContentObject.action.links[buttonIndex];
+  //     let buttonType = buttonObject.type;
+  //     switch (buttonType) {
+  //       case 'copy':
+  //         //this type copies the associated text to the clipboard
+  //         let copiedText = buttonObject.copyText.text;
+  //         console.log(
+  //           'App Inbox ->',
+  //           'copied text to Clipboard: ' + copiedText,
+  //         );
+  //         //_dismissAppInbox()
+  //         break;
 
-        case 'url':
-          //this type fires the DeepLink
-          let firedDeepLinkUrl = buttonObject.url.android.text;
-          console.log(
-            'App Inbox ->',
-            'fired DeepLink url: ' + firedDeepLinkUrl,
-          );
-          //_dismissAppInbox();
-          break;
-        case 'kv':
-          //this type contains the custom key-value pairs
-          let kvPair = buttonObject.kv;
-          console.log('App Inbox ->', 'custom key-value pair: ', kvPair);
-          //_dismissAppInbox();
-          break;
-      }
-    } else {
-      //Item's body is clicked
-      console.log(
-        'App Inbox ->',
-        'type/template of App Inbox item: ' + inboxMessageClicked.type,
-      );
-      //_dismissAppInbox();
-    }
-  }
+  //       case 'url':
+  //         //this type fires the DeepLink
+  //         let firedDeepLinkUrl = buttonObject.url.android.text;
+  //         console.log(
+  //           'App Inbox ->',
+  //           'fired DeepLink url: ' + firedDeepLinkUrl,
+  //         );
+  //         //_dismissAppInbox();
+  //         break;
+  //       case 'kv':
+  //         //this type contains the custom key-value pairs
+  //         let kvPair = buttonObject.kv;
+  //         console.log('App Inbox ->', 'custom key-value pair: ', kvPair);
+  //         //_dismissAppInbox();
+  //         break;
+  //     }
+  //   } else {
+  //     //Item's body is clicked
+  //     console.log(
+  //       'App Inbox ->',
+  //       'type/template of App Inbox item: ' + inboxMessageClicked.type,
+  //     );
+  //     //_dismissAppInbox();
+  //   }
+  // }
 
-  if (eventName == 'CleverTapInboxMessageButtonTapped') {
-    console.log('Inbox message button tapped with customExtras:');
-    for (const key of Object.keys(event)) {
-      console.log('Value for key: ' + key + ' is:' + event[key]);
-    }
-  }
+  // if (eventName == 'CleverTapInboxMessageButtonTapped') {
+  //   console.log('Inbox message button tapped with customExtras:');
+  //   for (const key of Object.keys(event)) {
+  //     console.log('Value for key: ' + key + ' is:' + event[key]);
+  //   }
+  // }
 }
 
-// function _dismissAppInbox() {
-//   CleverTap.dismissInbox();
-// }
+function _dismissAppInbox() {
+  CleverTap.dismissInbox();
+}
 
 function _handleCleverTapInAppEvent(eventName, event) {
   console.log('handleCleverTapInApp', eventName, event);
@@ -1502,28 +1544,36 @@ function _handleCleverTapDisplayUnitsLoaded(eventName, event) {
   console.log('handleCleverTapDisplayUnitsLoaded', eventName, event);
   ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
   let data = event['displayUnits'];
-  printDisplayUnitsPayload(data);
+
+  // Uncomment to access payload.
+  // printDisplayUnitsPayload(data);
 }
 
 function printDisplayUnitsPayload(data) {
-  // Uncomment to access payload.
   if (data != null) {
+    console.log('Total Display units count = ' + data.length);
     data.forEach(element => {
-      let content = element['content'];
-      content.forEach(contentElement => {
-        let title = contentElement['title'];
-        let message = contentElement['message'];
-        console.log('Title text of display unit is: '+ title['text']);
-        console.log('Message text of display unit is: '+ message['text']);
-      });
-      let customKV = element['custom_kv'];
-      if (customKV != null) {
-        console.log('Display units custom key-values: ', customKV);
-        for (const key of Object.keys(customKV)) {
-          console.log('Value for key: '+ key + ' is:' + customKV[key]);
-        }
-      }
+      printDisplayUnit(element);
     });
+  }
+}
+
+function printDisplayUnit(element) {
+  if (element != null) {
+    let content = element['content'];
+    content.forEach(contentElement => {
+      let title = contentElement['title'];
+      let message = contentElement['message'];
+      console.log('Title text of display unit is: '+ title['text']);
+      console.log('Message text of display unit is: '+ message['text']);
+    });
+    let customKV = element['custom_kv'];
+    if (customKV != null) {
+      console.log('Display units custom key-values: ', customKV);
+      for (const key of Object.keys(customKV)) {
+        console.log('Value for key: '+ key + ' is:' + customKV[key]);
+      }
+    }
   }
 }
 
