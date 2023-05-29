@@ -450,6 +450,11 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    */
   export function showInbox(styleConfig: any): void;
 
+   /**
+   * Call this method to dismiss the App Inbox
+   */
+  export function dismissInbox(): void;
+  
   /**
    * Call this method to get all inbox messages
    */

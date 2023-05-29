@@ -501,7 +501,7 @@ RCT_EXPORT_METHOD(setDebugLevel:(int)level) {
 }
 
 - (CTVar *)createVarForName:(NSString *)name andValue:(id)value {
-    
+
     if ([value isKindOfClass:[NSString class]]) {
         return [[self cleverTapInstance]defineVar:name withString:value];
     }
@@ -606,15 +606,21 @@ RCT_EXPORT_METHOD(deleteInboxMessagesForIDs:(NSArray*)messageIds) {
     [[self cleverTapInstance] deleteInboxMessagesForIDs:messageIds];
 }
 
+RCT_EXPORT_METHOD(dismissInbox) {
+    RCTLogInfo(@"[CleverTap dismissAppInbox]");
+    [[self cleverTapInstance] dismissAppInbox];
+}
+
 RCT_EXPORT_METHOD(initializeInbox) {
     RCTLogInfo(@"[CleverTap Inbox Initialize]");
     [[self cleverTapInstance] initializeInboxWithCallback:^(BOOL success) {
         if (success) {
             RCTLogInfo(@"[Inbox initialized]");
-            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxDidInitialize object:nil userInfo:nil];
+            NSMutableDictionary *body = [NSMutableDictionary new];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxDidInitialize object:nil userInfo:body];
             [[self cleverTapInstance] registerInboxUpdatedBlock:^{
                 RCTLogInfo(@"[Inbox updated]");
-                [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessagesDidUpdate object:nil userInfo:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessagesDidUpdate object:nil userInfo:body];
             }];
         }
     }];
@@ -707,15 +713,13 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
 - (void)messageDidSelect:(CleverTapInboxMessage *_Nonnull)message atIndex:(int)index withButtonIndex:(int)buttonIndex {
     NSMutableDictionary *body = [NSMutableDictionary new];
     if ([message json] != nil) {
-        NSError *error;
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[message json]
-                                                                   options:0
-                                                                   error:&error];
-        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        body[@"data"] = jsonString;
-        body[@"contentPageIndex"] = @(index);
-        body[@"buttonIndex"] = @(buttonIndex);
+        body[@"data"] = [NSMutableDictionary dictionaryWithDictionary:[message json]];
+    } else {
+        body[@"data"] = [NSMutableDictionary new];
     }
+    body[@"contentPageIndex"] = @(index);
+    body[@"buttonIndex"] = @(buttonIndex);
+
     [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessageTapped object:nil userInfo:body];
 }
 
@@ -963,7 +967,7 @@ RCT_EXPORT_METHOD(getVariable:(NSString * _Nonnull)name callback:(RCTResponseSen
 
 RCT_EXPORT_METHOD(getVariables:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getVariables]");
-    
+
     NSMutableDictionary *varValues = [self getVariableValues];
     [self returnResult:varValues withCallback:callback andError:nil];
 }
@@ -977,12 +981,12 @@ RCT_EXPORT_METHOD(fetchVariables:(RCTResponseSenderBlock)callback) {
 
 RCT_EXPORT_METHOD(defineVariables:(NSDictionary*)variables) {
     RCTLogInfo(@"[CleverTap defineVariables]");
-    
+
     if (!variables) return;
-    
+
     [variables enumerateKeysAndObjectsUsingBlock:^(NSString*  _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
         CTVar *var = [self createVarForName:key andValue:value];
-        
+
         if (var) {
             self.allVariables[key] = var;
         }
