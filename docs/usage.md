@@ -125,6 +125,16 @@ CleverTap.addListener(CleverTap.CleverTapInboxMessageButtonTapped, (event) => {/
 CleverTap.dismissInbox();
 ```
 
+### Mark read all inbox messages by array of messageIds
+```javascript
+CleverTap.markReadInboxMessagesForIDs(['1', '2', '3']);	
+```
+
+### Delete all inbox messages by array of messageIds
+```javascript
+CleverTap.deleteInboxMessagesForIDs(['1', '2', '3']);	
+```
+
 #### Get Total message count
 
 ```javascript 

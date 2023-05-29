@@ -33,7 +33,7 @@ CleverTap React Native SDK provides several callbacks for the developer to recei
 
 - Status of fetch variables request
 - `onVariablesChanged`
-- `onceVariablesChanged`
+- `onValueChanged`
 
 ## Status of Variables Fetch Request
 
