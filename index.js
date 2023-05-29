@@ -759,7 +759,8 @@ var CleverTap = {
     },
 
     /**
-     * 
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     *
      * Returns the product config parameter value for the given key as a String.
      * @param {string} the property key
      * @param {function(err, res)} callback that returns a value of type string if present else blank
