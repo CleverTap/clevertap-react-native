@@ -21,7 +21,7 @@
    export function removeListener(eventName: string): void;
 
    /**
-    * Deprecated - Since version 5.0.0. Use removeListener(eventName) instead
+    * @deprecated - Since version 5.0.0. Use removeListener(eventName) instead
     * Remove all event listeners
     */
    export function removeListeners(): void;
@@ -450,6 +450,11 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    */
   export function showInbox(styleConfig: any): void;
 
+   /**
+   * Call this method to dismiss the App Inbox
+   */
+  export function dismissInbox(): void;
+  
   /**
    * Call this method to get all inbox messages
    */
@@ -471,9 +476,19 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function deleteInboxMessageForId(messageId: string): void;
 
   /**
+   * Call this method to delete multiple inbox messages that belongs to the given message ids
+   */
+  export function deleteInboxMessagesForIDs(messageIds: any): void;
+
+  /**
    * Call this method to mark inbox message as read
    */
   export function markReadInboxMessageForId(messageId: string): void;
+
+  /**
+   * Call this method to mark multiple inbox messages as read
+   */
+  export function markReadInboxMessagesForIDs(messageIds: any): void;
 
   /**
    * Call this method to push the Notification Clicked event for App Inbox to CleverTap
@@ -513,44 +528,68 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    * Product Configs
    ******************/ 
   /**
+   * @deprecated
+   * Since version 1.1.0 and will be removed in the future versions of this SDK.
+   *
    * Sets default product config params using the given object.
    * @param productConfigMap {any} key-value product config properties. keys are strings and values can be string, double, integer, boolean or json in string format.
    */
   export function setDefaultsMap(productConfigMap: any): void;
 
   /**
+   * @deprecated
+   * Since version 1.1.0 and will be removed in the future versions of this SDK.
+   *
    * Starts fetching product configs, adhering to the default minimum fetch interval.
    */
   export function fetch(): void;
 
   /**
+   * @deprecated
+   * Since version 1.1.0 and will be removed in the future versions of this SDK.
+   *
    * Starts fetching product configs, adhering to the default minimum fetch interval.
    * @param intervalInSecs {number}  minimum fetch interval in seconds.
    */
   export function fetchWithMinimumIntervalInSeconds(intervalInSecs: number): void;
 
   /**
+   * @deprecated
+   * Since version 1.1.0 and will be removed in the future versions of this SDK.
+   *
    * Activates the most recently fetched product configs, so that the fetched key value pairs take effect.
    */
   export function activate(): void;
 
   /**
+   * @deprecated
+   * Since version 1.1.0 and will be removed in the future versions of this SDK.
+   *
    * Asynchronously fetches and then activates the fetched product configs.
    */
   export function fetchAndActivate(): void;
 
   /**
+   * @deprecated
+   * Since version 1.1.0 and will be removed in the future versions of this SDK.
+   *
    * Sets the minimum interval in seconds between successive fetch calls.
    * @param intervalInSecs {number} interval in seconds between successive fetch calls.
    */
   export function setMinimumFetchIntervalInSeconds(intervalInSecs: number): void;
 
   /**
+   * @deprecated
+   * Since version 1.1.0 and will be removed in the future versions of this SDK.
+   *
    * Deletes all activated, fetched and defaults configs as well as all Product Config settings.
    */
   export function resetProductConfig(): void;
 
   /**
+   * @deprecated
+   * Since version 1.1.0 and will be removed in the future versions of this SDK.
+   *
    * Returns the product config parameter value for the given key as a String.
    * @param key {string} - the name of the key
    * @param callback {Callback} - callback that returns a value of type string if present else blank
@@ -560,6 +599,9 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     callback: Callback): void;
 
   /**
+   * @deprecated
+   * Since version 1.1.0 and will be removed in the future versions of this SDK.
+   *
    * Returns the product config parameter value for the given key as a boolean.
    * @param key {string} - the name of the key
    * @param callback {Callback} - callback that returns a value of type boolean if present else false
@@ -569,6 +611,9 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     callback: Callback): void;
 
   /**
+   * @deprecated
+   * Since version 1.1.0 and will be removed in the future versions of this SDK.
+   *
    * Returns the product config parameter value for the given key as a number.
    * @param key {string} - the name of the key
    * @param callback {Callback} - callback that returns a value of type number if present else 0
@@ -578,6 +623,9 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     callback: Callback): void;
 
   /**
+   * @deprecated
+   * Since version 1.1.0 and will be removed in the future versions of this SDK.
+   *
    * Returns the last fetched timestamp in millis.
    * @param callback {Callback} - callback that returns value of timestamp in millis as a string.
    */
@@ -588,6 +636,9 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    ******************/
 
   /**
+   * @deprecated
+   * Since version 1.1.0 and will be removed in the future versions of this SDK.
+   *
    * Getter to return the feature flag configured at the dashboard
    * @param key {string} - the name of the key
    * @param defaultValue {boolean} - default value of the key, in case we don't find any feature flag with the key.
@@ -642,6 +693,64 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function setInstanceWithAccountId(accountId: string): void;
 
   /*******************
+   * Product Experiences: Vars
+   ******************/
+
+  /**
+   * Uploads variables to the server. Requires Development/Debug build/configuration.
+   */
+  export function syncVariables(): void;
+
+  /**
+   * Uploads variables to the server.
+   * 
+   * @param isProduction Provide `true` if variables must be sync in Productuon build/configuration.
+   */
+  export function syncVariablesinProd(isProduction: boolean): void;
+
+  /**
+   *  Forces variables to update from the server.
+   *
+   * @param {function(err, res)} a callback with a boolean flag whether the update was successful.
+   */
+  export function fetchVariables(callback: Callback): void;
+
+  /**
+   *  Create variables. 
+   * 
+   * @param {object} variables The JSON Object specifying the varibles to be created.
+   */
+  export function defineVariables(variables: object): void;
+  
+  /**
+   * Get all variables via a JSON object.
+   * 
+   */
+  export function getVariables(callback: Callback): void;
+
+  /**
+   * Get a variable or a group for the specified name.
+   * 
+   * @param {string} name - name.
+   */
+  export function getVariable(name: string, callback: Callback): void;
+
+  /**
+    *  Adds a callback to be invoked when variables are initialised with server values. Will be called each time new values are fetched.
+    * 
+    * @param {function} handler The callback to add
+    */
+  export function onVariablesChanged(handler: Function): void;
+
+  /**
+    * Called when the value of the variable changes.
+    * 
+    * @param {name} string the name of the variable
+    * @param {function} handler The callback to add
+    */
+  export function onValueChanged(name: string, handler: Function): void;
+
+  /*******************
    * Developer Options
    ******************/
   /**
@@ -673,3 +782,5 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export const CleverTapProductConfigDidActivate: string;
   export const CleverTapPushNotificationClicked: string;
   export const CleverTapPushPermissionResponseReceived: string;
+  export const CleverTapOnVariablesChanged: string;
+  export const CleverTapOnValueChanged: string;

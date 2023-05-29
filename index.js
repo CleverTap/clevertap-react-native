@@ -3,6 +3,15 @@ import { DeviceEventEmitter, NativeEventEmitter, NativeModules } from 'react-nat
 const CleverTapReact = NativeModules.CleverTapReact;
 const EventEmitter = NativeModules.CleverTapReactEventEmitter ? new NativeEventEmitter(NativeModules.CleverTapReactEventEmitter) : DeviceEventEmitter;
 
+/**
+* Set the CleverTap React-Native library name with current version
+* @param {string} libName - Library name will be "React-Native"
+* @param {int} libVersion - The updated library version. If current version is 1.1.0 then pass as 10100  
+*/
+const libName = 'React-Native';
+const libVersion = 10100; 
+CleverTapReact.setLibrary(libName,libVersion);
+
 function defaultCallback(method, err, res) {
     if (err) {
         console.log('CleverTap ' + method + ' default callback error', err);
@@ -49,12 +58,14 @@ var CleverTap = {
     CleverTapInboxMessageTapped: CleverTapReact.CleverTapInboxMessageTapped,
     CleverTapDisplayUnitsLoaded: CleverTapReact.CleverTapDisplayUnitsLoaded,
     CleverTapInAppNotificationButtonTapped: CleverTapReact.CleverTapInAppNotificationButtonTapped,
-    CleverTapFeatureFlagsDidUpdate: CleverTapReact.CleverTapFeatureFlagsDidUpdate,
-    CleverTapProductConfigDidInitialize: CleverTapReact.CleverTapProductConfigDidInitialize,
-    CleverTapProductConfigDidFetch: CleverTapReact.CleverTapProductConfigDidFetch,
-    CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate,
+    CleverTapFeatureFlagsDidUpdate: CleverTapReact.CleverTapFeatureFlagsDidUpdate, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapProductConfigDidInitialize: CleverTapReact.CleverTapProductConfigDidInitialize, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapProductConfigDidFetch: CleverTapReact.CleverTapProductConfigDidFetch, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
     CleverTapPushNotificationClicked: CleverTapReact.CleverTapPushNotificationClicked,
     CleverTapPushPermissionResponseReceived: CleverTapReact.CleverTapPushPermissionResponseReceived,
+    CleverTapOnVariablesChanged: CleverTapReact.CleverTapOnVariablesChanged,
+    CleverTapOnValueChanged: CleverTapReact.CleverTapOnValueChanged,
 
     /**
     * Add a CleverTap event listener
@@ -81,7 +92,7 @@ var CleverTap = {
     },
 
     /**
-    *  Deprecated - Since version 0.5.0. Use removeListener(eventName) instead
+    *  @deprecated - Since version 0.5.0. Use removeListener(eventName) instead
     *  Remove all event listeners
     */
     removeListeners: function () {
@@ -358,7 +369,7 @@ var CleverTap = {
     },
 
     /**
-     * Deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
+     * @deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
     * Get a unique CleverTap identifier suitable for use with install attribution providers
     * @param {function(err, res)} callback that returns a string res
     */
@@ -367,7 +378,7 @@ var CleverTap = {
     },
 
     /**
-     * Deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
+     * @deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
     * Get the user profile's CleverTap identifier value
     * @param {function(err, res)} callback that returns a string res
     */
@@ -553,6 +564,13 @@ var CleverTap = {
     },
 
     /**
+     * Method to dismiss the App Inbox
+     */
+    dismissInbox: function () {
+        CleverTapReact.dismissInbox();
+    },
+
+    /**
      * Get the total number of Inbox Messages
      * @param {function(err, res)} callback that returns a res of count of inbox messages or -1
      */
@@ -601,11 +619,27 @@ var CleverTap = {
     },
 
     /**
+     * Deletes multiple Inbox Messages that belongs to the given message ids
+     * @param {array} messageIds a collection of ids of inbox messages
+     */
+    deleteInboxMessagesForIDs: function (messageIds) {
+        CleverTapReact.deleteInboxMessagesForIDs(messageIds);
+    },
+
+    /**
      * Marks Inbox Message that belongs to the given message id as read
      * @param {string} message id of inbox message of type CTInboxMessage
      */
     markReadInboxMessageForId: function (messageId) {
         CleverTapReact.markReadInboxMessageForId(messageId);
+    },
+
+    /**
+     * Marks multiple Inbox Messages that belongs to the given message ids as read
+     * @param {array} messageIds a collection of ids of inbox messages
+     */
+    markReadInboxMessagesForIDs: function (messageIds) {
+        CleverTapReact.markReadInboxMessagesForIDs(messageIds);
     },
 
     /**
@@ -659,6 +693,8 @@ var CleverTap = {
 
 
     /**
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
      * Sets default product config params using the given object.
      * @param {object} productConfigMap - key-value product config properties.  keys are strings and values can be string, double, integer, boolean or json in string format.
      */
@@ -667,6 +703,8 @@ var CleverTap = {
     },
 
     /**
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
      * Starts fetching product configs, adhering to the default minimum fetch interval.
      */
     fetch: function () {
@@ -674,6 +712,8 @@ var CleverTap = {
     },
 
     /**
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
      * Starts fetching product configs, adhering to the specified minimum fetch interval in seconds.
      * @param {int} intervalInSecs - minimum fetch interval in seconds.
      */
@@ -682,6 +722,8 @@ var CleverTap = {
     },
 
     /**
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
      * Activates the most recently fetched product configs, so that the fetched key value pairs take effect.
      */
     activate: function () {
@@ -689,6 +731,8 @@ var CleverTap = {
     },
 
     /**
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
      * Asynchronously fetches and then activates the fetched product configs.
      */
     fetchAndActivate: function () {
@@ -696,6 +740,8 @@ var CleverTap = {
     },
 
     /**
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
      * Sets the minimum interval in seconds between successive fetch calls.
      * @param {int} intervalInSecs - interval in seconds between successive fetch calls.
      */
@@ -704,6 +750,8 @@ var CleverTap = {
     },
 
     /**
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
      * Deletes all activated, fetched and defaults configs as well as all Product Config settings.
      */
     resetProductConfig: function () {
@@ -711,33 +759,41 @@ var CleverTap = {
     },
 
     /**
-    * Returns the product config parameter value for the given key as a String.
-    * @param {string} the property key
-    * @param {function(err, res)} callback that returns a value of type string if present else blank
-    */
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     *
+     * Returns the product config parameter value for the given key as a String.
+     * @param {string} the property key
+     * @param {function(err, res)} callback that returns a value of type string if present else blank
+     */
     getProductConfigString: function (key, callback) {
         callWithCallback('getString', [key], callback);
     },
 
     /**
-    * Returns the product config parameter value for the given key as a boolean.
-    * @param {string} the property key
-    * @param {function(err, res)} callback that returns a value of type boolean if present else false
-    */
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
+     * Returns the product config parameter value for the given key as a boolean.
+     * @param {string} the property key
+     * @param {function(err, res)} callback that returns a value of type boolean if present else false
+     */
     getProductConfigBoolean: function (key, callback) {
         callWithCallback('getBoolean', [key], callback);
     },
 
     /**
-    * Returns the product config parameter value for the given key as a number.
-    * @param {string} the property key
-    * @param {function(err, res)} callback that returns a value of type number if present else 0
-    */
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
+     * Returns the product config parameter value for the given key as a number.
+     * @param {string} the property key
+     * @param {function(err, res)} callback that returns a value of type number if present else 0
+     */
     getNumber: function (key, callback) {
         callWithCallback('getDouble', [key], callback);
     },
 
     /**
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
      * Returns the last fetched timestamp in millis.
      * @param {function(err, res)} callback that returns value of timestamp in millis as a string.
      */
@@ -746,11 +802,13 @@ var CleverTap = {
     },
 
     /**
-    * Getter to return the feature flag configured at the dashboard
-    * @param {string} key of the feature flag
-    * @param {string} default value of the key, in case we don't find any feature flag with the key.
-    * @param {function(err, res)} callback that returns a feature flag value of type boolean if present else provided default value
-    */
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * 
+     * Getter to return the feature flag configured at the dashboard
+     * @param {string} key of the feature flag
+     * @param {string} default value of the key, in case we don't find any feature flag with the key.
+     * @param {function(err, res)} callback that returns a feature flag value of type boolean if present else provided default value
+     */
     getFeatureFlag: function (name, defaultValue, callback) {
         callWithCallback('getFeatureFlag', [name, defaultValue], callback);
     },
@@ -812,6 +870,77 @@ var CleverTap = {
      */
     setInstanceWithAccountId: function (accountId) {
         CleverTapReact.setInstanceWithAccountId(accountId);
+    },
+
+    /**
+    * Uploads variables to the server. Requires Development/Debug build/configuration.
+    */
+    syncVariables: function () {
+        CleverTapReact.syncVariables();
+    },
+
+    /**
+    * Uploads variables to the server.
+    *
+    * @param {boolean} isProduction Provide `true` if variables must be sync in Productuon build/configuration.
+    */
+    syncVariablesinProd: function (isProduction) {
+        CleverTapReact.syncVariablesinProd(isProduction)
+    },
+
+    /**
+    * Forces variables to update from the server.
+    *
+    */
+    fetchVariables: function (callback) {
+        callWithCallback('fetchVariables', null, callback);
+    },
+
+    /**
+     * Create variables. 
+     * 
+     * @param {object} variables The JSON Object specifying the varibles to be created.
+     */
+    defineVariables: function (variables) {
+        CleverTapReact.defineVariables(variables);
+    },
+
+    /**
+     * Get a variable or a group for the specified name.
+     * 
+     * @param {string} name - name.
+     */
+    getVariable: function (name, callback) {
+        callWithCallback('getVariable', [name], callback);
+    },
+
+    /**
+     * Get all variables via a JSON object.
+     * 
+     */
+    getVariables: function (callback) {
+        callWithCallback('getVariables', null, callback);
+    },
+
+    /**
+     *  Adds a callback to be invoked when variables are initialised with server values. Will be called each time new values are fetched.
+     * 
+     * @param {function} handler The callback to add
+     */
+    onVariablesChanged: function (handler) {
+        CleverTapReact.onVariablesChanged();
+        this.addListener(CleverTapReact.CleverTapOnVariablesChanged, handler);
+    },
+
+    /**
+     * Called when the value of the variable changes.
+     * 
+     * @param {name} string the name of the variable
+     * @param {function} handler The callback to add
+     */
+    onValueChanged: function (name, handler) {
+        CleverTapReact.onValueChanged(name);
+        this.addListener(CleverTapReact.CleverTapOnValueChanged, handler);
     }
 };
 
