@@ -1,5 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: 'com.google.gms.google-services'
+apply plugin: "com.facebook.react"
 
 
 import com.android.build.OutputFile
@@ -80,7 +81,7 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    enableHermes: false,  // clean and rebuild if changing
+    enableHermes: true,  // clean and rebuild if changing
     nodeExecutableAndArgs:  ["/usr/local/bin/node"]
 ]
 
@@ -203,7 +204,8 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
     //react-native  libs
-    //implementation "com.facebook.react:react-native:+"
+    implementation "com.facebook.react:react-android"
+    implementation "com.facebook.react:hermes-android"
 
     //com.google
     implementation 'com.google.android.gms:play-services-base:18.2.0'
@@ -216,8 +218,8 @@ dependencies {
 
 
     //clevertap
-    implementation 'com.clevertap.android:clevertap-android-sdk:4.7.5'
-    implementation "com.clevertap.android:push-templates:1.0.8"
+    implementation 'com.clevertap.android:clevertap-android-sdk:5.0.0'
+    implementation "com.clevertap.android:push-templates:1.0.9"
     implementation project(':clevertap-react-native')
 
 
@@ -238,19 +240,15 @@ dependencies {
         exclude group:'com.facebook.flipper'
     }
     if (enableHermes) {
-        def hermesPath = "../../node_modules/hermes-engine/android/";
+        /*def hermesPath = "../../node_modules/hermes-engine/android/";
         debugImplementation files(hermesPath + "hermes-debug.aar")
-        releaseImplementation files(hermesPath + "hermes-release.aar")
+        releaseImplementation files(hermesPath + "hermes-release.aar")*/
+        implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
     }
 }
 
-// Run this once to be able to run the application with BUCK
-// puts all compile dependencies into folder libs for BUCK to use
-task copyDownloadableDepsToLibs(type: Copy) {
-    from configurations.compile
-    into 'libs'
-}
+
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

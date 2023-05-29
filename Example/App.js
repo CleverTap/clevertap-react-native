@@ -439,6 +439,47 @@ class Expandable_ListView extends Component {
               }
             });
             break;
+          case 80:
+            CleverTap.syncVariables()
+            break;
+          case 81:
+            CleverTap.getVariables((err, variables) => {
+              console.log('getVariables: ', variables, err);
+            });
+            break;
+          case 82:
+            CleverTap.getVariable('reactnative_var_string', (err, variable) => {
+              console.log(`variable value for key \'reactnative_var_string\': ${variable}`);
+            });
+            break;
+          case 83:
+            let variables = {
+              'reactnative_var_string': 'reactnative_var_string_value',
+              'reactnative_var_map': {
+                'reactnative_var_map_string': 'reactnative_var_map_value'
+              },
+              'reactnative_var_int': 6,
+              'reactnative_var_float': 6.9,
+              'reactnative_var_boolean': true
+            };
+            console.log(`Creating variables: ${JSON.stringify(variables)}`);
+            CleverTap.defineVariables(variables);
+            break;
+          case 84:
+            CleverTap.fetchVariables((err, success) => {
+              console.log('fetchVariables result: ', success);
+            });
+            break;   
+          case 85:
+              CleverTap.onVariablesChanged((variables) => {
+                console.log('onVariablesChanged: ', variables);
+              });
+              break;
+          case 86:
+              CleverTap.onValueChanged('reactnative_var_string', (variable) => {
+                console.log('onValueChanged: ', variable);
+                });
+              break;        
         }
     }
 
@@ -521,6 +562,40 @@ export default class App extends Component {
         });
 
         const array = [
+          {
+            expanded: false,
+            category_Name: 'Product Experiences: Vars',
+            sub_Category: [
+              {
+                id: 80, 
+                name: 'Sync Variables'
+              },
+              {
+                id: 81,
+                name: 'Get Variables'
+              },
+              {
+                id: 82,
+                name: 'Get Variable Value for name \'reactnative_var_string\''
+              },
+              {
+                id: 83,
+                name: 'Define Variables'
+              },
+              {
+                id: 84,
+                name: 'Fetch Variables'
+              },
+              {
+                id: 85,
+                name: 'Add \'OnVariablesChanged\' listener'
+              },
+              {
+                id: 86,
+                name: 'Add \'OnValueChanged\' listener for name \'reactnative_var_string\''
+              }
+            ],
+          },
           {
             expanded: false,
             category_Name: 'User Properties',
@@ -766,7 +841,7 @@ export default class App extends Component {
                 name: 'Hard permission dialog with fallbackToSettings - true',
               },
             ],
-          },
+          }
         ];
 
         this.state = { AccordionData: [...array] }
@@ -1100,26 +1175,26 @@ productConfig = () => {
 
 };
 fetch = () => {
-    alert('Check Console for update result');
+    // alert('Check Console for update result');
     //Fetch
     CleverTap.fetch();
 
 };
 activate = () => {
-    alert('Check Console for update result');
+    // alert('Check Console for update result');
     //Activate
     CleverTap.activate();
 
 };
 fetchAndActivate = () => {
-    alert('Check Console for update result');
+    // alert('Check Console for update result');
 
     //Fetch And Activate
     CleverTap.fetchAndActivate();
 
 };
 fetchwithMinIntervalinsec = () => {
-    alert('Check Console for update result');
+    // alert('Check Console for update result');
 
     //Fetch Minimum Time Interval
     CleverTap.fetchWithMinimumIntervalInSeconds(60);
@@ -1127,7 +1202,7 @@ fetchwithMinIntervalinsec = () => {
 };
 
 setMinimumFetchIntervalInSeconds = () => {
-    alert('Check Console for update result');
+    // alert('Check Console for update result');
 
     //Set Minimum Interval
     CleverTap.setMinimumFetchIntervalInSeconds(60);
@@ -1144,7 +1219,7 @@ getBoolean = () => {
 
 };
 getLong = () => {
-    alert('Check Console for update result');
+    // alert('Check Console for update result');
 
     //Number
     CleverTap.getNumber('msg_count', (err, res) => {
@@ -1162,7 +1237,7 @@ getDouble = () => {
     });
 };
 getString = () => {
-    alert('Check Console for update result');
+    // alert('Check Console for update result');
 
     //Set Minimum Interval
     //String
@@ -1173,7 +1248,7 @@ getString = () => {
 
 };
 getStrings = () => {
-    alert('Check Console for update result');
+    // alert('Check Console for update result');
 
     //Set Minimum Interval
     CleverTap.getProductConfigString('json', (err, res) => {
@@ -1183,7 +1258,7 @@ getStrings = () => {
 
 };
 reset_config = () => {
-    alert('Check Console for update result');
+    // alert('Check Console for update result');
     //Reset Product config
     CleverTap.resetProductConfig();
 };

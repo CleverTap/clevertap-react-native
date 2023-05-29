@@ -1,6 +1,24 @@
 Change Log
 ==========
 
+Version 1.1.0 *(26th May 2023)*
+-------------------------------------------
+- Adds support for Remote Config Variables. Please refer to the [Remote Config Variables doc](/docs/Variables.md) to read more on how to integrate this to your app.
+- The following methods related to Product Config and Feature Flags have been marked as deprecated in this release. These methods will be removed in the future with prior notice
+    - Feature Flags
+        - `getFeatureFlag`
+    - Product Config
+        - `setDefaultsMap`
+        - `fetch`
+        - `activate`
+        - `fetchAndActivate`
+        - `setMinimumFetchIntervalInSeconds`
+        - `resetProductConfig`
+        - `getProductConfigString`
+        - `getProductConfigBoolean`
+        - `getNumber`
+        - `getLastFetchTimeStampInMillis`
+
 Version 1.0.3 *(3rd May 2023)*
 -------------------------------------------
 - Fixes a bug where notification clicked callbacks were not working for killed state in iOS.
