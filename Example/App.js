@@ -54,375 +54,431 @@ class Expandable_ListView extends Component {
     return false;
   }
 
-  //In this Function You can write the items to be called w.r.t list id:
-  show_Selected_Category = item => {
-    switch (item.id) {
-      case 1:
-        set_userProfile();
-        break;
-      case 2:
-        CleverTap.profileSetMultiValuesForKey(['a', 'b', 'c'], 'letters');
-        break;
-      case 3:
-        CleverTap.profileRemoveMultiValueForKey('b', 'letters');
-        break;
-      case 4:
-        CleverTap.profileRemoveMultiValueForKey('b', 'letters');
-        break;
-      case 5:
-        CleverTap.profileAddMultiValueForKey('d', 'letters');
-        break;
-      case 500:
-        CleverTap.profileIncrementValueForKey(10, 'score');
-        CleverTap.profileIncrementValueForKey(3.141, 'PI_Float');
-        CleverTap.profileIncrementValueForKey(3.141592653589793, 'PI_Double');
-        break;
-      case 501:
-        CleverTap.profileDecrementValueForKey(10, 'score');
-        CleverTap.profileDecrementValueForKey(3.141, 'PI_Float');
-        CleverTap.profileDecrementValueForKey(3.141592653589793, 'PI_Double');
-        break;
-      case 6:
-        onUser_Login();
-        break;
-      case 7: //Removing a Value from the Multiple Values
-        removeMultiValuesForKey();
-        break;
-      case 8:
-        removeValueForKey();
-        break;
-      case 9:
-        getCleverTap_id();
-        break;
-      case 10:
-        set_userLocation();
-        break;
-      case 11:
-        CleverTap.initializeInbox();
-        break;
-      case 12:
-        show_appInbox();
-        break;
-      case 55:
-        show_appInboxwithTabs();
-        break;
-      case 13:
-        get_TotalMessageCount();
-        break;
-      case 14:
-        get_UnreadMessageCount();
-        break;
-      case 15:
-        Get_All_InboxMessages();
-        break;
-      case 16:
-        get_All_InboxUnreadMessages();
-        break;
-      case 17:
-        Get_InboxMessageForId();
-        break;
-      case 18:
-        delete_InboxMessageForId();
-        break;
-      case 19:
-        markRead_InboxMessageForId();
-        break;
-      case 20:
-        pushInboxNotificationViewed();
-        break;
-      case 21:
-        pushInboxNotificationClicked();
-        break;
-      case 22:
-        pushevent();
-        break;
-      case 23:
-        pushChargedEvent();
-        break;
-      case 24:
-        CleverTap.setDebugLevel(3);
-        break;
-      case 25:
-        create_NotificationChannelGroup();
-        break;
-      case 26:
-        create_NotificationChannel();
-        break;
-      case 27:
-        delete_NotificationChannel();
-        break;
-      case 28:
-        delete_NotificationChannelGroup();
-        break;
-      case 29:
-        pushFcmRegistrationId();
-        break;
-      case 30:
-        create_notification();
-        break;
-      case 300:
-        createNotificationChannelWithSound();
-        break;
-      case 301:
-        createNotificationChannelWithGroupId();
-        break;
-      case 302:
-        createNotificationChannelWithGroupIdAndSound();
-        break;
-      case 31:
-        getUnitID();
-        break;
-      case 32:
-        getAllDisplayUnits();
-        break;
-      case 33:
-        fetch();
-        break;
-      case 34:
-        activate();
-        break;
-      case 35:
-        fetchAndActivate();
-        break;
-      case 36:
-        fetchwithMinIntervalinsec();
-        break;
-      case 37:
-        setMinimumFetchIntervalInSeconds();
-        break;
-      case 38:
-        getBoolean();
-        break;
-      case 39:
-        getDouble();
-        break;
-      case 40:
-        getLong();
-        break;
-      case 41:
-        getString();
-        break;
-      case 42:
-        getStrings();
-        break;
-      case 43:
-        reset_config();
-        break;
-      case 44:
-        getLastFetchTimeStampInMillis();
-        break;
-      case 45:
-        getFeatureFlag();
-        break;
-      case 450:
-        CleverTap.suspendInAppNotifications();
-        break;
-      case 451:
-        CleverTap.discardInAppNotifications();
-        break;
-      case 452:
-        CleverTap.resumeInAppNotifications();
-        break;
-      case 46:
-        enablePersonalization();
-        break;
-      case 47:
-        profile_getProperty();
-        break;
-      case 48:
-        GetCleverTapAttributionIdentifier();
-        break;
-      case 49:
-        CleverTap.setOptOut(false);
-        break;
-      case 50:
-        CleverTap.enableDeviceNetworkInfoReporting(true);
-        break;
-      case 51:
-        CleverTap.enablePersonalization();
-        break;
-      case 52:
-        CleverTap.setOffline(false);
-        break;
-      case 53:
-        addCleverTapAPIListeners(true);
-        break;
-      case 54:
-        removeCleverTapAPIListeners();
-        break;
-      case 60:
-      case 61:
-      case 62:
-      case 63:
-      case 64:
-      case 65:
-      case 66:
-      case 67:
-      case 68:
-      case 69:
-      case 690:
-      case 691:
-      case 692:
-      case 693:
-      case 694:
-      case 695:
-      case 696:
-      case 697:
-      case 698:
-        CleverTap.recordEvent(item.name);
-        break;
-      case 70:
-        CleverTap.isPushPermissionGranted((err, res) => {
-          console.log('isPushPermissionGranted', res, err);
-          if (res == true) {
-            alert('Push Notification permission is already granted');
-          } else {
-            CleverTap.promptPushPrimer({
-              inAppType: 'half-interstitial',
-              titleText: 'Get Notified',
-              messageText:
-                'Please enable notifications on your device to use Push Notifications.',
-              followDeviceOrientation: true,
-              positiveBtnText: 'Allow',
-              negativeBtnText: 'Cancel',
-              backgroundColor: '#FFFFFF',
-              btnBorderColor: '#0000FF',
-              titleTextColor: '#0000FF',
-              messageTextColor: '#000000',
-              btnTextColor: '#FFFFFF',
-              btnBackgroundColor: '#0000FF',
-              btnBorderRadius: '2',
+
+    //In this Function You can write the items to be called w.r.t list id:
+    show_Selected_Category = (item) => {
+        switch (item.id) {
+          case 1:
+            set_userProfile();
+            break;
+          case 2:
+            CleverTap.profileSetMultiValuesForKey(['a', 'b', 'c'], 'letters');
+            break;
+          case 3:
+            CleverTap.profileRemoveMultiValueForKey('b', 'letters');
+            break;
+          case 4:
+            CleverTap.profileRemoveMultiValueForKey('b', 'letters');
+            break;
+          case 5:
+            CleverTap.profileAddMultiValueForKey('d', 'letters');
+            break;
+          case 500:
+            CleverTap.profileIncrementValueForKey(10, 'score');
+            CleverTap.profileIncrementValueForKey(3.141, 'PI_Float');
+            CleverTap.profileIncrementValueForKey(
+              3.141592653589793,
+              'PI_Double',
+            );
+            break;
+          case 501:
+            CleverTap.profileDecrementValueForKey(10, 'score');
+            CleverTap.profileDecrementValueForKey(3.141, 'PI_Float');
+            CleverTap.profileDecrementValueForKey(
+              3.141592653589793,
+              'PI_Double',
+            );
+            break;
+          case 6:
+            onUser_Login();
+            break;
+          case 7: //Removing a Value from the Multiple Values
+            removeMultiValuesForKey();
+            break;
+          case 8:
+            removeValueForKey();
+            break;
+          case 9:
+            getCleverTap_id();
+            break;
+          case 10:
+            set_userLocation();
+            break;
+          case 11:
+            CleverTap.initializeInbox();
+            break;
+          case 12:
+            show_appInbox();
+            break;
+          case 55:
+            show_appInboxwithTabs();
+            break;
+          case 13:
+            get_TotalMessageCount();
+            break;
+          case 14:
+            get_UnreadMessageCount();
+            break;
+          case 15:
+            Get_All_InboxMessages();
+            break;
+          case 16:
+            get_All_InboxUnreadMessages();
+            break;
+          case 17:
+            Get_InboxMessageForId();
+            break;
+          case 18:
+            delete_InboxMessageForId();
+            break;
+          case 19:
+            markRead_InboxMessageForId();
+            break;
+          case 20:
+            pushInboxNotificationViewed();
+            break;
+          case 21:
+            pushInboxNotificationClicked();
+            break;
+          case 22:
+            pushevent();
+            break;
+          case 23:
+            pushChargedEvent();
+            break;
+          case 24:
+            CleverTap.setDebugLevel(3);
+            break;
+          case 25:
+            create_NotificationChannelGroup();
+            break;
+          case 26:
+            create_NotificationChannel();
+            break;
+          case 27:
+            delete_NotificationChannel();
+            break;
+          case 28:
+            delete_NotificationChannelGroup();
+            break;
+          case 29:
+            pushFcmRegistrationId();
+            break;
+          case 30:
+            create_notification();
+            break;
+          case 300:
+            createNotificationChannelWithSound();
+            break;
+          case 301:
+            createNotificationChannelWithGroupId();
+            break;
+          case 302:
+            createNotificationChannelWithGroupIdAndSound();
+            break;
+          case 31:
+            getUnitID();
+            break;
+          case 32:
+            getAllDisplayUnits();
+            break;
+          case 33:
+            fetch();
+            break;
+          case 34:
+            activate();
+            break;
+          case 35:
+            fetchAndActivate();
+            break;
+          case 36:
+            fetchwithMinIntervalinsec();
+            break;
+          case 37:
+            setMinimumFetchIntervalInSeconds();
+            break;
+          case 38:
+            getBoolean();
+            break;
+          case 39:
+            getDouble();
+            break;
+          case 40:
+            getLong();
+            break;
+          case 41:
+            getString();
+            break;
+          case 42:
+            getStrings();
+            break;
+          case 43:
+            reset_config();
+            break;
+          case 44:
+            getLastFetchTimeStampInMillis();
+            break;
+          case 45:
+            getFeatureFlag();
+            break;
+          case 450:
+            CleverTap.suspendInAppNotifications();
+            break;
+          case 451:
+            CleverTap.discardInAppNotifications();
+            break;
+          case 452:
+            CleverTap.resumeInAppNotifications();
+            break;
+          case 46:
+            enablePersonalization();
+            break;
+          case 47:
+            profile_getProperty();
+            break;
+          case 48:
+            GetCleverTapAttributionIdentifier();
+            break;
+          case 49:
+            CleverTap.setOptOut(false);
+            break;
+          case 50:
+            CleverTap.enableDeviceNetworkInfoReporting(true);
+            break;
+          case 51:
+            CleverTap.enablePersonalization();
+            break;
+          case 52:
+            CleverTap.setOffline(false);
+            break;
+          case 53:
+            addCleverTapAPIListeners(true);
+            break;
+          case 54:
+            removeCleverTapAPIListeners();
+            break;
+          case 60:
+          case 61:
+          case 62:
+          case 63:
+          case 64:
+          case 65:
+          case 66:
+          case 67:
+          case 68:
+          case 69:
+          case 690:
+          case 691:
+          case 692:
+          case 693:
+          case 694:
+          case 695:
+          case 696:
+          case 697:
+          case 698:
+            CleverTap.recordEvent(item.name);
+            break;
+          case 70:
+            CleverTap.isPushPermissionGranted((err, res) => {
+              console.log('isPushPermissionGranted', res, err);
+              if (res == true) {
+                alert('Push Notification permission is already granted');
+              }
+              else {
+                CleverTap.promptPushPrimer({
+                  inAppType: 'half-interstitial',
+                  titleText: 'Get Notified',
+                  messageText:
+                    'Please enable notifications on your device to use Push Notifications.',
+                  followDeviceOrientation: true,
+                  positiveBtnText: 'Allow',
+                  negativeBtnText: 'Cancel',
+                  backgroundColor: '#FFFFFF',
+                  btnBorderColor: '#0000FF',
+                  titleTextColor: '#0000FF',
+                  messageTextColor: '#000000',
+                  btnTextColor: '#FFFFFF',
+                  btnBackgroundColor: '#0000FF',
+                  btnBorderRadius: '2',
+                });
+              }
             });
-          }
-        });
-        break;
-      case 71:
-        CleverTap.isPushPermissionGranted((err, res) => {
-          console.log('isPushPermissionGranted', res, err);
-          if (res == true) {
-            alert('Push Notification permission is already granted');
-          } else {
-            CleverTap.promptPushPrimer({
-              inAppType: 'half-interstitial',
-              titleText: 'Get Notified',
-              messageText:
-                'Please enable notifications on your device to use Push Notifications.',
-              followDeviceOrientation: true,
-              positiveBtnText: 'Allow',
-              negativeBtnText: 'Cancel',
-              backgroundColor: '#FFFFFF',
-              btnBorderColor: '#0000FF',
-              titleTextColor: '#0000FF',
-              messageTextColor: '#000000',
-              btnTextColor: '#FFFFFF',
-              btnBackgroundColor: '#0000FF',
-              imageUrl:
-                'https://icons.iconarchive.com/icons/treetog/junior/64/camera-icon.png',
-              btnBorderRadius: '2',
+            break;
+          case 71:
+            CleverTap.isPushPermissionGranted((err, res) => {
+              console.log('isPushPermissionGranted', res, err);
+              if (res == true) {
+                alert('Push Notification permission is already granted');
+              }
+              else {
+                CleverTap.promptPushPrimer({
+                  inAppType: 'half-interstitial',
+                  titleText: 'Get Notified',
+                  messageText:
+                    'Please enable notifications on your device to use Push Notifications.',
+                  followDeviceOrientation: true,
+                  positiveBtnText: 'Allow',
+                  negativeBtnText: 'Cancel',
+                  backgroundColor: '#FFFFFF',
+                  btnBorderColor: '#0000FF',
+                  titleTextColor: '#0000FF',
+                  messageTextColor: '#000000',
+                  btnTextColor: '#FFFFFF',
+                  btnBackgroundColor: '#0000FF',
+                  imageUrl:
+                    'https://icons.iconarchive.com/icons/treetog/junior/64/camera-icon.png',
+                  btnBorderRadius: '2',
+                });
+              }
             });
-          }
-        });
-        break;
-      case 72:
-        CleverTap.isPushPermissionGranted((err, res) => {
-          console.log('isPushPermissionGranted', res, err);
-          if (res == true) {
-            alert('Push Notification permission is already granted');
-          } else {
-            CleverTap.promptPushPrimer({
-              inAppType: 'half-interstitial',
-              titleText: 'Get Notified',
-              messageText:
-                'Please enable notifications on your device to use Push Notifications.',
-              followDeviceOrientation: true,
-              positiveBtnText: 'Allow',
-              negativeBtnText: 'Cancel',
-              backgroundColor: '#FFFFFF',
-              btnBorderColor: '#0000FF',
-              titleTextColor: '#0000FF',
-              messageTextColor: '#000000',
-              btnTextColor: '#FFFFFF',
-              btnBackgroundColor: '#0000FF',
-              btnBorderRadius: '2',
-              fallbackToSettings: true,
+            break;
+          case 72:
+            CleverTap.isPushPermissionGranted((err, res) => {
+              console.log('isPushPermissionGranted', res, err);
+              if (res == true) {
+                alert('Push Notification permission is already granted');
+              }
+              else {
+                CleverTap.promptPushPrimer({
+                  inAppType: 'half-interstitial',
+                  titleText: 'Get Notified',
+                  messageText:
+                    'Please enable notifications on your device to use Push Notifications.',
+                  followDeviceOrientation: true,
+                  positiveBtnText: 'Allow',
+                  negativeBtnText: 'Cancel',
+                  backgroundColor: '#FFFFFF',
+                  btnBorderColor: '#0000FF',
+                  titleTextColor: '#0000FF',
+                  messageTextColor: '#000000',
+                  btnTextColor: '#FFFFFF',
+                  btnBackgroundColor: '#0000FF',
+                  btnBorderRadius: '2',
+                  fallbackToSettings: true,
+                });
+              }
             });
-          }
-        });
-        break;
-      case 73:
-        CleverTap.isPushPermissionGranted((err, res) => {
-          console.log('isPushPermissionGranted', res, err);
-          if (res == true) {
-            alert('Push Notification permission is already granted');
-          } else {
-            CleverTap.promptPushPrimer({
-              inAppType: 'alert',
-              titleText: 'Get Notified',
-              messageText: 'Enable Notification permission',
-              followDeviceOrientation: true,
-              positiveBtnText: 'Allow',
-              negativeBtnText: 'Cancel',
+            break;
+          case 73:
+            CleverTap.isPushPermissionGranted((err, res) => {
+              console.log('isPushPermissionGranted', res, err);
+              if (res == true) {
+                alert('Push Notification permission is already granted');
+              }
+              else {
+                CleverTap.promptPushPrimer({
+                  inAppType: 'alert',
+                  titleText: 'Get Notified',
+                  messageText: 'Enable Notification permission',
+                  followDeviceOrientation: true,
+                  positiveBtnText: 'Allow',
+                  negativeBtnText: 'Cancel',
+                });
+              }
             });
-          }
-        });
-        break;
-      case 74:
-        CleverTap.isPushPermissionGranted((err, res) => {
-          console.log('isPushPermissionGranted', res, err);
-          if (res == true) {
-            alert('Push Notification permission is already granted');
-          } else {
-            CleverTap.promptPushPrimer({
-              inAppType: 'alert',
-              titleText: 'Get Notified',
-              messageText: 'Enable Notification permission',
-              followDeviceOrientation: false,
-              positiveBtnText: 'Allow',
-              negativeBtnText: 'Cancel',
+            break;
+          case 74:
+            CleverTap.isPushPermissionGranted((err, res) => {
+              console.log('isPushPermissionGranted', res, err);
+              if (res == true) {
+                alert('Push Notification permission is already granted');
+              }
+              else {
+                CleverTap.promptPushPrimer({
+                  inAppType: 'alert',
+                  titleText: 'Get Notified',
+                  messageText: 'Enable Notification permission',
+                  followDeviceOrientation: false,
+                  positiveBtnText: 'Allow',
+                  negativeBtnText: 'Cancel',
+                });
+              }
             });
-          }
-        });
-        break;
-      case 75:
-        CleverTap.isPushPermissionGranted((err, res) => {
-          console.log('isPushPermissionGranted', res, err);
-          if (res == true) {
-            alert('Push Notification permission is already granted');
-          } else {
-            CleverTap.promptPushPrimer({
-              inAppType: 'alert',
-              titleText: 'Get Notified',
-              messageText: 'Enable Notification permission',
-              followDeviceOrientation: false,
-              positiveBtnText: 'Allow',
-              negativeBtnText: 'Cancel',
-              fallbackToSettings: true,
+            break;
+          case 75:
+            CleverTap.isPushPermissionGranted((err, res) => {
+              console.log('isPushPermissionGranted', res, err);
+              if (res == true) {
+                alert('Push Notification permission is already granted');
+              }
+              else {
+                CleverTap.promptPushPrimer({
+                  inAppType: 'alert',
+                  titleText: 'Get Notified',
+                  messageText: 'Enable Notification permission',
+                  followDeviceOrientation: false,
+                  positiveBtnText: 'Allow',
+                  negativeBtnText: 'Cancel',
+                  fallbackToSettings: true,
+                });
+              }
             });
-          }
-        });
-        break;
-      case 76:
-        CleverTap.isPushPermissionGranted((err, res) => {
-          console.log('isPushPermissionGranted', res, err);
-          if (res == false) {
-            CleverTap.promptForPushPermission(false);
-          } else {
-            alert('Push Notification permission is already granted');
-          }
-        });
-        break;
-      case 77:
-        CleverTap.isPushPermissionGranted((err, res) => {
-          console.log('isPushPermissionGranted', res, err);
-          if (res == false) {
-            CleverTap.promptForPushPermission(true);
-          } else {
-            alert('Push Notification permission is already granted');
-          }
-        });
-        break;
+            break;
+          case 76:
+            CleverTap.isPushPermissionGranted((err, res) => {
+              console.log('isPushPermissionGranted', res, err);
+              if (res == false) {
+                CleverTap.promptForPushPermission(false);
+              }
+              else {
+                alert('Push Notification permission is already granted');
+              }
+            });
+            break;
+          case 77:
+            CleverTap.isPushPermissionGranted((err, res) => {
+              console.log('isPushPermissionGranted', res, err);
+              if (res == false) {
+                CleverTap.promptForPushPermission(true);
+              }
+              else{
+                alert('Push Notification permission is already granted');
+              }
+            });
+            break;
+          case 80:
+            CleverTap.syncVariables()
+            break;
+          case 81:
+            CleverTap.getVariables((err, variables) => {
+              console.log('getVariables: ', variables, err);
+            });
+            break;
+          case 82:
+            CleverTap.getVariable('reactnative_var_string', (err, variable) => {
+              console.log(`variable value for key \'reactnative_var_string\': ${variable}`);
+            });
+            break;
+          case 83:
+            let variables = {
+              'reactnative_var_string': 'reactnative_var_string_value',
+              'reactnative_var_map': {
+                'reactnative_var_map_string': 'reactnative_var_map_value'
+              },
+              'reactnative_var_int': 6,
+              'reactnative_var_float': 6.9,
+              'reactnative_var_boolean': true
+            };
+            console.log(`Creating variables: ${JSON.stringify(variables)}`);
+            CleverTap.defineVariables(variables);
+            break;
+          case 84:
+            CleverTap.fetchVariables((err, success) => {
+              console.log('fetchVariables result: ', success);
+            });
+            break;
+          case 85:
+              CleverTap.onVariablesChanged((variables) => {
+                console.log('onVariablesChanged: ', variables);
+              });
+              break;
+          case 86:
+              CleverTap.onValueChanged('reactnative_var_string', (variable) => {
+                console.log('onValueChanged: ', variable);
+                });
+              break;
+        }
     }
-  };
 
   render() {
     return (
@@ -503,23 +559,57 @@ export default class App extends Component {
       }
     });
 
-    const array = [
-      {
-        expanded: false,
-        category_Name: 'User Properties',
-        sub_Category: [
-          {id: 1, name: 'pushProfile'},
-          {id: 2, name: 'set Multi Values For Key'},
+        const array = [
           {
-            id: 3,
-            name: 'removeMultiValueForKey',
+            expanded: false,
+            category_Name: 'Product Experiences: Vars',
+            sub_Category: [
+              {
+                id: 80,
+                name: 'Sync Variables'
+              },
+              {
+                id: 81,
+                name: 'Get Variables'
+              },
+              {
+                id: 82,
+                name: 'Get Variable Value for name \'reactnative_var_string\''
+              },
+              {
+                id: 83,
+                name: 'Define Variables'
+              },
+              {
+                id: 84,
+                name: 'Fetch Variables'
+              },
+              {
+                id: 85,
+                name: 'Add \'OnVariablesChanged\' listener'
+              },
+              {
+                id: 86,
+                name: 'Add \'OnValueChanged\' listener for name \'reactnative_var_string\''
+              }
+            ],
           },
-          {id: 4, name: 'removeValueForKey'},
-          {id: 5, name: 'addMultiValueForKey'},
-          {id: 500, name: 'Increment Value'},
-          {id: 501, name: 'Decrement Value'},
-        ],
-      },
+          {
+            expanded: false,
+            category_Name: 'User Properties',
+            sub_Category: [
+              {id: 1, name: 'pushProfile'},
+              {id: 2, name: 'set Multi Values For Key'},
+              {
+                id: 3,
+                name: 'removeMultiValueForKey',
+              },
+              {id: 4, name: 'removeValueForKey'},
+              {id: 5, name: 'addMultiValueForKey'},
+              {id: 500, name: 'Increment Value'},
+              {id: 501, name: 'Decrement Value'},
+            ],
+          },
 
       {
         expanded: false,
@@ -1093,34 +1183,35 @@ productConfig = () => {
   });
 };
 fetch = () => {
-  alert('Check Console for update result');
-  //Fetch
-  CleverTap.fetch();
+    // alert('Check Console for update result');
+    //Fetch
+    CleverTap.fetch();
 };
 activate = () => {
-  alert('Check Console for update result');
-  //Activate
-  CleverTap.activate();
+    // alert('Check Console for update result');
+    //Activate
+    CleverTap.activate();
 };
 fetchAndActivate = () => {
-  alert('Check Console for update result');
+    // alert('Check Console for update result');
 
-  //Fetch And Activate
-  CleverTap.fetchAndActivate();
+    //Fetch And Activate
+    CleverTap.fetchAndActivate();
 };
 fetchwithMinIntervalinsec = () => {
-  alert('Check Console for update result');
+    // alert('Check Console for update result');
 
-  //Fetch Minimum Time Interval
-  CleverTap.fetchWithMinimumIntervalInSeconds(60);
+    //Fetch Minimum Time Interval
+    CleverTap.fetchWithMinimumIntervalInSeconds(60);
 };
 
 setMinimumFetchIntervalInSeconds = () => {
-  alert('Check Console for update result');
+    // alert('Check Console for update result');
 
-  //Set Minimum Interval
-  CleverTap.setMinimumFetchIntervalInSeconds(60);
+    //Set Minimum Interval
+    CleverTap.setMinimumFetchIntervalInSeconds(60);
 };
+
 getBoolean = () => {
   //Boolean
   CleverTap.getProductConfigBoolean('is_shown', (err, res) => {
@@ -1128,8 +1219,9 @@ getBoolean = () => {
     alert(`PC is_shown val in boolean: ${res}`);
   });
 };
+
 getLong = () => {
-  alert('Check Console for update result');
+    // alert('Check Console for update result');
 
   //Number
   CleverTap.getNumber('msg_count', (err, res) => {
@@ -1144,7 +1236,7 @@ getDouble = () => {
   });
 };
 getString = () => {
-  alert('Check Console for update result');
+    // alert('Check Console for update result');
 
   //Set Minimum Interval
   //String
@@ -1154,7 +1246,7 @@ getString = () => {
   });
 };
 getStrings = () => {
-  alert('Check Console for update result');
+    // alert('Check Console for update result');
 
   //Set Minimum Interval
   CleverTap.getProductConfigString('json', (err, res) => {
@@ -1163,9 +1255,9 @@ getStrings = () => {
   });
 };
 reset_config = () => {
-  alert('Check Console for update result');
-  //Reset Product config
-  CleverTap.resetProductConfig();
+    // alert('Check Console for update result');
+    //Reset Product config
+    CleverTap.resetProductConfig();
 };
 
 getLastFetchTimeStampInMillis = () => {

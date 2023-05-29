@@ -17,11 +17,14 @@
 #import "CleverTapInstanceConfig.h"
 #import "CTLocalInApp.h"
 #import "Clevertap+PushPermission.h"
+#import "CleverTap+CTVar.h"
+#import "CTVar.h"
 
 static NSDateFormatter *dateFormatter;
 
 @interface CleverTapReact()
 @property CleverTap *cleverTapInstance;
+@property(nonatomic, strong) NSMutableDictionary *allVariables;
 @end
 
 @implementation CleverTapReact
@@ -52,6 +55,10 @@ RCT_EXPORT_MODULE();
         kCleverTapPushNotificationClicked: kCleverTapPushNotificationClicked,
         kCleverTapPushPermissionResponseReceived: kCleverTapPushPermissionResponseReceived,
         kCleverTapInAppNotificationShowed: kCleverTapInAppNotificationShowed,
+        kCleverTapOnVariablesChanged:
+            kCleverTapOnVariablesChanged,
+        kCleverTapOnValueChanged:
+            kCleverTapOnValueChanged,
         kXPS: kXPS
     };
 }
@@ -62,6 +69,15 @@ RCT_EXPORT_MODULE();
 
 
 # pragma mark - Launch
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.allVariables = [NSMutableDictionary dictionary];
+    }
+    return self;
+}
 
 - (CleverTap *)cleverTapInstance {
     if (_cleverTapInstance != nil) {
@@ -95,6 +111,12 @@ RCT_EXPORT_METHOD(getInitialUrl:(RCTResponseSenderBlock)callback) {
     } else {
         [self returnResult:nil withCallback:callback andError:@"CleverTap initialUrl is nil"];
     }
+}
+
+RCT_EXPORT_METHOD(setLibrary:(NSString*)name andVersion:(int)version) {
+    RCTLogInfo(@"[CleverTap setLibrary:%@ andVersion:%d]", name, version);
+    [[self cleverTapInstance] setLibrary:name];
+    [[self cleverTapInstance] setCustomSdkVersion:name version:version];
 }
 
 #pragma mark - Push Notifications
@@ -478,6 +500,36 @@ RCT_EXPORT_METHOD(setDebugLevel:(int)level) {
     return _profile;
 }
 
+- (CTVar *)createVarForName:(NSString *)name andValue:(id)value {
+
+    if ([value isKindOfClass:[NSString class]]) {
+        return [[self cleverTapInstance]defineVar:name withString:value];
+    }
+    if ([value isKindOfClass:[NSDictionary class]]) {
+        return [[self cleverTapInstance]defineVar:name withDictionary:value];
+    }
+    if ([value isKindOfClass:[NSNumber class]]) {
+        if ([self isBoolNumber:value]) {
+            return [[self cleverTapInstance]defineVar:name withBool:value];
+        }
+        return [[self cleverTapInstance]defineVar:name withNumber:value];
+    }
+    return nil;
+}
+
+- (BOOL)isBoolNumber:(NSNumber *)number {
+    CFTypeID boolID = CFBooleanGetTypeID();
+    CFTypeID numID = CFGetTypeID(CFBridgingRetain(number));
+    return (numID == boolID);
+}
+
+- (NSMutableDictionary *)getVariableValues {
+    NSMutableDictionary *varValues = [NSMutableDictionary dictionary];
+    [self.allVariables enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, CTVar*  _Nonnull var, BOOL * _Nonnull stop) {
+        varValues[key] = var.value;
+    }];
+    return varValues;
+}
 
 #pragma mark - App Inbox
 
@@ -540,6 +592,18 @@ RCT_EXPORT_METHOD(markReadInboxMessageForId:(NSString*)messageId) {
 RCT_EXPORT_METHOD(deleteInboxMessageForId:(NSString*)messageId) {
     RCTLogInfo(@"[CleverTap deleteInboxMessageForId]");
     [[self cleverTapInstance] deleteInboxMessageForID:messageId];
+}
+
+RCT_EXPORT_METHOD(markReadInboxMessagesForIDs:(NSArray*)messageIds) {
+    if (!messageIds) return;
+    RCTLogInfo(@"[CleverTap markReadInboxMessagesForIDs]");
+    [[self cleverTapInstance] markReadInboxMessagesForIDs:messageIds];
+}
+
+RCT_EXPORT_METHOD(deleteInboxMessagesForIDs:(NSArray*)messageIds) {
+    if (!messageIds) return;
+    RCTLogInfo(@"[CleverTap deleteInboxMessagesForIDs]");
+    [[self cleverTapInstance] deleteInboxMessagesForIDs:messageIds];
 }
 
 RCT_EXPORT_METHOD(dismissInbox) {
@@ -883,5 +947,70 @@ RCT_EXPORT_METHOD(isPushPermissionGranted:(RCTResponseSenderBlock)callback){
     }
 }
 
-@end
+#pragma mark - Product Experiences: Vars
 
+RCT_EXPORT_METHOD(syncVariables) {
+    RCTLogInfo(@"[CleverTap syncVariables]");
+    [[self cleverTapInstance]syncVariables];
+}
+
+RCT_EXPORT_METHOD(syncVariablesinProd:(BOOL)isProduction) {
+    RCTLogInfo(@"[CleverTap syncVariables:isProduction]");
+    [[self cleverTapInstance]syncVariables:isProduction];
+}
+
+RCT_EXPORT_METHOD(getVariable:(NSString * _Nonnull)name callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getVariable:name]");
+    CTVar *var = self.allVariables[name];
+    [self returnResult:var.value withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(getVariables:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getVariables]");
+
+    NSMutableDictionary *varValues = [self getVariableValues];
+    [self returnResult:varValues withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(fetchVariables:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap fetchVariables]");
+    [[self cleverTapInstance]fetchVariables:^(BOOL success) {
+        [self returnResult:@(success) withCallback:callback andError:nil];
+    }];
+}
+
+RCT_EXPORT_METHOD(defineVariables:(NSDictionary*)variables) {
+    RCTLogInfo(@"[CleverTap defineVariables]");
+
+    if (!variables) return;
+
+    [variables enumerateKeysAndObjectsUsingBlock:^(NSString*  _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
+        CTVar *var = [self createVarForName:key andValue:value];
+
+        if (var) {
+            self.allVariables[key] = var;
+        }
+    }];
+}
+
+RCT_EXPORT_METHOD(onVariablesChanged) {
+    RCTLogInfo(@"[CleverTap onVariablesChanged]");
+    [[self cleverTapInstance]onVariablesChanged:^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnVariablesChanged object:nil userInfo:[self getVariableValues]];
+    }];
+}
+
+RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
+    RCTLogInfo(@"[CleverTap onValueChanged]");
+    CTVar *var = self.allVariables[name];
+    if (var) {
+        [var onValueChanged:^{
+            NSDictionary *varResult = @{
+                var.name: var.value
+            };
+            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnValueChanged object:nil userInfo:varResult];
+        }];
+    }
+}
+
+@end
