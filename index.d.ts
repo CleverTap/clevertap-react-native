@@ -21,7 +21,7 @@
    export function removeListener(eventName: string): void;
 
    /**
-    * Deprecated - Since version 5.0.0. Use removeListener(eventName) instead
+    * @deprecated - Since version 5.0.0. Use removeListener(eventName) instead
     * Remove all event listeners
     */
    export function removeListeners(): void;

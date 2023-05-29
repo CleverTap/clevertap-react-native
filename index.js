@@ -6,7 +6,7 @@ const EventEmitter = NativeModules.CleverTapReactEventEmitter ? new NativeEventE
 /**
 * Set the CleverTap React-Native library name with current version
 * @param {string} libName - Library name will be "React-Native"
-* @param {int} libVersion - The updated library version. If current version is 1.0.3 then pass as 10103  
+* @param {int} libVersion - The updated library version. If current version is 1.1.0 then pass as 10100  
 */
 const libName = 'React-Native';
 const libVersion = 10100; 
@@ -58,10 +58,10 @@ var CleverTap = {
     CleverTapInboxMessageTapped: CleverTapReact.CleverTapInboxMessageTapped,
     CleverTapDisplayUnitsLoaded: CleverTapReact.CleverTapDisplayUnitsLoaded,
     CleverTapInAppNotificationButtonTapped: CleverTapReact.CleverTapInAppNotificationButtonTapped,
-    CleverTapFeatureFlagsDidUpdate: CleverTapReact.CleverTapFeatureFlagsDidUpdate, // Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
-    CleverTapProductConfigDidInitialize: CleverTapReact.CleverTapProductConfigDidInitialize, // Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
-    CleverTapProductConfigDidFetch: CleverTapReact.CleverTapProductConfigDidFetch, // Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
-    CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate, // Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapFeatureFlagsDidUpdate: CleverTapReact.CleverTapFeatureFlagsDidUpdate, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapProductConfigDidInitialize: CleverTapReact.CleverTapProductConfigDidInitialize, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapProductConfigDidFetch: CleverTapReact.CleverTapProductConfigDidFetch, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
     CleverTapPushNotificationClicked: CleverTapReact.CleverTapPushNotificationClicked,
     CleverTapPushPermissionResponseReceived: CleverTapReact.CleverTapPushPermissionResponseReceived,
     CleverTapOnVariablesChanged: CleverTapReact.CleverTapOnVariablesChanged,
@@ -92,7 +92,7 @@ var CleverTap = {
     },
 
     /**
-    *  Deprecated - Since version 0.5.0. Use removeListener(eventName) instead
+    *  @deprecated - Since version 0.5.0. Use removeListener(eventName) instead
     *  Remove all event listeners
     */
     removeListeners: function () {
@@ -369,7 +369,7 @@ var CleverTap = {
     },
 
     /**
-     * Deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
+     * @deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
     * Get a unique CleverTap identifier suitable for use with install attribution providers
     * @param {function(err, res)} callback that returns a string res
     */
@@ -378,7 +378,7 @@ var CleverTap = {
     },
 
     /**
-     * Deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
+     * @deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
     * Get the user profile's CleverTap identifier value
     * @param {function(err, res)} callback that returns a string res
     */
@@ -686,7 +686,7 @@ var CleverTap = {
 
 
     /**
-     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
      * 
      * Sets default product config params using the given object.
      * @param {object} productConfigMap - key-value product config properties.  keys are strings and values can be string, double, integer, boolean or json in string format.
@@ -696,7 +696,7 @@ var CleverTap = {
     },
 
     /**
-     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
      * 
      * Starts fetching product configs, adhering to the default minimum fetch interval.
      */
@@ -705,7 +705,7 @@ var CleverTap = {
     },
 
     /**
-     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
      * 
      * Starts fetching product configs, adhering to the specified minimum fetch interval in seconds.
      * @param {int} intervalInSecs - minimum fetch interval in seconds.
@@ -715,7 +715,7 @@ var CleverTap = {
     },
 
     /**
-     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
      * 
      * Activates the most recently fetched product configs, so that the fetched key value pairs take effect.
      */
@@ -724,7 +724,7 @@ var CleverTap = {
     },
 
     /**
-     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
      * 
      * Asynchronously fetches and then activates the fetched product configs.
      */
@@ -733,7 +733,7 @@ var CleverTap = {
     },
 
     /**
-     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
      * 
      * Sets the minimum interval in seconds between successive fetch calls.
      * @param {int} intervalInSecs - interval in seconds between successive fetch calls.
@@ -743,7 +743,7 @@ var CleverTap = {
     },
 
     /**
-     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
      * 
      * Deletes all activated, fetched and defaults configs as well as all Product Config settings.
      */
@@ -762,7 +762,7 @@ var CleverTap = {
     },
 
     /**
-     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
      * 
      * Returns the product config parameter value for the given key as a boolean.
      * @param {string} the property key
@@ -773,7 +773,7 @@ var CleverTap = {
     },
 
     /**
-     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
      * 
      * Returns the product config parameter value for the given key as a number.
      * @param {string} the property key
@@ -784,7 +784,7 @@ var CleverTap = {
     },
 
     /**
-     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
      * 
      * Returns the last fetched timestamp in millis.
      * @param {function(err, res)} callback that returns value of timestamp in millis as a string.
@@ -794,7 +794,7 @@ var CleverTap = {
     },
 
     /**
-     * Deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+     * @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
      * 
      * Getter to return the feature flag configured at the dashboard
      * @param {string} key of the feature flag
