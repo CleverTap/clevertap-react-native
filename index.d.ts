@@ -778,3 +778,4 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export const CleverTapPushNotificationClicked: string;
   export const CleverTapPushPermissionResponseReceived: string;
   export const CleverTapOnVariablesChanged: string;
+  export const CleverTapOnValueChanged: string;
