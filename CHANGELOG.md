@@ -12,20 +12,20 @@ Version 1.1.0 *(29th May 2023)*
 
 ***Deprecated:*** The following methods and classes related to Product Config and Feature Flags have been marked as deprecated in this release, instead use new Remote Config Variables feature. These methods and classes will be removed in the future versions with prior notice.
     
-  - *Product config*
-    - setDefaultsMap
-    - fetch
-    - activate
-    - fetchAndActivate
-    - setMinimumFetchIntervalInSeconds
-    - resetProductConfig
-    - getProductConfigString
-    - getProductConfigBoolean
-    - getNumber
-    - getLastFetchTimeStampInMillis
+  - Product config
+    - `setDefaultsMap`
+    - `fetch`
+    - `activate`
+    - `fetchAndActivate`
+    - `setMinimumFetchIntervalInSeconds`
+    - `resetProductConfig`
+    - `getProductConfigString`
+    - `getProductConfigBoolean`
+    - `getNumber`
+    - `getLastFetchTimeStampInMillis`
 
-  - *Feature flags*
-    - getFeatureFlag
+  - Feature flags
+    - `getFeatureFlag`
 
 **Breaking Change**
 - Streamlines the payload for various callbacks across Android and iOS platform. Refer [doc](https://github.com/CleverTap/clevertap-react-native/blob/master/docs/callbackPayloadFormat.md) for detailed changes.
