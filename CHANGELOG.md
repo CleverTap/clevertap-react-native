@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Version 1.1.1 *(2nd May 2023)*
+-------------------------------------------
+- Bug fixes and performance improvements.
+
 Version 1.1.0 *(29th May 2023)*
 -------------------------------------------
 **New Features**
