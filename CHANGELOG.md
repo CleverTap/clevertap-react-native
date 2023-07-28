@@ -8,8 +8,8 @@ Version 1.1.1 *(2nd May 2023)*
 Version 1.1.0 *(29th May 2023)*
 -------------------------------------------
 **New Updates**
-- Supports [CleverTap Android SDK v5.0.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-500-may-5-2023)
-- Supports [CleverTap iOS SDK v5.0.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-501-may-17-2023)
+- Supports [CleverTap Android SDK v5.0.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-500-may-5-2023).
+- Supports [CleverTap iOS SDK v5.0.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-501-may-17-2023).
 - Adds support for **Remote Config Variables**. Please refer to the [Remote Config Variables doc](https://github.com/CleverTap/clevertap-react-native/blob/da2c3188fb5db6248f136e52f4b9e3372c26e78a/docs/Variables.md) to read more on how to integrate this to your app.
 - Adds new API `dismissInbox()` to dismiss the App Inbox screen.
 - Adds new APIs, `markReadInboxMessagesForIDs(Array)` and `deleteInboxMessagesForIDs(Array)` to mark read and delete an array of Inbox Messages respectively.
@@ -19,19 +19,26 @@ Version 1.1.0 *(29th May 2023)*
 ***Deprecated:*** The following methods and classes related to Product Config and Feature Flags have been marked as deprecated in this release, instead use new Remote Config Variables feature. These methods and classes will be removed in the future versions with prior notice.
     
   - Product config
-    - `setDefaultsMap`
-    - `fetch`
-    - `activate`
-    - `fetchAndActivate`
-    - `setMinimumFetchIntervalInSeconds`
-    - `resetProductConfig`
-    - `getProductConfigString`
-    - `getProductConfigBoolean`
-    - `getNumber`
-    - `getLastFetchTimeStampInMillis`
+    - Methods
+      - `setDefaultsMap`
+      - `fetch`
+      - `activate`
+      - `fetchAndActivate`
+      - `setMinimumFetchIntervalInSeconds`
+      - `resetProductConfig`
+      - `getProductConfigString`
+      - `getProductConfigBoolean`
+      - `getNumber`
+      - `getLastFetchTimeStampInMillis`
+
+    - Callbacks
+      - `CleverTap.CleverTapProductConfigDidInitialize`
+      - `CleverTap.CleverTapProductConfigDidFetch`
+      - `CleverTap.CleverTapProductConfigDidActivate`
 
   - Feature flags
     - `getFeatureFlag`
+    - `CleverTap.CleverTapFeatureFlagsDidUpdate` callback
 
 **Breaking Change**
 - Streamlines the payload for various callbacks across Android and iOS platform. Refer [doc](https://github.com/CleverTap/clevertap-react-native/blob/master/docs/callbackPayloadFormat.md) for detailed changes.
