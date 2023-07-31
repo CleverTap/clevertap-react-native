@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+Version 1.1.2 *(31st July 2023)*
+-------------------------------------------
+**New Updates**
+- Supports [CleverTap iOS SDK v5.1.2](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-512-july-28-2023).
+
+**Bug Fixes**
+- [iOS platform]Fixed a bug where the App Inbox would appear empty.
+
 Version 1.1.1 *(2nd May 2023)*
 -------------------------------------------
 - Bug fixes and performance improvements.
