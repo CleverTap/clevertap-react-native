@@ -683,6 +683,10 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
     if (noMessageText) {
         _config.noMessageViewText = noMessageText;
     }
+    NSString *firstTabTitle = [dict valueForKey:@"firstTabTitle"];
+    if (firstTabTitle) {
+        _config.firstTabTitle = firstTabTitle;
+    }
     return _config;
 }
 - (UIColor *)ct_colorWithHexString:(NSString *)string alpha:(CGFloat)alpha{
