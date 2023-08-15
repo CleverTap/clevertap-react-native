@@ -88,6 +88,36 @@ CleverTap.recordChargedEvent({'totalValue': 20, 'category': 'books'}, [{'title':
 
 -----------
 
+## Encryption of PII data
+PII data is stored across the SDK and could be sensitive information. From CleverTap SDK v5.2.0 onwards, you can enable encryption for PII data wiz. Email, Identity, Name and Phone.
+
+Currently 2 levels of encryption are supported i.e None(0) and Medium(1). Encryption level is None by default.
+**None** - All stored data is in plaintext
+**Medium** - PII data is encrypted completely.
+
+The only way to set the encryption level for the default instance is through the `AndroidManifest.xml`.
+For the same, add the following to the `AndroidManifest.xml` file:
+```XML
+<meta-data
+    android:name="CLEVERTAP_ENCRYPTION_LEVEL"
+    android:value="1" />
+```
+
+Different instances can have different encryption levels. To set an encryption level for an additional instance:
+
+```kotlin
+val clevertapAdditionalInstanceConfig = CleverTapInstanceConfig.createInstance(
+    applicationContext,
+    "ADDITIONAL_CLEVERTAP_ACCOUNT_ID",
+    "ADDITIONAL_CLEVERTAP_ACCOUNT_TOKEN"
+)
+
+clevertapAdditionalInstanceConfig.setEncryptionLevel(CryptHandler.EncryptionLevel.MEDIUM)
+val clevertapAdditionalInstance = CleverTapAPI.instanceWithConfig(applicationContext ,clevertapAdditionalInstanceConfig)
+```
+
+-----------
+
 ## App Inbox
 
 #### Initialize the CleverTap App Inbox Method

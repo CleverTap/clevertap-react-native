@@ -1,6 +1,21 @@
 Change Log
 ==========
 
+Version 1.2.0 *(16th July 2023)*
+-------------------------------------------
+**New Updates**
+- Supports [CleverTap Android SDK v5.2.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-520-august-10-2023).
+- Adds support for encryption of PII data wiz. Email, Identity, Name and Phone. Please refer to [Usage.md](https://github.com/CleverTap/clevertap-react-native/blob/master/docs/usage.md#encryption-of-pii-data) file to read more on how to enable/disable encryption. Encryption of PII data
+- Adds support for custom KV pairs common to all inbox messages in AppInbox.
+
+**Bug Fixes**
+- Fixes a bug where addMultiValueForKey and addMultiValuesForKey were overwriting the current values of the user properties instead of appending it.
+- Fixes [#393](https://github.com/CleverTap/clevertap-android-sdk/issues/393) - push permission flow crash when context in CoreMetadata is null.
+
+Version 1.1.1 *(2nd May 2023)*
+-------------------------------------------
+- Bug fixes and performance improvements.
+
 Version 1.1.2 *(31st July 2023)*
 -------------------------------------------
 **New Updates**
