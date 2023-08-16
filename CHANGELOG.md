@@ -3,14 +3,33 @@ Change Log
 
 Version 1.2.0 *(16th July 2023)*
 -------------------------------------------
-**New Updates**
-- Supports [CleverTap Android SDK v5.2.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-520-august-10-2023).
-- Adds support for encryption of PII data wiz. Email, Identity, Name and Phone. Please refer to [Usage.md](https://github.com/CleverTap/clevertap-react-native/blob/master/docs/usage.md#encryption-of-pii-data) file to read more on how to enable/disable encryption. Encryption of PII data
-- Adds support for custom KV pairs common to all inbox messages in AppInbox.
+
+**What's new**
+
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v5.2.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-520-august-10-2023).
+  * ***Note: RenderMax Push SDK functionality is now supported directly within the CleverTap Core SDK***. Please remove the [integrated RenderMax SDK](https://developer.clevertap.com/docs/react-native-push-notification#integrate-rendermax-push-sdk-with-react-native) before you upgrade to CleverTap React Native SDK for this version.
+  * Adds support for encryption of PII data wiz. Email, Identity, Name and Phone. Please refer to [Usage.md](https://github.com/CleverTap/clevertap-react-native/blob/master/docs/usage.md#encryption-of-pii-data) file to read more on how to enable/disable encryption. Encryption of PII data.
+  * Adds support for custom KV pairs common to all inbox messages in App Inbox.
+  * Adds support for developer defined default notification channel. Please refer to the [Usage.md](https://github.com/CleverTap/clevertap-react-native/blob/master/docs/usage.md#default-notification-channel) file to read more on how to setup default channel in your app. Also please note that this is only supported for CleverTap core notifications. Support for push templates will be released soon.
+
+**Breaking API Changes**
+* **[Android Platform]**
+  * Adds `SCCampaignOptOut` Event to Restricted Events Name List for **internal use**.
+  * Adds custom sdk versions to `af` field for **internal use**.
+
+**Breaking API Changes**
+* **[Android Platform]**
+  * **CTFlushPushImpressionsWork breaks custom WorkerFactory implementation of an App**:
+    * If you are using custom `WorkFactory` implementation of `WorkManager` for Android platform then make sure that you correctly handle workers defined by CleverTap SDK and other third party dependencies.
+    * You must return `null` from `createWorker()` for any unknown workerClassName. Please check implementation provided in the blog [here](https://medium.com/androiddevelopers/customizing-workmanager-fundamentals-fdaa17c46dd2).
 
 **Bug Fixes**
-- Fixes a bug where addMultiValueForKey and addMultiValuesForKey were overwriting the current values of the user properties instead of appending it.
-- Fixes [#393](https://github.com/CleverTap/clevertap-android-sdk/issues/393) - push permission flow crash when context in CoreMetadata is null.
+* **[Android Platform]**
+  * Fixes [#393](https://github.com/CleverTap/clevertap-android-sdk/issues/393) - push permission flow crash when context in CoreMetadata is null.
+  * Fixes [#428](https://github.com/CleverTap/clevertap-android-sdk/issues/428) - Race-condition when detecting if an in-app message should show.
+  * Fixes Push primer alert dialog freeze behavior, which became unresponsive when clicked outside the window.
+  * Fixes a bug where addMultiValueForKey and addMultiValuesForKey were overwriting the current values of the user properties instead of appending it.
 
 Version 1.1.1 *(2nd May 2023)*
 -------------------------------------------
