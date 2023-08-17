@@ -13,7 +13,7 @@ Version 1.2.0 *(16th July 2023)*
   * Adds support for custom KV pairs common to all inbox messages in App Inbox.
   * Adds support for developer defined default notification channel. Please refer to the [Usage.md](https://github.com/CleverTap/clevertap-react-native/blob/master/docs/usage.md#default-notification-channel) file to read more on how to setup default channel in your app. Also please note that this is only supported for CleverTap core notifications. Support for push templates will be released soon.
 
-**Breaking API Changes**
+** API Changes**
 * **[Android Platform]**
   * Adds `SCCampaignOptOut` Event to Restricted Events Name List for **internal use**.
   * Adds custom sdk versions to `af` field for **internal use**.
