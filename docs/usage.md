@@ -95,26 +95,15 @@ Currently 2 levels of encryption are supported i.e None(0) and Medium(1). Encryp
 **None** - All stored data is in plaintext
 **Medium** - PII data is encrypted completely.
 
-The only way to set the encryption level for the default instance is through the `AndroidManifest.xml`.
-For the same, add the following to the `AndroidManifest.xml` file:
+#### Android
+Add encryption level in the `AndroidManifest.xml` as following:
 ```XML
 <meta-data
     android:name="CLEVERTAP_ENCRYPTION_LEVEL"
     android:value="1" />
 ```
-
-Different instances can have different encryption levels. To set an encryption level for an additional instance:
-
-```kotlin
-val clevertapAdditionalInstanceConfig = CleverTapInstanceConfig.createInstance(
-    applicationContext,
-    "ADDITIONAL_CLEVERTAP_ACCOUNT_ID",
-    "ADDITIONAL_CLEVERTAP_ACCOUNT_TOKEN"
-)
-
-clevertapAdditionalInstanceConfig.setEncryptionLevel(CryptHandler.EncryptionLevel.MEDIUM)
-val clevertapAdditionalInstance = CleverTapAPI.instanceWithConfig(applicationContext ,clevertapAdditionalInstanceConfig)
-```
+#### iOS
+Add the `CleverTapEncryptionLevel` String key to `info.plist` file where value 1 means Medium and 0 means None. Encryption Level will be None if any other value is provided.
 
 -----------
 

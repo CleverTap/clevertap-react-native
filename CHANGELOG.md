@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 1.2.0 *(16th July 2023)*
+Version 1.2.0 *(18th August 2023)*
 -------------------------------------------
 
 **What's new**
@@ -9,11 +9,16 @@ Version 1.2.0 *(16th July 2023)*
 * **[Android Platform]**
   * Supports [CleverTap Android SDK v5.2.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-520-august-10-2023).
   * ***Note: RenderMax Push SDK functionality is now supported directly within the CleverTap Core SDK***. Please remove the [integrated RenderMax SDK](https://developer.clevertap.com/docs/react-native-push-notification#integrate-rendermax-push-sdk-with-react-native) before you upgrade to CleverTap React Native SDK for this version.
-  * Adds support for encryption of PII data wiz. Email, Identity, Name and Phone. Please refer to [Usage.md](https://github.com/CleverTap/clevertap-react-native/blob/master/docs/usage.md#encryption-of-pii-data) file to read more on how to enable/disable encryption. Encryption of PII data.
-  * Adds support for custom KV pairs common to all inbox messages in App Inbox.
   * Adds support for developer defined default notification channel. Please refer to the [Usage.md](https://github.com/CleverTap/clevertap-react-native/blob/master/docs/usage.md#default-notification-channel) file to read more on how to setup default channel in your app. Also please note that this is only supported for CleverTap core notifications. Support for push templates will be released soon.
 
-** API Changes**
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v5.2.0](https://github.com/CleverTap/clevertap-ios-sdk/releases/tag/5.2.0).
+
+* **[Android and iOS Platform]**
+  * Adds support for encryption of PII data wiz. Email, Identity, Name and Phone. Please refer to [Usage.md](https://github.com/CleverTap/clevertap-react-native/blob/master/docs/usage.md#encryption-of-pii-data) file to read more on how to enable/disable encryption of PII data.
+  * Adds support for custom KV pairs common to all inbox messages in App Inbox.
+
+**API Changes**
 * **[Android Platform]**
   * Adds `SCCampaignOptOut` Event to Restricted Events Name List for **internal use**.
   * Adds custom sdk versions to `af` field for **internal use**.
@@ -30,10 +35,6 @@ Version 1.2.0 *(16th July 2023)*
   * Fixes [#428](https://github.com/CleverTap/clevertap-android-sdk/issues/428) - Race-condition when detecting if an in-app message should show.
   * Fixes Push primer alert dialog freeze behavior, which became unresponsive when clicked outside the window.
   * Fixes a bug where addMultiValueForKey and addMultiValuesForKey were overwriting the current values of the user properties instead of appending it.
-
-Version 1.1.1 *(2nd May 2023)*
--------------------------------------------
-- Bug fixes and performance improvements.
 
 Version 1.1.2 *(31st July 2023)*
 -------------------------------------------
