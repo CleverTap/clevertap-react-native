@@ -88,6 +88,25 @@ CleverTap.recordChargedEvent({'totalValue': 20, 'category': 'books'}, [{'title':
 
 -----------
 
+## Encryption of PII data
+PII data is stored across the SDK and could be sensitive information. From CleverTap SDK v5.2.0 onwards, you can enable encryption for PII data wiz. Email, Identity, Name and Phone.
+
+Currently 2 levels of encryption are supported i.e None(0) and Medium(1). Encryption level is None by default.
+**None** - All stored data is in plaintext
+**Medium** - PII data is encrypted completely.
+
+#### Android
+Add encryption level in the `AndroidManifest.xml` as following:
+```XML
+<meta-data
+    android:name="CLEVERTAP_ENCRYPTION_LEVEL"
+    android:value="1" />
+```
+#### iOS
+Add the `CleverTapEncryptionLevel` String key to `info.plist` file where value 1 means Medium and 0 means None. Encryption Level will be None if any other value is provided.
+
+-----------
+
 ## App Inbox
 
 #### Initialize the CleverTap App Inbox Method
@@ -212,6 +231,19 @@ Follow the [Push Primer integration doc](pushprimer.md).
 ```javascript 
 CleverTap.createNotificationChannel("CtRNS", "Clever Tap React Native Testing", "CT React Native Testing", 1, true);			
 ```
+
+#### Default Notification Channel
+Starting from CleverTap React Native SDK v1.2.0, we have introduced a new feature that allows developers to define a default notification channel for their app. This feature provides flexibility in handling push notifications. Please note that this is only supported for clevertap core notifications. Support for push templates will be released soon. To specify the default notification channel ID, you can add the following metadata in your app's manifest file:
+
+```XML
+<meta-data android:name="CLEVERTAP_DEFAULT_CHANNEL_ID" android:value="your_default_channel_id" />
+```
+
+By including this metadata, you can define a specific notification channel that CleverTap will use if the channel provided in push payload is not registered by your app. This ensures that push notifications are displayed consistently even if the app's notification channels are not set up.
+
+In case the SDK does not find the default channel ID specified in the manifest, it will automatically fallback to using a default channel called "Miscellaneous". This ensures that push notifications are still delivered, even if no specific default channel is specified in the manifest.
+
+This enhancement provides developers with greater control over the default notification channel used by CleverTap for push notifications, ensuring a seamless and customizable user experience.
 
 #### Delete Notification Channel
 
