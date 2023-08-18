@@ -218,7 +218,7 @@ dependencies {
 
 
     //clevertap
-    implementation 'com.clevertap.android:clevertap-android-sdk:5.0.0'
+    implementation 'com.clevertap.android:clevertap-android-sdk:5.2.0'
     implementation "com.clevertap.android:push-templates:1.0.9"
     implementation project(':clevertap-react-native')
 
@@ -226,7 +226,7 @@ dependencies {
     // 3rd party
 	implementation 'com.github.bumptech.glide:glide:4.12.0' //Mandatory for App Inbox
 
-    implementation "com.clevertap.android:clevertap-rendermax-sdk:1.0.3"
+    //implementation "com.clevertap.android:clevertap-rendermax-sdk:1.0.3"
 
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
