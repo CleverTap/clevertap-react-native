@@ -27,5 +27,6 @@ target 'Example' do
 end
 
 target 'NotificationService' do
+  pod "CleverTap-iOS-SDK"
   pod "CTNotificationService"
 end
