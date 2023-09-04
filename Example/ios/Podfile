@@ -25,3 +25,7 @@ target 'Example' do
     end
    end
 end
+
+target 'NotificationService' do
+  pod "CTNotificationService"
+end
