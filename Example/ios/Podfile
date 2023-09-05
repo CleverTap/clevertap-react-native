@@ -30,3 +30,7 @@ target 'NotificationService' do
   pod "CleverTap-iOS-SDK"
   pod "CTNotificationService"
 end
+
+target 'NotificationContent' do
+  pod "CTNotificationContent"
+end
