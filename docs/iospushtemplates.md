@@ -4,32 +4,162 @@ CleverTap Push Templates SDK helps you engage with your users using fancy push n
 
 # Table of contents
 
-- [Installation](#installation)
+- [Notification Service](#notification-service)
+- [Notification Content](#notification-content)
 - [Dashboard Usage](#dashboard-usage)
 - [Template Types](#template-types)
 - [Template Keys](#template-keys)
 
-# Installation
+# Notification Service
 
 [(Back to top)](#table-of-contents)
-- Add Notification Content Extension (Push Templates) in a React Native iOS Project
+## Installation
+- Go to File -> New -> Target -> Notification Service Extension and select Objective-C language
+
+![NotificationServiceTarget](https://github.com/CleverTap/clevertap-react-native/blob/master/static/NotificationServiceTarget.png)
+- Update Podfile as below and do `pod install`, refer [example](https://github.com/CleverTap/clevertap-react-native/blob/master/Example/ios/Podfile) for detailed Podfile.
+```
+target 'NotificationService' do
+  pod "CTNotificationService"
+end
+```
+- Update your `NotificationService.h` as:
+```
+#import <CTNotificationService/CTNotificationService.h>
+
+@interface NotificationService : CTNotificationServiceExtension
+@end
+```
+- Update your `NotificationService.m` file as:
+```
+#import "NotificationService.h"
+
+@implementation NotificationService
+
+- (void)didReceiveNotificationRequest:(UNNotificationRequest *)request withContentHandler:(void (^)(UNNotificationContent * _Nonnull))contentHandler {
+  [super didReceiveNotificationRequest:request withContentHandler:contentHandler];
+}
+
+@end
+```
+
+## Push Impression
+- Add `pod "CleverTap-iOS-SDK" ` in podfile for notification service target as do `pod install`:
+```
+target 'NotificationService' do
+  pod "CleverTap-iOS-SDK"
+  pod "CTNotificationService"
+end
+```
+- Add CleverTap Account Id and Token in target `Info.plist` file as updated [here](https://github.com/CleverTap/clevertap-react-native/tree/master/Example/ios/Example/NotificationService/Info.plist)
+- Update your `NotificationService.m` file as:
+```
+#import "NotificationService.h"
+#import <CleverTap-iOS-SDK/CleverTap.h>
+
+@implementation NotificationService
+
+- (void)didReceiveNotificationRequest:(UNNotificationRequest *)request withContentHandler:(void (^)(UNNotificationContent * _Nonnull))contentHandler {
+  // Add CleverTap Account ID and Account token in your target .plist file
+  [CleverTap setDebugLevel:2];
+  NSDictionary *profile = @{
+                              @"Name": @"testUserA1",
+                              @"Identity": @123456,
+                              @"Email": @"test@test.com"
+  };
+  [[CleverTap sharedInstance] profilePush:profile];
+  [[CleverTap sharedInstance] recordNotificationViewedEventWithData: request.content.userInfo];
+
+  [super didReceiveNotificationRequest:request withContentHandler:contentHandler];
+}
+
+@end
+```
+
+- Refer [example](https://github.com/CleverTap/clevertap-react-native/tree/master/Example/ios/Example/NotificationService) for more details if you are using Objective-C language for the target.
+
+## Add Notification Service target using Swift language
+- Go to File -> New -> Target -> Notification Service Extension and select Swift language
+- Update Podfile and use `use_frameworks! :linkage => :static` as below and `pod install`:
+```
+platform :ios, '13.0'
+use_frameworks! :linkage => :static
+target 'Example' do
+  # ...
+end
+
+target 'NotificationService' do
+  pod "CTNotificationService"
+end
+```
+- Update your `NotificationService.swift` as
+```
+import CTNotificationService
+
+class NotificationService: CTNotificationServiceExtension {
+  override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+    super.didReceive(request, withContentHandler: contentHandler)
+  }
+}
+```
+
+## Push Impression using Swift language target
+- Add `pod "CleverTap-iOS-SDK" ` in podfile for notification service target and do `pod install` as
+```
+platform :ios, '13.0'
+use_frameworks! :linkage => :static
+target 'Example' do
+  # ...
+end
+
+target 'NotificationService' do
+  pod "CleverTap-iOS-SDK"
+  pod "CTNotificationService"
+end
+```
+- Add CleverTap Account Id and Token in target `Info.plist` file as updated [here](https://github.com/CleverTap/clevertap-react-native/tree/master/Example/ios/Example/NotificationService/Info.plist)
+- Update your `NotificationService.swift` file as:
+```
+import CTNotificationService
+import CleverTapSDK
+
+class NotificationService: CTNotificationServiceExtension {
+  override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+    let profile: Dictionary<String, AnyObject> = [
+      "Name": "testUserA1" as AnyObject,
+      "Identity": 123456 as AnyObject,
+      "Email": "test@test.com" as AnyObject ]
+    CleverTap.sharedInstance()?.profilePush(profile)
+    CleverTap.sharedInstance()?.recordNotificationViewedEvent(withData: request.content.userInfo)
+    super.didReceive(request, withContentHandler: contentHandler)
+  }
+}
+```
+
+# Notification Content
+
+[(Back to top)](#table-of-contents)
+
+Add Notification Content Extension (Push Templates) in a React Native iOS Project
 Notification Content Extension is an app extension that provides a custom interface when a user previews your notification in the notification center. To enable the functionality of CleverTap iOS Push templates, we need this extension in the project which act as subclass to our CTNotificationContent framework.
 
-Open Example.xcodeproj (or your app’s .xcodeproj file) in the ios folder of React Native project. Go to File > New > Target… and search with the name “Notification Content Extension“
+## Installation
+- Open Example.xcodeproj (or your app’s .xcodeproj file) in the ios folder of React Native project. 
+- Go to File > New > Target… and search with the name “Notification Content Extension“
 
 ![NotificationContentTarget](https://github.com/CleverTap/clevertap-react-native/blob/task/SDK-2395-RN-pushtemplates-support/static/NotificationContentTarget.png)
 
-Add “Notification Content“ as target name.
+- Add “Notification Content“ as target name.
 
 ![NotificationContent](https://github.com/CleverTap/clevertap-react-native/blob/task/SDK-2395-RN-pushtemplates-support/static/NotificationContent.png)
 
-Refer to https://github.com/CleverTap/CTNotificationContent#-setup for setting up Notification Content target so that it imports CTNotificationContent framework in the code. Make sure to add the necessary key-values in  the Info.plist file of NotificationContent target so that it recognises the identifier of the incoming notification.  
+- Refer to https://github.com/CleverTap/CTNotificationContent#-setup for setting up Notification Content target so that it imports CTNotificationContent framework in the code. Make sure to add the necessary key-values in  the Info.plist file of NotificationContent target so that it recognises the identifier of the incoming notification.  
 
 Alternatively, go to finder and replace newly created NotificationContent  (or your content extension) folder with the NotificationContent folder in CTNotificationContent Example project repository.
 
 ![Finder](https://github.com/CleverTap/clevertap-react-native/blob/task/SDK-2395-RN-pushtemplates-support/static/Finder.png)
 
-Add the following to a file named Podfile in the ios directory of your project.
+- Add the following to a file named Podfile in the ios directory of your project.
 ```
 use_frameworks!
 target 'NotificationContent' do
@@ -137,6 +267,22 @@ target 'reactnativedemo' do
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end
+```
+
+- Edit the Maininterface.storyboard in your NotificationContent target to a plain UIView. Steps: 
+  MainInterface.storyboard -> Expand View -> Click Label -> Delete
+
+![NotificationContentStoryboard](https://github.com/CleverTap/clevertap-react-native/blob/master/static/NotificationContentStoryboard.png)  
+
+- Update NotificationViewController.h, NotificationViewController.m and Info.plist as updated in [example app](https://github.com/CleverTap/clevertap-react-native/tree/master/Example/ios/Example/NotificationContent)
+- Set Notification categories from AppDelegate if you want to add category buttons in `didFinishLaunchingWithOptions:` method and add import `#import <UserNotifications/UserNotifications.h>`:
+```
+UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+UNNotificationAction *action1 = [UNNotificationAction actionWithIdentifier:@"action_1" title:@"Back" options:UNNotificationActionOptionNone];
+UNNotificationAction *action2 = [UNNotificationAction actionWithIdentifier:@"action_2" title:@"Next" options:UNNotificationActionOptionNone];
+UNNotificationAction *action3 = [UNNotificationAction actionWithIdentifier:@"action_3" title:@"View In App" options:UNNotificationActionOptionNone];
+UNNotificationCategory *cat = [UNNotificationCategory categoryWithIdentifier:@"CTNotification" actions:@[action1, action2, action3] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+[center setNotificationCategories:[NSSet setWithObjects:cat, nil]];
 ```
 
 ### Out of the box
