@@ -20,7 +20,7 @@ CleverTap Push Templates SDK helps you engage with your users using fancy push n
 - Update Podfile as below and do `pod install`, refer [example](https://github.com/CleverTap/clevertap-react-native/blob/master/Example/ios/Podfile) for detailed Podfile.
 ```
 target 'NotificationService' do
-  pod "CTNotificationService"
+  pod "CTNotificationService", :modular_headers => true
 end
 ```
 - Update your `NotificationService.h` as:
@@ -47,8 +47,8 @@ end
 - Add `pod "CleverTap-iOS-SDK" ` in podfile for notification service target as do `pod install`:
 ```
 target 'NotificationService' do
-  pod "CleverTap-iOS-SDK"
-  pod "CTNotificationService"
+  pod "CleverTap-iOS-SDK", :modular_headers => true
+  pod "CTNotificationService", :modular_headers => true
 end
 ```
 - Add CleverTap Account Id and Token in target `Info.plist` file as updated [here](https://github.com/CleverTap/clevertap-react-native/tree/master/Example/ios/Example/NotificationService/Info.plist)
@@ -82,14 +82,8 @@ end
 - Go to File -> New -> Target -> Notification Service Extension and select Swift language
 - Update Podfile and use `use_frameworks! :linkage => :static` as below and `pod install`:
 ```
-platform :ios, '13.0'
-use_frameworks! :linkage => :static
-target 'Example' do
-  # ...
-end
-
 target 'NotificationService' do
-  pod "CTNotificationService"
+  pod "CTNotificationService", :modular_headers => true
 end
 ```
 - Update your `NotificationService.swift` as
@@ -106,15 +100,9 @@ class NotificationService: CTNotificationServiceExtension {
 ## Push Impression using Swift language target
 - Add `pod "CleverTap-iOS-SDK" ` in podfile for notification service target and do `pod install` as
 ```
-platform :ios, '13.0'
-use_frameworks! :linkage => :static
-target 'Example' do
-  # ...
-end
-
 target 'NotificationService' do
-  pod "CleverTap-iOS-SDK"
-  pod "CTNotificationService"
+  pod "CleverTap-iOS-SDK", :modular_headers => true
+  pod "CTNotificationService", :modular_headers => true
 end
 ```
 - Add CleverTap Account Id and Token in target `Info.plist` file as updated [here](https://github.com/CleverTap/clevertap-react-native/tree/master/Example/ios/Example/NotificationService/Info.plist)
