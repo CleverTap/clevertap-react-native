@@ -80,7 +80,7 @@ end
 
 ## Add Notification Service target using Swift language
 - Go to File -> New -> Target -> Notification Service Extension and select Swift language
-- Update Podfile and use `use_frameworks! :linkage => :static` as below and `pod install`:
+- Update Podfile as below and `pod install`:
 ```
 target 'NotificationService' do
   pod "CTNotificationService", :modular_headers => true
@@ -149,7 +149,6 @@ Alternatively, go to finder and replace newly created NotificationContent  (or y
 
 - Add the following to a file named Podfile in the ios directory of your project.
 ```
-use_frameworks!
 target 'NotificationContent' do
     pod 'CTNotificationContent'
 end

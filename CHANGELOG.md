@@ -1,13 +1,6 @@
 Change Log
 ==========
 
-Version 1.2.1 *(12th September 2023)*
--------------------------------------------
-**What's new**
-
-* **[iOS Platform]**
-  * Updated sample app to support Push Notifications using CleverTap `CTNotificationService` and `CTNotificationContent` SDKs.
-
 Version 1.2.0 *(18th August 2023)*
 -------------------------------------------
 
