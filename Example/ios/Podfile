@@ -25,3 +25,22 @@ target 'Example' do
     end
    end
 end
+
+target 'NotificationService' do
+  pod "CleverTap-iOS-SDK", :modular_headers => true
+  pod "CTNotificationService", :modular_headers => true
+end
+
+target 'NotificationContent' do
+  pod "CTNotificationContent"
+end
+
+# Added these target for sample code only in Swift
+target 'NotificationServiceSwift' do
+  pod "CleverTap-iOS-SDK", :modular_headers => true
+  pod "CTNotificationService", :modular_headers => true
+end
+
+target 'NotificationContentSwift' do
+  pod "CTNotificationContent"
+end
