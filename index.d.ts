@@ -32,6 +32,12 @@
     */
    export function getInitialUrl(callback: Callback): void;
 
+  /**
+   * Call this method to set Locale. If Language is english and country is US the locale format which you can set is en_US
+   * @param locale {string}
+   */
+   export function setLocale(locale: string): void;
+
   /*******************
    * Personalization
    ******************/
