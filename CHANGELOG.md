@@ -1,21 +1,6 @@
 Change Log
 ==========
 
-Version 1.2.1 *(xx October 2023)*
--------------------------------------------
-**New Updates**
-- Supports [CleverTap iOS SDK v5.2.1](https://github.com/CleverTap/clevertap-ios-sdk/releases/tag/5.2.1).
-- Adds public API setLocale to set custom locale
-
-**API Changes**
-* **[iOS Platform]**
-  * Adds support to enable `NSFileProtectionComplete` to secure App’s document directory.
-Adds support to send locale - lanugage and country data using NSLocale and Adds public API setLocale to set custom locale, for LP Parity.
-  * Adds support to send locale - lanugage and country data using NSLocale to set custom locale, for LP Parity.
-**Bug Fixes**
-- [iOS platform]Fixes a crash in iOS 17/Xcode 15 related to alert inapps.
-- [iOS platform]Fixes a failing test_clevertap_instance_nscoding test case.
-
 Version 1.2.0 *(18th August 2023)*
 -------------------------------------------
 

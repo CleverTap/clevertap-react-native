@@ -9,7 +9,7 @@ const EventEmitter = NativeModules.CleverTapReactEventEmitter ? new NativeEventE
 * @param {int} libVersion - The updated library version. If current version is 1.1.0 then pass as 10100  
 */
 const libName = 'React-Native';
-const libVersion = 10201; 
+const libVersion = 10200; 
 CleverTapReact.setLibrary(libName,libVersion);
 
 function defaultCallback(method, err, res) {
@@ -109,14 +109,6 @@ var CleverTap = {
         callWithCallback('getInitialUrl', null, callback);
     },
 
-    /**
-    * Call this method to set Locale. If Language is english and country is US the locale format which you can set is en_US
-    * @param {string} locale - the locale string
-    */
-    setLocale: function (locale) {
-        CleverTapReact.setLocale(locale);
-    },
-    
     /**
     * Registers the application to receive push notifications
     * only necessary for iOS.
