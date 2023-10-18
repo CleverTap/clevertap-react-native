@@ -947,7 +947,7 @@ set_userLocation = () => {
 set_Locale = () => {
   alert('User Locale set');
 
-  CleverTap.setLocale("en_BR");
+  CleverTap.setLocale("en_IN");
 };
 ///Events
 

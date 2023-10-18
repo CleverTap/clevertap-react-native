@@ -121,7 +121,8 @@ RCT_EXPORT_METHOD(setLibrary:(NSString*)name andVersion:(int)version) {
 
 RCT_EXPORT_METHOD(setLocale:(NSString*)locale) {
     RCTLogInfo(@"[CleverTap setLocale:%@]", locale);
-    [[self cleverTapInstance] setLocale:locale];
+    NSLocale *userLocale = [NSLocale localeWithLocaleIdentifier:locale];
+    [[self cleverTapInstance] setLocale:userLocale];
 }
 
 #pragma mark - Push Notifications
