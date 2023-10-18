@@ -104,6 +104,9 @@ class Expandable_ListView extends Component {
           case 10:
             set_userLocation();
             break;
+          case 303:
+            set_Locale();
+            break;
           case 11:
             CleverTap.initializeInbox();
             break;
@@ -628,7 +631,10 @@ export default class App extends Component {
       {
         expanded: false,
         category_Name: 'Location ',
-        sub_Category: [{id: 10, name: 'setLocation'}],
+        sub_Category: [
+          {id: 10, name: 'setLocation'},
+          {id: 303, name: 'setLocale'},
+        ],
       },
 
       {
@@ -935,6 +941,13 @@ set_userLocation = () => {
   alert('User Location set');
 
   CleverTap.setLocation(34.15, -118.2);
+};
+
+// Location
+set_Locale = () => {
+  alert('User Locale set');
+
+  CleverTap.setLocale("en_BR");
 };
 ///Events
 
