@@ -177,6 +177,16 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             cleverTap.setCustomSdkVersion(libName,libVersion);
         }
     }
+    
+    @ReactMethod
+    private void setLocale(String localeString) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTapAPI.setLocale(locale);
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+        }
+    }
 
     @ReactMethod
     public void activate() {
