@@ -179,10 +179,10 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
     
     @ReactMethod
-    private void setLocale(String localeString) {
+    private void setLocale(String locale) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
-            cleverTapAPI.setLocale(locale);
+            cleverTap.setLocale(locale);
         } else {
             Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
         }
