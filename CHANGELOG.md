@@ -1,20 +1,30 @@
 Change Log
 ==========
 
-Version 1.2.1 *(xx October 2023)*
+Version 1.2.1 *(25 October 2023)*
 -------------------------------------------
-**New Updates**
-- Supports [CleverTap iOS SDK v5.2.1](https://github.com/CleverTap/clevertap-ios-sdk/releases/tag/5.2.1).
-- Adds public API setLocale to set custom locale
+**What's new**
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v5.2.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-521-october-12-2023).
+  * Adds Custom Proxy Domain functionality for Push Impressions and Events raised from CleverTap Android SDK. Please refer to [Usage.md](docs/Usage.md#integrate-custom-proxy-domain) file to read more on how to configure custom proxy domains in Android.
 
-**API Changes**
 * **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v5.2.1](https://github.com/CleverTap/clevertap-ios-sdk/releases/tag/5.2.1).
   * Adds support to enable `NSFileProtectionComplete` to secure App’s document directory.
-Adds support to send locale - lanugage and country data using NSLocale and Adds public API setLocale to set custom locale, for LP Parity.
-  * Adds support to send locale - lanugage and country data using NSLocale to set custom locale, for LP Parity.
+  
+* **[Android and iOS Platform]**
+  * Adds in-built support to send the default locale(i.e.language and country) data to the dashboard and exposed public API `CleverTapPlugin.setLocale(Locale locale)` to set the custom locale, for LP Parity.
+  * Adds support for Integration Debugger to view errors and events on the dashboard when the debugLevel is set to 3 using `CleverTapPlugin.setDebugLevel(3)`.
+
+**Changes**
+* **[iOS Platform]**
+  * Updated logic to retrieve country code using NSLocale above iOS 16 as `CTCarrier` is deprecated above iOS 16 with no replacements, see [Apple Doc](https://developer.apple.com/documentation/coretelephony/ctcarrier).
+  * Updated logic to not send carrier name above iOS 16 in CTCarrier field.
+
 **Bug Fixes**
-- [iOS platform]Fixes a crash in iOS 17/Xcode 15 related to alert inapps.
-- [iOS platform]Fixes a failing test_clevertap_instance_nscoding test case.
+* **[iOS Platform]**
+  * Fixes a crash in iOS 17/Xcode 15 related to alert inapps.
+  * Fixes a failing `test_clevertap_instance_nscoding` test case.
 
 Version 1.2.0 *(18th August 2023)*
 -------------------------------------------
