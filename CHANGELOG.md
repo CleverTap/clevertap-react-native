@@ -15,6 +15,7 @@ Version 1.2.1 *(25 October 2023)*
 * **[Android and iOS Platform]**
   * Adds in-built support to send the default locale(i.e.language and country) data to the dashboard and exposed public API `CleverTapPlugin.setLocale(Locale locale)` to set the custom locale, for LP Parity.
   * Adds support for Integration Debugger to view errors and events on the dashboard when the debugLevel is set to 3 using `CleverTapPlugin.setDebugLevel(3)`.
+  * Adds support to configure first tab title in App Inbox.
 
 **Changes**
 * **[iOS Platform]**
