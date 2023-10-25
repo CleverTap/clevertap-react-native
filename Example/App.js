@@ -1009,6 +1009,7 @@ show_appInboxwithTabs = () => {
     selectedTabIndicatorColor: '#000000',
     noMessageText: 'No message(s)',
     noMessageTextColor: '#FF0000',
+    firstTabTitle:"First Tab",
   });
 };
 
