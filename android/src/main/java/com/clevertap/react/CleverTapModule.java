@@ -177,6 +177,16 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             cleverTap.setCustomSdkVersion(libName,libVersion);
         }
     }
+    
+    @ReactMethod
+    private void setLocale(String locale) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.setLocale(locale);
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+        }
+    }
 
     @ReactMethod
     public void activate() {
@@ -1997,6 +2007,10 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 if ("noMessageTextColor".equals(styleConfigKey) && readableType == ReadableType.String) {
                     String noMessageTitleColor = styleConfig.getString(styleConfigKey);
                     ctInboxStyleConfig.setNoMessageViewTextColor(noMessageTitleColor);
+                }
+                if ("firstTabTitle".equals(styleConfigKey) && readableType == ReadableType.String) {
+                    String firstTabTitle = styleConfig.getString(styleConfigKey);
+                    ctInboxStyleConfig.setFirstTabTitle(firstTabTitle);
                 }
 
             } catch (Throwable t) {

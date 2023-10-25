@@ -119,6 +119,12 @@ RCT_EXPORT_METHOD(setLibrary:(NSString*)name andVersion:(int)version) {
     [[self cleverTapInstance] setCustomSdkVersion:name version:version];
 }
 
+RCT_EXPORT_METHOD(setLocale:(NSString*)locale) {
+    RCTLogInfo(@"[CleverTap setLocale:%@]", locale);
+    NSLocale *userLocale = [NSLocale localeWithLocaleIdentifier:locale];
+    [[self cleverTapInstance] setLocale:userLocale];
+}
+
 #pragma mark - Push Notifications
 
 RCT_EXPORT_METHOD(registerForPush) {
@@ -682,6 +688,10 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
     NSString *noMessageText = [dict valueForKey:@"noMessageText"];
     if (noMessageText) {
         _config.noMessageViewText = noMessageText;
+    }
+    NSString *firstTabTitle = [dict valueForKey:@"firstTabTitle"];
+    if (firstTabTitle) {
+        _config.firstTabTitle = firstTabTitle;
     }
     return _config;
 }
