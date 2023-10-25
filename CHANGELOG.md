@@ -24,7 +24,6 @@ Version 1.2.1 *(25 October 2023)*
 **Bug Fixes**
 * **[iOS Platform]**
   * Fixes a crash in iOS 17/Xcode 15 related to alert inapps.
-  * Fixes a failing `test_clevertap_instance_nscoding` test case.
 
 Version 1.2.0 *(18th August 2023)*
 -------------------------------------------
