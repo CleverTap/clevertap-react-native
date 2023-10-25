@@ -9,8 +9,7 @@ Version 1.2.1 *(xx October 2023)*
 
 **API Changes**
 * **[iOS Platform]**
-  * Adds support to enable `NSFileProtectionComplete` to secure App’s document directory.
-Adds support to send locale - lanugage and country data using NSLocale and Adds public API setLocale to set custom locale, for LP Parity.
+  * Adds support to send locale - lanugage and country data using NSLocale and Adds public API setLocale to set custom locale, for LP Parity.
   * Adds support to send locale - lanugage and country data using NSLocale to set custom locale, for LP Parity.
 **Bug Fixes**
 - [iOS platform]Fixes a crash in iOS 17/Xcode 15 related to alert inapps.
