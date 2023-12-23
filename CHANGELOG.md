@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 1.2.2 *()*
+-------------------------------------------
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v5.2.2](https://github.com/CleverTap/clevertap-ios-sdk/releases/tag/5.2.2).
+
 Version 1.2.1 *(25 October 2023)*
 -------------------------------------------
 **What's new**
