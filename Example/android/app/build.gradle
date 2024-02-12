@@ -211,14 +211,14 @@ dependencies {
     implementation 'com.google.android.gms:play-services-base:18.2.0'
     implementation 'com.google.firebase:firebase-messaging:23.0.6'
     implementation 'com.google.android.material:material:1.4.0' //Mandatory for App Inbox
-    implementation 'com.google.android.exoplayer:exoplayer:2.17.1' //Optional for Audio/Video
-    implementation 'com.google.android.exoplayer:exoplayer-hls:2.17.1' //Optional for Audio/Video
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.17.1' //Optional for Audio/Video
+    implementation 'com.google.android.exoplayer:exoplayer:2.19.1' //Optional for Audio/Video
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.19.1' //Optional for Audio/Video
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.19.1' //Optional for Audio/Video
     //implementation 'com.google.android.gms:play-services-ads:19.0.1'
 
 
     //clevertap
-    implementation 'com.clevertap.android:clevertap-android-sdk:5.2.0'
+    implementation 'com.clevertap.android:clevertap-android-sdk:6.0.0'
     implementation "com.clevertap.android:push-templates:1.0.9"
     implementation project(':clevertap-react-native')
 

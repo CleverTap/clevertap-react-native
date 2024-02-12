@@ -41,6 +41,7 @@ import com.clevertap.android.sdk.variables.Var;
 import com.clevertap.android.sdk.variables.callbacks.FetchVariablesCallback;
 import com.clevertap.android.sdk.variables.callbacks.VariableCallback;
 import com.clevertap.android.sdk.variables.callbacks.VariablesChangedCallback;
+import com.clevertap.android.sdk.inapp.callbacks.FetchInAppsCallback;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -1534,6 +1535,30 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                     sendEvent(CLEVERTAP_ON_VARIABLES_CHANGED, getVariablesValues());
                 }
             });
+        }
+    }
+
+    @ReactMethod
+    public void clearInAppResources(final boolean expiredOnly) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.clearInAppResources(expiredOnly);
+        }
+    }
+
+    @ReactMethod
+    public void fetchInApps(final Callback callback) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.fetchInApps(new FetchInAppsCallback() {
+                @Override
+                public void onInAppsFetched(final boolean isSuccess) {
+                    callbackWithErrorAndResult(callback, null, isSuccess);
+                }
+            });
+        } else {
+            String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            callbackWithErrorAndResult(callback, error, null);
         }
     }
 
