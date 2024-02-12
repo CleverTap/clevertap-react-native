@@ -66,6 +66,41 @@ CleverTap.profileDecrementValueForKey(1, "score");
 
 -----------
 
+## Integrate Custom Proxy Domain
+The custom proxy domain feature allows to proxy all events raised from the CleverTap SDK through your required domain,
+ideal for handling or relaying CleverTap events and Push Impression events with your application server.
+Refer following steps to configure the custom proxy domain(s) in the manifest file:
+
+#### [Android Platform] Configure Custom Proxy Domain(s) using Manifest file
+1. Add your CleverTap Account credentials in the Manifest file against the `CLEVERTAP_ACCOUNT_ID` and `CLEVERTAP_TOKEN` keys.
+2. Add the **CLEVERTAP_PROXY_DOMAIN** key with the proxy domain value for handling events through the custom proxy domain.
+3. Add the **CLEVERTAP_SPIKY_PROXY_DOMAIN** key with proxy domain value for handling push impression events.
+
+```xml
+        <meta-data
+            android:name="CLEVERTAP_ACCOUNT_ID"
+            android:value="YOUR ACCOUNT ID" />
+        <meta-data
+            android:name="CLEVERTAP_TOKEN"
+            android:value="YOUR ACCOUNT TOKEN" />
+        <meta-data
+            android:name="CLEVERTAP_PROXY_DOMAIN"
+            android:value="YOUR PROXY DOMAIN"/>  <!-- e.g., analytics.sdktesting.xyz -->
+        <meta-data
+            android:name="CLEVERTAP_SPIKY_PROXY_DOMAIN"
+            android:value="YOUR SPIKY PROXY DOMAIN"/>  <!-- e.g., spiky-analytics.sdktesting.xyz -->
+```
+#### [iOS Platform] Configure Custom Proxy Domain(s) using `CleverTap.autoIntegrate()` API
+1. Add your CleverTap Account credentials in the *Info.plist* file against the `CleverTapAccountID` and `CleverTapToken` keys.
+2. Add the `CleverTapProxyDomain` key with the proxy domain value for handling events through the custom proxy domain e.g., *analytics.sdktesting.xyz*.
+3. Add the `CleverTapSpikyProxyDomain` key with proxy domain value for handling push impression events e.g., *spiky-analytics.sdktesting.xyz*.
+4. Import the CleverTap SDK in your *AppDelegate* file and call the following method in the `didFinishLaunchingWithOptions:` method.
+    ``` swift
+      CleverTap.autoIntegrate()
+    ```
+
+-----------
+
 ## User Events
 
 #### Record an event  
@@ -120,7 +155,7 @@ CleverTap.initializeInbox();
 ```javascript
 CleverTap.showInbox({'tabs':['Offers','Promotions'],'navBarTitle':'My App Inbox','navBarTitleColor':'#FF0000','navBarColor':'#FFFFFF','inboxBackgroundColor':'#AED6F1','backButtonColor':'#00FF00'
                                 ,'unselectedTabColor':'#0000FF','selectedTabColor':'#FF0000','selectedTabIndicatorColor':'#000000',
-                                'noMessageText':'No message(s)','noMessageTextColor':'#FF0000'});
+                                'noMessageText':'No message(s)','noMessageTextColor':'#FF0000','firstTabTitle':'First Tab' });
  ```
 
 #### App Inbox Item Click Callback
