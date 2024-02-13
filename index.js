@@ -949,6 +949,24 @@ var CleverTap = {
     onValueChanged: function (name, handler) {
         CleverTapReact.onValueChanged(name);
         this.addListener(CleverTapReact.CleverTapOnValueChanged, handler);
+    },
+
+    /**
+     * Fetches In Apps from server.
+     *
+     * @param callback {function(err, res)} a callback with a boolean flag whether the update was successful
+     */
+    fetchInApps: function (callback) {
+        callWithCallback('fetchInApps', null, callback);
+    },
+
+    /**
+     * Deletes all images and gifs which are preloaded for inapps in cs mode
+     *
+     * @param {boolean} expiredOnly to clear only assets which will not be needed further for inapps
+     */
+    clearInAppResources: function(expiredOnly) {
+        CleverTapReact.clearInAppResources(expiredOnly);
     }
 };
 

@@ -480,6 +480,17 @@ class Expandable_ListView extends Component {
                 console.log('onValueChanged: ', variable);
                 });
               break;
+          case 87:
+              CleverTap.fetchInApps((err, success) => {
+                console.log('fetchInApps result: ', success);
+              });
+              break;
+          case 88:
+              CleverTap.clearInAppResources(false);
+              break;
+          case 89:
+              CleverTap.clearInAppResources(true);
+              break;
         }
     }
 
@@ -595,6 +606,15 @@ export default class App extends Component {
                 id: 86,
                 name: 'Add \'OnValueChanged\' listener for name \'reactnative_var_string\''
               }
+            ],
+          },
+          {
+            expanded: false,
+            category_Name: 'Client Side InApps',
+            sub_Category: [
+              {id: 87, name: 'Fetch Client Side InApps'},
+              {id: 88, name: 'Clear All InApp Resources'},
+              {id: 89, name: 'Clear Expired Only InApp Resources'}
             ],
           },
           {
