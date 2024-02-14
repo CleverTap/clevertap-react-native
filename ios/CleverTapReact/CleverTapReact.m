@@ -866,7 +866,7 @@ RCT_EXPORT_METHOD(fetchInApps:(RCTResponseSenderBlock)callback) {
     }];
 }
 
-RCT_EXPORT_METHOD(clearInAppResources:(Bool)expiredOnly) {
+RCT_EXPORT_METHOD(clearInAppResources:(BOOL)expiredOnly) {
     RCTLogInfo(@"[CleverTap clearInAppResources");
     [[self cleverTapInstance] clearInAppResources: expiredOnly];
 }
