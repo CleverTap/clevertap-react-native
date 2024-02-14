@@ -634,11 +634,16 @@ RCT_EXPORT_METHOD(initializeInbox) {
 
 RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
     RCTLogInfo(@"[CleverTap Show Inbox]");
+    UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+    UIViewController *mainViewController = keyWindow.rootViewController;
+    if (mainViewController.presentedViewController) {
+        RCTLogInfo(@"CleverTap : Could not present App Inbox because a view controller is already being presented.");
+        return;
+    }
+    
     CleverTapInboxViewController *inboxController = [[self cleverTapInstance] newInboxViewControllerWithConfig:[self _dictToInboxStyleConfig:styleConfig? styleConfig : nil] andDelegate:(id <CleverTapInboxViewControllerDelegate>)self];
     if (inboxController) {
         UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:inboxController];
-        UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
-        UIViewController *mainViewController = keyWindow.rootViewController;
         [mainViewController presentViewController:navigationController animated:YES completion:nil];
     }
 }
@@ -850,6 +855,20 @@ RCT_EXPORT_METHOD(discardInAppNotifications) {
 RCT_EXPORT_METHOD(resumeInAppNotifications) {
     RCTLogInfo(@"[CleverTap resumeInAppNotifications");
     [[self cleverTapInstance] resumeInAppNotifications];
+}
+
+#pragma mark - InApp Controls
+
+RCT_EXPORT_METHOD(fetchInApps:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap fetchInApps]");
+    [[self cleverTapInstance]fetchInApps:^(BOOL success) {
+        [self returnResult:@(success) withCallback:callback andError:nil];
+    }];
+}
+
+RCT_EXPORT_METHOD(clearInAppResources:(boolean)expiredOnly) {
+    RCTLogInfo(@"[CleverTap clearInAppResources");
+    [[self cleverTapInstance] clearInAppResources: expiredOnly];
 }
 
 #pragma mark - Push Permission
