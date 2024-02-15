@@ -756,6 +756,21 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     */
   export function onValueChanged(name: string, handler: Function): void;
 
+
+  /**
+   * Fetches In Apps from server.
+   *
+   * @param {function(err, res)} callback a callback with a boolean flag whether the fetching was successful
+   */
+  export function fetchInApps(callback: Callback): void;
+
+  /**
+   * Deletes all images and gifs which are preloaded for inapps in cs mode
+   *
+   * @param {boolean} expiredOnly to clear only assets which will not be needed further for inapps
+   */
+  export function clearInAppResources(expiredOnly: boolean): void;
+
   /*******************
    * Developer Options
    ******************/
