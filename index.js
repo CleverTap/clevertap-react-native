@@ -9,7 +9,7 @@ const EventEmitter = NativeModules.CleverTapReactEventEmitter ? new NativeEventE
 * @param {int} libVersion - The updated library version. If current version is 1.1.0 then pass as 10100  
 */
 const libName = 'React-Native';
-const libVersion = 10201; 
+const libVersion = 20000; 
 CleverTapReact.setLibrary(libName,libVersion);
 
 function defaultCallback(method, err, res) {
@@ -949,6 +949,24 @@ var CleverTap = {
     onValueChanged: function (name, handler) {
         CleverTapReact.onValueChanged(name);
         this.addListener(CleverTapReact.CleverTapOnValueChanged, handler);
+    },
+
+    /**
+     * Fetches In Apps from server.
+     *
+     * @param callback {function(err, res)} a callback with a boolean flag whether the update was successful
+     */
+    fetchInApps: function (callback) {
+        callWithCallback('fetchInApps', null, callback);
+    },
+
+    /**
+     * Deletes all images and gifs which are preloaded for inapps in cs mode
+     *
+     * @param {boolean} expiredOnly to clear only assets which will not be needed further for inapps
+     */
+    clearInAppResources: function(expiredOnly) {
+        CleverTapReact.clearInAppResources(expiredOnly);
     }
 };
 
