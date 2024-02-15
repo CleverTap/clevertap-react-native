@@ -17,16 +17,16 @@ Version 2.0.0 *(15 February 2024)*
 
 **Bug Fixes**
 * **[Android Platform]**
-* Fixes a bug where JavaScript was not working for custom-html InApp header/footer templates.
-* Fixes an NPE related to AppInbox APIs.
-* Fixes a ClassCastException in defineVariable API of Product Experiences.
-* Fixes a resource name conflict with the firebase library in fcm_fallback_notification_channel_label
-* Fixes a StrictMode Violation spawning from ctVariables.init().
-* Removes use of lossy conversions leading to an issue in PushTemplates.
-* Handles an edge case related to migration of encryption level when local db is out of memory
+  * Fixes a bug where JavaScript was not working for custom-html InApp header/footer templates.
+  * Fixes an NPE related to AppInbox APIs.
+  * Fixes a ClassCastException in defineVariable API of Product Experiences.
+  * Fixes a resource name conflict with the firebase library in fcm_fallback_notification_channel_label
+  * Fixes a StrictMode Violation spawning from ctVariables.init().
+  * Removes use of lossy conversions leading to an issue in PushTemplates.
+  * Handles an edge case related to migration of encryption level when local db is out of memory
 
 * **[iOS Platform]**
-* Fixes a bug where some in-apps were not being dismissed.
+  * Fixes a bug where some in-apps were not being dismissed.
 
 Version 1.2.1 *(25 October 2023)*
 -------------------------------------------
