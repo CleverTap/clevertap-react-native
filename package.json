@@ -6,7 +6,6 @@
   "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "node install.js",
     "lint": "./node_modules/.bin/eslint index.js */**.js",
     "lint-fix": "./node_modules/.bin/eslint --fix index.js */**.js"
   },
@@ -32,9 +31,6 @@
     "react-native",
     "segmentation"
   ],
-  "dependencies": {
-    "extract-zip": "^1.6.6"
-  },
   "peerDependencies": {
     "react-native": ">=0.63.3"
   },
