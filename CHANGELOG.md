@@ -7,9 +7,8 @@ Version 2.0.0 *(15 February 2024)*
 * **[Android Platform]**
   * Supports [CleverTap Android SDK v6.0.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-600-january-15-2024).
 
-
 * **[iOS Platform]**
-  // Todo
+  * Supports [CleverTap iOS SDK v6.0.0](https://github.com/CleverTap/clevertap-ios-sdk/releases/tag/6.0.0).
   
 * **[Android and iOS Platform]**
   * Adds support for client-side in-apps.
@@ -27,7 +26,7 @@ Version 2.0.0 *(15 February 2024)*
 * Handles an edge case related to migration of encryption level when local db is out of memory
 
 * **[iOS Platform]**
-// todo
+* Fixes a bug where some in-apps were not being dismissed.
 
 Version 1.2.1 *(25 October 2023)*
 -------------------------------------------
