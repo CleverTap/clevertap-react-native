@@ -79,6 +79,8 @@ public class CleverTapUtils {
                     writableMap.putInt(key, (Integer) value);
                 } else if (value instanceof Boolean) {
                     writableMap.putBoolean(key, (Boolean) value);
+                } else if (value instanceof Long) {
+                    writableMap.putDouble(key, ((Long) value).doubleValue());
                 } else if (value instanceof Float || value instanceof Double) {
                     writableMap.putDouble(key, Double.parseDouble(value.toString()));
                 } else if (value instanceof JSONObject) {
@@ -109,6 +111,8 @@ public class CleverTapUtils {
                     writableArray.pushInt((Integer) value);
                 } else if (value instanceof Boolean) {
                     writableArray.pushBoolean((Boolean) value);
+                } else if (value instanceof Long) {
+                    writableArray.pushDouble(((Long) value).doubleValue());
                 } else if (value instanceof Float || value instanceof Double) {
                     writableArray.pushDouble(Double.parseDouble(value.toString()));
                 } else if (value instanceof JSONObject) {
