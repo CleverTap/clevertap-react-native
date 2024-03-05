@@ -6,7 +6,7 @@ buildscript {
         minSdkVersion = 21
         compileSdkVersion = 34
         targetSdkVersion = 34
-        ndkVersion = "20.1.5948944"
+        ndkVersion = "26.2.11394342"
     }
     repositories {
         google()
@@ -25,8 +25,8 @@ buildscript {
         maven { url "https://maven.google.com" }
     }
     dependencies {
-        classpath('com.android.tools.build:gradle:7.3.1')
-        classpath ('com.google.gms:google-services:4.3.5')
+        classpath('com.android.tools.build:gradle:8.2.2')
+        classpath ('com.google.gms:google-services:4.4.1')
         classpath("com.facebook.react:react-native-gradle-plugin")
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
