@@ -8,9 +8,8 @@ buildscript {
             name 'Google'
         }
     }
-
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.android.tools.build:gradle:8.2.2'
     }
 }
 
@@ -24,6 +23,8 @@ android {
         versionCode 210
         versionName "2.1.0"
     }
+
+    namespace 'com.clevertap.react'
     buildTypes {
         release {
             minifyEnabled false
