@@ -1,6 +1,19 @@
 Change Log
 ==========
 
+Version 2.1.0 *(6 March 2024)*
+-------------------------------------------
+**What's new**
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v6.1.0](https://github.com/CleverTap/clevertap-ios-sdk/releases/tag/6.1.0).
+  * Adds privacy manifests for CleverTap-iOS-SDK & CleverTapLocation.
+
+**Bug Fixes**
+* **[iOS Platform]**
+  * Fixed a crash due to out of bounds in NSLocale implementation.
+  
+<!--  To Do for Android-->
+
 Version 2.0.0 *(15 February 2024)*
 -------------------------------------------
 **What's new**
