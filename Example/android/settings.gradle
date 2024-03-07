@@ -7,7 +7,7 @@ apply from: file("../node_modules/@react-native-community/cli-platform-android/n
 include ':app'
 include ':clevertap-react-native'
 project(':clevertap-react-native').projectDir = new File(settingsDir, '../node_modules/clevertap-react-native/android')
-includeBuild('../node_modules/react-native-gradle-plugin')
+includeBuild('../node_modules/@react-native/gradle-plugin')
   
   
   
