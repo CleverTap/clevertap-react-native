@@ -21,6 +21,8 @@ build/
 local.properties
 Example/android/app/google-services.json
 *.iml
+.project
+.settings
 
 # Node
 node_modules
