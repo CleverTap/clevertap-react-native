@@ -14,7 +14,7 @@
     "@react-navigation/drawer": "^6.6.2",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
-    "clevertap-react-native": "git+https://github.com/CleverTap/clevertap-react-native#develop",
+    "clevertap-react-native": "git+https://github.com/CleverTap/clevertap-react-native#SDK-3749-Update_ct-ios-sdk_to_v6.2.0",
     "react": "18.2.0",
     "react-native": "0.73.5",
     "react-native-drawer": "^2.5.1",
