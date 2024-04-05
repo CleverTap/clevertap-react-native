@@ -21,7 +21,7 @@ Version 2.2.0 *(5 April 2024)*
   * Fixes a crash due to `NullPointerException` related to `deviceInfo.deviceId`.
   * Fixes an ANR related to `isMainProcess` check.
   * Fixes an ANR due to eager initialisation of `CtApi` triggered by DeviceId generation.
-  * Fixes an android build issue related to `package name no found` for apps with ReactNative version less than 0.71.
+  * Fixes an android build issue related to `package name not found` for apps with `ReactNative` version 0.70 or lower.
 
 * **[iOS Platform]**
   * Fixes a bug where client side in-apps were not discarded when rendering status is set to "discard".
