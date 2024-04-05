@@ -17,7 +17,7 @@
 #import "CleverTapPushNotificationDelegate.h"
 #import "CleverTapInAppNotificationDelegate.h"
 #import "CleverTap+PushPermission.h"
-
+#import "CleverTapReactEventEmitter.h"
 
 @interface CleverTapReactManager() <CleverTapSyncDelegate, CleverTapInAppNotificationDelegate, CleverTapDisplayUnitDelegate,  CleverTapFeatureFlagsDelegate, CleverTapProductConfigDelegate, CleverTapPushNotificationDelegate, CleverTapPushPermissionDelegate> {
 }
@@ -75,7 +75,7 @@
 #pragma mark - Private
 
 - (void)postNotificationWithName:(NSString *)name andBody:(NSDictionary *)body {
-    [[NSNotificationCenter defaultCenter] postNotificationName:name object:nil userInfo:body];
+    [CleverTapReactEventEmitter sendEventOnObserving:name body:body];
 }
 
 
