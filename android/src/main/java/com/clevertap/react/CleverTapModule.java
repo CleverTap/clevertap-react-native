@@ -1354,27 +1354,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @ReactMethod
-    public void setPushTokenAsStringWithRegion(String token, String type, String region) {
-        Logger.v("setPushTokenAsString() called with: token = [" + token + "], type = [" + type + "], region = ["
-                + region + "]");
-
-        CleverTapAPI clevertap = getCleverTapAPI();
-        if (clevertap == null || token == null || type == null || TextUtils.isEmpty(region)) {
-            return;
-        }
-
-        switch (type) {
-            case XPS:
-                clevertap.pushXiaomiRegistrationId(token, region, true);
-                break;
-            default:
-                Log.e(TAG, "Unknown push token type " + type);
-                break;
-        }
-    }
-
-
-    @ReactMethod
     public void showInbox(ReadableMap styleConfig) {
         CTInboxStyleConfig inboxStyleConfig = styleConfigFromReadableMap(styleConfig);
         CleverTapAPI cleverTap = getCleverTapAPI();

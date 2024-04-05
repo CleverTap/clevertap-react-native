@@ -72,10 +72,9 @@
   /**
    * Manually set the push token on the CleverTap user profile
    * @param {string} token - the device token
-   * @param {string} type - for Android only, specifying the type of push service token. Values can be CleverTap.FCM for Firebase or CleverTap.XPS for Xiaomi or CleverTap.BPS for Baidu or CleverTap.HPS for Huawei,
-   * @param {string} region - for xps only ,to specify the region
+   * @param {string} type - for Android only, specifying the type of push service token. Values can be CleverTap.FCM for Firebase or CleverTap.BPS for Baidu or CleverTap.HPS for Huawei,
    */
-  export function setPushToken(token: string, type: string,region?:string): void;
+  export function setPushToken(token: string, type: string): void;
 
   /**
    * Create Notification Channel for Android O+
@@ -784,7 +783,6 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   type CallbackString = (err: object, res: string) => void;
 
   export const FCM: string;
-  export const XPS: string;
   export const BPS: string;
   export const HPS: string;
   export const CleverTapProfileDidInitialize: string;
