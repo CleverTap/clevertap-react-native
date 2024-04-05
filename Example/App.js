@@ -1157,7 +1157,6 @@ pushFcmRegistrationId = () => {
     // => https://developer.clevertap.com/docs/android#section-custom-android-push-notifications-handling
     CleverTap.setPushToken('1000test000token000fcm', CleverTap.FCM);
     //CleverTap.setPushToken("111056687894", CleverTap.HMS);//for Huawei push
-    CleverTap.setPushToken('1000test000token000xps', CleverTap.XPS, 'Europe'); //for Xiaomi push
     //CleverTap.setPushToken("111056687894", CleverTap.BPS);//for Baidu push
   }
 };

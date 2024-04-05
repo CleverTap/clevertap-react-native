@@ -218,7 +218,7 @@ dependencies {
 
 
     //clevertap
-    implementation 'com.clevertap.android:clevertap-android-sdk:6.1.1'
+    implementation 'com.clevertap.android:clevertap-android-sdk:6.2.0'
     implementation "com.clevertap.android:push-templates:1.2.3"
     implementation project(':clevertap-react-native')
 
