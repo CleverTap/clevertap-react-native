@@ -1,4 +1,8 @@
-<manifest>
+<manifest package="com.clevertap.react">
+    <!--
+    Package name has been added to support compatibility for RN versions less than 0.71.
+    This gives warning for RN versions greater than or equal to 0.71 which can be ignored
+    -->
     <application>
     </application>
 </manifest>
