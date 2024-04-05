@@ -8,7 +8,7 @@ Version 2.2.0 *(5 April 2024)*
   * Supports [CleverTap Android SDK v6.2.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-620-april-3-2024).
 
 * **[iOS Platform]**
-  * Supports [CleverTap iOS SDK v6.2.0](https://github.com/CleverTap/clevertap-ios-sdk/releases/tag/6.1.0).
+  * Supports [CleverTap iOS SDK v6.2.0](https://github.com/CleverTap/clevertap-ios-sdk/releases/tag/6.2.0).
 
 **API Changes**
   * Removes all Xiaomi related public methods as the Xiaomi SDK has been discontinued. Details [here](https://developer.clevertap.com/docs/discontinuation-of-xiaomi-push-service).
@@ -16,10 +16,10 @@ Version 2.2.0 *(5 April 2024)*
 
 **Bug Fixes**
 * **[Android Platform]**
-  * Extends the push primer callback to notify permission denial when cancel button is clicked on PromptForSettings alert dialog.
-  * Fixes a crash due to NullPointerException related to deviceInfo.deviceId.
-  * Fixes an ANR related to isMainProcess check. 
-  * Fixes an ANR due to eager initialisation of CtApi triggered by DeviceId generation.
+  * Extends the push primer callback to notify permission denial when cancel button is clicked on `PromptForSettings` alert dialog.
+  * Fixes a crash due to `NullPointerException` related to `deviceInfo.deviceId`.
+  * Fixes an ANR related to `isMainProcess` check.
+  * Fixes an ANR due to eager initialisation of `CtApi` triggered by DeviceId generation.
 
 * **[iOS Platform]**
   * Fixes a bug where client side in-apps were not discarded when rendering status is set to "discard".
