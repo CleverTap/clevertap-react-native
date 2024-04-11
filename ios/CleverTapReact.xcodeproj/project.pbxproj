@@ -17,6 +17,8 @@
 		5266DAB91E4B9C16000008F5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5266DAB61E4B9B8C000008F5 /* UIKit.framework */; };
 		5266DABA1E4B9C20000008F5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DFC6831E4B990A00EDC368 /* SystemConfiguration.framework */; };
 		5266DADB1E4BB5BD000008F5 /* CleverTapSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5266DAD91E4BB598000008F5 /* CleverTapSDK.framework */; };
+		6B587A032BC02ECD0077493E /* CleverTapReactPendingEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B587A022BC02ECD0077493E /* CleverTapReactPendingEvent.m */; };
+		6B587A042BC02ECD0077493E /* CleverTapReactPendingEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B587A012BC02ECD0077493E /* CleverTapReactPendingEvent.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -45,6 +47,8 @@
 		52DFC6831E4B990A00EDC368 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		52DFC6851E4B991000EDC368 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		5D72D2E81C16249000E22EC1 /* libCleverTapReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCleverTapReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		6B587A012BC02ECD0077493E /* CleverTapReactPendingEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CleverTapReactPendingEvent.h; sourceTree = "<group>"; };
+		6B587A022BC02ECD0077493E /* CleverTapReactPendingEvent.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CleverTapReactPendingEvent.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +75,8 @@
 				52344FBC1E4CE7F000661762 /* CleverTapReactManager.m */,
 				52344FDE1E4D0F3700661762 /* CleverTapReactEventEmitter.h */,
 				52344FDF1E4D0F3700661762 /* CleverTapReactEventEmitter.m */,
+				6B587A012BC02ECD0077493E /* CleverTapReactPendingEvent.h */,
+				6B587A022BC02ECD0077493E /* CleverTapReactPendingEvent.m */,
 			);
 			path = CleverTapReact;
 			sourceTree = "<group>";
@@ -111,6 +117,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				52344FC21E4CEC3200661762 /* CleverTapReactManager.h in Headers */,
+				6B587A042BC02ECD0077493E /* CleverTapReactPendingEvent.h in Headers */,
 				52344FE01E4D0F3700661762 /* CleverTapReactEventEmitter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -176,6 +183,7 @@
 				52344FBF1E4CE7F000661762 /* CleverTapReactManager.m in Sources */,
 				52344FE11E4D0F3700661762 /* CleverTapReactEventEmitter.m in Sources */,
 				52344FBE1E4CE7F000661762 /* CleverTapReact.m in Sources */,
+				6B587A032BC02ECD0077493E /* CleverTapReactPendingEvent.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
