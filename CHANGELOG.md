@@ -1,5 +1,17 @@
 Change Log
 ==========
+Version 2.2.1 *(10 April 2024)*
+-------------------------------------------
+**What's new**
+
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v6.2.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-620-april-3-2024).
+
+**Bug Fixes**
+* **[Android Platform]**
+  * Fixes a crash due to `IllegalArgumentException` caused by allowedPushType `XPS` enum.
+
+
 Version 2.2.0 *(5 April 2024)*
 -------------------------------------------
 **What's new**
