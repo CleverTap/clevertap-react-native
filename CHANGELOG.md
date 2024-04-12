@@ -7,9 +7,15 @@ Version 2.2.1 *(12 April 2024)*
 * **[Android Platform]**
   * Supports [CleverTap Android SDK v6.2.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-620-april-3-2024).
 
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v6.2.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-621-april-12-2024).
+
 **Bug Fixes**
 * **[Android Platform]**
   * Fixes a crash due to `IllegalArgumentException` caused by allowedPushType `XPS` enum.
+
+* **[iOS Platform]**
+  * Fixes a build error related to privacy manifests when statically linking the SDK using Cocoapods.
 
 
 Version 2.2.0 *(5 April 2024)*
