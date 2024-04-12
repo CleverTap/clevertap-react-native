@@ -1,6 +1,6 @@
 Change Log
 ==========
-Version 2.2.1 *(10 April 2024)*
+Version 2.2.1 *(12 April 2024)*
 -------------------------------------------
 **What's new**
 
@@ -14,6 +14,9 @@ Version 2.2.1 *(10 April 2024)*
 
 Version 2.2.0 *(5 April 2024)*
 -------------------------------------------
+> ⚠️ **NOTE**
+2.2.0 produces a crash, please update to 2.2.1 and above. 
+
 **What's new**
 
 * **[Android Platform]**
