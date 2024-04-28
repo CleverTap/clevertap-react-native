@@ -18,13 +18,13 @@
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
-  
+
   // Add CleverTap Account ID and Account Token in your .plist file
   // Initialize CleverTap
 #ifdef DEBUG
   [CleverTap setDebugLevel:CleverTapLogDebug];
 #endif
-  
+
   [CleverTapReactCustomTemplates registerCustomTemplates:@"templates", nil];
   [CleverTap autoIntegrate];
   [self addNotificationCategories];
@@ -71,9 +71,6 @@
 - (NSURL *)bundleURL {
 #if DEBUG
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
-#else
-  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-#endif
 }
 
 @end

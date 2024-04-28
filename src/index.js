@@ -989,7 +989,7 @@ var CleverTap = {
      * Notify the SDK that an active custom template is dismissed. The active custom template is considered to be
      * visible to the user until this method is called. Since the SDK can show only one InApp message at a time, all
      * other messages will be queued until the current one is dismissed.
-     * 
+     *
      * @param {string} templateName The name of the active template
      */
     customTemplateSetDismissed: function (templateName) {
@@ -998,7 +998,7 @@ var CleverTap = {
 
     /**
      * Notify the SDK that an active custom template is presented to the user
-     * 
+     *
      * @param {string} templateName The name of the active template
      */
     customTemplateSetPresented: function (templateName) {
@@ -1007,7 +1007,7 @@ var CleverTap = {
 
     /**
      * Trigger a custom template action argument by name.
-     * 
+     *
      * @param {string} templateName The name of an active template for which the action is defined
      * @param {string} argName The action argument name
      */
@@ -1020,7 +1020,7 @@ var CleverTap = {
      *
      * @param {string} templateName The name of an active template for which the argument is defined
      * @param {string} argName The action argument name
-     * 
+     *
      * @returns {string} The argument value or null if no such argument is defined for the template.
      */
     customTemplateGetStringArg: function (templateName, argName) {
@@ -1032,7 +1032,7 @@ var CleverTap = {
      *
      * @param {string} templateName The name of an active template for which the argument is defined
      * @param {string} argName The action argument name
-     * 
+     *
      * @returns {number} The argument value or null if no such argument is defined for the template.
      */
     customTemplateGetNumberArg: function (templateName, argName) {
@@ -1044,7 +1044,7 @@ var CleverTap = {
      *
      * @param {string} templateName The name of an active template for which the argument is defined
      * @param {stirng} argName The action argument name
-     * 
+     *
      * @returns {boolean} The argument value or null if no such argument is defined for the template.
      */
     customTemplateGetBooleanArg: function (templateName, argName) {
@@ -1056,7 +1056,7 @@ var CleverTap = {
      *
      * @param {string} templateName The name of an active template for which the argument is defined
      * @param {string} argName The action argument name
-     * 
+     *
      * @returns {string} The file path to the file or null if no such argument is defined for the template.
      */
     customTemplateGetFileArg: function (templateName, argName) {
@@ -1068,7 +1068,7 @@ var CleverTap = {
      *
      * @param {string} templateName The name of an active template for which the argument is defined
      * @param {string} argName The action argument name
-     * 
+     *
      * @returns {any} The argument value or null if no such argument is defined for the template.
      */
     customTemplateGetObjectArg: function (templateName, argName) {
@@ -1076,8 +1076,8 @@ var CleverTap = {
     },
 
     /**
-     * Get a string representation of an active's template context with information about all arguments. 
-     * 
+     * Get a string representation of an active's template context with information about all arguments.
+     *
      * @param {string} templateName The name of an active template
      * @returns {string}
      */

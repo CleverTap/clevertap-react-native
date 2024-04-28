@@ -4,6 +4,10 @@
 #import <UserNotifications/UserNotifications.h>
 #import <CoreLocation/CoreLocation.h>
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#import "CleverTapReactModuleSpec.h"
+#endif
+
 #import <React/RCTLog.h>
 
 #import "CleverTap.h"
@@ -1140,7 +1144,7 @@ RCT_EXPORT_METHOD(customTemplateContextToString:(NSString *)templateName
         reject(@"CustomTemplateError", @"CleverTap is not initialized", nil);
         return;
     }
-    
+
     CTTemplateContext *context  = [[self cleverTapInstance] activeContextForTemplate:templateName];
     if (!context) {
         reject(@"CustomTemplateError",
@@ -1148,7 +1152,7 @@ RCT_EXPORT_METHOD(customTemplateContextToString:(NSString *)templateName
                nil);
         return;
     }
-    
+
     resolve(blockName(context));
 }
 
@@ -1210,17 +1214,17 @@ RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
         RCTLogWarn(@"[CleverTap: %@ is sent before observing and is not part of the observable events]", name);
         [observableEvents addObject:name];
     }
-    
+
     if ([observableEvents containsObject:name] && ![observedEvents containsObject:name]) {
         if (!pendingEvents[name]) {
             pendingEvents[name] = [NSMutableArray array];
         }
-        
+
         CleverTapReactPendingEvent *event = [[CleverTapReactPendingEvent alloc] initWithName:name body:body];
         [pendingEvents[name] addObject:event];
         return;
     }
-    
+
     [[NSNotificationCenter defaultCenter] postNotificationName:name object:nil userInfo:body];
 }
 
@@ -1257,9 +1261,9 @@ RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
                                                      name:eventName
                                                    object:nil];
     }
-    
+
     isObserving = YES;
-    
+
     // Clear the pending events that no listeners were added for.
     // Clear the events after PENDING_EVENTS_TIME_OUT of when the first observer is added.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(PENDING_EVENTS_TIME_OUT * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
