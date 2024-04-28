@@ -1,4 +1,4 @@
-#import <React/RCTBridgeModule.h>
+#import <Foundation/Foundation.h>
 
 static NSString *const kCleverTapProfileDidInitialize        = @"CleverTapProfileDidInitialize";
 static NSString *const kCleverTapProfileSync                 = @"CleverTapProfileSync";
@@ -20,8 +20,13 @@ static NSString *const kCleverTapOnVariablesChanged           = @"CleverTapOnVar
 static NSString *const kCleverTapOnValueChanged           = @"CleverTapOnValueChanged";
 static NSString *const kXPS = @"XPS";
 
-
+#ifdef RCT_NEW_ARCH_ENABLED
+#import <CleverTapReactModuleSpec/CleverTapReactModuleSpec.h>
+@interface CleverTapReact: NSObject <NativeCleverTapReactModuleSpec>
+#else
+#import <React/RCTBridgeModule.h>
 @interface CleverTapReact : NSObject <RCTBridgeModule>
+#endif
 
 @end
 

@@ -4,6 +4,10 @@
 #import <UserNotifications/UserNotifications.h>
 #import <CoreLocation/CoreLocation.h>
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#import "CleverTapReactModuleSpec.h"
+#endif
+
 #import <React/RCTLog.h>
 
 #import "CleverTap.h"
@@ -1041,5 +1045,11 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
         }];
     }
 }
+
+#ifdef RCT_NEW_ARCH_ENABLED
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const facebook::react::ObjCTurboModule::InitParams &)params {
+  return std::make_shared<facebook::react::NativeCleverTapReactModuleSpecJSI>(params);
+}
+#endif
 
 @end

@@ -1,5 +1,14 @@
 Change Log
 ==========
+## 3.0.0
+
+##### Breaking
+- If you are using the New Architecture, this version requires React Native `0.70` or higher.
+##### Added
+- Migrates the CleverTap bridge to a backwards-compatible [New Architecture Turbo Module](https://reactnative.dev/docs/next/the-new-architecture/pillars-turbomodules).
+  - This is a non-breaking change to your existing imports of the CT SDK if you are using React Native `0.70`+.
+  - The CleverTap SDK continues to be compatible with both the New Architecture and old React Native architecture.
+  
 Version 2.2.1 *(12 April 2024)*
 -------------------------------------------
 **What's new**
