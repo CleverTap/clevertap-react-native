@@ -1,6 +1,6 @@
 import { DeviceEventEmitter, NativeEventEmitter, NativeModules } from 'react-native';
 
-const CleverTapReact = require('./NativeCleverTapReactModule').default; 
+const CleverTapReact = require('./NativeCleverTapModule').default;
 const EventEmitter = NativeModules.CleverTapReactEventEmitter ? new NativeEventEmitter(NativeModules.CleverTapReactEventEmitter) : DeviceEventEmitter;
 
 /**
@@ -364,10 +364,10 @@ var CleverTap = {
     * Set the user's location as a latitude,longitude coordinate
     * @param {float} latitude
     * @param {float} longitude
-    */
-    setLocation: function (latitude, longitude) {
-        CleverTapReact.setLocation(latitude, longitude);
-    },
+    // */
+    // setLocation: function (latitude, longitude) {
+    //     CleverTapReact.setLocation(latitude, longitude);
+    // },
 
     /**
      * @deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead

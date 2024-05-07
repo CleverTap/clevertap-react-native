@@ -21,11 +21,11 @@ static NSString *const kCleverTapOnValueChanged           = @"CleverTapOnValueCh
 static NSString *const kXPS = @"XPS";
 
 #ifdef RCT_NEW_ARCH_ENABLED
-#import <CleverTapReactModuleSpec/CleverTapReactModuleSpec.h>
-@interface CleverTapReact: NSObject <NativeCleverTapReactModuleSpec>
+#import <CTTurboModuleSpec/CTTurboModuleSpec.h>
+@interface CleverTapReact: NSObject <NativeCleverTapModuleSpec>
 #else
 #import <React/RCTBridgeModule.h>
-@interface CleverTapReact : NSObject <RCTBridgeModule>
+@interface CleverTapReact: NSObject <RCTBridgeModule>
 #endif
 
 @end

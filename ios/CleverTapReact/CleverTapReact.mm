@@ -4,10 +4,6 @@
 #import <UserNotifications/UserNotifications.h>
 #import <CoreLocation/CoreLocation.h>
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import "CleverTapReactModuleSpec.h"
-#endif
-
 #import <React/RCTLog.h>
 
 #import "CleverTap.h"
@@ -23,6 +19,10 @@
 #import "Clevertap+PushPermission.h"
 #import "CleverTap+CTVar.h"
 #import "CTVar.h"
+
+#ifdef RCT_NEW_ARCH_ENABLED
+#import <CTTurboModuleSpec/CTTurboModuleSpec.h>
+#endif
 
 static NSDateFormatter *dateFormatter;
 
@@ -255,11 +255,11 @@ RCT_EXPORT_METHOD(getEventHistory:(RCTResponseSenderBlock)callback) {
 
 #pragma mark - Profile API
 
-RCT_EXPORT_METHOD(setLocation:(double)latitude longitude:(double)longitude) {
-    RCTLogInfo(@"[CleverTap setLocation: %f %f]", latitude, longitude);
-    CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(latitude, longitude);
-    [CleverTap setLocation:coordinate];
-}
+// RCT_EXPORT_METHOD(setLocation:(double)latitude longitude:(double)longitude) {
+//     RCTLogInfo(@"[CleverTap setLocation: %f %f]", latitude, longitude);
+//     CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(latitude, longitude);
+//     [CleverTap setLocation:coordinate];
+// }
 
 RCT_EXPORT_METHOD(profileGetCleverTapAttributionIdentifier:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap profileGetCleverTapAttributionIdentifier]");
@@ -1048,7 +1048,7 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
 
 #ifdef RCT_NEW_ARCH_ENABLED
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const facebook::react::ObjCTurboModule::InitParams &)params {
-  return std::make_shared<facebook::react::NativeCleverTapReactModuleSpecJSI>(params);
+  return std::make_shared<facebook::react::NativeCleverTapModuleSpecJSI>(params);
 }
 #endif
 
