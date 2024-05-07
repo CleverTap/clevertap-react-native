@@ -4,10 +4,6 @@
 #import <UserNotifications/UserNotifications.h>
 #import <CoreLocation/CoreLocation.h>
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import "CleverTapReactModuleSpec.h"
-#endif
-
 #import <React/RCTLog.h>
 
 #import "CleverTap.h"
@@ -25,6 +21,10 @@
 #import "CTVar.h"
 #import "CleverTapReactPendingEvent.h"
 #import "CTTemplateContext.h"
+
+#ifdef RCT_NEW_ARCH_ENABLED
+#import <CTTurboModuleSpec/CTTurboModuleSpec.h>
+#endif
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <CTTurboModuleSpec/CTTurboModuleSpec.h>
@@ -267,11 +267,11 @@ RCT_EXPORT_METHOD(getEventHistory:(RCTResponseSenderBlock)callback) {
 
 #pragma mark - Profile API
 
-RCT_EXPORT_METHOD(setLocation:(double)latitude longitude:(double)longitude) {
-    RCTLogInfo(@"[CleverTap setLocation: %f %f]", latitude, longitude);
-    CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(latitude, longitude);
-    [CleverTap setLocation:coordinate];
-}
+// RCT_EXPORT_METHOD(setLocation:(double)latitude longitude:(double)longitude) {
+//     RCTLogInfo(@"[CleverTap setLocation: %f %f]", latitude, longitude);
+//     CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(latitude, longitude);
+//     [CleverTap setLocation:coordinate];
+// }
 
 RCT_EXPORT_METHOD(profileGetCleverTapAttributionIdentifier:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap profileGetCleverTapAttributionIdentifier]");
