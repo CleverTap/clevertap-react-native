@@ -117,10 +117,11 @@ RCT_EXPORT_METHOD(getInitialUrl:(RCTResponseSenderBlock)callback) {
     }
 }
 
-RCT_EXPORT_METHOD(setLibrary:(NSString*)name andVersion:(int)version) {
-    RCTLogInfo(@"[CleverTap setLibrary:%@ andVersion:%d]", name, version);
+RCT_EXPORT_METHOD(setLibrary:(NSString*)name andVersion:(double)version) {
+    int libVersion = (int)version;
+    RCTLogInfo(@"[CleverTap setLibrary:%@ andVersion:%d]", name, libVersion);
     [[self cleverTapInstance] setLibrary:name];
-    [[self cleverTapInstance] setCustomSdkVersion:name version:version];
+    [[self cleverTapInstance] setCustomSdkVersion:name version:libVersion];
 }
 
 RCT_EXPORT_METHOD(setLocale:(NSString*)locale) {
@@ -255,11 +256,11 @@ RCT_EXPORT_METHOD(getEventHistory:(RCTResponseSenderBlock)callback) {
 
 #pragma mark - Profile API
 
-// RCT_EXPORT_METHOD(setLocation:(double)latitude longitude:(double)longitude) {
-//     RCTLogInfo(@"[CleverTap setLocation: %f %f]", latitude, longitude);
-//     CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(latitude, longitude);
-//     [CleverTap setLocation:coordinate];
-// }
+RCT_EXPORT_METHOD(setLocation:(double)latitude longitude:(double)longitude) {
+    RCTLogInfo(@"[CleverTap setLocation: %f %f]", latitude, longitude);
+    CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(latitude, longitude);
+    [CleverTap setLocation:coordinate];
+}
 
 RCT_EXPORT_METHOD(profileGetCleverTapAttributionIdentifier:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap profileGetCleverTapAttributionIdentifier]");
@@ -413,9 +414,10 @@ RCT_EXPORT_METHOD(createNotification:(NSDictionary*)extras) {
 
 #pragma mark - Developer Options
 
-RCT_EXPORT_METHOD(setDebugLevel:(int)level) {
-    RCTLogInfo(@"[CleverTap setDebugLevel: %i]", level);
-    [CleverTap setDebugLevel:level];
+RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
+     int debugLevel = (int)level;
+    RCTLogInfo(@"[CleverTap setDebugLevel: %i]", debugLevel);
+    [CleverTap setDebugLevel:debugLevel];
 }
 
 
