@@ -267,11 +267,11 @@ RCT_EXPORT_METHOD(getEventHistory:(RCTResponseSenderBlock)callback) {
 
 #pragma mark - Profile API
 
-// RCT_EXPORT_METHOD(setLocation:(double)latitude longitude:(double)longitude) {
-//     RCTLogInfo(@"[CleverTap setLocation: %f %f]", latitude, longitude);
-//     CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(latitude, longitude);
-//     [CleverTap setLocation:coordinate];
-// }
+RCT_EXPORT_METHOD(setLocation:(double)latitude longitude:(double)longitude) {
+    RCTLogInfo(@"[CleverTap setLocation: %f %f]", latitude, longitude);
+    CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(latitude, longitude);
+    [CleverTap setLocation:coordinate];
+}
 
 RCT_EXPORT_METHOD(profileGetCleverTapAttributionIdentifier:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap profileGetCleverTapAttributionIdentifier]");
@@ -426,7 +426,7 @@ RCT_EXPORT_METHOD(createNotification:(NSDictionary*)extras) {
 #pragma mark - Developer Options
 
 RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
-    int debugLevel = (int)level;
+     int debugLevel = (int)level;
     RCTLogInfo(@"[CleverTap setDebugLevel: %i]", debugLevel);
     [CleverTap setDebugLevel:debugLevel];
 }
