@@ -175,8 +175,8 @@ export interface Spec extends TurboModule {
 
   // NativeEventEmitter methods for the New Architecture.
   // The implementations are handled implicitly by React Native.
-//   addListener: (eventType: string) => void;
-//   removeListeners: (count: number) => void;
+  addListener: (eventType: string) => void;
+  removeListener: (count: number) => void;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('CleverTapReact');

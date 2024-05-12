@@ -3,6 +3,10 @@
 #import "CleverTapReact.h"
 #import <React/RCTLog.h>
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#import <CTTurboModuleSpec/CTTurboModuleSpec.h>
+#endif
+
 static NSMutableArray<CleverTapReactPendingEvent *> *pendingEvents;
 static BOOL isObserving;
 

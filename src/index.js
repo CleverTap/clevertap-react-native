@@ -1,7 +1,7 @@
 import { DeviceEventEmitter, NativeEventEmitter, NativeModules } from 'react-native';
 
 const CleverTapReact = require('./NativeCleverTapModule').default;
-const EventEmitter = NativeModules.CleverTapReactEventEmitter ? new NativeEventEmitter(NativeModules.CleverTapReactEventEmitter) : DeviceEventEmitter;
+const EventEmitter = NativeModules.CleverTapReactEventEmitter ? new NativeEventEmitter(this.CleverTapReact) : DeviceEventEmitter;
 
 /**
 * Set the CleverTap React-Native library name with current version
