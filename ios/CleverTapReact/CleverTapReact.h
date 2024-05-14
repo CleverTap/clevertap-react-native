@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+#import <React/RCTEventEmitter.h>
 
 static NSString *const kCleverTapProfileDidInitialize        = @"CleverTapProfileDidInitialize";
 static NSString *const kCleverTapProfileSync                 = @"CleverTapProfileSync";
@@ -22,11 +23,13 @@ static NSString *const kXPS = @"XPS";
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <CTTurboModuleSpec/CTTurboModuleSpec.h>
-@interface CleverTapReact: NSObject <NativeCleverTapModuleSpec>
+@interface CleverTapReact: RCTEventEmitter <NativeCleverTapModuleSpec>
 #else
 #import <React/RCTBridgeModule.h>
-@interface CleverTapReact: NSObject <RCTBridgeModule>
+@interface CleverTapReact: RCTEventEmitter <RCTBridgeModule>
 #endif
+
++ (void)sendEventOnObserving:(NSString *)name body:(id)body;
 
 @end
 

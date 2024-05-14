@@ -19,12 +19,15 @@
 #import "Clevertap+PushPermission.h"
 #import "CleverTap+CTVar.h"
 #import "CTVar.h"
+#import "CleverTapReactPendingEvent.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <CTTurboModuleSpec/CTTurboModuleSpec.h>
 #endif
 
 static NSDateFormatter *dateFormatter;
+static NSMutableArray<CleverTapReactPendingEvent *> *pendingEvents;
+static BOOL isObserving;
 
 @interface CleverTapReact()
 @property CleverTap *cleverTapInstance;
@@ -67,6 +70,10 @@ RCT_EXPORT_MODULE();
     };
 }
 
+- (NSDictionary*) getConstants {
+  return [self constantsToExport];
+}
+
 - (dispatch_queue_t)methodQueue {
     return dispatch_get_main_queue();
 }
@@ -84,6 +91,7 @@ RCT_EXPORT_MODULE();
 }
 
 - (CleverTap *)cleverTapInstance {
+    [CleverTap setDebugLevel:4];
     if (_cleverTapInstance != nil) {
         return _cleverTapInstance;
     }
@@ -1047,6 +1055,60 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
         }];
     }
 }
+
+//- (void)getFeatureFlag:(NSString *)flag defaultValue:(BOOL)defaultValue callback:(RCTResponseSenderBlock)callback { 
+//    
+//}
+//
+//
+//- (void)removeListener:(double)count { 
+//    
+//}
+
+
+# pragma mark - Event emitter
+
++ (void)sendEventOnObserving:(NSString *)name body:(id)body {
+    if (isObserving) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:name object:nil userInfo:body];
+        return;
+    }
+    
+    if (!pendingEvents) {
+        pendingEvents = [NSMutableArray array];
+    }
+    
+    CleverTapReactPendingEvent *event = [[CleverTapReactPendingEvent alloc] initWithName:name body:body];
+    [pendingEvents addObject:event];
+}
+
+- (NSArray<NSString *> *)supportedEvents {
+    return @[kCleverTapProfileDidInitialize, kCleverTapProfileSync, kCleverTapInAppNotificationDismissed, kCleverTapInboxDidInitialize, kCleverTapInboxMessagesDidUpdate, kCleverTapInAppNotificationButtonTapped, kCleverTapInboxMessageButtonTapped, kCleverTapInboxMessageTapped, kCleverTapDisplayUnitsLoaded,  kCleverTapFeatureFlagsDidUpdate, kCleverTapProductConfigDidFetch, kCleverTapProductConfigDidActivate, kCleverTapProductConfigDidInitialize, kCleverTapPushNotificationClicked, kCleverTapPushPermissionResponseReceived, kCleverTapInAppNotificationShowed, kCleverTapOnVariablesChanged, kCleverTapOnValueChanged];
+}
+
+- (void)startObserving {
+    NSArray *eventNames = [self supportedEvents];
+    for (NSString *eventName in eventNames) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(emitEventInternal:)
+                                                     name:eventName
+                                                   object:nil];
+    }
+    
+    isObserving = YES;
+    for (CleverTapReactPendingEvent *ev in pendingEvents) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:ev.name object:nil userInfo:ev.body];
+    }
+}
+
+- (void)stopObserving {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)emitEventInternal:(NSNotification *)notification {
+    [self sendEventWithName:notification.name body:notification.userInfo];
+}
+
 
 #ifdef RCT_NEW_ARCH_ENABLED
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const facebook::react::ObjCTurboModule::InitParams &)params {
