@@ -45,8 +45,6 @@ function callWithCallback(method, args, callback) {
 }
 
 var CleverTap = {
-    // getConstants: CleverTapReact.getConstants(),
-    myconstant: CleverTapReact.getConstants().CleverTapProfileDidInitialize,
     CleverTapProfileDidInitialize: CleverTapReact.getConstants().CleverTapProfileDidInitialize,
     CleverTapProfileSync: CleverTapReact.getConstants().CleverTapProfileSync,
     CleverTapInAppNotificationDismissed: CleverTapReact.getConstants().CleverTapInAppNotificationDismissed,
