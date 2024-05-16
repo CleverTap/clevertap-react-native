@@ -72,6 +72,16 @@ export interface Spec extends TurboModule {
     callback: ((error: Object, result: boolean) => void) | null
   ): void;
   profileRemoveValueForKey(key: string): void;
+  profileSetMultiValues(
+    values: string[],
+    forKey: string
+  ): void;
+  profileAddMultiValue(value: string, forKey: string): void;
+  profileAddMultiValues(
+    values: string[],
+    forKey: string
+  ): void;
+  profileRemoveMultiValue(value: string, forKey: string): void;
   profileRemoveMultiValues(
     values: string[],
     forKey: string
@@ -148,7 +158,7 @@ export interface Spec extends TurboModule {
   pushDisplayUnitClickedEventForID(unitId: string): void;
   getFeatureFlag(
     flag: string,
-    defaultValue: boolean,
+    withdefaultValue: boolean,
     callback: ((error: Object, result: boolean) => void) | null
   ): void;
   setDefaultsMap(
@@ -188,6 +198,7 @@ export interface Spec extends TurboModule {
     callback: ((error: Object, result: boolean) => void) | null
   ): void;
   fetchVariables(callback: ((error: Object, result: boolean) => void) | null): void;
+  getVariables(callback: ((error: Object, result: boolean) => void) | null): void;
   defineVariables(
     variables: Object | null
   ): void;

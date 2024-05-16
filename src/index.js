@@ -366,9 +366,9 @@ var CleverTap = {
     * @param {float} latitude
     * @param {float} longitude
     // */
-    // setLocation: function (latitude, longitude) {
-    //     CleverTapReact.setLocation(latitude, longitude);
-    // },
+    setLocation: function (latitude, longitude) {
+        CleverTapReact.setLocation(latitude, longitude);
+    },
 
     /**
      * @deprecated - Since version 0.6.0. Use getCleverTapID(callback) instead
@@ -931,7 +931,7 @@ var CleverTap = {
      */
     onVariablesChanged: function (handler) {
         CleverTapReact.onVariablesChanged();
-        this.addListener(CleverTapReact.CleverTapOnVariablesChanged, handler);
+        this.addListener(CleverTapReact.getConstants().CleverTapOnVariablesChanged, handler);
     },
 
     /**
@@ -942,7 +942,7 @@ var CleverTap = {
      */
     onValueChanged: function (name, handler) {
         CleverTapReact.onValueChanged(name);
-        this.addListener(CleverTapReact.CleverTapOnValueChanged, handler);
+        this.addListener(CleverTapReact.getConstants().CleverTapOnValueChanged, handler);
     },
 
     /**
