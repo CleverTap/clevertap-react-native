@@ -1,44 +1,35 @@
-package com.clevertap.react;
+package com.clevertap.react
 
-import com.facebook.react.ReactPackage;
-import com.facebook.react.bridge.JavaScriptModule;
-import com.facebook.react.bridge.NativeModule;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.uimanager.ViewManager;
+import com.facebook.react.TurboReactPackage
+import com.facebook.react.bridge.NativeModule
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.module.model.ReactModuleInfo
+import com.facebook.react.module.model.ReactModuleInfoProvider
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+class CleverTapPackage : TurboReactPackage() {
 
-public class CleverTapPackage implements ReactPackage {
-    /**
-     * @param reactContext react application context that can be used to create modules
-     * @return list of native modules to register with the newly created catalyst instance
-     */
-    @Override
-    public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-        List<NativeModule> modules = new ArrayList<>();
-        modules.add(new CleverTapModule(reactContext));
-        return modules;
+    override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
+        return if (name == CleverTapModuleImpl.REACT_MODULE_NAME) {
+            CleverTapModule(reactContext)
+        } else {
+            null
+        }
     }
 
-    /**
-     * @return list of JS modules to register with the newly created catalyst instance.
-     * <p/>
-     * IMPORTANT: Note that only modules that needs to be accessible from the native code should be
-     * listed here. Also listing a native module here doesn't imply that the JS implementation of it
-     * will be automatically included in the JS bundle.
-     */
-    public List<Class<? extends JavaScriptModule>> createJSModules() {
-        return Collections.emptyList();
-    }
-
-    /**
-     * @param reactContext
-     * @return a list of view managers
-     */
-    @Override
-    public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
-        return Collections.emptyList();
+    override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
+        return ReactModuleInfoProvider {
+            val moduleInfos: MutableMap<String, ReactModuleInfo> = HashMap()
+            val isTurboModule: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+            moduleInfos[CleverTapModuleImpl.REACT_MODULE_NAME] = ReactModuleInfo(
+                CleverTapModuleImpl.REACT_MODULE_NAME,
+                CleverTapModuleImpl.REACT_MODULE_NAME,
+                false,  // canOverrideExistingModule
+                false,  // needsEagerInit
+                true,  // hasConstants
+                false,  // isCxxModule
+                isTurboModule // isTurboModule
+            )
+            moduleInfos
+        }
     }
 }
