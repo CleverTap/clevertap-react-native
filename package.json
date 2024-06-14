@@ -44,7 +44,7 @@
     "eslint-plugin-standard": "^2.0.0",
     "i": "^0.3.6",
     "react": "^17.0.2",
-    "react-native": "^0.71.0"
+    "react-native": "^0.70.0"
   },
   "codegenConfig": {
     "name": "CTTurboModuleSpec",
