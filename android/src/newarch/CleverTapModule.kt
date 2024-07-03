@@ -23,9 +23,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
     }
 
     @SuppressLint("RestrictedApi")
-
-    override fun setLibrary(libName: String?, libVersion: Int) {
-        cleverTapModuleImpl.setLibrary(libName, libVersion)
+    override fun setLibrary(libName: String?, libVersion: Double) {
+        cleverTapModuleImpl.setLibrary(libName, libVersion.toInt())
     }
 
     override fun setLocale(locale: String?) {
@@ -46,11 +45,11 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
 
     override fun createNotificationChannel(
         channelId: String?, channelName: String?, channelDescription: String?,
-        importance: Int, showBadge: Boolean
+        importance: Double, showBadge: Boolean
     ) {
         cleverTapModuleImpl.createNotificationChannel(
             channelId, channelName, channelDescription,
-            importance, showBadge
+            importance.toInt(), showBadge
         )
     }
 
@@ -64,11 +63,11 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
 
     override fun createNotificationChannelWithGroupId(
         channelId: String?, channelName: String?, channelDescription: String?,
-        importance: Int, groupId: String?, showBadge: Boolean
+        importance: Double, groupId: String?, showBadge: Boolean
     ) {
         cleverTapModuleImpl.createNotificationChannelWithGroupId(
             channelId, channelName, channelDescription,
-            importance, groupId, showBadge
+            importance.toInt(), groupId, showBadge
         )
     }
 
@@ -76,11 +75,11 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
 
     override fun createNotificationChannelWithGroupIdAndSound(
         channelId: String?, channelName: String?,
-        channelDescription: String?, importance: Int, groupId: String?, showBadge: Boolean, sound: String?
+        channelDescription: String?, importance: Double, groupId: String?, showBadge: Boolean, sound: String?
     ) {
         cleverTapModuleImpl.createNotificationChannelWithGroupIdAndSound(
             channelId, channelName, channelDescription,
-            importance, groupId, showBadge, sound
+            importance.toInt(), groupId, showBadge, sound
         )
     }
 
@@ -88,11 +87,11 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
 
     override fun createNotificationChannelWithSound(
         channelId: String?, channelName: String?, channelDescription: String?,
-        importance: Int, showBadge: Boolean, sound: String?
+        importance: Double, showBadge: Boolean, sound: String?
     ) {
         cleverTapModuleImpl.createNotificationChannelWithSound(
             channelId, channelName, channelDescription,
-            importance, showBadge, sound
+            importance.toInt(), showBadge, sound
         )
     }
 
@@ -162,8 +161,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         cleverTapModuleImpl.fetchAndActivate()
     }
 
-    override fun fetchWithMinimumFetchIntervalInSeconds(interval: Int) {
-        cleverTapModuleImpl.fetchWithMinimumFetchIntervalInSeconds(interval)
+    override fun fetchWithMinimumFetchIntervalInSeconds(interval: Double) {
+        cleverTapModuleImpl.fetchWithMinimumFetchIntervalInSeconds(interval.toInt())
     }
 
     override fun getAllDisplayUnits(callback: Callback?) {
@@ -191,7 +190,7 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         cleverTapModuleImpl.getEventHistory(callback)
     }
 
-    override fun getFeatureFlag(name: String?, defaultValue: Boolean?, callback: Callback?) {
+    override fun getFeatureFlag(name: String?, defaultValue: Boolean, callback: Callback?) {
         cleverTapModuleImpl.getFeatureFlag(name, defaultValue, callback)
     }
 
@@ -353,8 +352,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         cleverTapModuleImpl.sessionGetUTMDetails(callback)
     }
 
-    override fun setDebugLevel(level: Int) {
-        CleverTapAPI.setDebugLevel(level)
+    override fun setDebugLevel(level: Double) {
+        CleverTapAPI.setDebugLevel(level.toInt())
     }
 
     override fun setDefaultsMap(map: ReadableMap?) {
@@ -365,12 +364,11 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         cleverTapModuleImpl.setLocation(latitude, longitude)
     }
 
-    override fun setMinimumFetchIntervalInSeconds(interval: Int) {
-        cleverTapModuleImpl.setMinimumFetchIntervalInSeconds(interval)
+    override fun setMinimumFetchIntervalInSeconds(interval: Double) {
+        cleverTapModuleImpl.setMinimumFetchIntervalInSeconds(interval.toInt())
     }
 
     //Sets the SDK to offline mode
-
     override fun setOffline(value: Boolean) {
         cleverTapModuleImpl.setOffline(value)
     }
@@ -419,17 +417,70 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         cleverTapModuleImpl.setInstanceWithAccountId(accountId)
     }
 
+    override fun fetchInApps(callback: Callback?) {
+        cleverTapModuleImpl.fetchInApps(callback)
+    }
+
+    override fun clearInAppResources(expiredOnly : Boolean) {
+        cleverTapModuleImpl.clearInAppResources(expiredOnly)
+    }
+
+    override fun syncVariables() {
+        cleverTapModuleImpl.syncVariables()
+    }
+
+    override fun syncVariablesinProd(isProduction: Boolean) {
+        cleverTapModuleImpl.syncVariablesinProd(isProduction, null)
+    }
+
+    override fun defineVariables(`object`: ReadableMap) {
+        cleverTapModuleImpl.defineVariables(`object`)
+    }
+
+    override fun fetchVariables(callback: Callback?) {
+        cleverTapModuleImpl.fetchVariables(callback)
+    }
+
+    override fun getVariable(key: String?, callback: Callback?) {
+        cleverTapModuleImpl.getVariable(key, callback)
+
+    }
+
+    override fun getVariables(callback: Callback?) {
+        cleverTapModuleImpl.getVariables(callback)
+    }
+
+    override fun onVariablesChanged() {
+        cleverTapModuleImpl.onVariablesChanged()
+    }
+
+    override fun onValueChanged(name: String) {
+        cleverTapModuleImpl.onValueChanged(name)
+    }
+
+    override fun addListener(name: String) {
+        return;
+    }
+
+    override fun removeListeners(count: Double) {
+        return;
+    }
+
+    override fun setPushTokenAsStringWithRegion(token: String?, withType: String?, withRegion: String?) {
+        return;
+    }
+
+
     companion object {
 
         private val mlaunchURI: Uri? = null
-        const val REACT_MODULE_NAME = "CleverTapReact"
+        const val REACT_MODULE_NAME = "CleverTapModule"
         private const val TAG = REACT_MODULE_NAME
         private const val CLEVERTAP_PROFILE_DID_INITIALIZE = "CleverTapProfileDidInitialize"
         private const val CLEVERTAP_PROFILE_SYNC = "CleverTapProfileSync"
         private const val CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED = "CleverTapInAppNotificationDismissed"
         private const val CLEVERTAP_IN_APP_NOTIFICATION_SHOWED = "CleverTapInAppNotificationShowed"
         private const val FCM = "FCM"
-        private const val XPS = "XPS"
         private const val BPS = "BPS"
         private const val HPS = "HPS"
         private const val CLEVERTAP_INBOX_DID_INITIALIZE = "CleverTapInboxDidInitialize"
@@ -448,7 +499,7 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         private const val CLEVERTAP_ON_VALUE_CHANGED = "CleverTapOnValueChanged"
     }
 
-    override fun getConstants(): Map<String, Any> {
+    override fun getTypedExportedConstants(): Map<String, Any> {
         val constants: MutableMap<String, Any> = HashMap()
         constants[CLEVERTAP_PROFILE_DID_INITIALIZE] = CLEVERTAP_PROFILE_DID_INITIALIZE
         constants[CLEVERTAP_PROFILE_SYNC] = CLEVERTAP_PROFILE_SYNC
@@ -457,7 +508,6 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         constants[CLEVERTAP_IN_APP_NOTIFICATION_SHOWED] =
             CLEVERTAP_IN_APP_NOTIFICATION_SHOWED
         constants[FCM] = FCM
-        constants[XPS] = XPS
         constants[BPS] = BPS
         constants[HPS] = HPS
         constants[CLEVERTAP_INBOX_DID_INITIALIZE] =

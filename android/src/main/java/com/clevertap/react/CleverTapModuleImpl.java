@@ -116,8 +116,6 @@ public class CleverTapModuleImpl implements SyncListener,
 
     private static final String FCM = "FCM";
 
-    private static final String XPS = "XPS";
-
     private static final String BPS = "BPS";
 
     private static final String HPS = "HPS";

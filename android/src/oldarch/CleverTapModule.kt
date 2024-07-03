@@ -490,6 +490,57 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : ReactContextBase
         cleverTapModuleImpl.setInstanceWithAccountId(accountId)
     }
 
+    @ReactMethod
+    fun fetchInApps(callback: Callback?) {
+        cleverTapModuleImpl.fetchInApps(callback)
+    }
+
+    @ReactMethod
+    fun clearInAppResources(expiredOnly : Boolean) {
+        cleverTapModuleImpl.clearInAppResources(expiredOnly)
+    }
+
+    @ReactMethod
+    fun syncVariables() {
+        cleverTapModuleImpl.syncVariables()
+    }
+
+    @ReactMethod
+    fun syncVariablesinProd(isProduction: Boolean, callback: Callback?) {
+        cleverTapModuleImpl.syncVariablesinProd(isProduction, callback)
+    }
+
+    @ReactMethod
+    fun defineVariables(`object`: ReadableMap) {
+        cleverTapModuleImpl.defineVariables(`object`)
+    }
+
+    @ReactMethod
+    fun fetchVariables(callback: Callback?) {
+        cleverTapModuleImpl.fetchVariables(callback)
+    }
+
+    @ReactMethod
+    fun getVariable(key: String?, callback: Callback?) {
+        cleverTapModuleImpl.getVariable(key, callback)
+
+    }
+
+    @ReactMethod
+    fun getVariables(callback: Callback?) {
+        cleverTapModuleImpl.getVariables(callback)
+    }
+
+    @ReactMethod
+    fun onVariablesChanged() {
+        cleverTapModuleImpl.onVariablesChanged()
+    }
+
+    @ReactMethod
+    fun onValueChanged(name: String) {
+        cleverTapModuleImpl.onValueChanged(name)
+    }
+
     companion object {
 
         private val mlaunchURI: Uri? = null
@@ -500,7 +551,6 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : ReactContextBase
         private const val CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED = "CleverTapInAppNotificationDismissed"
         private const val CLEVERTAP_IN_APP_NOTIFICATION_SHOWED = "CleverTapInAppNotificationShowed"
         private const val FCM = "FCM"
-        private const val XPS = "XPS"
         private const val BPS = "BPS"
         private const val HPS = "HPS"
         private const val CLEVERTAP_INBOX_DID_INITIALIZE = "CleverTapInboxDidInitialize"
@@ -528,7 +578,6 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : ReactContextBase
         constants[CLEVERTAP_IN_APP_NOTIFICATION_SHOWED] =
             CLEVERTAP_IN_APP_NOTIFICATION_SHOWED
         constants[FCM] = FCM
-        constants[XPS] = XPS
         constants[BPS] = BPS
         constants[HPS] = HPS
         constants[CLEVERTAP_INBOX_DID_INITIALIZE] =
