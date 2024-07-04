@@ -287,14 +287,6 @@ public class CleverTapModuleImpl implements SyncListener,
         Log.i(TAG, "Notification Channel " + channelName + " with sound file " + sound + " created");
     }
 
-    public void deleteInboxMessageForId(String messageId) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.deleteInboxMessage(messageId);
-        } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
-        }
-    }
 
     @RequiresApi(api = VERSION_CODES.O)
     public void deleteNotificationChannel(String channelId) {
@@ -379,7 +371,6 @@ public class CleverTapModuleImpl implements SyncListener,
         clevertap.enablePersonalization();
     }
 
-    //Enables tracking opt out for the currently active user.
     public void eventGetDetail(String eventName, Callback callback) {
         String error = null;
         WritableMap result = null;
@@ -407,7 +398,6 @@ public class CleverTapModuleImpl implements SyncListener,
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    //Enables the reporting of device network-related information, including IP address.  This reporting is disabled by default.
     public void eventGetLastTime(String eventName, Callback callback) {
         String error = null;
         int result = -1;
@@ -421,7 +411,6 @@ public class CleverTapModuleImpl implements SyncListener,
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    // Personalization
     public void eventGetOccurrences(String eventName, Callback callback) {
         String error = null;
         int result = -1;
@@ -442,7 +431,6 @@ public class CleverTapModuleImpl implements SyncListener,
         sendEvent(CLEVERTAP_FEATURE_FLAGS_DID_UPDATE, params);//passing empty map
     }
 
-    // Event API
     public void fetch() {
         CTProductConfigController productConfigController = getCtProductConfigController();
         if (productConfigController == null) {
@@ -481,11 +469,6 @@ public class CleverTapModuleImpl implements SyncListener,
             error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
         }
         callbackWithErrorAndResult(callback, error, result);
-    }
-
-    public void getAllInboxMessages(Callback callback) {
-
-        getInboxMessages(callback, InBoxMessages.ALL);
     }
 
     public void getBoolean(String key, Callback callback) {
@@ -572,6 +555,10 @@ public class CleverTapModuleImpl implements SyncListener,
         callbackWithErrorAndResult(callback, error, result);
     }
 
+    public void getAllInboxMessages(Callback callback) {
+        getInboxMessages(callback, InBoxMessages.ALL);
+    }
+
     public void getInboxMessageCount(Callback callback) {
 
         String error = null;
@@ -614,6 +601,102 @@ public class CleverTapModuleImpl implements SyncListener,
             error = "CleverTap not initialized";
         }
         callbackWithErrorAndResult(callback, error, result);
+    }
+
+    public void deleteInboxMessageForId(String messageId) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.deleteInboxMessage(messageId);
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+        }
+    }
+
+    public void getUnreadInboxMessages(Callback callback) {
+        getInboxMessages(callback, InBoxMessages.UNREAD);
+    }
+
+
+    //App Inbox methods
+    public void initializeInbox() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.initializeInbox();
+            Log.e(TAG, "initializeInbox Called");
+        }
+    }
+
+    public void markReadInboxMessageForId(String messageId) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.markReadInboxMessage(messageId);
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+        }
+    }
+
+    public void markReadInboxMessagesForIDs(final ReadableArray messageIDs) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.markReadInboxMessagesForIDs(arrayListStringFromReadableArray(messageIDs));
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+        }
+    }
+
+    public void deleteInboxMessagesForIDs(final ReadableArray messageIDs) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.deleteInboxMessagesForIDs(arrayListStringFromReadableArray(messageIDs));
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+        }
+    }
+
+    //Inbox Callbacks
+    public void inboxDidInitialize() {
+        WritableMap params = Arguments.createMap();
+        sendEvent(CLEVERTAP_INBOX_DID_INITIALIZE, params);//passing empty map
+    }
+    public void inboxMessagesDidUpdate() {
+        WritableMap params = Arguments.createMap();
+        sendEvent(CLEVERTAP_INBOX_MESSAGES_DID_UPDATE, params); //passing empty map
+    }
+    public void onInboxButtonClick(HashMap<String, String> payload) {
+        sendEvent(CLEVERTAP_ON_INBOX_BUTTON_CLICK, getWritableMapFromMap(payload));
+    }
+
+    public void pushInboxNotificationClickedEventForId(String messageId) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.pushInboxNotificationClickedEvent(messageId);
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+        }
+    }
+
+    public void pushInboxNotificationViewedEventForId(String messageId) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.pushInboxNotificationViewedEvent(messageId);
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+        }
+    }
+
+    public void showInbox(ReadableMap styleConfig) {
+        CTInboxStyleConfig inboxStyleConfig = styleConfigFromReadableMap(styleConfig);
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.showAppInbox(inboxStyleConfig);
+        }
+    }
+
+    public void dismissInbox() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.dismissAppInbox();
+        }
     }
 
     public void getInitialUrl(Callback callback) {
@@ -664,57 +747,6 @@ public class CleverTapModuleImpl implements SyncListener,
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getUnreadInboxMessages(Callback callback) {
-
-        getInboxMessages(callback, InBoxMessages.UNREAD);
-    }
-
-    //Inbox Callbacks
-    public void inboxDidInitialize() {
-        WritableMap params = Arguments.createMap();
-        sendEvent(CLEVERTAP_INBOX_DID_INITIALIZE, params);//passing empty map
-    }
-
-    public void inboxMessagesDidUpdate() {
-        WritableMap params = Arguments.createMap();
-        sendEvent(CLEVERTAP_INBOX_MESSAGES_DID_UPDATE, params); //passing empty map
-    }
-
-    //App Inbox methods
-    public void initializeInbox() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.initializeInbox();
-            Log.e(TAG, "initializeInbox Called");
-        }
-    }
-
-    public void markReadInboxMessageForId(String messageId) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.markReadInboxMessage(messageId);
-        } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
-        }
-    }
-
-    public void markReadInboxMessagesForIDs(final ReadableArray messageIDs) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.markReadInboxMessagesForIDs(arrayListStringFromReadableArray(messageIDs));
-        } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
-        }
-    }
-
-    public void deleteInboxMessagesForIDs(final ReadableArray messageIDs) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.deleteInboxMessagesForIDs(arrayListStringFromReadableArray(messageIDs));
-        } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
-        }
-    }
 
     @Override
     public void onActivated() {
@@ -747,15 +779,9 @@ public class CleverTapModuleImpl implements SyncListener,
         sendEvent(CLEVERTAP_PRODUCT_CONFIG_DID_FETCH, params);//passing empty map
     }
 
-    //Native Display methods
-
     //InApp Notification callback
     public void onInAppButtonClick(HashMap<String, String> hashMap) {
         sendEvent(CLEVERTAP_ON_INAPP_BUTTON_CLICK, getWritableMapFromMap(hashMap));
-    }
-
-    public void onInboxButtonClick(HashMap<String, String> payload) {
-        sendEvent(CLEVERTAP_ON_INBOX_BUTTON_CLICK, getWritableMapFromMap(payload));
     }
 
     @Override
@@ -986,24 +1012,6 @@ public class CleverTapModuleImpl implements SyncListener,
         }
     }
 
-    public void pushInboxNotificationClickedEventForId(String messageId) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.pushInboxNotificationClickedEvent(messageId);
-        } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
-        }
-    }
-
-    public void pushInboxNotificationViewedEventForId(String messageId) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.pushInboxNotificationViewedEvent(messageId);
-        } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
-        }
-    }
-
     public void pushInstallReferrer(String source, String medium, String campaign) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -1068,7 +1076,6 @@ public class CleverTapModuleImpl implements SyncListener,
         }
     }
 
-    // Product Config methods
     public void registerForPush() {
         // no-op in Android
         Log.i(TAG, "CleverTap.registerForPush is a no-op in Android");
@@ -1083,7 +1090,6 @@ public class CleverTapModuleImpl implements SyncListener,
         productConfigController.reset();
     }
 
-    // Feature Flag methods
     public void sessionGetPreviousVisitTime(Callback callback) {
         String error = null;
         int result = -1;
@@ -1097,7 +1103,6 @@ public class CleverTapModuleImpl implements SyncListener,
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    // Developer Options
     public void sessionGetScreenCount(Callback callback) {
         String error = null;
         int result = -1;
@@ -1223,21 +1228,6 @@ public class CleverTapModuleImpl implements SyncListener,
             default:
                 Log.e(TAG, "Unknown push token type " + type);
                 break;
-        }
-    }
-
-    public void showInbox(ReadableMap styleConfig) {
-        CTInboxStyleConfig inboxStyleConfig = styleConfigFromReadableMap(styleConfig);
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.showAppInbox(inboxStyleConfig);
-        }
-    }
-
-    public void dismissInbox() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.dismissAppInbox();
         }
     }
 
@@ -1382,6 +1372,9 @@ public class CleverTapModuleImpl implements SyncListener,
             });
         }
     }
+    /************************************************
+     *  Product Experience Remote Config methods ends
+     ************************************************/
 
     public void clearInAppResources(final boolean expiredOnly) {
         CleverTapAPI cleverTap = getCleverTapAPI();
@@ -1405,9 +1398,6 @@ public class CleverTapModuleImpl implements SyncListener,
         }
     }
 
-    /************************************************
-     *  Product Experience Remote Config methods ends
-     ************************************************/
 
 
     /**
@@ -1467,7 +1457,6 @@ public class CleverTapModuleImpl implements SyncListener,
         }
         return writableMap;
     }
-    // Listeners
 
     private boolean checkKitkatVersion(String methodName) {
         if (VERSION.SDK_INT < VERSION_CODES.KITKAT) {
@@ -1516,6 +1505,7 @@ public class CleverTapModuleImpl implements SyncListener,
         return props;
     }
 
+    // Listeners
     private void registerListeners(CleverTapAPI clevertap) {
         clevertap.registerPushPermissionNotificationResponseListener(this);
         clevertap.setCTPushNotificationListener(this);

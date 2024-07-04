@@ -36,83 +36,78 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
     }
 
     //Custom Push Notification
-
     override fun createNotification(extras: ReadableMap?) {
         cleverTapModuleImpl.createNotification(extras)
     }
 
     @RequiresApi(api = VERSION_CODES.O)
-
     override fun createNotificationChannel(
-        channelId: String?, channelName: String?, channelDescription: String?,
-        importance: Double, showBadge: Boolean
+        channelId: String?, channelName: String?, channelDescription: String?, importance: Double, showBadge: Boolean
     ) {
         cleverTapModuleImpl.createNotificationChannel(
-            channelId, channelName, channelDescription,
-            importance.toInt(), showBadge
+            channelId, channelName, channelDescription, importance.toInt(), showBadge
         )
     }
 
     @RequiresApi(api = VERSION_CODES.O)
-
     override fun createNotificationChannelGroup(groupId: String?, groupName: String?) {
         cleverTapModuleImpl.createNotificationChannelGroup(groupId, groupName)
     }
 
     @RequiresApi(api = VERSION_CODES.O)
-
     override fun createNotificationChannelWithGroupId(
-        channelId: String?, channelName: String?, channelDescription: String?,
-        importance: Double, groupId: String?, showBadge: Boolean
+        channelId: String?,
+        channelName: String?,
+        channelDescription: String?,
+        importance: Double,
+        groupId: String?,
+        showBadge: Boolean
     ) {
         cleverTapModuleImpl.createNotificationChannelWithGroupId(
-            channelId, channelName, channelDescription,
-            importance.toInt(), groupId, showBadge
+            channelId, channelName, channelDescription, importance.toInt(), groupId, showBadge
         )
     }
 
     @RequiresApi(api = VERSION_CODES.O)
-
     override fun createNotificationChannelWithGroupIdAndSound(
-        channelId: String?, channelName: String?,
-        channelDescription: String?, importance: Double, groupId: String?, showBadge: Boolean, sound: String?
+        channelId: String?,
+        channelName: String?,
+        channelDescription: String?,
+        importance: Double,
+        groupId: String?,
+        showBadge: Boolean,
+        sound: String?
     ) {
         cleverTapModuleImpl.createNotificationChannelWithGroupIdAndSound(
-            channelId, channelName, channelDescription,
-            importance.toInt(), groupId, showBadge, sound
+            channelId, channelName, channelDescription, importance.toInt(), groupId, showBadge, sound
         )
     }
 
     @RequiresApi(api = VERSION_CODES.O)
-
     override fun createNotificationChannelWithSound(
-        channelId: String?, channelName: String?, channelDescription: String?,
-        importance: Double, showBadge: Boolean, sound: String?
+        channelId: String?,
+        channelName: String?,
+        channelDescription: String?,
+        importance: Double,
+        showBadge: Boolean,
+        sound: String?
     ) {
         cleverTapModuleImpl.createNotificationChannelWithSound(
-            channelId, channelName, channelDescription,
-            importance.toInt(), showBadge, sound
+            channelId, channelName, channelDescription, importance.toInt(), showBadge, sound
         )
     }
 
-    override fun deleteInboxMessageForId(messageId: String?) {
-        cleverTapModuleImpl.deleteInboxMessageForId(messageId)
-    }
-
     @RequiresApi(api = VERSION_CODES.O)
-
     override fun deleteNotificationChannel(channelId: String?) {
         cleverTapModuleImpl.deleteNotificationChannel(channelId)
     }
 
     @RequiresApi(api = VERSION_CODES.O)
-
     override fun deleteNotificationChannelGroup(groupId: String?) {
         cleverTapModuleImpl.deleteNotificationChannelGroup(groupId)
     }
 
     //Push permission methods
-
     override fun promptForPushPermission(showFallbackSettings: Boolean) {
         cleverTapModuleImpl.promptForPushPermission(showFallbackSettings)
     }
@@ -169,17 +164,12 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         cleverTapModuleImpl.getAllDisplayUnits(callback)
     }
 
-    override fun getAllInboxMessages(callback: Callback?) {
-        cleverTapModuleImpl.getAllInboxMessages(callback)
+    override fun getDisplayUnitForId(unitID: String?, callback: Callback?) {
+        cleverTapModuleImpl.getDisplayUnitForId(unitID, callback)
     }
 
     override fun getBoolean(key: String?, callback: Callback?) {
         cleverTapModuleImpl.getBoolean(key, callback)
-    }
-
-
-    override fun getDisplayUnitForId(unitID: String?, callback: Callback?) {
-        cleverTapModuleImpl.getDisplayUnitForId(unitID, callback)
     }
 
     override fun getDouble(key: String?, callback: Callback?) {
@@ -194,6 +184,10 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         cleverTapModuleImpl.getFeatureFlag(name, defaultValue, callback)
     }
 
+    override fun getAllInboxMessages(callback: Callback?) {
+        cleverTapModuleImpl.getAllInboxMessages(callback)
+    }
+
     override fun getInboxMessageCount(callback: Callback?) {
         cleverTapModuleImpl.getInboxMessageCount(callback)
     }
@@ -206,16 +200,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         cleverTapModuleImpl.getInboxMessageUnreadCount(callback)
     }
 
-    override fun getInitialUrl(callback: Callback?) {
-        cleverTapModuleImpl.getInitialUrl(callback)
-    }
-
-    override fun getLastFetchTimeStampInMillis(callback: Callback?) {
-        cleverTapModuleImpl.getLastFetchTimeStampInMillis(callback)
-    }
-
-    override fun getString(key: String?, callback: Callback?) {
-        cleverTapModuleImpl.getString(key, callback)
+    override fun deleteInboxMessageForId(messageId: String?) {
+        cleverTapModuleImpl.deleteInboxMessageForId(messageId)
     }
 
     override fun getUnreadInboxMessages(callback: Callback?) {
@@ -236,6 +222,34 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
 
     override fun deleteInboxMessagesForIDs(messageIDs: ReadableArray?) {
         cleverTapModuleImpl.deleteInboxMessagesForIDs(messageIDs)
+    }
+
+    override fun pushInboxNotificationClickedEventForId(messageId: String?) {
+        cleverTapModuleImpl.pushInboxNotificationClickedEventForId(messageId)
+    }
+
+    override fun pushInboxNotificationViewedEventForId(messageId: String?) {
+        cleverTapModuleImpl.pushInboxNotificationViewedEventForId(messageId)
+    }
+
+    override fun showInbox(styleConfig: ReadableMap?) {
+        cleverTapModuleImpl.showInbox(styleConfig)
+    }
+
+    override fun dismissInbox() {
+        cleverTapModuleImpl.dismissInbox()
+    }
+
+    override fun getInitialUrl(callback: Callback?) {
+        cleverTapModuleImpl.getInitialUrl(callback)
+    }
+
+    override fun getLastFetchTimeStampInMillis(callback: Callback?) {
+        cleverTapModuleImpl.getLastFetchTimeStampInMillis(callback)
+    }
+
+    override fun getString(key: String?, callback: Callback?) {
+        cleverTapModuleImpl.getString(key, callback)
     }
 
     override fun onUserLogin(profile: ReadableMap?) {
@@ -292,14 +306,6 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
 
     override fun pushDisplayUnitViewedEventForID(unitID: String?) {
         cleverTapModuleImpl.pushDisplayUnitViewedEventForID(unitID)
-    }
-
-    override fun pushInboxNotificationClickedEventForId(messageId: String?) {
-        cleverTapModuleImpl.pushInboxNotificationClickedEventForId(messageId)
-    }
-
-    override fun pushInboxNotificationViewedEventForId(messageId: String?) {
-        cleverTapModuleImpl.pushInboxNotificationViewedEventForId(messageId)
     }
 
     override fun pushInstallReferrer(source: String?, medium: String?, campaign: String?) {
@@ -381,14 +387,6 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         cleverTapModuleImpl.setPushTokenAsString(token, type)
     }
 
-    override fun showInbox(styleConfig: ReadableMap?) {
-        cleverTapModuleImpl.showInbox(styleConfig)
-    }
-
-    override fun dismissInbox() {
-        cleverTapModuleImpl.dismissInbox()
-    }
-
     // Increment/Decrement Operator
 
     override fun profileIncrementValueForKey(value: Double?, key: String?) {
@@ -421,7 +419,7 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         cleverTapModuleImpl.fetchInApps(callback)
     }
 
-    override fun clearInAppResources(expiredOnly : Boolean) {
+    override fun clearInAppResources(expiredOnly: Boolean) {
         cleverTapModuleImpl.clearInAppResources(expiredOnly)
     }
 
@@ -443,7 +441,6 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
 
     override fun getVariable(key: String?, callback: Callback?) {
         cleverTapModuleImpl.getVariable(key, callback)
-
     }
 
     override fun getVariables(callback: Callback?) {
@@ -469,7 +466,6 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
     override fun setPushTokenAsStringWithRegion(token: String?, withType: String?, withRegion: String?) {
         return;
     }
-
 
     companion object {
 
@@ -503,31 +499,21 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         val constants: MutableMap<String, Any> = HashMap()
         constants[CLEVERTAP_PROFILE_DID_INITIALIZE] = CLEVERTAP_PROFILE_DID_INITIALIZE
         constants[CLEVERTAP_PROFILE_SYNC] = CLEVERTAP_PROFILE_SYNC
-        constants[CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED] =
-            CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED
-        constants[CLEVERTAP_IN_APP_NOTIFICATION_SHOWED] =
-            CLEVERTAP_IN_APP_NOTIFICATION_SHOWED
+        constants[CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED] = CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED
+        constants[CLEVERTAP_IN_APP_NOTIFICATION_SHOWED] = CLEVERTAP_IN_APP_NOTIFICATION_SHOWED
         constants[FCM] = FCM
         constants[BPS] = BPS
         constants[HPS] = HPS
-        constants[CLEVERTAP_INBOX_DID_INITIALIZE] =
-            CLEVERTAP_INBOX_DID_INITIALIZE
-        constants[CLEVERTAP_INBOX_MESSAGES_DID_UPDATE] =
-            CLEVERTAP_INBOX_MESSAGES_DID_UPDATE
-        constants[CLEVERTAP_ON_INBOX_BUTTON_CLICK] =
-            CLEVERTAP_ON_INBOX_BUTTON_CLICK
+        constants[CLEVERTAP_INBOX_DID_INITIALIZE] = CLEVERTAP_INBOX_DID_INITIALIZE
+        constants[CLEVERTAP_INBOX_MESSAGES_DID_UPDATE] = CLEVERTAP_INBOX_MESSAGES_DID_UPDATE
+        constants[CLEVERTAP_ON_INBOX_BUTTON_CLICK] = CLEVERTAP_ON_INBOX_BUTTON_CLICK
         constants[CLEVERTAP_ON_INBOX_MESSAGE_CLICK] = CLEVERTAP_ON_INBOX_MESSAGE_CLICK
-        constants[CLEVERTAP_ON_DISPLAY_UNITS_LOADED] =
-            CLEVERTAP_ON_DISPLAY_UNITS_LOADED
-        constants[CLEVERTAP_ON_INAPP_BUTTON_CLICK] =
-            CLEVERTAP_ON_INAPP_BUTTON_CLICK
-        constants[CLEVERTAP_FEATURE_FLAGS_DID_UPDATE] =
-            CLEVERTAP_FEATURE_FLAGS_DID_UPDATE
-        constants[CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE] =
-            CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE
+        constants[CLEVERTAP_ON_DISPLAY_UNITS_LOADED] = CLEVERTAP_ON_DISPLAY_UNITS_LOADED
+        constants[CLEVERTAP_ON_INAPP_BUTTON_CLICK] = CLEVERTAP_ON_INAPP_BUTTON_CLICK
+        constants[CLEVERTAP_FEATURE_FLAGS_DID_UPDATE] = CLEVERTAP_FEATURE_FLAGS_DID_UPDATE
+        constants[CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE] = CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE
         constants[CLEVERTAP_PRODUCT_CONFIG_DID_FETCH] = CLEVERTAP_PRODUCT_CONFIG_DID_FETCH
-        constants[CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE] =
-            CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE
+        constants[CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE] = CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE
         constants[CLEVERTAP_PUSH_NOTIFICATION_CLICKED] = CLEVERTAP_PUSH_NOTIFICATION_CLICKED
         constants[CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE] = CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE
         constants[CLEVERTAP_ON_VARIABLES_CHANGED] = CLEVERTAP_ON_VARIABLES_CHANGED
