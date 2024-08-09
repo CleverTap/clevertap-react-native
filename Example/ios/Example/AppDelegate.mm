@@ -19,17 +19,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-                                                   moduleName:@"Example"
-                                            initialProperties:nil];
+  self.moduleName = @"Example";
+  // You can add your custom initial props in the dictionary below.
+  // They will be passed down to the ViewController used by React Native.
+  self.initialProps = @{};
   
-  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  UIViewController *rootViewController = [UIViewController new];
-  rootViewController.view = rootView;
-  self.window.rootViewController = rootViewController;
-  [self.window makeKeyAndVisible];
   // Add CleverTap Account ID and Account Token in your .plist file)
   // initialize CleverTap
 #ifdef DEBUG
@@ -38,6 +32,9 @@
   [CleverTap autoIntegrate];
   [self addNotificationCategories];
   [[CleverTapReactManager sharedInstance] applicationDidLaunchWithOptions:launchOptions];
+
+  return  [super application:application didFinishLaunchingWithOptions:launchOptions];
+  
   
   return YES;
 }
@@ -72,7 +69,11 @@
   return [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
 }
 
-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
+  return [self bundleURL];
+}
+
+- (NSURL *)bundleURL
 {
 #if DEBUG
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
