@@ -565,6 +565,8 @@ export default class App extends Component {
     // check to see if CleverTap has a launch deep link
     // handles the case where the app is launched from a push notification containing a deep link
     CleverTap.getInitialUrl((err, url) => {
+        const archUsed = global?.nativeFabricUIManager ? 'new' : 'old';
+        console.log(`Using RN ${archUsed} architecture`);
       if (url) {
         console.log('CleverTap launch url', url);
         _handleOpenUrl({url}, 'CleverTap');
