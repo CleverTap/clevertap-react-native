@@ -188,7 +188,7 @@ export interface Spec extends TurboModule {
   resumeInAppNotifications(): void;
   fetchInApps(callback: ((error: Object, result: boolean) => void) | null): void;
   clearInAppResources(expiredOnly: number): void;
-  promptForPushPermission(showFallbackSettings: number): void;
+  promptForPushPermission(showFallbackSettings: boolean): void;
   promptPushPrimer(json: Object): void;
   isPushPermissionGranted(callback: ((error: Object, result: boolean) => void) | null): void;
   syncVariables(): void;
