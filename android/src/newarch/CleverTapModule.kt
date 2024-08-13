@@ -431,7 +431,7 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         cleverTapModuleImpl.syncVariablesinProd(isProduction, null)
     }
 
-    override fun defineVariables(`object`: ReadableMap) {
+    override fun defineVariables(`object`: ReadableMap?) {
         cleverTapModuleImpl.defineVariables(`object`)
     }
 
