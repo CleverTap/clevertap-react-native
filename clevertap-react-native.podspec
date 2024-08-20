@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
 
   install_modules_dependencies(s)
 
-  s.dependency 'CleverTap-iOS-SDK', '6.2.1'
+  s.dependency 'CleverTap-iOS-SDK', '7.0.0'
   s.dependency 'React-Core'
 
   if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then
