@@ -216,9 +216,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-base:18.2.0'
     implementation 'com.google.firebase:firebase-messaging:23.0.6'
     implementation 'com.google.android.material:material:1.4.0' //Mandatory for App Inbox
-    implementation("androidx.media3:media3-exoplayer:1.1.1")
-    implementation("androidx.media3:media3-exoplayer-hls:1.1.1")
-    implementation("androidx.media3:media3-ui:1.1.1")
+    implementation("androidx.media3:media3-exoplayer:1.1.1") //Optional for Audio/Video
+    implementation("androidx.media3:media3-exoplayer-hls:1.1.1") //Optional for Audio/Video
+    implementation("androidx.media3:media3-ui:1.1.1") //Optional for Audio/Video
     //implementation 'com.google.android.gms:play-services-ads:19.0.1'
 
 
