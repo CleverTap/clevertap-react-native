@@ -21,6 +21,9 @@ export interface Spec extends TurboModule {
     CleverTapPushPermissionResponseReceived: string;
     CleverTapOnVariablesChanged: string;
     CleverTapOnValueChanged: string;
+    HPS: string;
+    FCM: string;
+    BPS: string;
   };
   
   setInstanceWithAccountId(accountId: string): void;
