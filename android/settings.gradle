@@ -1,0 +1,5 @@
+includeBuild(new File("../../clevertap-android-sdk")) {
+        dependencySubstitution {
+            substitute(module("com.clevertap.android:clevertap-android-sdk")).using(project(":clevertap-core"))
+        }
+}

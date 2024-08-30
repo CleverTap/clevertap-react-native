@@ -866,6 +866,22 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    */
   export function customTemplateContextToString(templateName: string): Promise<string>;
 
+  export function customTemplateSetDismissed(templateName: string): Promise<void>;
+
+  export function customTemplateSetPresented(templateName: string): Promise<void>;
+
+  export function customTemplateRunAction(templateName: string, argName: string): Promise<void>;
+
+  export function customTemplateGetStringArg(templateName: string, argName: string): Promise<string>;
+
+  export function customTemplateGetNumberArg(templateName: string, argName: string): Promise<number>;
+
+  export function customTemplateGetBooleanArg(templateName: string, argName: string): Promise<boolean>;
+
+  export function customTemplateGetFileArg(templateName: string, argName: string): Promise<string>;
+
+  export function customTemplateGetObjectArg(templateName: string, argName: string): Promise<any>;
+
   /*******************
    * Developer Options
    ******************/
