@@ -1,4 +1,5 @@
 import { DeviceEventEmitter, NativeEventEmitter, NativeModules } from 'react-native';
+
 const CleverTapReact = require('./NativeCleverTapModule').default;
 const EventEmitter = Platform.select({
     ios: new NativeEventEmitter(CleverTapReact),
@@ -49,6 +50,10 @@ var CleverTap = {
     CleverTapProfileSync: CleverTapReact.getConstants().CleverTapProfileSync,
     CleverTapInAppNotificationDismissed: CleverTapReact.getConstants().CleverTapInAppNotificationDismissed,
     CleverTapInAppNotificationShowed: CleverTapReact.getConstants().CleverTapInAppNotificationShowed,
+    CleverTapInAppNotificationButtonTapped: CleverTapReact.getConstants().CleverTapInAppNotificationButtonTapped,
+    CleverTapCustomTemplatePresent: CleverTapReact.getConstants().CleverTapCustomTemplatePresent,
+    CleverTapCustomFunctionPresent: CleverTapReact.getConstants().CleverTapCustomFunctionPresent,
+    CleverTapCustomTemplateClose: CleverTapReact.getConstants().CleverTapCustomTemplateClose,
     FCM: CleverTapReact.getConstants().FCM,
     BPS: CleverTapReact.getConstants().BPS,
     HPS: CleverTapReact.getConstants().HPS,
@@ -57,7 +62,6 @@ var CleverTap = {
     CleverTapInboxMessageButtonTapped: CleverTapReact.getConstants().CleverTapInboxMessageButtonTapped,
     CleverTapInboxMessageTapped: CleverTapReact.getConstants().CleverTapInboxMessageTapped,
     CleverTapDisplayUnitsLoaded: CleverTapReact.getConstants().CleverTapDisplayUnitsLoaded,
-    CleverTapInAppNotificationButtonTapped: CleverTapReact.getConstants().CleverTapInAppNotificationButtonTapped,
     CleverTapFeatureFlagsDidUpdate: CleverTapReact.getConstants().CleverTapFeatureFlagsDidUpdate, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
     CleverTapProductConfigDidInitialize: CleverTapReact.getConstants().CleverTapProductConfigDidInitialize, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
     CleverTapProductConfigDidFetch: CleverTapReact.getConstants().CleverTapProductConfigDidFetch, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
@@ -962,6 +966,38 @@ var CleverTap = {
      */
     clearInAppResources: function (expiredOnly) {
         CleverTapReact.clearInAppResources(expiredOnly);
+    },
+
+    customTemplateSetDismissed: function (templateName) {
+        return CleverTapReact.customTemplateSetDismissed(templateName);
+    },
+
+    customTemplateSetPresented: function (templateName) {
+        return CleverTapReact.customTemplateSetPresented(templateName);
+    },
+
+    customTemplateRunAction: function (templateName, argName) {
+        return CleverTapReact.customTemplateRunAction(templateName, argName);
+    },
+
+    customTemplateGetStringArg: function (templateName, argName) {
+       return CleverTapReact.customTemplateGetStringArg(templateName, argName);
+    },
+
+    customTemplateGetNumberArg: function (templateName, argName) {
+        return CleverTapReact.customTemplateGetNumberArg(templateName, argName);
+    },
+
+    customTemplateGetBooleanArg: function (templateName, argName) {
+        return CleverTapReact.customTemplateGetBooleanArg(templateName, argName);
+    },
+
+    customTemplateGetFileArg: function (templateName, argName) {
+        return CleverTapReact.customTemplateGetFileArg(templateName, argName);
+    },
+
+    customTemplateGetObjectArg: function (templateName, argName) {
+        return CleverTapReact.customTemplateGetObjectArg(templateName, argName)
     }
 };
 
