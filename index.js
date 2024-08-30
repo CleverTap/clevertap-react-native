@@ -1,4 +1,5 @@
 import { DeviceEventEmitter, NativeEventEmitter, NativeModules } from 'react-native';
+import {customTemplateDismiss, customTemplateSetPresented} from "./index";
 
 const CleverTapReact = NativeModules.CleverTapReact;
 const EventEmitter = NativeModules.CleverTapReactEventEmitter ? new NativeEventEmitter(NativeModules.CleverTapReactEventEmitter) : DeviceEventEmitter;
@@ -960,6 +961,14 @@ var CleverTap = {
      */
     clearInAppResources: function(expiredOnly) {
         CleverTapReact.clearInAppResources(expiredOnly);
+    },
+
+    customTemplateSetDismissed: function(templateName) {
+        CleverTapReact.customTemplateSetDismissed(templateName);
+    },
+
+    customTemplateSetPresented: function (templateName) {
+        CleverTapReact.customTemplateSetPresented(templateName);
     }
 };
 

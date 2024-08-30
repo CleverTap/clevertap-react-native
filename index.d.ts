@@ -770,6 +770,10 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    */
   export function clearInAppResources(expiredOnly: boolean): void;
 
+  export function customTemplateSetDismissed(templateName: string): void;
+
+  export function customTemplateSetPresented(templateName: string): void;
+
   /*******************
    * Developer Options
    ******************/
@@ -803,3 +807,6 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export const CleverTapPushPermissionResponseReceived: string;
   export const CleverTapOnVariablesChanged: string;
   export const CleverTapOnValueChanged: string;
+  export const CleverTapCustomTemplateClose: string;
+  export const CleverTapCustomTemplatePresent: string;
+  export const CleverTapCustomFunctionPresent: string;

@@ -975,9 +975,10 @@ pushevent = () => {
   alert('Event Recorded');
 
   //Recording an Event
-  CleverTap.recordEvent('testEvent');
-  CleverTap.recordEvent('Send Basic Push');
-  CleverTap.recordEvent('testEventWithProps', {start: new Date(), foo: 'bar'});
+  // CleverTap.recordEvent('testEvent');
+  // CleverTap.recordEvent('Send Basic Push');
+  // CleverTap.recordEvent('testEventWithProps', {start: new Date(), foo: 'bar'});
+  CleverTap.recordEvent('template');
 };
 
 pushChargedEvent = () => {
@@ -1477,6 +1478,12 @@ function addCleverTapAPIListeners(fromClick) {
   if (fromClick) {
     alert('Listeners added successfully');
   }
+  // TODO Doesn't work with CleverTap.CleverTapCustomTemplatePresent
+  CleverTap.addListener("CleverTapCustomTemplatePresent", templateName => {
+    CleverTap.customTemplateSetPresented(templateName);
+    CleverTap.customTemplateSetDismissed(templateName);
+    alert("Template Presented " + templateName);
+  })
 }
 
 function createNotificationChannelWithSound() {

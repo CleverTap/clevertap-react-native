@@ -17,6 +17,7 @@ import com.clevertap.android.sdk.CleverTapAPI.LogLevel;
 import com.clevertap.android.sdk.interfaces.NotificationHandler;
 import com.clevertap.android.sdk.pushnotification.CTPushNotificationListener;
 import com.clevertap.react.CleverTapApplication;
+import com.clevertap.react.CleverTapCustomTemplates;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
@@ -69,6 +70,7 @@ public class MainApplication extends CleverTapApplication
 
     @Override
     public void onCreate() {
+        CleverTapCustomTemplates.registerCustomTemplates(this, this, "templates.json");
         CleverTapAPI.setDebugLevel(LogLevel.VERBOSE);
         CleverTapAPI.setNotificationHandler((NotificationHandler) new PushTemplateNotificationHandler());
         CleverTapAPI.getDefaultInstance(getApplicationContext()).enableDeviceNetworkInfoReporting(true);

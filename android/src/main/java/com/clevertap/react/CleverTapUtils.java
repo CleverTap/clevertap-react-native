@@ -1,9 +1,14 @@
 package com.clevertap.react;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.clevertap.android.sdk.displayunits.model.CleverTapDisplayUnit;
+import com.facebook.react.ReactApplication;
+import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -11,6 +16,8 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -328,5 +335,43 @@ public class CleverTapUtils {
                 return writableArray;
             }
         }
+    }
+
+    public static void sendEvent(String eventName, Object params, ReactContext context) {
+        try {
+            context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                    .emit(eventName, params);
+            Log.d(TAG, "Sending event " + eventName);
+        } catch (Exception e) {
+            Log.e(TAG, "Sending event failed", e);
+        }
+    }
+
+    public static void sendEventEnsureInitialization(String eventName, Object params, ReactApplication reactApplication) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> {
+
+            // Construct and load our normal React JS code bundle
+            final ReactInstanceManager reactInstanceManager = reactApplication
+                    .getReactNativeHost().getReactInstanceManager();
+            ReactContext context = reactInstanceManager.getCurrentReactContext();
+            // If it's constructed, send a notification
+            if (context != null) {
+                sendEvent(eventName, params, context);
+            } else {
+                // Otherwise wait for construction, then send the event
+                reactInstanceManager
+                        .addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
+                            public void onReactContextInitialized(ReactContext context) {
+                                sendEvent(eventName, params, context);
+                                reactInstanceManager.removeReactInstanceEventListener(this);
+                            }
+                        });
+                if (!reactInstanceManager.hasStartedCreatingInitialContext()) {
+                    // Construct it in the background
+                    reactInstanceManager.createReactContextInBackground();
+                }
+            }
+        });
     }
 }

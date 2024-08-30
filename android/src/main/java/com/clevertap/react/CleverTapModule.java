@@ -12,6 +12,8 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import com.clevertap.android.sdk.CTFeatureFlagsListener;
 import com.clevertap.android.sdk.CTInboxListener;
@@ -31,6 +33,7 @@ import com.clevertap.android.sdk.events.EventDetail;
 import com.clevertap.android.sdk.featureFlags.CTFeatureFlagsController;
 import com.clevertap.android.sdk.inapp.CTInAppNotification;
 import com.clevertap.android.sdk.inapp.CTLocalInApp;
+import com.clevertap.android.sdk.inapp.customtemplates.CustomTemplateContext;
 import com.clevertap.android.sdk.inbox.CTInboxMessage;
 import com.clevertap.android.sdk.interfaces.OnInitCleverTapIDListener;
 import com.clevertap.android.sdk.product_config.CTProductConfigController;
@@ -103,6 +106,12 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             return errorMessage;
         }
     }
+
+    public static final String CLEVERTAP_CUSTOM_TEMPLATE_CLOSE = "CleverTapCustomTemplateClose";
+
+    public static final String CLEVERTAP_CUSTOM_TEMPLATE_PRESENT = "CleverTapCustomTemplatePresent";
+
+    public static final String CLEVERTAP_CUSTOM_FUNCTION_PRESENT = "CleverTapCustomFunctionPresent";
 
     private static Uri mlaunchURI;
 
@@ -548,6 +557,9 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     @Override
     public Map<String, Object> getConstants() {
         final Map<String, Object> constants = new HashMap<>();
+        constants.put(CLEVERTAP_CUSTOM_TEMPLATE_CLOSE, CLEVERTAP_CUSTOM_TEMPLATE_CLOSE);
+        constants.put(CLEVERTAP_CUSTOM_TEMPLATE_PRESENT, CLEVERTAP_CUSTOM_TEMPLATE_PRESENT);
+        constants.put(CLEVERTAP_CUSTOM_FUNCTION_PRESENT, CLEVERTAP_CUSTOM_FUNCTION_PRESENT);
         constants.put(CLEVERTAP_PROFILE_DID_INITIALIZE, CLEVERTAP_PROFILE_DID_INITIALIZE);
         constants.put(CLEVERTAP_PROFILE_SYNC, CLEVERTAP_PROFILE_SYNC);
         constants.put(CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED, CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED);
@@ -1410,6 +1422,28 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.resumeInAppNotifications();
+        }
+    }
+
+    @ReactMethod
+    public void customTemplateSetDismissed(String templateName) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            CustomTemplateContext context = cleverTap.getActiveContextForTemplate(templateName);
+            if (context != null) {
+                context.setDismissed();
+            }
+        }
+    }
+
+    @ReactMethod
+    public void customTemplateSetPresented(String templateName) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            CustomTemplateContext context = cleverTap.getActiveContextForTemplate(templateName);
+            if (context != null) {
+                context.setPresented();
+            }
         }
     }
 

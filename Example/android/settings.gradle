@@ -8,6 +8,10 @@ include ':app'
 include ':clevertap-react-native'
 project(':clevertap-react-native').projectDir = new File(settingsDir, '../node_modules/clevertap-react-native/android')
 includeBuild('../node_modules/@react-native/gradle-plugin')
-  
+includeBuild(new File("../../../clevertap-android-sdk")) {
+    dependencySubstitution {
+        substitute(module("com.clevertap.android:clevertap-android-sdk")).using(project(":clevertap-core"))
+    }
+}
   
   
