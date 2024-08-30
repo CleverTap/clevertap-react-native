@@ -978,9 +978,10 @@ pushevent = () => {
   alert('Event Recorded');
 
   //Recording an Event
-  CleverTap.recordEvent('testEvent');
-  CleverTap.recordEvent('Send Basic Push');
-  CleverTap.recordEvent('testEventWithProps', {start: new Date(), foo: 'bar'});
+  // CleverTap.recordEvent('testEvent');
+  // CleverTap.recordEvent('Send Basic Push');
+  // CleverTap.recordEvent('testEventWithProps', {start: new Date(), foo: 'bar'});
+  CleverTap.recordEvent('template');
 };
 
 pushChargedEvent = () => {
@@ -1479,6 +1480,26 @@ function addCleverTapAPIListeners(fromClick) {
   );
   if (fromClick) {
     alert('Listeners added successfully');
+  }
+  CleverTap.addListener(CleverTap.CleverTapCustomTemplatePresent, templateName => {
+    getTemplateValuesString(templateName).then((str)=> {
+       alert(str);
+    })
+  })
+}
+
+async function getTemplateValuesString(templateName) {
+  try {
+    var var1 = await CleverTap.customTemplateGetBooleanArg(templateName, "var1");
+    var var2 = await CleverTap.customTemplateGetStringArg(templateName, "var2");
+    var var3 = await CleverTap.customTemplateGetNumberArg(templateName, "folder1.var3");
+    var var4 = await CleverTap.customTemplateGetFileArg(templateName, "folder1.var4");
+    var folder1 = await CleverTap.customTemplateGetObjectArg(templateName, "folder1");
+    await CleverTap.customTemplateSetPresented(templateName);
+    await CleverTap.customTemplateSetDismissed(templateName);
+    return `Template Presented ${templateName}\nvar1=${var1}\nvar2=${var2}\nfolder1.var3=${var3}\nfolder1.var4=${var4}\nfolder1=${JSON.stringify(folder1)}`;
+  } catch (e) {
+    return e.toString();
   }
 }
 

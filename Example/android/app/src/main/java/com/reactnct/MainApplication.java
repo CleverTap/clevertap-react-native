@@ -13,6 +13,7 @@ import com.clevertap.android.pushtemplates.PushTemplateNotificationHandler;
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.android.sdk.CleverTapAPI.LogLevel;
 import com.clevertap.react.CleverTapApplication;
+import com.clevertap.react.CleverTapCustomTemplates;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactHost;
@@ -72,6 +73,7 @@ public class MainApplication extends CleverTapApplication implements ActivityLif
 
     @Override
     public void onCreate() {
+        CleverTapCustomTemplates.registerCustomTemplates(this, "templates.json");
         CleverTapAPI.setDebugLevel(LogLevel.VERBOSE);
         CleverTapAPI.setNotificationHandler(new PushTemplateNotificationHandler());
         CleverTapAPI.getDefaultInstance(getApplicationContext()).enableDeviceNetworkInfoReporting(true);

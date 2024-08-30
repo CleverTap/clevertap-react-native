@@ -770,6 +770,22 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    */
   export function clearInAppResources(expiredOnly: boolean): void;
 
+  export function customTemplateSetDismissed(templateName: string): Promise<void>;
+
+  export function customTemplateSetPresented(templateName: string): Promise<void>;
+
+  export function customTemplateRunAction(templateName: string, argName: string): Promise<void>;
+
+  export function customTemplateGetStringArg(templateName: string, argName: string): Promise<string>;
+
+  export function customTemplateGetNumberArg(templateName: string, argName: string): Promise<number>;
+
+  export function customTemplateGetBooleanArg(templateName: string, argName: string): Promise<boolean>;
+
+  export function customTemplateGetFileArg(templateName: string, argName: string): Promise<string>;
+
+  export function customTemplateGetObjectArg(templateName: string, argName: string): Promise<any>;
+
   /*******************
    * Developer Options
    ******************/
@@ -789,12 +805,15 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export const CleverTapProfileSync: string;
   export const CleverTapInAppNotificationDismissed: string;
   export const CleverTapInAppNotificationShowed: string;
+  export const CleverTapInAppNotificationButtonTapped: string;
+  export const CleverTapCustomTemplatePresent: string;
+  export const CleverTapCustomTemplateClose: string;
+  export const CleverTapCustomFunctionPresent: string;
   export const CleverTapInboxDidInitialize: string;
   export const CleverTapInboxMessagesDidUpdate: string;
   export const CleverTapInboxMessageButtonTapped: string;
   export const CleverTapInboxMessageTapped: string;
   export const CleverTapDisplayUnitsLoaded: string;
-  export const CleverTapInAppNotificationButtonTapped: string;
   export const CleverTapFeatureFlagsDidUpdate: string;
   export const CleverTapProductConfigDidInitialize: string;
   export const CleverTapProductConfigDidFetch: string;
