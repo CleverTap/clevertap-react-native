@@ -16,7 +16,7 @@
     "@react-navigation/native-stack": "^6.9.12",
     "clevertap-react-native": "git+https://github.com/CleverTap/clevertap-react-native#develop",
     "react": "18.2.0",
-    "react-native": "0.73.5",
+    "react-native": "0.74.5",
     "react-native-drawer": "^2.5.1",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-pager-view": "^5.1.2",
