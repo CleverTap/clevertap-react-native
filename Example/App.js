@@ -1478,11 +1478,23 @@ function addCleverTapAPIListeners(fromClick) {
   if (fromClick) {
     alert('Listeners added successfully');
   }
-  // TODO Doesn't work with CleverTap.CleverTapCustomTemplatePresent
-  CleverTap.addListener("CleverTapCustomTemplatePresent", templateName => {
-    CleverTap.customTemplateSetPresented(templateName);
-    CleverTap.customTemplateSetDismissed(templateName);
-    alert("Template Presented " + templateName);
+  CleverTap.addListener(CleverTap.CleverTapCustomTemplatePresent, templateName => {
+    var boolVar, textVar, nestedNumber, fileVar;
+    CleverTap.customTemplateGetBooleanArg(templateName, "var1", (err, res) => {
+        boolVar = res;
+        CleverTap.customTemplateGetStringArg(templateName, "var2", (err, res) => {
+          textVar = res;
+          CleverTap.customTemplateGetNumberArg(templateName, "folder1.var3", (err, res) => {
+            nestedNumber = res;
+            CleverTap.customTemplateGetFileArg(templateName, "folder1.var4", (err, res)=> {
+              fileVar = res;
+              CleverTap.customTemplateSetPresented(templateName);
+              CleverTap.customTemplateSetDismissed(templateName);
+              alert(`Template Presented ${templateName}\nvar1=${boolVar}\nvar2=${textVar}\nfolder1.var3=${nestedNumber}\nfolder1.var4=${fileVar}`);
+            });
+          });
+        });
+    });
   })
 }
 

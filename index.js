@@ -1,5 +1,4 @@
 import { DeviceEventEmitter, NativeEventEmitter, NativeModules } from 'react-native';
-import {customTemplateDismiss, customTemplateSetPresented} from "./index";
 
 const CleverTapReact = NativeModules.CleverTapReact;
 const EventEmitter = NativeModules.CleverTapReactEventEmitter ? new NativeEventEmitter(NativeModules.CleverTapReactEventEmitter) : DeviceEventEmitter;
@@ -11,7 +10,7 @@ const EventEmitter = NativeModules.CleverTapReactEventEmitter ? new NativeEventE
 */
 const libName = 'React-Native';
 const libVersion = 20201;
-CleverTapReact.setLibrary(libName,libVersion);
+CleverTapReact.setLibrary(libName, libVersion);
 
 function defaultCallback(method, err, res) {
     if (err) {
@@ -66,6 +65,9 @@ var CleverTap = {
     CleverTapPushPermissionResponseReceived: CleverTapReact.CleverTapPushPermissionResponseReceived,
     CleverTapOnVariablesChanged: CleverTapReact.CleverTapOnVariablesChanged,
     CleverTapOnValueChanged: CleverTapReact.CleverTapOnValueChanged,
+    CleverTapCustomTemplateClose: CleverTapReact.CleverTapCustomTemplateClose,
+    CleverTapCustomTemplatePresent: CleverTapReact.CleverTapCustomTemplatePresent,
+    CleverTapCustomFunctionPresent: CleverTapReact.CleverTapCustomFunctionPresent,
 
     /**
     * Add a CleverTap event listener
@@ -116,7 +118,7 @@ var CleverTap = {
     setLocale: function (locale) {
         CleverTapReact.setLocale(locale);
     },
-    
+
     /**
     * Registers the application to receive push notifications
     * only necessary for iOS.
@@ -959,16 +961,40 @@ var CleverTap = {
      *
      * @param {boolean} expiredOnly to clear only assets which will not be needed further for inapps
      */
-    clearInAppResources: function(expiredOnly) {
+    clearInAppResources: function (expiredOnly) {
         CleverTapReact.clearInAppResources(expiredOnly);
     },
 
-    customTemplateSetDismissed: function(templateName) {
+    customTemplateSetDismissed: function (templateName) {
         CleverTapReact.customTemplateSetDismissed(templateName);
     },
 
     customTemplateSetPresented: function (templateName) {
         CleverTapReact.customTemplateSetPresented(templateName);
+    },
+
+    customTemplateRunAction: function (templateName, argName) {
+        CleverTapReact.customTemplateRunAction(templateName, argName);
+    },
+
+    customTemplateGetStringArg: function (templateName, argName, callback) {
+        CleverTapReact.customTemplateGetStringArg(templateName, argName, callback);
+    },
+
+    customTemplateGetNumberArg: function (templateName, argName, callback) {
+        CleverTapReact.customTemplateGetNumberArg(templateName, argName, callback);
+    },
+
+    customTemplateGetBooleanArg: function (templateName, argName, callback) {
+        CleverTapReact.customTemplateGetBooleanArg(templateName, argName, callback);
+    },
+
+    customTemplateGetFileArg: function (templateName, argName, callback) {
+        CleverTapReact.customTemplateGetFileArg(templateName, argName, callback);
+    },
+
+    customTemplateGetMapArg: function (templateName, argName, callback) {
+        CleverTapReact.customTemplateGetMapArg(templateName, argName, callback)
     }
 };
 

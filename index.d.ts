@@ -774,6 +774,18 @@ export function isPushPermissionGranted(callback: CallbackString): void;
 
   export function customTemplateSetPresented(templateName: string): void;
 
+  export function customTemplateRunAction(templateName: string, argName: string): void;
+
+  export function customTemplateGetStringArg(templateName: string, argName: string, callback: Callback): void;
+
+  export function customTemplateGetNumberArg(templateName: string, argName: string, callback: Callback): void;
+
+  export function customTemplateGetBooleanArg(templateName: string, argName: string, callback: Callback): void;
+
+  export function customTemplateGetFileArg(templateName: string, argName: string, callback: Callback): void;
+
+  export function customTemplateGetMapArg(templateName: string, argName: string, callback: Callback): void;
+
   /*******************
    * Developer Options
    ******************/

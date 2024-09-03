@@ -65,7 +65,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Consumer;
+
 import javax.annotation.Nullable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1427,24 +1430,86 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     @ReactMethod
     public void customTemplateSetDismissed(String templateName) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            CustomTemplateContext context = cleverTap.getActiveContextForTemplate(templateName);
-            if (context != null) {
-                context.setDismissed();
-            }
-        }
+        runWithTemplateContext(templateName, CustomTemplateContext::setDismissed);
     }
 
     @ReactMethod
     public void customTemplateSetPresented(String templateName) {
+        runWithTemplateContext(templateName, CustomTemplateContext::setPresented);
+    }
+
+    @ReactMethod
+    public void customTemplateRunAction(String templateName, String argName) {
+        runWithTemplateContext(
+                templateName,
+                customTemplateContext -> {
+                    if (customTemplateContext instanceof CustomTemplateContext.TemplateContext) {
+                        ((CustomTemplateContext.TemplateContext) customTemplateContext).triggerActionArgument(argName, null);
+                    }
+                }
+        );
+    }
+
+    @ReactMethod
+    public void customTemplateGetStringArg(String templateName, String argName, Callback callback) {
+        runWithTemplateContext(
+                templateName,
+                templateContext -> callbackWithErrorAndResult(callback, null, templateContext.getString(argName))
+        );
+    }
+
+    @ReactMethod
+    public void customTemplateGetNumberArg(String templateName, String argName, Callback callback) {
+        runWithTemplateContext(
+                templateName,
+                templateContext -> callbackWithErrorAndResult(callback, null, templateContext.getDouble(argName))
+        );
+    }
+
+    @ReactMethod
+    public void customTemplateGetBooleanArg(String templateName, String argName, Callback callback) {
+        runWithTemplateContext(
+                templateName,
+                templateContext -> callbackWithErrorAndResult(callback, null, templateContext.getBoolean(argName))
+        );
+    }
+
+    @ReactMethod
+    public void customTemplateGetFileArg(String templateName, String argName, Callback callback) {
+        runWithTemplateContext(
+                templateName,
+                templateContext -> callbackWithErrorAndResult(callback, null, templateContext.getFile(argName))
+        );
+    }
+
+    @ReactMethod
+    public void customTemplateGetMapArg(String templateName, String argName, Callback callback) {
+        runWithTemplateContext(
+                templateName,
+                templateContext -> {
+                    Map<String, Object> mapArg = templateContext.getMap(argName);
+                    if (mapArg != null) {
+                        callback.invoke(CleverTapUtils.MapUtil.toWritableMap(mapArg));
+                    } else {
+                        callback.invoke();
+                    }
+                }
+        );
+    }
+
+    private void runWithTemplateContext(String templateName, TemplateContextAction action) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
-            CustomTemplateContext context = cleverTap.getActiveContextForTemplate(templateName);
-            if (context != null) {
-                context.setPresented();
+            CustomTemplateContext templateContext = cleverTap.getActiveContextForTemplate(templateName);
+            if (templateContext != null) {
+                action.execute(templateContext);
             }
         }
+    }
+
+    @FunctionalInterface
+    private interface TemplateContextAction {
+        void execute(CustomTemplateContext context);
     }
 
     /**************************************************
