@@ -966,35 +966,35 @@ var CleverTap = {
     },
 
     customTemplateSetDismissed: function (templateName) {
-        CleverTapReact.customTemplateSetDismissed(templateName);
+        return CleverTapReact.customTemplateSetDismissed(templateName);
     },
 
     customTemplateSetPresented: function (templateName) {
-        CleverTapReact.customTemplateSetPresented(templateName);
+        return CleverTapReact.customTemplateSetPresented(templateName);
     },
 
     customTemplateRunAction: function (templateName, argName) {
-        CleverTapReact.customTemplateRunAction(templateName, argName);
+        return CleverTapReact.customTemplateRunAction(templateName, argName);
     },
 
-    customTemplateGetStringArg: function (templateName, argName, callback) {
-        CleverTapReact.customTemplateGetStringArg(templateName, argName, callback);
+    customTemplateGetStringArg: function (templateName, argName) {
+       return CleverTapReact.customTemplateGetStringArg(templateName, argName);
     },
 
-    customTemplateGetNumberArg: function (templateName, argName, callback) {
-        CleverTapReact.customTemplateGetNumberArg(templateName, argName, callback);
+    customTemplateGetNumberArg: function (templateName, argName) {
+        return CleverTapReact.customTemplateGetNumberArg(templateName, argName);
     },
 
-    customTemplateGetBooleanArg: function (templateName, argName, callback) {
-        CleverTapReact.customTemplateGetBooleanArg(templateName, argName, callback);
+    customTemplateGetBooleanArg: function (templateName, argName) {
+        return CleverTapReact.customTemplateGetBooleanArg(templateName, argName);
     },
 
-    customTemplateGetFileArg: function (templateName, argName, callback) {
-        CleverTapReact.customTemplateGetFileArg(templateName, argName, callback);
+    customTemplateGetFileArg: function (templateName, argName) {
+        return CleverTapReact.customTemplateGetFileArg(templateName, argName);
     },
 
-    customTemplateGetMapArg: function (templateName, argName, callback) {
-        CleverTapReact.customTemplateGetMapArg(templateName, argName, callback)
+    customTemplateGetObjectArg: function (templateName, argName) {
+        return CleverTapReact.customTemplateGetObjectArg(templateName, argName)
     }
 };
 

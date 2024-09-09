@@ -10,10 +10,8 @@ import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import com.clevertap.android.sdk.CTFeatureFlagsListener;
 import com.clevertap.android.sdk.CTInboxListener;
@@ -47,6 +45,7 @@ import com.clevertap.android.sdk.variables.callbacks.VariablesChangedCallback;
 import com.clevertap.android.sdk.inapp.callbacks.FetchInAppsCallback;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -62,10 +61,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
@@ -1429,87 +1426,104 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @ReactMethod
-    public void customTemplateSetDismissed(String templateName) {
-        runWithTemplateContext(templateName, CustomTemplateContext::setDismissed);
+    public void customTemplateSetDismissed(String templateName, Promise promise) {
+        resolveWithTemplateContext(templateName, promise, templateContext -> {
+            templateContext.setDismissed();
+            return null;
+        });
     }
 
     @ReactMethod
-    public void customTemplateSetPresented(String templateName) {
-        runWithTemplateContext(templateName, CustomTemplateContext::setPresented);
+    public void customTemplateSetPresented(String templateName, Promise promise) {
+        resolveWithTemplateContext(templateName, promise, templateContext -> {
+            templateContext.setPresented();
+            return null;
+        });
     }
 
     @ReactMethod
-    public void customTemplateRunAction(String templateName, String argName) {
-        runWithTemplateContext(
+    public void customTemplateRunAction(String templateName, String argName, Promise promise) {
+        resolveWithTemplateContext(
                 templateName,
+                promise,
                 customTemplateContext -> {
                     if (customTemplateContext instanceof CustomTemplateContext.TemplateContext) {
                         ((CustomTemplateContext.TemplateContext) customTemplateContext).triggerActionArgument(argName, null);
                     }
+                    return null;
                 }
         );
     }
 
     @ReactMethod
-    public void customTemplateGetStringArg(String templateName, String argName, Callback callback) {
-        runWithTemplateContext(
+    public void customTemplateGetStringArg(String templateName, String argName, Promise promise) {
+        resolveWithTemplateContext(
                 templateName,
-                templateContext -> callbackWithErrorAndResult(callback, null, templateContext.getString(argName))
+                promise,
+                templateContext -> templateContext.getString(argName)
         );
     }
 
     @ReactMethod
-    public void customTemplateGetNumberArg(String templateName, String argName, Callback callback) {
-        runWithTemplateContext(
+    public void customTemplateGetNumberArg(String templateName, String argName, Promise promise) {
+        resolveWithTemplateContext(
                 templateName,
-                templateContext -> callbackWithErrorAndResult(callback, null, templateContext.getDouble(argName))
+                promise,
+                templateContext -> templateContext.getDouble(argName)
         );
     }
 
     @ReactMethod
-    public void customTemplateGetBooleanArg(String templateName, String argName, Callback callback) {
-        runWithTemplateContext(
+    public void customTemplateGetBooleanArg(String templateName, String argName, Promise promise) {
+        resolveWithTemplateContext(
                 templateName,
-                templateContext -> callbackWithErrorAndResult(callback, null, templateContext.getBoolean(argName))
+                promise,
+                templateContext -> templateContext.getBoolean(argName)
         );
     }
 
     @ReactMethod
-    public void customTemplateGetFileArg(String templateName, String argName, Callback callback) {
-        runWithTemplateContext(
+    public void customTemplateGetFileArg(String templateName, String argName, Promise promise) {
+        resolveWithTemplateContext(
                 templateName,
-                templateContext -> callbackWithErrorAndResult(callback, null, templateContext.getFile(argName))
+                promise,
+                templateContext -> templateContext.getFile(argName)
         );
     }
 
     @ReactMethod
-    public void customTemplateGetMapArg(String templateName, String argName, Callback callback) {
-        runWithTemplateContext(
+    public void customTemplateGetObjectArg(String templateName, String argName, Promise promise) {
+        resolveWithTemplateContext(
                 templateName,
+                promise,
                 templateContext -> {
                     Map<String, Object> mapArg = templateContext.getMap(argName);
                     if (mapArg != null) {
-                        callback.invoke(CleverTapUtils.MapUtil.toWritableMap(mapArg));
+                        return CleverTapUtils.MapUtil.toWritableMap(mapArg);
                     } else {
-                        callback.invoke();
+                        return null;
                     }
                 }
         );
     }
 
-    private void runWithTemplateContext(String templateName, TemplateContextAction action) {
+    private void resolveWithTemplateContext(String templateName, Promise promise, TemplateContextAction action) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             CustomTemplateContext templateContext = cleverTap.getActiveContextForTemplate(templateName);
             if (templateContext != null) {
-                action.execute(templateContext);
+                promise.resolve(action.execute(templateContext));
+            } else {
+                promise.reject("CustomTemplateError", "Custom template: " + templateName + " is not currently being presented");
             }
+        } else {
+            promise.reject("CustomTemplateError", "CleverTap is not initialized");
         }
     }
 
     @FunctionalInterface
     private interface TemplateContextAction {
-        void execute(CustomTemplateContext context);
+        Object execute(CustomTemplateContext context);
     }
 
     /**************************************************
