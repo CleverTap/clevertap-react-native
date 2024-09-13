@@ -169,6 +169,16 @@ public class CleverTapModuleImpl implements SyncListener,
         if (cleverTap != null) {
             cleverTap.setCustomSdkVersion(libName, libVersion);
         }
+
+    }
+
+    public void fireCallbacks() {
+        for (Map.Entry<String, Object> entry : CleverTapApplication.emitList.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            Log.i(TAG, "Firing " + key);
+            sendEvent(key, value);
+        }
     }
 
     public void setLocale(String locale) {

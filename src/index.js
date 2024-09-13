@@ -125,6 +125,10 @@ var CleverTap = {
         CleverTapReact.registerForPush();
     },
 
+    componentMounted: function() {
+        CleverTapReact.fireCallbacks()
+    },
+
     /**
      * Manually set the push token on the CleverTap user profile
      * @param {string} token - the device token

@@ -18,9 +18,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CleverTapApplication extends Application implements CTPushNotificationListener {
     private static final String TAG = "CleverTapApplication";
+    public static Map<String, Object> emitList = new HashMap<>();
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -33,37 +37,7 @@ public class CleverTapApplication extends Application implements CTPushNotificat
     public void onNotificationClickedPayloadReceived(final HashMap<String, Object> payload) {
         Log.e(TAG, "onNotificationClickedPayloadReceived called");
         final String CLEVERTAP_PUSH_NOTIFICATION_CLICKED = "CleverTapPushNotificationClicked";
-
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            public void run() {
-
-                // Construct and load our normal React JS code bundle
-                final ReactInstanceManager mReactInstanceManager = ((ReactApplication) getApplicationContext())
-                        .getReactNativeHost().getReactInstanceManager();
-                ReactContext context = mReactInstanceManager.getCurrentReactContext();
-                // If it's constructed, send a notification
-                if (context != null) {
-                    sendEvent(CLEVERTAP_PUSH_NOTIFICATION_CLICKED, getWritableMapFromMap(payload), context);
-                } else {
-                    // Otherwise wait for construction, then send the notification
-                    mReactInstanceManager
-                            .addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
-                                public void onReactContextInitialized(ReactContext context) {
-                                    sendEvent(CLEVERTAP_PUSH_NOTIFICATION_CLICKED, getWritableMapFromMap(payload),
-                                            context);
-                                    mReactInstanceManager.removeReactInstanceEventListener(this);
-                                }
-                            });
-                    if (!mReactInstanceManager.hasStartedCreatingInitialContext()) {
-                        // Construct it in the background
-                        mReactInstanceManager.createReactContextInBackground();
-                    }
-                }
-
-            }
-        });
-
+        emitList.put(CLEVERTAP_PUSH_NOTIFICATION_CLICKED, getWritableMapFromMap(payload));
     }
 
     private void sendEvent(String eventName, Object params, ReactContext context) {
