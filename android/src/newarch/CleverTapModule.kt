@@ -27,8 +27,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         cleverTapModuleImpl.setLibrary(libName, libVersion.toInt())
     }
 
-    override fun fireCallbacks() {
-        cleverTapModuleImpl.fireCallbacks()
+    override fun componentMounted() {
+        cleverTapModuleImpl.componentMounted()
     }
 
     override fun setLocale(locale: String?) {
