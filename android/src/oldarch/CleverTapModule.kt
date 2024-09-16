@@ -548,56 +548,12 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : ReactContextBase
     }
 
     companion object {
-
         private val mlaunchURI: Uri? = null
         private const val REACT_MODULE_NAME = "CleverTapReact"
         private const val TAG = REACT_MODULE_NAME
-        private const val CLEVERTAP_PROFILE_DID_INITIALIZE = "CleverTapProfileDidInitialize"
-        private const val CLEVERTAP_PROFILE_SYNC = "CleverTapProfileSync"
-        private const val CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED = "CleverTapInAppNotificationDismissed"
-        private const val CLEVERTAP_IN_APP_NOTIFICATION_SHOWED = "CleverTapInAppNotificationShowed"
-        private const val FCM = "FCM"
-        private const val BPS = "BPS"
-        private const val HPS = "HPS"
-        private const val CLEVERTAP_INBOX_DID_INITIALIZE = "CleverTapInboxDidInitialize"
-        private const val CLEVERTAP_INBOX_MESSAGES_DID_UPDATE = "CleverTapInboxMessagesDidUpdate"
-        private const val CLEVERTAP_ON_INBOX_BUTTON_CLICK = "CleverTapInboxMessageButtonTapped"
-        private const val CLEVERTAP_ON_INBOX_MESSAGE_CLICK = "CleverTapInboxMessageTapped"
-        private const val CLEVERTAP_ON_INAPP_BUTTON_CLICK = "CleverTapInAppNotificationButtonTapped"
-        private const val CLEVERTAP_ON_DISPLAY_UNITS_LOADED = "CleverTapDisplayUnitsLoaded"
-        private const val CLEVERTAP_FEATURE_FLAGS_DID_UPDATE = "CleverTapFeatureFlagsDidUpdate"
-        private const val CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE = "CleverTapProductConfigDidInitialize"
-        private const val CLEVERTAP_PRODUCT_CONFIG_DID_FETCH = "CleverTapProductConfigDidFetch"
-        private const val CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE = "CleverTapProductConfigDidActivate"
-        private const val CLEVERTAP_PUSH_NOTIFICATION_CLICKED = "CleverTapPushNotificationClicked"
-        private const val CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE = "CleverTapPushPermissionResponseReceived"
-        private const val CLEVERTAP_ON_VARIABLES_CHANGED = "CleverTapOnVariablesChanged"
-        private const val CLEVERTAP_ON_VALUE_CHANGED = "CleverTapOnValueChanged"
     }
 
     override fun getConstants(): Map<String, Any> {
-        val constants: MutableMap<String, Any> = HashMap()
-        constants[CLEVERTAP_PROFILE_DID_INITIALIZE] = CLEVERTAP_PROFILE_DID_INITIALIZE
-        constants[CLEVERTAP_PROFILE_SYNC] = CLEVERTAP_PROFILE_SYNC
-        constants[CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED] = CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED
-        constants[CLEVERTAP_IN_APP_NOTIFICATION_SHOWED] = CLEVERTAP_IN_APP_NOTIFICATION_SHOWED
-        constants[FCM] = FCM
-        constants[BPS] = BPS
-        constants[HPS] = HPS
-        constants[CLEVERTAP_INBOX_DID_INITIALIZE] = CLEVERTAP_INBOX_DID_INITIALIZE
-        constants[CLEVERTAP_INBOX_MESSAGES_DID_UPDATE] = CLEVERTAP_INBOX_MESSAGES_DID_UPDATE
-        constants[CLEVERTAP_ON_INBOX_BUTTON_CLICK] = CLEVERTAP_ON_INBOX_BUTTON_CLICK
-        constants[CLEVERTAP_ON_INBOX_MESSAGE_CLICK] = CLEVERTAP_ON_INBOX_MESSAGE_CLICK
-        constants[CLEVERTAP_ON_DISPLAY_UNITS_LOADED] = CLEVERTAP_ON_DISPLAY_UNITS_LOADED
-        constants[CLEVERTAP_ON_INAPP_BUTTON_CLICK] = CLEVERTAP_ON_INAPP_BUTTON_CLICK
-        constants[CLEVERTAP_FEATURE_FLAGS_DID_UPDATE] = CLEVERTAP_FEATURE_FLAGS_DID_UPDATE
-        constants[CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE] = CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE
-        constants[CLEVERTAP_PRODUCT_CONFIG_DID_FETCH] = CLEVERTAP_PRODUCT_CONFIG_DID_FETCH
-        constants[CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE] = CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE
-        constants[CLEVERTAP_PUSH_NOTIFICATION_CLICKED] = CLEVERTAP_PUSH_NOTIFICATION_CLICKED
-        constants[CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE] = CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE
-        constants[CLEVERTAP_ON_VARIABLES_CHANGED] = CLEVERTAP_ON_VARIABLES_CHANGED
-        constants[CLEVERTAP_ON_VALUE_CHANGED] = CLEVERTAP_ON_VALUE_CHANGED
-        return constants
+        return cleverTapModuleImpl.getClevertapConstants()
     }
 }
