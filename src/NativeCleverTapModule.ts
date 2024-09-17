@@ -29,7 +29,7 @@ export interface Spec extends TurboModule {
   setInstanceWithAccountId(accountId: string): void;
   getInitialUrl(callback: (callback: string) => void): void;
   setLibrary(name: string, andVersion: number): void;
-  componentMounted(): void;
+  notifyComponentMounted(): void;
   setLocale(locale: string): void;
   registerForPush(): void;
   setPushTokenAsString(token: string, withType: string): void;

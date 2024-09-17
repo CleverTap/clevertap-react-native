@@ -125,8 +125,8 @@ var CleverTap = {
         CleverTapReact.registerForPush();
     },
 
-    componentMounted: function() {
-        CleverTapReact.componentMounted()
+    notifyComponentMounted: function() {
+        CleverTapReact.notifyComponentMounted()
     },
 
     /**

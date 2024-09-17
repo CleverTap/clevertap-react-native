@@ -172,7 +172,7 @@ public class CleverTapModuleImpl implements SyncListener,
 
     }
 
-    public void componentMounted() {
+    public void notifyComponentMounted() {
         CleverTapEventEmitter.INSTANCE.flushBuffer(context);
         CleverTapEventEmitter.INSTANCE.setBufferAll(false);
     }

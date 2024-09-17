@@ -31,8 +31,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : ReactContextBase
     }
 
     @ReactMethod
-    fun componentMounted() {
-        cleverTapModuleImpl.componentMounted()
+    fun notifyComponentMounted() {
+        cleverTapModuleImpl.notifyComponentMounted()
     }
 
     @ReactMethod

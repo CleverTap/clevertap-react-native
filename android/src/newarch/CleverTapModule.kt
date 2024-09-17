@@ -27,8 +27,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         cleverTapModuleImpl.setLibrary(libName, libVersion.toInt())
     }
 
-    override fun componentMounted() {
-        cleverTapModuleImpl.componentMounted()
+    override fun notifyComponentMounted() {
+        cleverTapModuleImpl.notifyComponentMounted()
     }
 
     override fun setLocale(locale: String?) {
