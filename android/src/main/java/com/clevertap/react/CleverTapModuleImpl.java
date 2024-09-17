@@ -140,7 +140,7 @@ public class CleverTapModuleImpl implements SyncListener,
 
     private static final String CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE = "CleverTapProductConfigDidActivate";
 
-    private static final String CLEVERTAP_PUSH_NOTIFICATION_CLICKED = "CleverTapPushNotificationClicked";
+    public static final String CLEVERTAP_PUSH_NOTIFICATION_CLICKED = "CleverTapPushNotificationClicked";
 
     private static final String CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE = "CleverTapPushPermissionResponseReceived";
 
@@ -172,13 +172,9 @@ public class CleverTapModuleImpl implements SyncListener,
 
     }
 
-    public void fireCallbacks() {
-        for (Map.Entry<String, Object> entry : CleverTapApplication.emitList.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-            Log.i(TAG, "Firing " + key);
-            sendEvent(key, value);
-        }
+    public void componentMounted() {
+        CleverTapEventEmitter.INSTANCE.flushBuffer(context);
+        CleverTapEventEmitter.INSTANCE.setBufferAll(false);
     }
 
     public void setLocale(String locale) {

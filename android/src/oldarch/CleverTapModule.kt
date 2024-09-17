@@ -31,6 +31,11 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : ReactContextBase
     }
 
     @ReactMethod
+    fun componentMounted() {
+        cleverTapModuleImpl.componentMounted()
+    }
+
+    @ReactMethod
     fun setLocale(locale: String?) {
         cleverTapModuleImpl.setLocale(locale)
     }

@@ -126,7 +126,7 @@ var CleverTap = {
     },
 
     componentMounted: function() {
-        CleverTapReact.fireCallbacks()
+        CleverTapReact.componentMounted()
     },
 
     /**
