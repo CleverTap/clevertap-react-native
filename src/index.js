@@ -125,6 +125,10 @@ var CleverTap = {
         CleverTapReact.registerForPush();
     },
 
+    /**
+    * Notifies the CleverTap package that the component has been mounted.
+    * This method must be called from the main App component after the Clevertap listeners have been attached.
+    */
     notifyComponentMounted: function() {
         CleverTapReact.notifyComponentMounted()
     },

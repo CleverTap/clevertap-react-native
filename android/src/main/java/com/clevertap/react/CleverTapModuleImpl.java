@@ -172,6 +172,12 @@ public class CleverTapModuleImpl implements SyncListener,
 
     }
 
+    /**
+     * Notifies CleverTap that the component has been mounted and is ready to flush events.
+     * This method:
+     * - Flushes any buffered events that were queued before the component was mounted.
+     * - Disables event buffering to allow real-time event processing.
+     */
     public void notifyComponentMounted() {
         CleverTapEventEmitter.INSTANCE.flushBuffer(context);
         CleverTapEventEmitter.INSTANCE.setBufferAll(false);
