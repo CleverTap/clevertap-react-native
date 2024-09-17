@@ -547,6 +547,8 @@ export default class App extends Component {
     // for iOS only: register for push notifications
     CleverTap.registerForPush();
     addCleverTapAPIListeners(false);
+
+    // Notify clevertap that the component has been mounted after the listeners have been added
     CleverTap.notifyComponentMounted();
     CleverTap.initializeInbox();
 
