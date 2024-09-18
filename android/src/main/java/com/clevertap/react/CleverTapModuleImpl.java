@@ -172,17 +172,6 @@ public class CleverTapModuleImpl implements SyncListener,
 
     }
 
-    /**
-     * Notifies CleverTap that the component has been mounted and is ready to flush events.
-     * This method:
-     * - Flushes any buffered events that were queued before the component was mounted.
-     * - Disables event buffering to allow real-time event processing.
-     */
-    public void notifyComponentMounted() {
-        CleverTapEventEmitter.INSTANCE.flushBuffer(context);
-        CleverTapEventEmitter.INSTANCE.setBufferAll(false);
-    }
-
     public void setLocale(String locale) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1410,7 +1399,18 @@ public class CleverTapModuleImpl implements SyncListener,
         }
     }
 
+    public void onEventListenerAdded(String eventName) {
+        CleverTapEventEmitter.INSTANCE.disableBuffer(eventName);
+        CleverTapEventEmitter.INSTANCE.flushBuffer(eventName, context);
+    }
 
+    public void onEventListenerRemoved(String eventName) {
+        CleverTapEventEmitter.INSTANCE.enableBuffer(eventName);
+    }
+
+    public void onAllEventListenersRemoved() {
+        CleverTapEventEmitter.INSTANCE.enableAllBuffers();
+    }
 
     /**
      * result must be primitive, String or com.facebook.react.bridge.WritableArray/WritableMap
@@ -1644,13 +1644,7 @@ public class CleverTapModuleImpl implements SyncListener,
     }
 
     private void sendEvent(String eventName, @Nullable Object params) {
-        try {
-            this.context
-                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit(eventName, params);
-        } catch (Throwable t) {
-            Log.e(TAG, t.getLocalizedMessage());
-        }
+        CleverTapEventEmitter.INSTANCE.emit(eventName, params, context);
     }
 
     /**

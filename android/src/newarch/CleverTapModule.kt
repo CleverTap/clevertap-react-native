@@ -27,10 +27,6 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         cleverTapModuleImpl.setLibrary(libName, libVersion.toInt())
     }
 
-    override fun notifyComponentMounted() {
-        cleverTapModuleImpl.notifyComponentMounted()
-    }
-
     override fun setLocale(locale: String?) {
         cleverTapModuleImpl.setLocale(locale)
     }
@@ -457,6 +453,18 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
 
     override fun onValueChanged(name: String) {
         cleverTapModuleImpl.onValueChanged(name)
+    }
+
+    override fun onEventListenerAdded(eventName: String) {
+        cleverTapModuleImpl.onEventListenerAdded(eventName)
+    }
+
+    override fun onEventListenerRemoved(eventName: String) {
+        cleverTapModuleImpl.onEventListenerRemoved(eventName)
+    }
+
+    override fun onAllEventListenersRemoved() {
+        cleverTapModuleImpl.onAllEventListenersRemoved()
     }
 
     override fun addListener(name: String) {

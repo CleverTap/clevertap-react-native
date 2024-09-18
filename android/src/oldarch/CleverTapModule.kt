@@ -31,11 +31,6 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : ReactContextBase
     }
 
     @ReactMethod
-    fun notifyComponentMounted() {
-        cleverTapModuleImpl.notifyComponentMounted()
-    }
-
-    @ReactMethod
     fun setLocale(locale: String?) {
         cleverTapModuleImpl.setLocale(locale)
     }
@@ -550,6 +545,21 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : ReactContextBase
     @ReactMethod
     fun onValueChanged(name: String) {
         cleverTapModuleImpl.onValueChanged(name)
+    }
+
+    @ReactMethod
+    fun onEventListenerAdded(eventName: String) {
+        cleverTapModuleImpl.onEventListenerAdded(eventName)
+    }
+
+    @ReactMethod
+    fun onEventListenerRemoved(eventName: String) {
+        cleverTapModuleImpl.onEventListenerRemoved(eventName)
+    }
+
+    @ReactMethod
+    fun onAllEventListenersRemoved() {
+        cleverTapModuleImpl.onAllEventListenersRemoved()
     }
 
     companion object {

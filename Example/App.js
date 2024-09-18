@@ -548,8 +548,6 @@ export default class App extends Component {
     CleverTap.registerForPush();
     addCleverTapAPIListeners(false);
 
-    // Notify clevertap that the component has been mounted after the listeners have been added
-    CleverTap.notifyComponentMounted();
     CleverTap.initializeInbox();
 
     // Listener to handle incoming deep links

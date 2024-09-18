@@ -77,6 +77,7 @@ var CleverTap = {
     addListener: function (eventName, handler) {
         if (EventEmitter) {
             EventEmitter.addListener(eventName, handler);
+            CleverTapReact.onEventListenerAdded(eventName);
         }
     },
 
@@ -88,6 +89,7 @@ var CleverTap = {
     removeListener: function (eventName) {
         if (EventEmitter) {
             EventEmitter.removeAllListeners(eventName);
+            CleverTapReact.onEventListenerRemoved(eventName);
         }
     },
 
@@ -98,6 +100,7 @@ var CleverTap = {
     removeListeners: function () {
         if (DeviceEventEmitter) {
             DeviceEventEmitter.removeAllListeners();
+            CleverTapReact.onAllEventListenersRemoved();
         }
     },
 
@@ -116,21 +119,13 @@ var CleverTap = {
     setLocale: function (locale) {
         CleverTapReact.setLocale(locale);
     },
-    
+
     /**
     * Registers the application to receive push notifications
     * only necessary for iOS.
     */
     registerForPush: function () {
         CleverTapReact.registerForPush();
-    },
-
-    /**
-    * Notifies the CleverTap package that the component has been mounted.
-    * This method must be called from the main App component after the Clevertap listeners have been attached.
-    */
-    notifyComponentMounted: function() {
-        CleverTapReact.notifyComponentMounted()
     },
 
     /**
@@ -967,7 +962,7 @@ var CleverTap = {
      *
      * @param {boolean} expiredOnly to clear only assets which will not be needed further for inapps
      */
-    clearInAppResources: function(expiredOnly) {
+    clearInAppResources: function (expiredOnly) {
         CleverTapReact.clearInAppResources(expiredOnly);
     }
 };

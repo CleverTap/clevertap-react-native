@@ -29,7 +29,6 @@ export interface Spec extends TurboModule {
   setInstanceWithAccountId(accountId: string): void;
   getInitialUrl(callback: (callback: string) => void): void;
   setLibrary(name: string, andVersion: number): void;
-  notifyComponentMounted(): void;
   setLocale(locale: string): void;
   registerForPush(): void;
   setPushTokenAsString(token: string, withType: string): void;
@@ -209,6 +208,9 @@ export interface Spec extends TurboModule {
   onVariablesChanged(): void;
   onValueChanged(name: string): void;
 
+  onEventListenerAdded(eventType: string): void;
+  onEventListenerRemoved(eventType: string): void;
+  onAllEventListenersRemoved(): void;
   // NativeEventEmitter methods for the New Architecture.
   // The implementations are handled implicitly by React Native.
   addListener: (eventType: string) => void;
