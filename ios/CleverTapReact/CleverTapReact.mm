@@ -426,7 +426,7 @@ RCT_EXPORT_METHOD(createNotification:(NSDictionary*)extras) {
 #pragma mark - Developer Options
 
 RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
-     int debugLevel = (int)level;
+    int debugLevel = (int)level;
     RCTLogInfo(@"[CleverTap setDebugLevel: %i]", debugLevel);
     [CleverTap setDebugLevel:debugLevel];
 }
