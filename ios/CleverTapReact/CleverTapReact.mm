@@ -68,8 +68,8 @@ RCT_EXPORT_MODULE();
     };
 }
 
-- (NSDictionary*) getConstants {
-  return [self constantsToExport];
+- (NSDictionary *)getConstants {
+    return [self constantsToExport];
 }
 
 - (dispatch_queue_t)methodQueue {
@@ -420,11 +420,10 @@ RCT_EXPORT_METHOD(createNotification:(NSDictionary*)extras) {
 #pragma mark - Developer Options
 
 RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
-     int debugLevel = (int)level;
+    int debugLevel = (int)level;
     RCTLogInfo(@"[CleverTap setDebugLevel: %i]", debugLevel);
     [CleverTap setDebugLevel:debugLevel];
 }
-
 
 #pragma mark - Private/Helpers
 
@@ -872,7 +871,7 @@ RCT_EXPORT_METHOD(resumeInAppNotifications) {
 
 RCT_EXPORT_METHOD(fetchInApps:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap fetchInApps]");
-    [[self cleverTapInstance]fetchInApps:^(BOOL success) {
+    [[self cleverTapInstance] fetchInApps:^(BOOL success) {
         [self returnResult:@(success) withCallback:callback andError:nil];
     }];
 }

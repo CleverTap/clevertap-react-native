@@ -6,26 +6,20 @@
 #import <React/RCTRootView.h>
 #import <React/RCTLinkingManager.h>
 
-//@import CleverTapReact;
-//@import CleverTapSDK;
-
-//#import <CleverTapSDK/CleverTap.h>
-//#import <CleverTapReact/CleverTapReactManager.h>
-
 #import "CleverTap.h"
 #import "CleverTapReactManager.h"
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
+# pragma mark - App Launch
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   self.moduleName = @"Example";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
   
-  // Add CleverTap Account ID and Account Token in your .plist file)
-  // initialize CleverTap
+  // Add CleverTap Account ID and Account Token in your .plist file
+  // Initialize CleverTap
 #ifdef DEBUG
   [CleverTap setDebugLevel:CleverTapLogDebug];
 #endif
@@ -37,6 +31,7 @@
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
+# pragma mark - Notification Categories
 - (void)addNotificationCategories {
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     UNNotificationAction *action1 = [UNNotificationAction actionWithIdentifier:@"action_1" title:@"Back" options:UNNotificationActionOptionNone];
@@ -46,8 +41,7 @@
     [center setNotificationCategories:[NSSet setWithObjects:cat, nil]];
 }
 
-// Deep links
-
+# pragma mark - Deep links
 - (BOOL)application:(UIApplication *)app
             openURL:(NSURL *)url
             options:(NSDictionary *)options {
@@ -62,7 +56,7 @@
   
 }
 
-// Universal links
+# pragma mark - Universal links
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler {
   return [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
 }
@@ -71,8 +65,7 @@
   return [self bundleURL];
 }
 
-- (NSURL *)bundleURL
-{
+- (NSURL *)bundleURL {
 #if DEBUG
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
 #else
