@@ -26,8 +26,6 @@
 #endif
 
 static NSDateFormatter *dateFormatter;
-static NSMutableArray<CleverTapReactPendingEvent *> *pendingEvents;
-static BOOL isObserving;
 
 @interface CleverTapReact()
 @property CleverTap *cleverTapInstance;
@@ -91,7 +89,6 @@ RCT_EXPORT_MODULE();
 }
 
 - (CleverTap *)cleverTapInstance {
-    [CleverTap setDebugLevel:4];
     if (_cleverTapInstance != nil) {
         return _cleverTapInstance;
     }
@@ -1056,30 +1053,62 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
     }
 }
 
-//- (void)getFeatureFlag:(NSString *)flag defaultValue:(BOOL)defaultValue callback:(RCTResponseSenderBlock)callback { 
-//    
-//}
-//
-//
-//- (void)removeListener:(double)count { 
-//    
-//}
-
-
 # pragma mark - Event emitter
 
+static NSMutableDictionary<NSString *, NSMutableArray<CleverTapReactPendingEvent *> *> *pendingEvents = [NSMutableDictionary dictionary];
+
+static BOOL isObserving;
+static NSMutableSet<NSString *> *observedEvents = [NSMutableSet set];
+
+static NSMutableSet<NSString *> *observableEvents = [NSMutableSet setWithObjects:kCleverTapPushNotificationClicked, kCleverTapProfileDidInitialize, kCleverTapDisplayUnitsLoaded, kCleverTapInAppNotificationShowed, kCleverTapInAppNotificationDismissed, kCleverTapInAppNotificationButtonTapped, kCleverTapProductConfigDidInitialize, nil];
+
+const int PENDING_EVENTS_TIME_OUT = 5;
+
+/**
+ * Called when a observer/listener is added for the event.
+ * Post the pending events for the event name.
+ *
+ * @param name the name of the observed event
+ */
+RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
+    [observedEvents addObject:name];
+    NSArray *pendingEventsForName = pendingEvents[name];
+    if (pendingEventsForName) {
+        RCTLogInfo(@"[CleverTap: Posting pending events for event: %@]", name);
+        for (CleverTapReactPendingEvent *event in pendingEventsForName) {
+            RCTLogInfo(@"[CleverTap: posting pending event: %@ with body: %@]", event.name, event.body);
+            [[NSNotificationCenter defaultCenter] postNotificationName:event.name object:nil userInfo:event.body];
+        }
+    }
+}
+
+/**
+ * Send event when ReactNative has started observing events.
+ * This happens when the first observer/listener is added in ReactNative.
+ * If events are sent before that, the events are queued.
+ * Events expected to be queued are specified in `observableEvents`.
+ * If ReactNative has started observing and the event is observed, see `observedEvents`, the events are emitted directly.
+ *
+ * @param name the event name
+ * @param body the event body parameters
+ */
 + (void)sendEventOnObserving:(NSString *)name body:(id)body {
-    if (isObserving) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:name object:nil userInfo:body];
+    if (!isObserving && ![observableEvents containsObject:name]) {
+        RCTLogWarn(@"[CleverTap: %@ is sent before observing and is not part of the observable events]", name);
+        [observableEvents addObject:name];
+    }
+    
+    if ([observableEvents containsObject:name] && ![observedEvents containsObject:name]) {
+        if (!pendingEvents[name]) {
+            pendingEvents[name] = [NSMutableArray array];
+        }
+        
+        CleverTapReactPendingEvent *event = [[CleverTapReactPendingEvent alloc] initWithName:name body:body];
+        [pendingEvents[name] addObject:event];
         return;
     }
     
-    if (!pendingEvents) {
-        pendingEvents = [NSMutableArray array];
-    }
-    
-    CleverTapReactPendingEvent *event = [[CleverTapReactPendingEvent alloc] initWithName:name body:body];
-    [pendingEvents addObject:event];
+    [[NSNotificationCenter defaultCenter] postNotificationName:name object:nil userInfo:body];
 }
 
 - (NSArray<NSString *> *)supportedEvents {
@@ -1087,6 +1116,7 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
 }
 
 - (void)startObserving {
+    RCTLogInfo(@"[CleverTap startObserving]");
     NSArray *eventNames = [self supportedEvents];
     for (NSString *eventName in eventNames) {
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -1096,9 +1126,19 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
     }
     
     isObserving = YES;
-    for (CleverTapReactPendingEvent *ev in pendingEvents) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:ev.name object:nil userInfo:ev.body];
-    }
+    
+    // Clear the pending events that no listeners were added for.
+    // Clear the events after PENDING_EVENTS_TIME_OUT of when the first observer is added.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(PENDING_EVENTS_TIME_OUT * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        RCTLogInfo(@"[CleverTap: Removing pending events which were not observed]");
+        [CleverTapReact clearPendingEvents];
+    });
+}
+
++ (void)clearPendingEvents {
+    pendingEvents = [NSMutableDictionary dictionary];
+    observableEvents = [NSMutableSet set];
+    observedEvents = [NSMutableSet set];
 }
 
 - (void)stopObserving {
@@ -1109,6 +1149,7 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
     [self sendEventWithName:notification.name body:notification.userInfo];
 }
 
+# pragma mark - Turbo Module
 
 #ifdef RCT_NEW_ARCH_ENABLED
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const facebook::react::ObjCTurboModule::InitParams &)params {

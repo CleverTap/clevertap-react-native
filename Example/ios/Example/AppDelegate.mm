@@ -31,12 +31,10 @@
 #endif
   [CleverTap autoIntegrate];
   [self addNotificationCategories];
-  [[CleverTapReactManager sharedInstance] applicationDidLaunchWithOptions:launchOptions];
 
-  return  [super application:application didFinishLaunchingWithOptions:launchOptions];
+  [[CleverTapReactManager sharedInstance] applicationDidLaunchWithOptions:launchOptions];
   
-  
-  return YES;
+  return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
 - (void)addNotificationCategories {
