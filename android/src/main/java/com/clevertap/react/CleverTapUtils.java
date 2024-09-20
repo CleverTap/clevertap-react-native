@@ -2,6 +2,9 @@ package com.clevertap.react;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.clevertap.android.sdk.displayunits.model.CleverTapDisplayUnit;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableArray;
@@ -28,7 +31,7 @@ public class CleverTapUtils {
     private static final String TAG = "CleverTapUtils";
 
     @SuppressWarnings({"TypeParameterExplicitlyExtendsObject", "rawtypes"})
-    public static WritableMap getWritableMapFromMap(Map<String, ? extends Object> var1) {
+    public static WritableMap getWritableMapFromMap(@Nullable Map<String, ? extends Object> var1) {
         JSONObject extras = var1 != null ? new JSONObject(var1) : new JSONObject();
         WritableMap extrasParams = Arguments.createMap();
         Iterator extrasKeys = extras.keys();
@@ -64,7 +67,7 @@ public class CleverTapUtils {
         return writableArray;
     }
 
-    public static WritableMap convertObjectToWritableMap(JSONObject jsonObject) {
+    public static WritableMap convertObjectToWritableMap(@NonNull JSONObject jsonObject) {
         WritableMap writableMap = Arguments.createMap();
 
         Iterator<String> keys = jsonObject.keys();

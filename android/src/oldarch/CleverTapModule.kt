@@ -15,13 +15,10 @@ import com.facebook.react.bridge.ReadableMap
 @Suppress("unused")
 class CleverTapModule(reactContext: ReactApplicationContext?) : ReactContextBaseJavaModule(reactContext) {
 
-    private val cleverTapModuleImpl: CleverTapModuleImpl
-    override fun getName(): String {
-        return CleverTapModuleImpl.REACT_MODULE_NAME
-    }
+    private val cleverTapModuleImpl: CleverTapModuleImpl = CleverTapModuleImpl(reactContext!!)
 
-    init {
-        cleverTapModuleImpl = CleverTapModuleImpl(reactContext!!)
+    override fun getName(): String {
+        return Constants.REACT_MODULE_NAME
     }
 
     @SuppressLint("RestrictedApi")
@@ -545,6 +542,11 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : ReactContextBase
     @ReactMethod
     fun onValueChanged(name: String) {
         cleverTapModuleImpl.onValueChanged(name)
+    }
+
+    @ReactMethod
+    fun onEventListenerAdded(eventName: String) {
+        cleverTapModuleImpl.onEventListenerAdded(eventName)
     }
 
     companion object {
