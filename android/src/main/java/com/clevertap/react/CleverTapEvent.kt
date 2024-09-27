@@ -29,7 +29,7 @@ enum class CleverTapEvent(val eventName: String, val bufferable: Boolean = false
 
         @JvmStatic
         fun fromName(eventName: String): CleverTapEvent? {
-            return entries.find { it.eventName == eventName }
+            return values().find { it.eventName == eventName }
         }
     }
 }

@@ -1213,7 +1213,7 @@ public class CleverTapModuleImpl {
         CleverTapEventEmitter.INSTANCE.setReactContext(reactContext);
         // disable buffers after a delay in order to give some time for event listeners to attach
         // and receive initially buffered events. After that all buffers will be cleared and disabled
-        // and event will continue to be sent immediately.
+        // and events will continue to be sent immediately.
         new Handler().postDelayed(() -> CleverTapEventEmitter.INSTANCE.resetAllBuffers(false), 5000);
     }
 

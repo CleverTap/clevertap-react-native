@@ -18,10 +18,6 @@ object CleverTapEventEmitter {
 
     var reactContext: ReactContext? = null
 
-    private class Buffer(var enabled: Boolean) {
-        val items: Queue<Any?> by lazy { LinkedList() }
-    }
-
     private var eventsBuffers: Map<CleverTapEvent, Buffer> = createBuffersMap(enableBuffers = true)
 
     /**
@@ -53,16 +49,16 @@ object CleverTapEventEmitter {
      */
     fun resetAllBuffers(enableBuffers: Boolean) {
         eventsBuffers = createBuffersMap(enableBuffers)
-        Log.i(LOG_TAG,"Buffers reset and enabled: $enableBuffers")
+        Log.i(LOG_TAG, "Buffers reset and enabled: $enableBuffers")
     }
 
     /**
      * Emit all currently buffered events for the specified event name.
      */
     fun flushBuffer(event: CleverTapEvent) {
-        val bufferedParams = eventsBuffers[event]?.items ?: return
-        while (bufferedParams.isNotEmpty()) {
-            val params = bufferedParams.remove()
+        val buffer = eventsBuffers[event] ?: return
+        while (buffer.size() > 0) {
+            val params = buffer.remove()
             sendEvent(event, params)
         }
     }
@@ -94,7 +90,7 @@ object CleverTapEventEmitter {
      */
     private fun addToBuffer(event: CleverTapEvent, params: Any?) {
         val buffer = eventsBuffers[event] ?: return
-        buffer.items.add(params)
+        buffer.add(params)
         Log.i(LOG_TAG, "Event $event added to buffer.")
     }
 
@@ -116,7 +112,15 @@ object CleverTapEventEmitter {
     }
 
     private fun createBuffersMap(enableBuffers: Boolean) =
-        CleverTapEvent.entries.filter { it.bufferable }.associateWith {
+        CleverTapEvent.values().filter { it.bufferable }.associateWith {
             Buffer(enabled = enableBuffers)
         }
+
+    private class Buffer(var enabled: Boolean) {
+        private val items: Queue<Any?> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) { LinkedList() }
+
+        fun add(item: Any?) = items.add(item)
+        fun remove(): Any? = items.remove()
+        fun size(): Int = items.size
+    }
 }

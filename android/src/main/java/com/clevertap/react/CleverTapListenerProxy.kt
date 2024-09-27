@@ -28,6 +28,7 @@ object CleverTapListenerProxy : SyncListener, InAppNotificationListener, CTInbox
     private const val LOG_TAG = Constants.REACT_MODULE_NAME
 
     fun attachToInstance(instance: CleverTapAPI) {
+        instance.unregisterPushPermissionNotificationResponseListener(this)
         instance.registerPushPermissionNotificationResponseListener(this)
         instance.ctPushNotificationListener = this
         instance.inAppNotificationListener = this
