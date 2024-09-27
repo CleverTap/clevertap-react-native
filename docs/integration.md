@@ -71,7 +71,7 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-
         // ...
     }
     ```
-4. From clevertap-react-native **v0.8.1** onwards developers can make their `Application` class extend `CleverTapApplication` to support Push Notification click callback out of the box and to register activity lifecycle events. Before v0.8.1 developers were forced to write logic for push click callback and register activity lifecycle to their `Application` class manually which is being abstract out in `CleverTapApplication` class.
+4. From clevertap-react-native **v0.8.1** onwards developers can make their `Application` class extend `CleverTapApplication` to support Push Notification click callback in killed state out of the box. Before v0.8.1 developers were forced to write logic for push click callback and register activity lifecycle to their `Application` class manually which is being abstract out in `CleverTapApplication` class.
  
     ```
    import com.clevertap.react.CleverTapApplication;
@@ -83,5 +83,9 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-
         // ...
    }
     ```
-[see the included Example Project](/Example/App.js) 
+
+5. <a name="point5"></a>From clevertap-react-native **v3.0.0** onwards, if developers don't want their `Application` class to extend `CleverTapApplication`, they can add the following to the `onCreate()` to support Push Notification click callback in killed state.
+
+
+[See the Example Project](/Example/App.js) 
 

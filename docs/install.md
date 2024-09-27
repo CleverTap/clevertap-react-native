@@ -79,22 +79,34 @@ dependencies {
     implementation 'com.google.android.gms:play-services-base:17.6.0'
     implementation 'com.google.firebase:firebase-messaging:21.0.0'
     implementation 'com.google.android.material:material:1.4.0'          //Mandatory for App Inbox
-    implementation 'com.google.android.exoplayer:exoplayer:2.17.1'      //Optional for Audio/Video
-    implementation 'com.google.android.exoplayer:exoplayer-hls:2.17.1'  //Optional for Audio/Video
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.17.1'   //Optional for Audio/Video
+    implementation 'com.google.android.exoplayer:exoplayer:2.19.1'      //Optional for Audio/Video
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.19.1'  //Optional for Audio/Video
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.19.1'   //Optional for Audio/Video
     //implementation 'com.google.android.gms:play-services-ads:19.0.1'
 
 
     //clevertap
-    implementation 'com.clevertap.android:clevertap-android-sdk:4.7.5'
+    implementation 'com.clevertap.android:clevertap-android-sdk:7.0.1'
 
 
     // other libs
 	implementation 'com.github.bumptech.glide:glide:4.12.0' //Mandatory for App Inbox
 	
-    //Note - ExoPlayer dependencies are optional but all 3 are required for Audio/Video Inbox and InApp Messages
+    //Note - ExoPlayer/AndroidX Media3 dependencies are optional but all 3 are required for Audio/Video Inbox and InApp Messages
 }
 ```
+
+### Migrating from `Exoplayer` to `AndroidX Media3` (Optional)
+
+Clevertap ReactNative SDK supports `AndroidX Media3` from `v3.0.0+` to replace the deprecated `ExoPlayer` libraries. For migration change the following dependencies.
+
+|         Old Dependency | New Dependency      |
+|-----------------------:|:--------------------|
+|     `com.google.android.exoplayer:exoplayer:2.19.1` | `androidx.media3:media3-exoplayer:1.1.1`     |
+| `com.google.android.exoplayer:exoplayer-hls:2.19.1` | `androidx.media3:media3-exoplayer-hls:1.1.1` |
+|  `com.google.android.exoplayer:exoplayer-ui:2.19.1` | `androidx.media3:media3-ui:1.1.1`  |
+
+
 ### Troubleshooting  
 
 If you face the following crash at runtime -
