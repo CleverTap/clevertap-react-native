@@ -13,7 +13,16 @@ import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 
 @Suppress("unused")
-class CleverTapModule(reactContext: ReactApplicationContext?) : ReactContextBaseJavaModule(reactContext) {
+class CleverTapModule(reactContext: ReactApplicationContext?) :
+    ReactContextBaseJavaModule(reactContext) {
+
+    companion object {
+
+        @JvmStatic
+        fun setInitialUri(uri: Uri?) {
+            CleverTapModuleImpl.setInitialUri(uri)
+        }
+    }
 
     private val cleverTapModuleImpl: CleverTapModuleImpl = CleverTapModuleImpl(reactContext!!)
 
@@ -46,7 +55,11 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : ReactContextBase
     @RequiresApi(api = VERSION_CODES.O)
     @ReactMethod
     fun createNotificationChannel(
-        channelId: String?, channelName: String?, channelDescription: String?, importance: Int, showBadge: Boolean
+        channelId: String?,
+        channelName: String?,
+        channelDescription: String?,
+        importance: Int,
+        showBadge: Boolean
     ) {
         cleverTapModuleImpl.createNotificationChannel(
             channelId, channelName, channelDescription, importance, showBadge
@@ -547,12 +560,6 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : ReactContextBase
     @ReactMethod
     fun onEventListenerAdded(eventName: String) {
         cleverTapModuleImpl.onEventListenerAdded(eventName)
-    }
-
-    companion object {
-        private val mlaunchURI: Uri? = null
-        private const val REACT_MODULE_NAME = "CleverTapReact"
-        private const val TAG = REACT_MODULE_NAME
     }
 
     override fun getConstants(): Map<String, Any> {
