@@ -106,9 +106,6 @@ public class MainApplication implements ActivityLifecycleCallbacks, ReactApplica
 
    // ...
 }
-
-
-
 ```
 
 [See the Example Project](/Example/App.js) 
