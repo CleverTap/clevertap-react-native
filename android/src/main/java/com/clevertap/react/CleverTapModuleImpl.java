@@ -99,7 +99,7 @@ public class CleverTapModuleImpl {
 
     public Map<String, Object> getClevertapConstants() {
         Map<String, Object> constants = new HashMap<>();
-        for (CleverTapEvent event : CleverTapEvent.getEntries()) {
+        for (CleverTapEvent event : CleverTapEvent.values()) {
             constants.put(event.getEventName(), event.getEventName());
         }
         constants.put(FCM, FCM);
