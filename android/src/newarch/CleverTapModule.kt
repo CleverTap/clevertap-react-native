@@ -1,6 +1,5 @@
 package com.clevertap.react
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Build.VERSION_CODES
 import androidx.annotation.RequiresApi
@@ -10,8 +9,16 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 
-@Suppress("unused")
-class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapModuleSpec(reactContext) {
+class CleverTapModule(reactContext: ReactApplicationContext?) :
+    NativeCleverTapModuleSpec(reactContext) {
+
+    companion object {
+
+        @JvmStatic
+        fun setInitialUri(uri: Uri?) {
+            CleverTapModuleImpl.setInitialUri(uri)
+        }
+    }
 
     private val cleverTapModuleImpl: CleverTapModuleImpl = CleverTapModuleImpl(reactContext!!)
 
@@ -19,7 +26,6 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         return Constants.REACT_MODULE_NAME
     }
 
-    @SuppressLint("RestrictedApi")
     override fun setLibrary(libName: String?, libVersion: Double) {
         cleverTapModuleImpl.setLibrary(libName, libVersion.toInt())
     }
@@ -39,7 +45,11 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
 
     @RequiresApi(api = VERSION_CODES.O)
     override fun createNotificationChannel(
-        channelId: String?, channelName: String?, channelDescription: String?, importance: Double, showBadge: Boolean
+        channelId: String?,
+        channelName: String?,
+        channelDescription: String?,
+        importance: Double,
+        showBadge: Boolean
     ) {
         cleverTapModuleImpl.createNotificationChannel(
             channelId, channelName, channelDescription, importance.toInt(), showBadge
@@ -76,7 +86,13 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
         sound: String?
     ) {
         cleverTapModuleImpl.createNotificationChannelWithGroupIdAndSound(
-            channelId, channelName, channelDescription, importance.toInt(), groupId, showBadge, sound
+            channelId,
+            channelName,
+            channelDescription,
+            importance.toInt(),
+            groupId,
+            showBadge,
+            sound
         )
     }
 
@@ -457,21 +473,19 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : NativeCleverTapM
     }
 
     override fun addListener(name: String) {
-        return;
+        return
     }
 
     override fun removeListeners(count: Double) {
-        return;
+        return
     }
 
-    override fun setPushTokenAsStringWithRegion(token: String?, withType: String?, withRegion: String?) {
-        return;
-    }
-
-    companion object {
-        private val mlaunchURI: Uri? = null
-        const val REACT_MODULE_NAME = "CleverTapModule"
-        private const val TAG = REACT_MODULE_NAME
+    override fun setPushTokenAsStringWithRegion(
+        token: String?,
+        withType: String?,
+        withRegion: String?
+    ) {
+        return
     }
 
     override fun getTypedExportedConstants(): Map<String, Any> {

@@ -1,31 +1,29 @@
 package com.reactnct;
 
 import android.app.Activity;
-import android.app.Application;
 import android.app.Application.ActivityLifecycleCallbacks;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
-import com.clevertap.android.sdk.ActivityLifecycleCallback;
+import androidx.annotation.Nullable;
+
+import com.clevertap.android.pushtemplates.PushTemplateNotificationHandler;
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.android.sdk.CleverTapAPI.LogLevel;
-import com.clevertap.android.sdk.interfaces.NotificationHandler;
 import com.clevertap.react.CleverTapApplication;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
-import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactHost;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
-import com.facebook.soloader.SoLoader;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import android.app.NotificationManager;
-import com.clevertap.android.pushtemplates.PushTemplateNotificationHandler;
-import android.content.Context;
-import androidx.annotation.Nullable;
 import com.facebook.react.defaults.DefaultReactHost;
 import com.facebook.react.defaults.DefaultReactNativeHost;
-import com.facebook.react.ReactHost;
+import com.facebook.soloader.SoLoader;
+
+import java.util.List;
 
 public class MainApplication extends CleverTapApplication implements ActivityLifecycleCallbacks, ReactApplication {
 
@@ -75,9 +73,8 @@ public class MainApplication extends CleverTapApplication implements ActivityLif
     @Override
     public void onCreate() {
         CleverTapAPI.setDebugLevel(LogLevel.VERBOSE);
-        CleverTapAPI.setNotificationHandler((NotificationHandler) new PushTemplateNotificationHandler());
+        CleverTapAPI.setNotificationHandler(new PushTemplateNotificationHandler());
         CleverTapAPI.getDefaultInstance(getApplicationContext()).enableDeviceNetworkInfoReporting(true);
-        ActivityLifecycleCallback.register(this);
         super.onCreate();
         SoLoader.init(this, /* native exopackage */ false);
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {

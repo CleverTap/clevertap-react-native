@@ -61,7 +61,6 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-@SuppressWarnings({"unused"})
 public class CleverTapModuleImpl {
 
     private static final String TAG = REACT_MODULE_NAME;
@@ -79,17 +78,17 @@ public class CleverTapModuleImpl {
 
     }
 
-    private static Uri mlaunchURI;
-
-    private final ReactApplicationContext context;
-
-    private CleverTapAPI mCleverTap;
+    private static Uri sLaunchUri;
 
     public static Map<String, Object> variables = new HashMap<>();
 
     public static void setInitialUri(final Uri uri) {
-        mlaunchURI = uri;
+        sLaunchUri = uri;
     }
+
+    private final ReactApplicationContext context;
+
+    private CleverTapAPI mCleverTap;
 
     public CleverTapModuleImpl(ReactApplicationContext reactContext) {
         this.context = reactContext;
@@ -606,10 +605,10 @@ public class CleverTapModuleImpl {
         String error = null;
         String url = null;
 
-        if (mlaunchURI == null) {
+        if (sLaunchUri == null) {
             error = "CleverTap InitialUrl is null";
         } else {
-            url = mlaunchURI.toString();
+            url = sLaunchUri.toString();
         }
         callbackWithErrorAndResult(callback, error, url);
     }
