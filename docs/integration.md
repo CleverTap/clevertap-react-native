@@ -84,10 +84,10 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-
    }
     ```
 
-5. <a name="point5"></a>From clevertap-react-native **v3.0.0** onwards, if developers don't want their `Application` class to extend `CleverTapApplication`, they should call `attachToInstance(ctInstance)` from the `onCreate()` to support Push Notification click callback in killed state.
+5. <a name="point5"></a>From clevertap-react-native **v3.0.0** onwards, if developers don't want their `Application` class to extend `CleverTapApplication`, they should call `CleverTapRnAPI.initReactNativeIntegration(this)` from the `onCreate()` to support Push Notification click callback in killed state.
 
 ```java
-import com.clevertap.react.CleverTapListenerProxy;
+import com.clevertap.react.CleverTapRnAPI;
 // ...
 
 public class MainApplication implements ActivityLifecycleCallbacks, ReactApplication {
@@ -96,10 +96,8 @@ public class MainApplication implements ActivityLifecycleCallbacks, ReactApplica
     @Override
     public void onCreate() {
         CleverTapAPI.setDebugLevel(LogLevel.VERBOSE);
-        CleverTapAPI cleverTapAPI = CleverTapAPI.getDefaultInstance(getApplicationContext());
         ActivityLifecycleCallback.register(this);
-        if (cleverTapAPI != null)
-            CleverTapListenerProxy.INSTANCE.attachToInstance(cleverTapAPI);
+        CleverTapRnAPI.initReactNativeIntegration(this);
         super.onCreate();
         // ...
     }
