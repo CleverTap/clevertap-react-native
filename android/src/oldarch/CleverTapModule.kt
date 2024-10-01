@@ -18,6 +18,13 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
 
     companion object {
 
+        @Deprecated(
+            message = "Use CleverTapRnAPI.setInitialUri(uri) instead",
+            replaceWith = ReplaceWith(
+                expression = "CleverTapRnAPI.setInitialUri(uri)",
+                imports = ["com.clevertap.react.CleverTapRnAPI"]
+            )
+        )
         @JvmStatic
         fun setInitialUri(uri: Uri?) {
             CleverTapModuleImpl.setInitialUri(uri)
