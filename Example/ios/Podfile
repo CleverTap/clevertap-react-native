@@ -14,6 +14,12 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
+
+def ct_pod 
+  pod "CleverTap-iOS-SDK", :modular_headers => true,
+   git: 'https://github.com/CleverTap/clevertap-ios-sdk', branch: 'custom_templates_json'
+end
+
 target 'Example' do
   config = use_native_modules!
 
@@ -22,6 +28,8 @@ target 'Example' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+
+  ct_pod
 
   post_install do |installer|
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
@@ -44,7 +52,7 @@ target 'Example' do
 end
 
 target 'NotificationService' do
-  pod "CleverTap-iOS-SDK", :modular_headers => true
+  ct_pod
   pod "CTNotificationService", :modular_headers => true
 end
 
@@ -54,7 +62,7 @@ end
 
 # Added these target for sample code only in Swift
 target 'NotificationServiceSwift' do
-  pod "CleverTap-iOS-SDK", :modular_headers => true
+  ct_pod
   pod "CTNotificationService", :modular_headers => true
 end
 
