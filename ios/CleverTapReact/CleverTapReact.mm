@@ -1056,53 +1056,53 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
 
 # pragma mark - Custom Code Templates
 
-- (void)customTemplateGetBooleanArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+RCT_EXPORT_METHOD(customTemplateGetBooleanArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         return [NSNumber numberWithBool:[context boolNamed:argName]];
     }];
 }
 
-- (void)customTemplateGetFileArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+RCT_EXPORT_METHOD(customTemplateGetFileArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         return [context fileNamed:argName];
     }];
 }
 
-- (void)customTemplateGetNumberArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+RCT_EXPORT_METHOD(customTemplateGetNumberArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         return [context numberNamed:argName];
     }];
 }
 
-- (void)customTemplateGetObjectArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+RCT_EXPORT_METHOD(customTemplateGetObjectArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         return [context dictionaryNamed:argName];
     }];
 }
 
-- (void)customTemplateGetStringArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+RCT_EXPORT_METHOD(customTemplateGetStringArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         return [context stringNamed:argName];
     }];
 }
 
-- (void)customTemplateRunAction:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+RCT_EXPORT_METHOD(customTemplateRunAction:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         [context triggerActionNamed:argName];
         return nil;
     }];
 }
 
-- (void)customTemplateSetDismissed:(NSString *)templateName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+RCT_EXPORT_METHOD(customTemplateSetDismissed:(NSString *)templateName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         [context dismissed];
         return nil;
     }];
 }
 
-- (void)customTemplateSetPresented:(NSString *)templateName 
+RCT_EXPORT_METHOD(customTemplateSetPresented:(NSString *)templateName
                            resolve:(RCTPromiseResolveBlock)resolve
-                            reject:(RCTPromiseRejectBlock)reject {
+                            reject:(RCTPromiseRejectBlock)reject) {
     [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         [context presented];
         return nil;
