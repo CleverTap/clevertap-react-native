@@ -21,14 +21,15 @@ object CleverTapRnAPI {
     }
 
     /**
-     * Notify the CleverTap SDK of a launch deep link used in the application.
+     * Set the initial Uri for the CleverTap SDK. This can later be accessed through 
+     * CleverTap.getInitialUrl in the ReactNative application.
      *
-     * @param uri The deep link as a [Uri]. This is usually the
+     * @param uri The initial [Uri]. This is usually the
      * [data][android.content.Intent.getData] of
      * [Activity.getIntent][android.app.Activity.getIntent].
      */
     @JvmStatic
-    fun notifyLaunchDeepLink(uri: Uri?) {
+    fun setInitialUri(uri: Uri?) {
         CleverTapModuleImpl.setInitialUri(uri)
     }
 }

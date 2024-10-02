@@ -67,7 +67,7 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            CleverTapRnAPI.notifyLaunchDeepLink(getIntent().getData());
+            CleverTapRnAPI.setInitialUri(getIntent().getData());
     	}
 
         // ...
