@@ -1,0 +1,43 @@
+{
+  "template-lina": {
+    "type": "template",
+    "arguments": {
+      "var1": {
+        "type": "boolean",
+        "value": false
+      },
+      "var2": {
+        "type": "string",
+        "value": "Default"
+      },
+      "folder1": {
+        "type": "object",
+        "value": {
+          "var3": {
+            "type": "number",
+            "value": 0
+          }
+        }
+      },
+      "folder1.var4": {
+        "type": "file"
+      },
+      "map": {
+        "type": "object",
+        "value": {
+          "int": {
+            "type": "number",
+            "value": 0
+          },
+          "string": {
+            "type": "string",
+            "value": "Default"
+          }
+        }
+      },
+      "action": {
+        "type": "action"
+      }
+    }
+  }
+}

@@ -20,6 +20,7 @@
 #import "CleverTap+CTVar.h"
 #import "CTVar.h"
 #import "CleverTapReactPendingEvent.h"
+#import "CTTemplateContext.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <CTTurboModuleSpec/CTTurboModuleSpec.h>
@@ -60,10 +61,11 @@ RCT_EXPORT_MODULE();
         kCleverTapPushNotificationClicked: kCleverTapPushNotificationClicked,
         kCleverTapPushPermissionResponseReceived: kCleverTapPushPermissionResponseReceived,
         kCleverTapInAppNotificationShowed: kCleverTapInAppNotificationShowed,
-        kCleverTapOnVariablesChanged:
-            kCleverTapOnVariablesChanged,
-        kCleverTapOnValueChanged:
-            kCleverTapOnValueChanged,
+        kCleverTapOnVariablesChanged: kCleverTapOnVariablesChanged,
+        kCleverTapOnValueChanged: kCleverTapOnValueChanged,
+        kCleverTapCustomTemplatePresent: kCleverTapCustomTemplatePresent,
+        kCleverTapCustomFunctionPresent: kCleverTapCustomFunctionPresent,
+        kCleverTapCustomTemplateClose: kCleverTapCustomTemplateClose,
         kXPS: kXPS
     };
 }
@@ -1052,6 +1054,81 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
     }
 }
 
+# pragma mark - Custom Code Templates
+
+- (void)customTemplateGetBooleanArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        return [NSNumber numberWithBool:[context boolNamed:argName]];
+    }];
+}
+
+- (void)customTemplateGetFileArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        return [context fileNamed:argName];
+    }];
+}
+
+- (void)customTemplateGetNumberArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        return [context numberNamed:argName];
+    }];
+}
+
+- (void)customTemplateGetObjectArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        return [context dictionaryNamed:argName];
+    }];
+}
+
+- (void)customTemplateGetStringArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        return [context stringNamed:argName];
+    }];
+}
+
+- (void)customTemplateRunAction:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        [context triggerActionNamed:argName];
+        return nil;
+    }];
+}
+
+- (void)customTemplateSetDismissed:(NSString *)templateName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        [context dismissed];
+        return nil;
+    }];
+}
+
+- (void)customTemplateSetPresented:(NSString *)templateName 
+                           resolve:(RCTPromiseResolveBlock)resolve
+                            reject:(RCTPromiseRejectBlock)reject {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        [context presented];
+        return nil;
+    }];
+}
+
+- (void)resolveWithTemplateContext:(NSString *)templateName
+                           resolve:(RCTPromiseResolveBlock)resolve
+                            reject:(RCTPromiseRejectBlock)reject
+                             block: (id (^)(CTTemplateContext *context))blockName {
+    if (![self cleverTapInstance]) {
+        reject(@"CustomTemplateError", @"CleverTap is not initialized", nil);
+        return;
+    }
+    
+    CTTemplateContext *context  = [[self cleverTapInstance] activeContextForTemplate:templateName];
+    if (!context) {
+        reject(@"CustomTemplateError",
+               [NSString stringWithFormat:@"Custom template: %@ is not currently being presented", templateName],
+               nil);
+        return;
+    }
+    
+    resolve(blockName(context));
+}
+
 # pragma mark - Event emitter
 
 static NSMutableDictionary<NSString *, NSMutableArray<CleverTapReactPendingEvent *> *> *pendingEvents = [NSMutableDictionary dictionary];
@@ -1111,7 +1188,9 @@ RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
 }
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[kCleverTapProfileDidInitialize, kCleverTapProfileSync, kCleverTapInAppNotificationDismissed, kCleverTapInboxDidInitialize, kCleverTapInboxMessagesDidUpdate, kCleverTapInAppNotificationButtonTapped, kCleverTapInboxMessageButtonTapped, kCleverTapInboxMessageTapped, kCleverTapDisplayUnitsLoaded,  kCleverTapFeatureFlagsDidUpdate, kCleverTapProductConfigDidFetch, kCleverTapProductConfigDidActivate, kCleverTapProductConfigDidInitialize, kCleverTapPushNotificationClicked, kCleverTapPushPermissionResponseReceived, kCleverTapInAppNotificationShowed, kCleverTapOnVariablesChanged, kCleverTapOnValueChanged];
+    return @[kCleverTapProfileDidInitialize, kCleverTapProfileSync, kCleverTapInAppNotificationDismissed, kCleverTapInboxDidInitialize, kCleverTapInboxMessagesDidUpdate, kCleverTapInAppNotificationButtonTapped, kCleverTapInboxMessageButtonTapped, kCleverTapInboxMessageTapped, kCleverTapDisplayUnitsLoaded,  kCleverTapFeatureFlagsDidUpdate, kCleverTapProductConfigDidFetch, kCleverTapProductConfigDidActivate, kCleverTapProductConfigDidInitialize, kCleverTapPushNotificationClicked, kCleverTapPushPermissionResponseReceived, kCleverTapInAppNotificationShowed, kCleverTapOnVariablesChanged, kCleverTapOnValueChanged,
+             kCleverTapCustomTemplatePresent, kCleverTapCustomFunctionPresent,
+             kCleverTapCustomTemplateClose];
 }
 
 - (void)startObserving {

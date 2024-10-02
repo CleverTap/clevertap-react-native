@@ -27,6 +27,7 @@
 		48BF79812AB076F20091FF16 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 48BF797F2AB076F20091FF16 /* MainInterface.storyboard */; };
 		48BF79852AB076F20091FF16 /* NotificationContentSwift.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 48BF79792AB076F10091FF16 /* NotificationContentSwift.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		685D0A42F74FC38D84284799 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9A4C3DD3EBC1242A62F0E22B /* PrivacyInfo.xcprivacy */; };
+		6B102BBB2CAD960F00296828 /* templates.json in Resources */ = {isa = PBXBuildFile; fileRef = 6B102BBA2CAD960F00296828 /* templates.json */; };
 		7B7C570A4995F82344A7A8B5 /* libPods-NotificationService.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2ACBB8C00715DBA0D18D594A /* libPods-NotificationService.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		B4B941977C6BD80AED255050 /* libPods-Example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A2FF03263A55A38E9204B29 /* libPods-Example.a */; };
@@ -115,6 +116,7 @@
 		494B16C126B01FD7008F32F7 /* Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Example.entitlements; path = Example/Example.entitlements; sourceTree = "<group>"; };
 		4EAE8C2E7DE9CD3E21AFE9BA /* Pods-NotificationService.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationService.debug.xcconfig"; path = "Target Support Files/Pods-NotificationService/Pods-NotificationService.debug.xcconfig"; sourceTree = "<group>"; };
 		6A2FF03263A55A38E9204B29 /* libPods-Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6B102BBA2CAD960F00296828 /* templates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = templates.json; sourceTree = "<group>"; };
 		7155EAA153AA7B390A68C1F6 /* Pods-Example-NotificationService.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example-NotificationService.release.xcconfig"; path = "Target Support Files/Pods-Example-NotificationService/Pods-Example-NotificationService.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Example/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8B9C3B152A6A98EC91F67C08 /* Pods-NotificationContentSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationContentSwift.debug.xcconfig"; path = "Target Support Files/Pods-NotificationContentSwift/Pods-NotificationContentSwift.debug.xcconfig"; sourceTree = "<group>"; };
@@ -188,6 +190,7 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				9A4C3DD3EBC1242A62F0E22B /* PrivacyInfo.xcprivacy */,
+				6B102BBA2CAD960F00296828 /* templates.json */,
 			);
 			name = Example;
 			sourceTree = "<group>";
@@ -463,6 +466,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				6B102BBB2CAD960F00296828 /* templates.json in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				685D0A42F74FC38D84284799 /* PrivacyInfo.xcprivacy in Resources */,
 			);
