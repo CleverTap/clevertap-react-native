@@ -11,8 +11,8 @@ Version 3.0.0 *(Todo 2024)*
   * Deprecates `CleverTapModule.setInitialUri()` in favour of `CleverTapRnAPI.setInitialUri()`. Refer to [step 4](docs/integration.md#step4)
 
 * **[iOS Platform]**
-  * Supports [CleverTap iOS SDK v7.0.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-701-september-2-2024).
-  * Todo
+  * Supports [CleverTap iOS SDK v7.0.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-701-august-22-2024).
+  * Fixes a bug where some user properties were being sent with an incorrect prefix.
 
 * **[Android and iOS Platform]**
   * Adds support for triggering InApps based on user attribute changes.
