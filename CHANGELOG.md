@@ -8,6 +8,7 @@ Version 3.0.0 *(Todo 2024)*
 * **[Android Platform]**
   * Supports [CleverTap Android SDK v7.0.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-701-september-2-2024).
   * Removes character limit of maximum 3 lines from `AppInbox` messages.
+  * Deprecates `CleverTapModule.setInitialUri()` in favour of `CleverTapRnAPI.setInitialUri()`. Refer to [step 4](docs/integration.md#step4)
 
 * **[iOS Platform]**
   * Supports [CleverTap iOS SDK v7.0.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-701-september-2-2024).
@@ -20,7 +21,7 @@ Version 3.0.0 *(Todo 2024)*
 
 **Breaking Changes**
 * **[Android Platform]**
-  * If you're using a custom `Application` class, ensure that it extends the `CleverTapApplication` or calls `CleverTapListenerProxy.attachToInstance(cleverTapAPIInstance)` to enable the functionality of `ClevertapPushNotificationClicked` and few other callbacks. Refer to [step 5 here](docs/integration.md#point5)
+  * If you're using a custom `Application` class, ensure that it extends the `CleverTapApplication` or calls `CleverTapRnAPI.initReactNativeIntegration(this);` to enable the functionality of `ClevertapPushNotificationClicked` and few other callbacks. Refer to [step 3](docs/integration.md#step3a)
 
 **Bug Fixes**
 * **[Android Platform]**
