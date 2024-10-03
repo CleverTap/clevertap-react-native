@@ -1,43 +1,68 @@
 {
-    "template-lina": {
-      "type": "template",
-      "arguments": {
-        "var1": {
-          "type": "boolean",
-          "value": false
-        },
-        "var2": {
-          "type": "string",
-          "value": "Default"
-        },
-        "folder1": {
-          "type": "object",
-          "value": {
-            "var3": {
-              "type": "number",
-              "value": 0
-            }
-          }
-        },
-        "folder1.var4": {
-          "type": "file"
-        },
-        "map": {
-          "type": "object",
-          "value": {
-            "int": {
-              "type": "number",
-              "value": 0
+    "Example template": {
+        "type": "template",
+        "arguments": {
+            "bool": {
+                "type": "boolean",
+                "value": false
             },
             "string": {
-              "type": "string",
-              "value": "Default"
+                "type": "string",
+                "value": "Default"
+            },
+            "map": {
+                "type": "object",
+                "value": {
+                    "int": {
+                        "type": "number",
+                        "value": 0
+                    },
+                    "string": {
+                        "type": "string",
+                        "value": "Default"
+                    }
+                }
+            },
+            "action": {
+                "type": "action"
+            },
+            "file": {
+                "type": "file"
             }
-          }
-        },
-        "action": {
-          "type": "action"
         }
-      }
+    },
+    "Example function": {
+        "type": "function",
+        "isVisual": false,
+        "arguments": {
+            "double": {
+                "type": "number",
+                "value": 99.98
+            },
+            "string": {
+                "type": "string",
+                "value": "Default"
+            },
+            "file": {
+                "type": "file"
+            }
+        }
+    },
+    "Example visual function": {
+        "type": "function",
+        "isVisual": true,
+        "arguments": {
+            "color": {
+                "type": "string",
+                "value": "transparent"
+            },
+            "enabled": {
+                "type": "boolean",
+                "value": false
+            },
+            "image": {
+                "type": "file"
+            }
+        }
     }
-  }
+}

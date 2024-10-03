@@ -2,6 +2,7 @@
 import React, {Component} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import CustomTemplate from './CustomTemplate';
 
 import {
   Alert,
@@ -910,6 +911,7 @@ export default class App extends Component {
           <TouchableOpacity style={styles.button}>
             <Text style={styles.button_Text}>CleverTap Example</Text>
           </TouchableOpacity>
+          <CustomTemplate></CustomTemplate>
           {this.state.AccordionData.map((item, key) => (
             <Expandable_ListView
               key={item.category_Name}
@@ -995,7 +997,7 @@ pushevent = () => {
   // CleverTap.recordEvent('testEvent');
   // CleverTap.recordEvent('Send Basic Push');
   // CleverTap.recordEvent('testEventWithProps', {start: new Date(), foo: 'bar'});
-  CleverTap.recordEvent('template');
+  CleverTap.recordEvent('pushEvent');
 };
 
 pushChargedEvent = () => {
@@ -1494,26 +1496,6 @@ function addCleverTapAPIListeners(fromClick) {
   );
   if (fromClick) {
     alert('Listeners added successfully');
-  }
-  CleverTap.addListener(CleverTap.CleverTapCustomTemplatePresent, templateName => {
-    getTemplateValuesString(templateName).then((str)=> {
-       alert(str);
-    })
-  })
-}
-
-async function getTemplateValuesString(templateName) {
-  try {
-    var var1 = await CleverTap.customTemplateGetBooleanArg(templateName, "var1");
-    var var2 = await CleverTap.customTemplateGetStringArg(templateName, "var2");
-    var var3 = await CleverTap.customTemplateGetNumberArg(templateName, "folder1.var3");
-    var var4 = await CleverTap.customTemplateGetFileArg(templateName, "folder1.var4");
-    var folder1 = await CleverTap.customTemplateGetObjectArg(templateName, "folder1");
-    await CleverTap.customTemplateSetPresented(templateName);
-    await CleverTap.customTemplateSetDismissed(templateName);
-    return `Template Presented ${templateName}\nvar1=${var1}\nvar2=${var2}\nfolder1.var3=${var3}\nfolder1.var4=${var4}\nfolder1=${JSON.stringify(folder1)}`;
-  } catch (e) {
-    return e.toString();
   }
 }
 
