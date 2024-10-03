@@ -13,15 +13,28 @@ import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 
 @Suppress("unused")
-class CleverTapModule(reactContext: ReactApplicationContext?) : ReactContextBaseJavaModule(reactContext) {
+class CleverTapModule(reactContext: ReactApplicationContext?) :
+    ReactContextBaseJavaModule(reactContext) {
 
-    private val cleverTapModuleImpl: CleverTapModuleImpl
-    override fun getName(): String {
-        return CleverTapModuleImpl.REACT_MODULE_NAME
+    companion object {
+
+        @Deprecated(
+            message = "Use CleverTapRnAPI.setInitialUri(uri) instead",
+            replaceWith = ReplaceWith(
+                expression = "CleverTapRnAPI.setInitialUri(uri)",
+                imports = ["com.clevertap.react.CleverTapRnAPI"]
+            )
+        )
+        @JvmStatic
+        fun setInitialUri(uri: Uri?) {
+            CleverTapModuleImpl.setInitialUri(uri)
+        }
     }
 
-    init {
-        cleverTapModuleImpl = CleverTapModuleImpl(reactContext!!)
+    private val cleverTapModuleImpl: CleverTapModuleImpl = CleverTapModuleImpl(reactContext!!)
+
+    override fun getName(): String {
+        return Constants.REACT_MODULE_NAME
     }
 
     @SuppressLint("RestrictedApi")
@@ -49,7 +62,11 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : ReactContextBase
     @RequiresApi(api = VERSION_CODES.O)
     @ReactMethod
     fun createNotificationChannel(
-        channelId: String?, channelName: String?, channelDescription: String?, importance: Int, showBadge: Boolean
+        channelId: String?,
+        channelName: String?,
+        channelDescription: String?,
+        importance: Int,
+        showBadge: Boolean
     ) {
         cleverTapModuleImpl.createNotificationChannel(
             channelId, channelName, channelDescription, importance, showBadge
@@ -547,10 +564,9 @@ class CleverTapModule(reactContext: ReactApplicationContext?) : ReactContextBase
         cleverTapModuleImpl.onValueChanged(name)
     }
 
-    companion object {
-        private val mlaunchURI: Uri? = null
-        private const val REACT_MODULE_NAME = "CleverTapReact"
-        private const val TAG = REACT_MODULE_NAME
+    @ReactMethod
+    fun onEventListenerAdded(eventName: String) {
+        cleverTapModuleImpl.onEventListenerAdded(eventName)
     }
 
     override fun getConstants(): Map<String, Any> {
