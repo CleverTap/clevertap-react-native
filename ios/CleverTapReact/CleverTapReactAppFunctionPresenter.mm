@@ -15,7 +15,7 @@
 }
 
 - (void)onCloseClicked:(nonnull CTTemplateContext *)context {
-    // NOOP
+    // NOOP - App Functions cannot have Action arguments.
 }
 
 @end
