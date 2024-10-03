@@ -1131,21 +1131,36 @@ RCT_EXPORT_METHOD(customTemplateSetPresented:(NSString *)templateName
 
 # pragma mark - Event emitter
 
+/// A collection of events sent before ReactNative has started observing events.
 static NSMutableDictionary<NSString *, NSMutableArray<CleverTapReactPendingEvent *> *> *pendingEvents = [NSMutableDictionary dictionary];
 
+/// Indicates if ``startObserving`` has been called which means a listener/observer has been added.
 static BOOL isObserving;
+
+/// A set of event names that a listener/observer has been added for.
 static NSMutableSet<NSString *> *observedEvents = [NSMutableSet set];
 
-static NSMutableSet<NSString *> *observableEvents = [NSMutableSet setWithObjects:kCleverTapPushNotificationClicked, kCleverTapProfileDidInitialize, kCleverTapDisplayUnitsLoaded, kCleverTapInAppNotificationShowed, kCleverTapInAppNotificationDismissed, kCleverTapInAppNotificationButtonTapped, kCleverTapProductConfigDidInitialize, nil];
+/// A set of event names that needs to be observed since they can be sent before ReactNative has started observing events.
+static NSMutableSet<NSString *> *observableEvents = [NSMutableSet setWithObjects:
+                                                     kCleverTapPushNotificationClicked,
+                                                     kCleverTapProfileDidInitialize,
+                                                     kCleverTapDisplayUnitsLoaded,
+                                                     kCleverTapInAppNotificationShowed,
+                                                     kCleverTapInAppNotificationDismissed,
+                                                     kCleverTapInAppNotificationButtonTapped,
+                                                     kCleverTapProductConfigDidInitialize,
+                                                     kCleverTapCustomTemplatePresent,
+                                                     kCleverTapCustomFunctionPresent,
+                                                     kCleverTapCustomTemplateClose, nil];
 
+/// Time out in seconds, after which pending events are cleared.
+/// See ``startObserving`` for details.
 const int PENDING_EVENTS_TIME_OUT = 5;
 
-/**
- * Called when a observer/listener is added for the event.
- * Post the pending events for the event name.
- *
- * @param name the name of the observed event
- */
+/// Called when a observer/listener is added for the event.
+/// Post the pending events for the event name.
+///
+/// @param name The name of the observed event.
 RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
     [observedEvents addObject:name];
     NSArray *pendingEventsForName = pendingEvents[name];
@@ -1158,16 +1173,14 @@ RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
     }
 }
 
-/**
- * Send event when ReactNative has started observing events.
- * This happens when the first observer/listener is added in ReactNative.
- * If events are sent before that, the events are queued.
- * Events expected to be queued are specified in `observableEvents`.
- * If ReactNative has started observing and the event is observed, see `observedEvents`, the events are emitted directly.
- *
- * @param name the event name
- * @param body the event body parameters
- */
+/// Send event when ReactNative has started observing events.
+/// This happens when the first observer/listener is added in ReactNative.
+/// If events are sent before that, the events are queued.
+/// Events expected to be queued are specified in ``observableEvents``.
+/// If ReactNative has started observing and the event is observed, see ``observedEvents``, the events are emitted directly.
+///
+/// @param name The event name.
+/// @param body The event body parameters.
 + (void)sendEventOnObserving:(NSString *)name body:(id)body {
     if (!isObserving && ![observableEvents containsObject:name]) {
         RCTLogWarn(@"[CleverTap: %@ is sent before observing and is not part of the observable events]", name);
@@ -1188,8 +1201,26 @@ RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
 }
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[kCleverTapProfileDidInitialize, kCleverTapProfileSync, kCleverTapInAppNotificationDismissed, kCleverTapInboxDidInitialize, kCleverTapInboxMessagesDidUpdate, kCleverTapInAppNotificationButtonTapped, kCleverTapInboxMessageButtonTapped, kCleverTapInboxMessageTapped, kCleverTapDisplayUnitsLoaded,  kCleverTapFeatureFlagsDidUpdate, kCleverTapProductConfigDidFetch, kCleverTapProductConfigDidActivate, kCleverTapProductConfigDidInitialize, kCleverTapPushNotificationClicked, kCleverTapPushPermissionResponseReceived, kCleverTapInAppNotificationShowed, kCleverTapOnVariablesChanged, kCleverTapOnValueChanged,
-             kCleverTapCustomTemplatePresent, kCleverTapCustomFunctionPresent,
+    return @[kCleverTapProfileDidInitialize,
+             kCleverTapProfileSync,
+             kCleverTapInAppNotificationShowed,
+             kCleverTapInAppNotificationDismissed,
+             kCleverTapInAppNotificationButtonTapped,
+             kCleverTapInboxDidInitialize,
+             kCleverTapInboxMessagesDidUpdate,
+             kCleverTapInboxMessageButtonTapped,
+             kCleverTapInboxMessageTapped,
+             kCleverTapDisplayUnitsLoaded,
+             kCleverTapFeatureFlagsDidUpdate,
+             kCleverTapProductConfigDidFetch,
+             kCleverTapProductConfigDidActivate,
+             kCleverTapProductConfigDidInitialize,
+             kCleverTapPushNotificationClicked,
+             kCleverTapPushPermissionResponseReceived,
+             kCleverTapOnVariablesChanged,
+             kCleverTapOnValueChanged,
+             kCleverTapCustomTemplatePresent,
+             kCleverTapCustomFunctionPresent,
              kCleverTapCustomTemplateClose];
 }
 
