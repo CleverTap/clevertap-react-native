@@ -10,6 +10,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// A `CTTemplatePresenter` handling App Functions presentation.
+/// Posts a `kCleverTapCustomFunctionPresent` notification to ReactNative
+/// when an App Function onPresent is called.
 @interface CleverTapReactAppFunctionPresenter : NSObject <CTTemplatePresenter>
 
 @end
