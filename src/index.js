@@ -968,6 +968,23 @@ var CleverTap = {
         CleverTapReact.clearInAppResources(expiredOnly);
     },
 
+    /**
+     * Uploads Custom in-app templates and app functions to the server.
+     * Requires Development/Debug build/configuration.
+     */
+    syncCustomTemplates: function () {
+        CleverTapReact.syncCustomTemplates();
+    },
+
+    /**
+     * Uploads Custom in-app templates and app functions to the server.
+     *
+     * @param {boolean} isProduction Provide `true` if templates must be sync in Productuon build/configuration.
+     */
+    syncCustomTemplatesInProd: function (isProduction) {
+        CleverTapReact.syncCustomTemplatesInProd(isProduction)
+    },
+
     customTemplateSetDismissed: function (templateName) {
         return CleverTapReact.customTemplateSetDismissed(templateName);
     },
