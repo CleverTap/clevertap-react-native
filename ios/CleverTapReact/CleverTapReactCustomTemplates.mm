@@ -29,37 +29,3 @@
 }
 
 @end
-
-/*
- 
- @JvmStatic
-     fun registerCustomTemplates(context: Context, vararg jsonAssets: String) {
-         for (jsonAsset in jsonAssets) {
-             val jsonDefinitions = readAsset(context, jsonAsset)
-             CleverTapAPI.registerCustomInAppTemplates(
-                 jsonDefinitions, mTemplatePresenter, mFunctionPresenter
-             )
-         }
-     }
-
-     private fun readAsset(context: Context, asset: String): String {
-         val assetManager = context.assets
-         try {
-             assetManager.open(asset).use { assetInputStream ->
-                 val reader =
-                     BufferedReader(InputStreamReader(assetInputStream, StandardCharsets.UTF_8))
-
-                 return buildString {
-                     var line = reader.readLine()
-                     while (line != null) {
-                         append(line)
-                         line = reader.readLine()
-                     }
-                 }
-             }
-         } catch (e: IOException) {
-             throw CustomTemplateException("Could not read json asset", e)
-         }
-     }
- 
- */
