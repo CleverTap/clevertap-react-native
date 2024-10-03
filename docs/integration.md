@@ -27,9 +27,9 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-
     // ...
 
     // CleverTap imports
-	import com.clevertap.android.sdk.ActivityLifecycleCallback; 
-    import com.clevertap.react.CleverTapPackage; 
-    import com.clevertap.android.sdk.CleverTapAPI;
+    import com.clevertap.android.sdk.ActivityLifecycleCallback;
+    import com.clevertap.react.CleverTapPackage;
+    import com.clevertap.react.CleverTapRnAPI;
 
 
     //...
@@ -37,9 +37,9 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-
     // add CleverTapPackage to react-native package list
     @Override
       protected List<ReactPackage> getPackages() {
-        List<ReactPackage> packages = new PackageList(this).getPackages(); 
-        // Packages that cannot be autolinked yet can be added manually here, for 
-        // example: 
+        List<ReactPackage> packages = new PackageList(this).getPackages();
+        // Packages that cannot be autolinked yet can be added manually here, for
+        // example:
         packages.add(new CleverTapPackage());// only needed when not auto-linking
         return packages;
 
@@ -51,21 +51,23 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-
 	    // Register the CleverTap ActivityLifecycleCallback; before calling super
         ActivityLifecycleCallback.register(this);	
         super.onCreate();
+        // Init CleverTapSDK React Native integration
+        CleverTapRnAPI.initReactNativeIntegration(this);
     }
     ```
 
-3. Optionally Override onCreate in MainActivity.java to notify CleverTap of a launch deep link  (`android/app/src/[...]/MainActivity.java`)
+3. Optionally override onCreate in MainActivity.java to notify CleverTap of a launch deep link  (`android/app/src/[...]/MainActivity.java`)
     ```java
     import com.clevertap.react.CleverTapModule;
     import android.os.Bundle;
     
     public class MainActivity extends ReactActivity {
-		// ...
+        // ...
 
-		@Override
-   		protected void onCreate(Bundle savedInstanceState) {
-        	super.onCreate(savedInstanceState);
-        	CleverTapModule.setInitialUri(getIntent().getData());
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            CleverTapRnAPI.setInitialUri(getIntent().getData());
     	}
 
         // ...

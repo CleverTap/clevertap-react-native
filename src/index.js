@@ -77,6 +77,7 @@ var CleverTap = {
     addListener: function (eventName, handler) {
         if (EventEmitter) {
             EventEmitter.addListener(eventName, handler);
+            CleverTapReact.onEventListenerAdded(eventName);
         }
     },
 
@@ -116,7 +117,7 @@ var CleverTap = {
     setLocale: function (locale) {
         CleverTapReact.setLocale(locale);
     },
-    
+
     /**
     * Registers the application to receive push notifications
     * only necessary for iOS.
@@ -959,7 +960,7 @@ var CleverTap = {
      *
      * @param {boolean} expiredOnly to clear only assets which will not be needed further for inapps
      */
-    clearInAppResources: function(expiredOnly) {
+    clearInAppResources: function (expiredOnly) {
         CleverTapReact.clearInAppResources(expiredOnly);
     }
 };
