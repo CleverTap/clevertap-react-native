@@ -685,6 +685,20 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    */
   export function resumeInAppNotifications(): void;
 
+  /**
+   * Fetches In Apps from server.
+   *
+   * @param {function(err, res)} callback a callback with a boolean flag whether the fetching was successful
+   */
+  export function fetchInApps(callback: Callback): void;
+
+  /**
+   * Deletes all images and gifs which are preloaded for inapps in cs mode
+   *
+   * @param {boolean} expiredOnly to clear only assets which will not be needed further for inapps
+   */
+  export function clearInAppResources(expiredOnly: boolean): void;
+
   /*******************
    * Instances
    ******************/
@@ -755,20 +769,22 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     */
   export function onValueChanged(name: string, handler: Function): void;
 
+  /*******************
+   * Custom Templates
+   ******************/
 
   /**
-   * Fetches In Apps from server.
-   *
-   * @param {function(err, res)} callback a callback with a boolean flag whether the fetching was successful
-   */
-  export function fetchInApps(callback: Callback): void;
+  * Uploads Custom in-app templates and app functions to the server.
+  * Requires Development/Debug build/configuration.
+  */
+  export function syncCustomTemplates(): void;
 
   /**
-   * Deletes all images and gifs which are preloaded for inapps in cs mode
-   *
-   * @param {boolean} expiredOnly to clear only assets which will not be needed further for inapps
+   * Uploads Custom in-app templates and app functions to the server.
+   * 
+   * @param isProduction Provide `true` if templates must be sync in Productuon build/configuration.
    */
-  export function clearInAppResources(expiredOnly: boolean): void;
+  export function syncCustomTemplatesInProd(isProduction: boolean): void;
 
   export function customTemplateSetDismissed(templateName: string): Promise<void>;
 

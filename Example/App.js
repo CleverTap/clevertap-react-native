@@ -491,6 +491,12 @@ class Expandable_ListView extends Component {
           case 89:
               CleverTap.clearInAppResources(true);
               break;
+          case 700:
+            CleverTap.syncCustomTemplates();
+            break;
+          case 701:
+            CleverTap.syncCustomTemplatesInProd(true);
+            break;
         }
     }
 
@@ -813,6 +819,14 @@ export default class App extends Component {
             id: 54,
             name: 'removeCleverTapAPIListeners',
           },
+        ],
+      },
+      {
+        expanded: false,
+        category_Name: 'Custom Templates',
+        sub_Category: [
+          {id: 700, name: 'Sync Custom Templates'},
+          {id: 701, name: 'Sync Custom Templates In Prod'}
         ],
       },
       {

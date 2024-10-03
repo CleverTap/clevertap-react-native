@@ -1056,6 +1056,16 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
 
 # pragma mark - Custom Code Templates
 
+RCT_EXPORT_METHOD(syncCustomTemplates) {
+    RCTLogInfo(@"[CleverTap syncCustomTemplates]");
+    [[self cleverTapInstance] syncCustomTemplates];
+}
+
+RCT_EXPORT_METHOD(syncCustomTemplatesInProd:(BOOL)isProduction) {
+    RCTLogInfo(@"[CleverTap syncCustomTemplates:isProduction]");
+    [[self cleverTapInstance] syncCustomTemplates:isProduction];
+}
+
 RCT_EXPORT_METHOD(customTemplateGetBooleanArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         return [NSNumber numberWithBool:[context boolNamed:argName]];
