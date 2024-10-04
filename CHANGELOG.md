@@ -12,7 +12,6 @@ Version 3.0.0 *(8 October 2024)*
 
 * **[iOS Platform]**
   * Supports [CleverTap iOS SDK v7.0.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-701-august-22-2024).
-  * Fixes a bug where some user properties were being sent with an incorrect prefix.
 
 * **[Android and iOS Platform]**
   * Adds support for triggering InApps based on user attribute changes.
@@ -30,9 +29,6 @@ Version 3.0.0 *(8 October 2024)*
   * Fixes an issue where an InApp was displayed even after all the campaigns were stopped.
   * Fixes an issue where the InApp image was not shown when the phone was rotated to landscape.
   * Fixes an issue where certain URLs loaded incorrectly in custom HTML InApp templates.
-
-* **[iOS Platform]**
-  * Todo
 
 Version 2.2.1 *(12 April 2024)*
 -------------------------------------------
