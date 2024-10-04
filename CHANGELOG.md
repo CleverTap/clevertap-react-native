@@ -16,7 +16,7 @@ Version 3.0.0 *(Todo 2024)*
 
 * **[Android and iOS Platform]**
   * Adds support for triggering InApps based on user attribute changes.
-  * Migrates the bridge to a backwards-compatible [New Architecture Turbo Module](https://github.com/reactwg/react-native-new-architecture#guides).
+  * Migrates the bridge to a backwards-compatible [New Architecture Turbo Module](docs/integration.md).
     * The CleverTap ReactNative SDK continues to be compatible with both the Old and the New Architecture.
 
 **Breaking Changes**

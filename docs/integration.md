@@ -2,6 +2,11 @@
 
 After [install](./install.md), you will need to integrate the CleverTap SDK into your iOS and Android apps.
 
+Clevertap supports the [ReactNative New Architecture](https://reactnative.dev/docs/the-new-architecture/landing-page) starting from clevertap-react-native **v3.0.0**, while still maintaining compatibility with the old architecture. Please refer to the [official guide](https://github.com/reactwg/react-native-new-architecture/blob/main/docs/enable-apps.md) to **optionally** enable New Architecture in your app.
+
+> ⚠️ For app maintainers to migrate to the New Architecture, **all of their dependencies** must support the New Architecture as well
+
+
 ### iOS
 1. Follow the integration instructions [starting with Step 2 here](https://support.clevertap.com/docs/ios/getting-started.html).
 2. In your `AppDelegate didFinishLaunchingWithOptions:` notify the CleverTap React SDK of application launch:
@@ -76,7 +81,7 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-
 <br>
 
 
-- From clevertap-react-native **v3.0.0** onwards developers can make their `Application` class extend `CleverTapApplication` to support out of the box integration. Before v3.0.0 developers were forced to register activity lifecycle in their `Application` class manually which is being abstract out in `CleverTapApplication` class.
+- From clevertap-react-native **v3.0.0** onwards developers can make their `Application` class extend `CleverTapApplication` to support out of the box integration. Before **v3.0.0** developers were forced to register activity lifecycle in their `Application` class manually which is being abstract out in `CleverTapApplication` class.
  
     ```java
   import com.clevertap.react.CleverTapApplication;
