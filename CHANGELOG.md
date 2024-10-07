@@ -20,7 +20,7 @@ Version 3.0.0 *(8 October 2024)*
 
 **Breaking Changes**
 * **[Android Platform]**
-  * If you're using a custom `Application` class, ensure that it extends the `CleverTapApplication` or calls `CleverTapRnAPI.initReactNativeIntegration(this);` to enable the functionality of `ClevertapPushNotificationClicked` and few other callbacks from killed state. Refer to [step 3](docs/integration.md#step3a)
+  * Ensure that your custom `Application` class, extends the `CleverTapApplication` or calls `CleverTapRnAPI.initReactNativeIntegration(this);` to enable the functionality of `ClevertapPushNotificationClicked` and few other callbacks linked to killed state. Refer to [step 3](docs/integration.md#step3a)
 
 **Bug Fixes**
 * **[Android Platform]**

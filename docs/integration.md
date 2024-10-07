@@ -61,7 +61,7 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-
     import com.clevertap.android.sdk.CleverTapAPI.LogLevel;
     // ...
 
-        public class MainApplication implements ActivityLifecycleCallbacks, ReactApplication {
+        public class MainApplication implements ReactApplication {
             // ...
 
             @Override
