@@ -13,7 +13,7 @@
     "@react-navigation/drawer": "^6.6.2",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
-    "clevertap-react-native": "git+https://github.com/CleverTap/clevertap-react-native#task/SDK-3736/Research-and-Document-RN-new-architecture-changes",
+    "clevertap-react-native": "../",
     "react": "18.2.0",
     "react-native": "^0.74.1",
     "react-native-drawer": "^2.5.1",
