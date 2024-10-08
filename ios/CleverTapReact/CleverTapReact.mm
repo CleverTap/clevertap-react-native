@@ -20,6 +20,7 @@
 #import "CleverTap+CTVar.h"
 #import "CTVar.h"
 #import "CleverTapReactPendingEvent.h"
+#import "CTTemplateContext.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <CTTurboModuleSpec/CTTurboModuleSpec.h>
@@ -60,10 +61,11 @@ RCT_EXPORT_MODULE();
         kCleverTapPushNotificationClicked: kCleverTapPushNotificationClicked,
         kCleverTapPushPermissionResponseReceived: kCleverTapPushPermissionResponseReceived,
         kCleverTapInAppNotificationShowed: kCleverTapInAppNotificationShowed,
-        kCleverTapOnVariablesChanged:
-            kCleverTapOnVariablesChanged,
-        kCleverTapOnValueChanged:
-            kCleverTapOnValueChanged,
+        kCleverTapOnVariablesChanged: kCleverTapOnVariablesChanged,
+        kCleverTapOnValueChanged: kCleverTapOnValueChanged,
+        kCleverTapCustomTemplatePresent: kCleverTapCustomTemplatePresent,
+        kCleverTapCustomFunctionPresent: kCleverTapCustomFunctionPresent,
+        kCleverTapCustomTemplateClose: kCleverTapCustomTemplateClose,
         kXPS: kXPS
     };
 }
@@ -1052,23 +1054,123 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
     }
 }
 
+# pragma mark - Custom Code Templates
+
+RCT_EXPORT_METHOD(syncCustomTemplates) {
+    RCTLogInfo(@"[CleverTap syncCustomTemplates]");
+    [[self cleverTapInstance] syncCustomTemplates];
+}
+
+RCT_EXPORT_METHOD(syncCustomTemplatesInProd:(BOOL)isProduction) {
+    RCTLogInfo(@"[CleverTap syncCustomTemplates:isProduction]");
+    [[self cleverTapInstance] syncCustomTemplates:isProduction];
+}
+
+RCT_EXPORT_METHOD(customTemplateGetBooleanArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        return [NSNumber numberWithBool:[context boolNamed:argName]];
+    }];
+}
+
+RCT_EXPORT_METHOD(customTemplateGetFileArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        return [context fileNamed:argName];
+    }];
+}
+
+RCT_EXPORT_METHOD(customTemplateGetNumberArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        return [context numberNamed:argName];
+    }];
+}
+
+RCT_EXPORT_METHOD(customTemplateGetObjectArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        return [context dictionaryNamed:argName];
+    }];
+}
+
+RCT_EXPORT_METHOD(customTemplateGetStringArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        return [context stringNamed:argName];
+    }];
+}
+
+RCT_EXPORT_METHOD(customTemplateRunAction:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        [context triggerActionNamed:argName];
+        return nil;
+    }];
+}
+
+RCT_EXPORT_METHOD(customTemplateSetDismissed:(NSString *)templateName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        [context dismissed];
+        return nil;
+    }];
+}
+
+RCT_EXPORT_METHOD(customTemplateSetPresented:(NSString *)templateName
+                           resolve:(RCTPromiseResolveBlock)resolve
+                            reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        [context presented];
+        return nil;
+    }];
+}
+
+- (void)resolveWithTemplateContext:(NSString *)templateName
+                           resolve:(RCTPromiseResolveBlock)resolve
+                            reject:(RCTPromiseRejectBlock)reject
+                             block: (id (^)(CTTemplateContext *context))blockName {
+    if (![self cleverTapInstance]) {
+        reject(@"CustomTemplateError", @"CleverTap is not initialized", nil);
+        return;
+    }
+    
+    CTTemplateContext *context  = [[self cleverTapInstance] activeContextForTemplate:templateName];
+    if (!context) {
+        reject(@"CustomTemplateError",
+               [NSString stringWithFormat:@"Custom template: %@ is not currently being presented", templateName],
+               nil);
+        return;
+    }
+    
+    resolve(blockName(context));
+}
+
 # pragma mark - Event emitter
 
+/// A collection of events sent before ReactNative has started observing events.
 static NSMutableDictionary<NSString *, NSMutableArray<CleverTapReactPendingEvent *> *> *pendingEvents = [NSMutableDictionary dictionary];
 
+/// Indicates if ``startObserving`` has been called which means a listener/observer has been added.
 static BOOL isObserving;
+
+/// A set of event names that a listener/observer has been added for.
 static NSMutableSet<NSString *> *observedEvents = [NSMutableSet set];
 
-static NSMutableSet<NSString *> *observableEvents = [NSMutableSet setWithObjects:kCleverTapPushNotificationClicked, kCleverTapProfileDidInitialize, kCleverTapDisplayUnitsLoaded, kCleverTapInAppNotificationShowed, kCleverTapInAppNotificationDismissed, kCleverTapInAppNotificationButtonTapped, kCleverTapProductConfigDidInitialize, nil];
+/// A set of event names that needs to be observed since they can be sent before ReactNative has started observing events.
+static NSMutableSet<NSString *> *observableEvents = [NSMutableSet setWithObjects:
+                                                     kCleverTapPushNotificationClicked,
+                                                     kCleverTapProfileDidInitialize,
+                                                     kCleverTapDisplayUnitsLoaded,
+                                                     kCleverTapInAppNotificationShowed,
+                                                     kCleverTapInAppNotificationDismissed,
+                                                     kCleverTapInAppNotificationButtonTapped,
+                                                     kCleverTapProductConfigDidInitialize,
+                                                     kCleverTapCustomTemplatePresent,
+                                                     kCleverTapCustomFunctionPresent,
+                                                     kCleverTapCustomTemplateClose, nil];
 
+/// Time out in seconds, after which pending events are cleared.
+/// See ``startObserving`` for details.
 const int PENDING_EVENTS_TIME_OUT = 5;
 
-/**
- * Called when a observer/listener is added for the event.
- * Post the pending events for the event name.
- *
- * @param name the name of the observed event
- */
+/// Called when a observer/listener is added for the event.
+/// Post the pending events for the event name.
+///
+/// @param name The name of the observed event.
 RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
     [observedEvents addObject:name];
     NSArray *pendingEventsForName = pendingEvents[name];
@@ -1081,16 +1183,14 @@ RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
     }
 }
 
-/**
- * Send event when ReactNative has started observing events.
- * This happens when the first observer/listener is added in ReactNative.
- * If events are sent before that, the events are queued.
- * Events expected to be queued are specified in `observableEvents`.
- * If ReactNative has started observing and the event is observed, see `observedEvents`, the events are emitted directly.
- *
- * @param name the event name
- * @param body the event body parameters
- */
+/// Send event when ReactNative has started observing events.
+/// This happens when the first observer/listener is added in ReactNative.
+/// If events are sent before that, the events are queued.
+/// Events expected to be queued are specified in ``observableEvents``.
+/// If ReactNative has started observing and the event is observed, see ``observedEvents``, the events are emitted directly.
+///
+/// @param name The event name.
+/// @param body The event body parameters.
 + (void)sendEventOnObserving:(NSString *)name body:(id)body {
     if (!isObserving && ![observableEvents containsObject:name]) {
         RCTLogWarn(@"[CleverTap: %@ is sent before observing and is not part of the observable events]", name);
@@ -1111,7 +1211,27 @@ RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
 }
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[kCleverTapProfileDidInitialize, kCleverTapProfileSync, kCleverTapInAppNotificationDismissed, kCleverTapInboxDidInitialize, kCleverTapInboxMessagesDidUpdate, kCleverTapInAppNotificationButtonTapped, kCleverTapInboxMessageButtonTapped, kCleverTapInboxMessageTapped, kCleverTapDisplayUnitsLoaded,  kCleverTapFeatureFlagsDidUpdate, kCleverTapProductConfigDidFetch, kCleverTapProductConfigDidActivate, kCleverTapProductConfigDidInitialize, kCleverTapPushNotificationClicked, kCleverTapPushPermissionResponseReceived, kCleverTapInAppNotificationShowed, kCleverTapOnVariablesChanged, kCleverTapOnValueChanged];
+    return @[kCleverTapProfileDidInitialize,
+             kCleverTapProfileSync,
+             kCleverTapInAppNotificationShowed,
+             kCleverTapInAppNotificationDismissed,
+             kCleverTapInAppNotificationButtonTapped,
+             kCleverTapInboxDidInitialize,
+             kCleverTapInboxMessagesDidUpdate,
+             kCleverTapInboxMessageButtonTapped,
+             kCleverTapInboxMessageTapped,
+             kCleverTapDisplayUnitsLoaded,
+             kCleverTapFeatureFlagsDidUpdate,
+             kCleverTapProductConfigDidFetch,
+             kCleverTapProductConfigDidActivate,
+             kCleverTapProductConfigDidInitialize,
+             kCleverTapPushNotificationClicked,
+             kCleverTapPushPermissionResponseReceived,
+             kCleverTapOnVariablesChanged,
+             kCleverTapOnValueChanged,
+             kCleverTapCustomTemplatePresent,
+             kCleverTapCustomFunctionPresent,
+             kCleverTapCustomTemplateClose];
 }
 
 - (void)startObserving {

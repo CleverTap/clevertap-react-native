@@ -3,8 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "postinstall": "react-native-asset",
+    "android": "react-native-asset && react-native run-android",
+    "ios": "react-native-asset && react-native run-ios",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint ."
@@ -16,6 +17,7 @@
     "clevertap-react-native": "file:..",
     "react": "18.2.0",
     "react-native": "^0.74.1",
+    "react-native-asset": "^2.1.1",
     "react-native-drawer": "^2.5.1",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-pager-view": "^5.1.2",

@@ -202,6 +202,8 @@ export interface Spec extends TurboModule {
   customTemplateGetBooleanArg(templateName: string, argName: string): Promise<boolean>;
   customTemplateGetFileArg(templateName: string, argName: string): Promise<string>;
   customTemplateGetObjectArg(templateName: string, argName: string): Promise<any>;
+  syncCustomTemplates(): void;
+  syncCustomTemplatesInProd(isProduction: boolean): void;
   promptForPushPermission(showFallbackSettings: boolean): void;
   promptPushPrimer(json: Object): void;
   isPushPermissionGranted(callback: ((error: Object, result: boolean) => void) | null): void;
