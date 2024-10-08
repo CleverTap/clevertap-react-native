@@ -16,8 +16,22 @@ Pod::Spec.new do |s|
   s.platform       = :ios, '9.0'
 
   s.preserve_paths = 'LICENSE.md', 'README.md', 'package.json', 'index.js'
-  s.source_files   = 'ios/CleverTapReact/*.{h,m}'
+  s.source_files   = 'ios/CleverTapReact/*.{h,m,mm}'
 
-  s.dependency 'CleverTap-iOS-SDK', '6.2.1'
-  s.dependency 'React-Core'
+  if respond_to?(:install_modules_dependencies, true)
+    install_modules_dependencies(s)
+  else
+    s.dependency 'React-Core'
+  end
+
+  s.dependency 'CleverTap-iOS-SDK', '7.0.1'
+
+  if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then
+    s.pod_target_xcconfig = {
+      'DEFINES_MODULE' => 'YES',
+      'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) COCOAPODS=1 RCT_NEW_ARCH_ENABLED=1',
+      "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/boost\"",
+      "CLANG_CXX_LANGUAGE_STANDARD" => "c++17"
+    }
+  end
 end
