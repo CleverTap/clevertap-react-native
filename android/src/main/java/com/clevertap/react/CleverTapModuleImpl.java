@@ -2,7 +2,10 @@ package com.clevertap.react;
 
 import static com.clevertap.react.CleverTapUtils.convertObjectToWritableMap;
 import static com.clevertap.react.CleverTapUtils.getWritableArrayFromDisplayUnitList;
-import static com.clevertap.react.CleverTapUtils.getWritableMapFromMap;
+import static com.clevertap.react.Constants.BPS;
+import static com.clevertap.react.Constants.FCM;
+import static com.clevertap.react.Constants.HPS;
+import static com.clevertap.react.Constants.REACT_MODULE_NAME;
 
 import android.annotation.SuppressLint;
 import android.location.Location;
@@ -10,69 +13,57 @@ import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.os.Handler;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import com.clevertap.android.sdk.CTFeatureFlagsListener;
-import com.clevertap.android.sdk.CTInboxListener;
+
 import com.clevertap.android.sdk.CTInboxStyleConfig;
 import com.clevertap.android.sdk.CleverTapAPI;
-import com.clevertap.android.sdk.InAppNotificationButtonListener;
-import com.clevertap.android.sdk.InAppNotificationListener;
-import com.clevertap.android.sdk.InboxMessageButtonListener;
-import com.clevertap.android.sdk.InboxMessageListener;
 import com.clevertap.android.sdk.Logger;
-import com.clevertap.android.sdk.PushPermissionResponseListener;
-import com.clevertap.android.sdk.SyncListener;
 import com.clevertap.android.sdk.UTMDetail;
-import com.clevertap.android.sdk.displayunits.DisplayUnitListener;
 import com.clevertap.android.sdk.displayunits.model.CleverTapDisplayUnit;
 import com.clevertap.android.sdk.events.EventDetail;
 import com.clevertap.android.sdk.featureFlags.CTFeatureFlagsController;
-import com.clevertap.android.sdk.inapp.CTInAppNotification;
 import com.clevertap.android.sdk.inapp.CTLocalInApp;
+import com.clevertap.android.sdk.inapp.callbacks.FetchInAppsCallback;
 import com.clevertap.android.sdk.inbox.CTInboxMessage;
 import com.clevertap.android.sdk.interfaces.OnInitCleverTapIDListener;
 import com.clevertap.android.sdk.product_config.CTProductConfigController;
-import com.clevertap.android.sdk.product_config.CTProductConfigListener;
-import com.clevertap.android.sdk.pushnotification.CTPushNotificationListener;
 import com.clevertap.android.sdk.variables.CTVariableUtils;
 import com.clevertap.android.sdk.variables.Var;
 import com.clevertap.android.sdk.variables.callbacks.FetchVariablesCallback;
 import com.clevertap.android.sdk.variables.callbacks.VariableCallback;
 import com.clevertap.android.sdk.variables.callbacks.VariablesChangedCallback;
-import com.clevertap.android.sdk.inapp.callbacks.FetchInAppsCallback;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import javax.annotation.Nullable;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-@SuppressWarnings({"unused", "RedundantSuppression"})
-public class CleverTapModule extends ReactContextBaseJavaModule implements SyncListener,
-        InAppNotificationListener, CTInboxListener,
-        InboxMessageButtonListener, InboxMessageListener,
-        InAppNotificationButtonListener, DisplayUnitListener, CTProductConfigListener,
-        CTFeatureFlagsListener, CTPushNotificationListener, PushPermissionResponseListener {
+import javax.annotation.Nullable;
+
+public class CleverTapModuleImpl {
+
+    private static final String TAG = REACT_MODULE_NAME;
 
     @SuppressWarnings("FieldCanBeLocal")
     private enum InBoxMessages {
@@ -87,109 +78,53 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
     }
 
-    private enum ErrorMessages {
+    private static Uri sLaunchUri;
 
-        CLEVERTAP_NOT_INITIALIZED("CleverTap not initialized"),
-        PRODUCTCONFIG_NOT_INITIALIZED("Product Config not initialized"),
-        FF_NOT_INITIALIZED("Feature Flags not initialized");
+    public static Map<String, Object> variables = new HashMap<>();
 
-        private final String errorMessage;
-
-        ErrorMessages(String s) {
-            errorMessage = s;
-        }
-
-        public String getErrorMessage() {
-            return errorMessage;
-        }
+    public static void setInitialUri(final Uri uri) {
+        sLaunchUri = uri;
     }
-
-    private static Uri mlaunchURI;
-
-    private static final String REACT_MODULE_NAME = "CleverTapReact";
-
-    private static final String TAG = REACT_MODULE_NAME;
-
-    private static final String CLEVERTAP_PROFILE_DID_INITIALIZE = "CleverTapProfileDidInitialize";
-
-    private static final String CLEVERTAP_PROFILE_SYNC = "CleverTapProfileSync";
-
-    private static final String CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED = "CleverTapInAppNotificationDismissed";
-
-    private static final String CLEVERTAP_IN_APP_NOTIFICATION_SHOWED = "CleverTapInAppNotificationShowed";
-
-    private static final String FCM = "FCM";
-
-    private static final String XPS = "XPS";
-
-    private static final String BPS = "BPS";
-
-    private static final String HPS = "HPS";
-
-    private static final String CLEVERTAP_INBOX_DID_INITIALIZE = "CleverTapInboxDidInitialize";
-
-    private static final String CLEVERTAP_INBOX_MESSAGES_DID_UPDATE = "CleverTapInboxMessagesDidUpdate";
-
-    private static final String CLEVERTAP_ON_INBOX_BUTTON_CLICK = "CleverTapInboxMessageButtonTapped";
-
-    private static final String CLEVERTAP_ON_INBOX_MESSAGE_CLICK = "CleverTapInboxMessageTapped";
-
-    private static final String CLEVERTAP_ON_INAPP_BUTTON_CLICK = "CleverTapInAppNotificationButtonTapped";
-
-    private static final String CLEVERTAP_ON_DISPLAY_UNITS_LOADED = "CleverTapDisplayUnitsLoaded";
-
-    private static final String CLEVERTAP_FEATURE_FLAGS_DID_UPDATE = "CleverTapFeatureFlagsDidUpdate";
-
-    private static final String CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE = "CleverTapProductConfigDidInitialize";
-
-    private static final String CLEVERTAP_PRODUCT_CONFIG_DID_FETCH = "CleverTapProductConfigDidFetch";
-
-    private static final String CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE = "CleverTapProductConfigDidActivate";
-
-    private static final String CLEVERTAP_PUSH_NOTIFICATION_CLICKED = "CleverTapPushNotificationClicked";
-
-    private static final String CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE = "CleverTapPushPermissionResponseReceived";
-
-    private static final String CLEVERTAP_ON_VARIABLES_CHANGED = "CleverTapOnVariablesChanged";
-
-    private static final String CLEVERTAP_ON_VALUE_CHANGED = "CleverTapOnValueChanged";
 
     private final ReactApplicationContext context;
 
     private CleverTapAPI mCleverTap;
 
-    public static Map<String, Object> variables = new HashMap<>();
-
-    public static void setInitialUri(final Uri uri) {
-        mlaunchURI = uri;
-    }
-
-    public CleverTapModule(ReactApplicationContext reactContext) {
-        super(reactContext);
+    public CleverTapModuleImpl(ReactApplicationContext reactContext) {
         this.context = reactContext;
+        enableEventEmitter(reactContext);
         getCleverTapAPI();
     }
 
+    public Map<String, Object> getClevertapConstants() {
+        Map<String, Object> constants = new HashMap<>();
+        for (CleverTapEvent event : CleverTapEvent.values()) {
+            constants.put(event.getEventName(), event.getEventName());
+        }
+        constants.put(FCM, FCM);
+        constants.put(BPS, BPS);
+        constants.put(HPS, HPS);
+        return constants;
+    }
+
     @SuppressLint("RestrictedApi")
-    @ReactMethod
     public void setLibrary(String libName, int libVersion) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
-            cleverTap.setCustomSdkVersion(libName,libVersion);
+            cleverTap.setCustomSdkVersion(libName, libVersion);
         }
+
     }
-    
-    @ReactMethod
-    private void setLocale(String locale) {
+
+    public void setLocale(String locale) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.setLocale(locale);
         } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
         }
     }
 
-    @ReactMethod
     public void activate() {
         CTProductConfigController productConfigController = getCtProductConfigController();
         if (productConfigController == null) {
@@ -198,24 +133,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         productConfigController.activate();
     }
 
-    // InAppNotificationListener
-    public boolean beforeShow(Map<String, Object> var1) {
-        return true;
-    }
-
-    @SuppressLint("RestrictedApi")
-    @Override
-    public void onShow(CTInAppNotification inAppNotification) {
-        WritableMap params = Arguments.createMap();
-        JSONObject data = inAppNotification.getJsonDescription();
-        if (data != null) {
-            params.putMap("data", convertObjectToWritableMap(data));
-        }
-        sendEvent(CLEVERTAP_IN_APP_NOTIFICATION_SHOWED, params);
-    }
 
     //Custom Push Notification
-    @ReactMethod
     public void createNotification(ReadableMap extras) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -237,9 +156,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @RequiresApi(api = VERSION_CODES.O)
-    @ReactMethod
     public void createNotificationChannel(String channelId, String channelName, String channelDescription,
-            int importance, boolean showBadge) {
+                                          int importance, boolean showBadge) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || channelId == null || channelName == null || channelDescription == null) {
             return;
@@ -250,7 +168,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @RequiresApi(api = VERSION_CODES.O)
-    @ReactMethod
     public void createNotificationChannelGroup(String groupId, String groupName) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || groupId == null || groupName == null) {
@@ -261,9 +178,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @RequiresApi(api = VERSION_CODES.O)
-    @ReactMethod
     public void createNotificationChannelWithGroupId(String channelId, String channelName, String channelDescription,
-            int importance, String groupId, boolean showBadge) {
+                                                     int importance, String groupId, boolean showBadge) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || channelId == null || channelName == null || channelDescription == null
                 || groupId == null) {
@@ -275,9 +191,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @RequiresApi(api = VERSION_CODES.O)
-    @ReactMethod
     public void createNotificationChannelWithGroupIdAndSound(String channelId, String channelName,
-            String channelDescription, int importance, String groupId, boolean showBadge, String sound) {
+                                                             String channelDescription, int importance, String groupId, boolean showBadge, String sound) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || channelId == null || channelName == null || channelDescription == null
                 || groupId == null || sound == null) {
@@ -290,9 +205,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @RequiresApi(api = VERSION_CODES.O)
-    @ReactMethod
     public void createNotificationChannelWithSound(String channelId, String channelName, String channelDescription,
-            int importance, boolean showBadge, String sound) {
+                                                   int importance, boolean showBadge, String sound) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || channelId == null || channelName == null || channelDescription == null
                 || sound == null) {
@@ -303,18 +217,8 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         Log.i(TAG, "Notification Channel " + channelName + " with sound file " + sound + " created");
     }
 
-    @ReactMethod
-    public void deleteInboxMessageForId(String messageId) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.deleteInboxMessage(messageId);
-        } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
-        }
-    }
 
     @RequiresApi(api = VERSION_CODES.O)
-    @ReactMethod
     public void deleteNotificationChannel(String channelId) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || channelId == null) {
@@ -325,7 +229,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     @RequiresApi(api = VERSION_CODES.O)
-    @ReactMethod
     public void deleteNotificationChannelGroup(String groupId) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || groupId == null) {
@@ -336,48 +239,36 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     //Push permission methods
-    @ReactMethod
     public void promptForPushPermission(boolean showFallbackSettings) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.promptForPushPermission(showFallbackSettings);
         } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
         }
     }
 
-    @ReactMethod
     public void promptPushPrimer(ReadableMap localInAppConfig) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             JSONObject jsonObject = localInAppConfigFromReadableMap(localInAppConfig);
             cleverTap.promptPushPrimer(jsonObject);
         } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
         }
     }
 
-    @ReactMethod
     public void isPushPermissionGranted(final Callback callback) {
         final CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap != null) {
             boolean isPushPermissionGranted = clevertap.isPushPermissionGranted();
             callbackWithErrorAndResult(callback, null, isPushPermissionGranted);
         } else {
-            String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
             callbackWithErrorAndResult(callback, error, null);
         }
     }
 
-    @Override
-    public void onPushPermissionResponse(boolean accepted) {
-        Log.i(TAG, "onPushPermissionResponse result: " + accepted);
-        WritableMap params = Arguments.createMap();
-        params.putBoolean("accepted", accepted);
-        sendEvent(CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE, params);
-    }
-
-    @ReactMethod
     public void disablePersonalization() {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -386,7 +277,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.disablePersonalization();
     }
 
-    @ReactMethod
     public void enableDeviceNetworkInfoReporting(boolean value) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -395,7 +285,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.enableDeviceNetworkInfoReporting(value);
     }
 
-    @ReactMethod
     public void enablePersonalization() {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -404,9 +293,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.enablePersonalization();
     }
 
-    //Enables tracking opt out for the currently active user. 
-
-    @ReactMethod
     public void eventGetDetail(String eventName, Callback callback) {
         String error = null;
         WritableMap result = null;
@@ -421,7 +307,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
     public void eventGetFirstTime(String eventName, Callback callback) {
         String error = null;
         int result = -1;
@@ -435,9 +320,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    //Enables the reporting of device network-related information, including IP address.  This reporting is disabled by default.
-
-    @ReactMethod
     public void eventGetLastTime(String eventName, Callback callback) {
         String error = null;
         int result = -1;
@@ -451,9 +333,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    // Personalization
-
-    @ReactMethod
     public void eventGetOccurrences(String eventName, Callback callback) {
         String error = null;
         int result = -1;
@@ -467,16 +346,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    //Feature Flags Callback
-    @Override
-    public void featureFlagsUpdated() {
-        WritableMap params = Arguments.createMap();
-        sendEvent(CLEVERTAP_FEATURE_FLAGS_DID_UPDATE, params);//passing empty map
-    }
-
-    // Event API
-
-    @ReactMethod
     public void fetch() {
         CTProductConfigController productConfigController = getCtProductConfigController();
         if (productConfigController == null) {
@@ -486,7 +355,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         productConfigController.fetch();
     }
 
-    @ReactMethod
     public void fetchAndActivate() {
         CTProductConfigController productConfigController = getCtProductConfigController();
         if (productConfigController == null) {
@@ -496,7 +364,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         productConfigController.fetchAndActivate();
     }
 
-    @ReactMethod
     public void fetchWithMinimumFetchIntervalInSeconds(int interval) {
         CTProductConfigController productConfigController = getCtProductConfigController();
         if (productConfigController == null) {
@@ -506,7 +373,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         productConfigController.fetch(interval);
     }
 
-    @ReactMethod
     public void getAllDisplayUnits(Callback callback) {
         String error = null;
         WritableArray result = Arguments.createArray();
@@ -515,18 +381,11 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         if (cleverTap != null) {
             result = getWritableArrayFromDisplayUnitList(cleverTap.getAllDisplayUnits());
         } else {
-            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
         }
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
-    public void getAllInboxMessages(Callback callback) {
-
-        getInboxMessages(callback, InBoxMessages.ALL);
-    }
-
-    @ReactMethod
     public void getBoolean(String key, Callback callback) {
         String error = null;
         Boolean result = null;
@@ -537,45 +396,14 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             if (productConfigController != null) {
                 result = productConfigController.getBoolean(key);
             } else {
-                error = ErrorMessages.PRODUCTCONFIG_NOT_INITIALIZED.getErrorMessage();
+                error = ErrorMessages.PRODUCTCONFIG_NOT_INITIALIZED;
             }
         } else {
-            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
         }
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @Override
-    public Map<String, Object> getConstants() {
-        final Map<String, Object> constants = new HashMap<>();
-        constants.put(CLEVERTAP_PROFILE_DID_INITIALIZE, CLEVERTAP_PROFILE_DID_INITIALIZE);
-        constants.put(CLEVERTAP_PROFILE_SYNC, CLEVERTAP_PROFILE_SYNC);
-        constants.put(CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED, CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED);
-        constants.put(CLEVERTAP_IN_APP_NOTIFICATION_SHOWED, CLEVERTAP_IN_APP_NOTIFICATION_SHOWED);
-        constants.put(FCM, FCM);
-        constants.put(XPS, XPS);
-        constants.put(BPS, BPS);
-        constants.put(HPS, HPS);
-        constants.put(CLEVERTAP_INBOX_DID_INITIALIZE, CLEVERTAP_INBOX_DID_INITIALIZE);
-        constants.put(CLEVERTAP_INBOX_MESSAGES_DID_UPDATE, CLEVERTAP_INBOX_MESSAGES_DID_UPDATE);
-        constants.put(CLEVERTAP_ON_INBOX_BUTTON_CLICK, CLEVERTAP_ON_INBOX_BUTTON_CLICK);
-        constants.put(CLEVERTAP_ON_INBOX_MESSAGE_CLICK, CLEVERTAP_ON_INBOX_MESSAGE_CLICK);
-        constants.put(CLEVERTAP_ON_DISPLAY_UNITS_LOADED, CLEVERTAP_ON_DISPLAY_UNITS_LOADED);
-        constants.put(CLEVERTAP_ON_INAPP_BUTTON_CLICK, CLEVERTAP_ON_INAPP_BUTTON_CLICK);
-        constants.put(CLEVERTAP_FEATURE_FLAGS_DID_UPDATE, CLEVERTAP_FEATURE_FLAGS_DID_UPDATE);
-        constants.put(CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE, CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE);
-        constants.put(CLEVERTAP_PRODUCT_CONFIG_DID_FETCH, CLEVERTAP_PRODUCT_CONFIG_DID_FETCH);
-        constants.put(CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE, CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE);
-        constants.put(CLEVERTAP_PUSH_NOTIFICATION_CLICKED, CLEVERTAP_PUSH_NOTIFICATION_CLICKED);
-        constants.put(CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE, CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE);
-        constants.put(CLEVERTAP_ON_VARIABLES_CHANGED, CLEVERTAP_ON_VARIABLES_CHANGED);
-        constants.put(CLEVERTAP_ON_VALUE_CHANGED, CLEVERTAP_ON_VALUE_CHANGED);
-        return constants;
-    }
-
-    // Profile API
-
-    @ReactMethod
     public void getDisplayUnitForId(String unitID, Callback callback) {
         String error = null;
         WritableMap result = null;
@@ -587,12 +415,11 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 result = convertObjectToWritableMap(displayUnit.getJsonObject());
             }
         } else {
-            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
         }
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
     public void getDouble(String key, Callback callback) {
         String error = null;
         Double result = null;
@@ -603,15 +430,14 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             if (productConfigController != null) {
                 result = productConfigController.getDouble(key);
             } else {
-                error = ErrorMessages.PRODUCTCONFIG_NOT_INITIALIZED.getErrorMessage();
+                error = ErrorMessages.PRODUCTCONFIG_NOT_INITIALIZED;
             }
         } else {
-            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
         }
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
     public void getEventHistory(Callback callback) {
         String error = null;
         WritableMap result = null;
@@ -626,7 +452,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
     public void getFeatureFlag(String name, Boolean defaultValue, Callback callback) {
         String error = null;
         Boolean result = null;
@@ -637,15 +462,18 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             if (featureFlagsController != null) {
                 result = featureFlagsController.get(name, defaultValue);
             } else {
-                error = ErrorMessages.FF_NOT_INITIALIZED.getErrorMessage();
+                error = ErrorMessages.FF_NOT_INITIALIZED;
             }
         } else {
-            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
         }
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
+    public void getAllInboxMessages(Callback callback) {
+        getInboxMessages(callback, InBoxMessages.ALL);
+    }
+
     public void getInboxMessageCount(Callback callback) {
 
         String error = null;
@@ -660,7 +488,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
     public void getInboxMessageForId(String messageId, Callback callback) {
         String error = null;
         WritableMap result = null;
@@ -673,12 +500,11 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 result = convertObjectToWritableMap(inboxMessage.getData());
             }
         } else {
-            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
         }
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
     public void getInboxMessageUnreadCount(Callback callback) {
         String error = null;
         int result = -1;
@@ -692,20 +518,101 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
+    public void deleteInboxMessageForId(String messageId) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.deleteInboxMessage(messageId);
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
+        }
+    }
+
+    public void getUnreadInboxMessages(Callback callback) {
+        getInboxMessages(callback, InBoxMessages.UNREAD);
+    }
+
+
+    //App Inbox methods
+    public void initializeInbox() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.initializeInbox();
+            Log.e(TAG, "initializeInbox Called");
+        }
+    }
+
+    public void markReadInboxMessageForId(String messageId) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.markReadInboxMessage(messageId);
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
+        }
+    }
+
+    public void markReadInboxMessagesForIDs(final ReadableArray messageIDs) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.markReadInboxMessagesForIDs(arrayListStringFromReadableArray(messageIDs));
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
+        }
+    }
+
+    public void deleteInboxMessagesForIDs(final ReadableArray messageIDs) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.deleteInboxMessagesForIDs(arrayListStringFromReadableArray(messageIDs));
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
+        }
+    }
+
+    public void pushInboxNotificationClickedEventForId(String messageId) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.pushInboxNotificationClickedEvent(messageId);
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
+        }
+    }
+
+    public void pushInboxNotificationViewedEventForId(String messageId) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.pushInboxNotificationViewedEvent(messageId);
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
+        }
+    }
+
+    public void showInbox(ReadableMap styleConfig) {
+        CTInboxStyleConfig inboxStyleConfig = styleConfigFromReadableMap(styleConfig);
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.showAppInbox(inboxStyleConfig);
+        }
+    }
+
+    public void dismissInbox() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.dismissAppInbox();
+        }
+    }
+
     public void getInitialUrl(Callback callback) {
         String error = null;
         String url = null;
 
-        if (mlaunchURI == null) {
+        if (sLaunchUri == null) {
             error = "CleverTap InitialUrl is null";
         } else {
-            url = mlaunchURI.toString();
+            url = sLaunchUri.toString();
         }
         callbackWithErrorAndResult(callback, error, url);
     }
 
-    @ReactMethod
     public void getLastFetchTimeStampInMillis(Callback callback) {
         String error = null;
         String result = null;
@@ -716,20 +623,14 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             if (productConfigController != null) {
                 result = String.valueOf(productConfigController.getLastFetchTimeStampInMillis());
             } else {
-                error = ErrorMessages.PRODUCTCONFIG_NOT_INITIALIZED.getErrorMessage();
+                error = ErrorMessages.PRODUCTCONFIG_NOT_INITIALIZED;
             }
         } else {
-            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
         }
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @Override
-    public String getName() {
-        return REACT_MODULE_NAME;
-    }
-
-    @ReactMethod
     public void getString(String key, Callback callback) {
         String error = null;
         String result = null;
@@ -740,137 +641,14 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
             if (productConfigController != null) {
                 result = productConfigController.getString(key);
             } else {
-                error = ErrorMessages.PRODUCTCONFIG_NOT_INITIALIZED.getErrorMessage();
+                error = ErrorMessages.PRODUCTCONFIG_NOT_INITIALIZED;
             }
         } else {
-            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
         }
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
-    public void getUnreadInboxMessages(Callback callback) {
-
-        getInboxMessages(callback, InBoxMessages.UNREAD);
-    }
-
-    //Inbox Callbacks
-    public void inboxDidInitialize() {
-        WritableMap params = Arguments.createMap();
-        sendEvent(CLEVERTAP_INBOX_DID_INITIALIZE, params);//passing empty map
-    }
-
-    public void inboxMessagesDidUpdate() {
-        WritableMap params = Arguments.createMap();
-        sendEvent(CLEVERTAP_INBOX_MESSAGES_DID_UPDATE, params); //passing empty map
-    }
-
-    //App Inbox methods
-    @ReactMethod
-    public void initializeInbox() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.initializeInbox();
-            Log.e(TAG, "initializeInbox Called");
-        }
-    }
-
-    @ReactMethod
-    public void markReadInboxMessageForId(String messageId) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.markReadInboxMessage(messageId);
-        } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
-        }
-    }
-
-    @ReactMethod
-    public void markReadInboxMessagesForIDs(final ReadableArray messageIDs) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.markReadInboxMessagesForIDs(arrayListStringFromReadableArray(messageIDs));
-        } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
-        }
-    }
-
-    @ReactMethod
-    public void deleteInboxMessagesForIDs(final ReadableArray messageIDs) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.deleteInboxMessagesForIDs(arrayListStringFromReadableArray(messageIDs));
-        } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
-        }
-    }
-
-    @Override
-    public void onActivated() {
-        WritableMap params = Arguments.createMap();
-        sendEvent(CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE, params);//passing empty map
-    }
-
-    public void onDismissed(Map<String, Object> var1, @Nullable Map<String, Object> var2) {
-
-        WritableMap extrasParams = getWritableMapFromMap(var1);
-        WritableMap actionExtrasParams = getWritableMapFromMap(var2);
-
-        WritableMap params = Arguments.createMap();
-        params.putMap("extras", extrasParams);
-        params.putMap("actionExtras", actionExtrasParams);
-
-        sendEvent(CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED, params);
-    }
-
-    //Native Display callback
-    public void onDisplayUnitsLoaded(ArrayList<CleverTapDisplayUnit> units) {
-        WritableMap params = Arguments.createMap();
-        params.putArray("displayUnits", getWritableArrayFromDisplayUnitList(units));
-        sendEvent(CLEVERTAP_ON_DISPLAY_UNITS_LOADED, params);
-    }
-
-    @Override
-    public void onFetched() {
-        WritableMap params = Arguments.createMap();
-        sendEvent(CLEVERTAP_PRODUCT_CONFIG_DID_FETCH, params);//passing empty map
-    }
-
-    //Native Display methods
-
-    //InApp Notification callback
-    public void onInAppButtonClick(HashMap<String, String> hashMap) {
-        sendEvent(CLEVERTAP_ON_INAPP_BUTTON_CLICK, getWritableMapFromMap(hashMap));
-    }
-
-    public void onInboxButtonClick(HashMap<String, String> payload) {
-        sendEvent(CLEVERTAP_ON_INBOX_BUTTON_CLICK, getWritableMapFromMap(payload));
-    }
-
-    @Override
-    public void onInboxItemClicked(CTInboxMessage message, int contentPageIndex, int buttonIndex) {
-        WritableMap params = Arguments.createMap();
-        JSONObject data = message.getData();
-        params.putMap("data", (data != null ? convertObjectToWritableMap(data) : params));
-        params.putInt("contentPageIndex", contentPageIndex);
-        params.putInt("buttonIndex", buttonIndex);
-        sendEvent(CLEVERTAP_ON_INBOX_MESSAGE_CLICK, params);
-    }
-
-    //Product Config Callback
-    @Override
-    public void onInit() {
-        WritableMap params = Arguments.createMap();
-        sendEvent(CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE, params);//passing empty map
-    }
-
-    //Push Notification Clicked callback
-    @Override
-    public void onNotificationClickedPayloadReceived(HashMap<String, Object> payload) {
-        sendEvent(CLEVERTAP_PUSH_NOTIFICATION_CLICKED, getWritableMapFromMap(payload));
-    }
-
-    @ReactMethod
     public void onUserLogin(ReadableMap profile) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -881,7 +659,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.onUserLogin(finalProfile);
     }
 
-    @ReactMethod
     public void profileAddMultiValue(String value, String key) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -890,7 +667,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.addMultiValueForKey(key, value);
     }
 
-    @ReactMethod
     public void profileAddMultiValues(ReadableArray values, String key) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -900,51 +676,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.addMultiValuesForKey(key, finalValues);
     }
 
-    // SyncListener
-    @SuppressWarnings("rawtypes")
-    public void profileDataUpdated(JSONObject updates) {
-        if (updates == null) {
-            return;
-        }
-
-        WritableMap updateParams = Arguments.createMap();
-        Iterator keys = updates.keys();
-        while (keys.hasNext()) {
-            String key = keys.next().toString();
-            try {
-                JSONArray arr = updates.getJSONArray(key);
-                WritableArray writableArray = Arguments.createArray();
-                for (int n = 0; n < arr.length(); n++) {
-                    JSONObject object = arr.getJSONObject(n);
-                    writableArray.pushString(object.toString());
-                }
-                updateParams.putArray(key, writableArray);
-
-            } catch (Throwable t) {
-                try {
-                    Object value = updates.get(key);
-                    updateParams.putString(key, value.toString());
-                } catch (Throwable t1) {
-                    Log.e(TAG, t1.getLocalizedMessage());
-                }
-            }
-        }
-
-        WritableMap params = Arguments.createMap();
-        params.putMap("updates", updateParams);
-        sendEvent(CLEVERTAP_PROFILE_SYNC, params);
-    }
-
-    public void profileDidInitialize(String CleverTapID) {
-        if (CleverTapID == null) {
-            return;
-        }
-        WritableMap params = Arguments.createMap();
-        params.putString("CleverTapID", CleverTapID);
-        sendEvent(CLEVERTAP_PROFILE_DID_INITIALIZE, params);
-    }
-
-    @ReactMethod
     public void profileGetCleverTapAttributionIdentifier(Callback callback) {
         String error = null;
         String result = null;
@@ -958,7 +689,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
     public void profileGetCleverTapID(Callback callback) {
         String error = null;
         String result = null;
@@ -972,7 +702,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
     public void getCleverTapID(final Callback callback) {
         final CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap != null) {
@@ -985,12 +714,11 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
 
             });
         } else {
-            String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
             callbackWithErrorAndResult(callback, error, null);
         }
     }
 
-    @ReactMethod
     public void profileGetProperty(String propertyName, Callback callback) {
         String error = null;
         Object result = null;
@@ -1020,7 +748,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
     public void profileRemoveMultiValue(String value, String key) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -1029,7 +756,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.removeMultiValueForKey(key, value);
     }
 
-    @ReactMethod
     public void profileRemoveMultiValues(ReadableArray values, String key) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -1039,7 +765,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.removeMultiValuesForKey(key, finalValues);
     }
 
-    @ReactMethod
     public void profileRemoveValueForKey(String key) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -1048,7 +773,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.removeValueForKey(key);
     }
 
-    @ReactMethod
     public void profileSet(ReadableMap profile) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -1059,7 +783,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.pushProfile(finalProfile);
     }
 
-    @ReactMethod
     public void profileSetMultiValues(ReadableArray values, String key) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -1069,47 +792,24 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.setMultiValuesForKey(key, finalValues);
     }
 
-    @ReactMethod
     public void pushDisplayUnitClickedEventForID(String unitID) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.pushDisplayUnitClickedEventForID(unitID);
         } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
         }
     }
 
-    @ReactMethod
     public void pushDisplayUnitViewedEventForID(String unitID) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.pushDisplayUnitViewedEventForID(unitID);
         } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
         }
     }
 
-    @ReactMethod
-    public void pushInboxNotificationClickedEventForId(String messageId) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.pushInboxNotificationClickedEvent(messageId);
-        } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
-        }
-    }
-
-    @ReactMethod
-    public void pushInboxNotificationViewedEventForId(String messageId) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.pushInboxNotificationViewedEvent(messageId);
-        } else {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage());
-        }
-    }
-
-    @ReactMethod
     public void pushInstallReferrer(String source, String medium, String campaign) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -1118,7 +818,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.pushInstallReferrer(source, medium, campaign);
     }
 
-    @ReactMethod
     public void recordChargedEvent(ReadableMap details, ReadableArray items) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || details == null) {
@@ -1147,7 +846,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
-    @ReactMethod
     public void recordEvent(String eventName, ReadableMap props) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -1163,7 +861,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
-    @ReactMethod
     public void recordScreenView(String screenName) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -1177,15 +874,11 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
-    // Product Config methods
-
-    @ReactMethod
     public void registerForPush() {
         // no-op in Android
         Log.i(TAG, "CleverTap.registerForPush is a no-op in Android");
     }
 
-    @ReactMethod
     public void reset() {
         CTProductConfigController productConfigController = getCtProductConfigController();
         if (productConfigController == null) {
@@ -1195,9 +888,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         productConfigController.reset();
     }
 
-    // Feature Flag methods
-
-    @ReactMethod
     public void sessionGetPreviousVisitTime(Callback callback) {
         String error = null;
         int result = -1;
@@ -1211,9 +901,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    // Developer Options
-
-    @ReactMethod
     public void sessionGetScreenCount(Callback callback) {
         String error = null;
         int result = -1;
@@ -1227,9 +914,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    // private helpers etc
-
-    @ReactMethod
     public void sessionGetTimeElapsed(Callback callback) {
         String error = null;
         int result = -1;
@@ -1243,7 +927,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
     public void sessionGetTotalVisits(Callback callback) {
         String error = null;
         int result = -1;
@@ -1257,7 +940,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
     public void sessionGetUTMDetails(Callback callback) {
         String error = null;
         WritableMap result = null;
@@ -1272,12 +954,10 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
     public void setDebugLevel(int level) {
         CleverTapAPI.setDebugLevel(level);
     }
 
-    @ReactMethod
     public void setDefaultsMap(ReadableMap map) {
         CTProductConfigController productConfigController = getCtProductConfigController();
         if (productConfigController == null) {
@@ -1288,7 +968,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         productConfigController.setDefaults(finalMap);
     }
 
-    @ReactMethod
     public void setLocation(double latitude, double longitude) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -1300,7 +979,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.setLocation(location);
     }
 
-    @ReactMethod
     public void setMinimumFetchIntervalInSeconds(int interval) {
         CTProductConfigController productConfigController = getCtProductConfigController();
         if (productConfigController == null) {
@@ -1311,7 +989,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     //Sets the SDK to offline mode
-    @ReactMethod
     public void setOffline(boolean value) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -1320,7 +997,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.setOffline(value);
     }
 
-    @ReactMethod
     public void setOptOut(boolean value) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
@@ -1329,7 +1005,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         clevertap.setOptOut(value);
     }
 
-    @ReactMethod
+
     public void setPushTokenAsString(String token, String type) {
         Logger.v("setPushTokenAsString() called with: token = [" + token + "], type = [" + type + "]");
         CleverTapAPI clevertap = getCleverTapAPI();
@@ -1353,25 +1029,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
-    @ReactMethod
-    public void showInbox(ReadableMap styleConfig) {
-        CTInboxStyleConfig inboxStyleConfig = styleConfigFromReadableMap(styleConfig);
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.showAppInbox(inboxStyleConfig);
-        }
-    }
-
-    @ReactMethod
-    public void dismissInbox() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
-        if (cleverTap != null) {
-            cleverTap.dismissAppInbox();
-        }
-    }
-
     // Increment/Decrement Operator
-    @ReactMethod
     public void profileIncrementValueForKey(Double value, String key) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1379,7 +1037,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
-    @ReactMethod
     public void profileDecrementValueForKey(Double value, String key) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1388,8 +1045,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     }
 
     // InApp Controls
-
-    @ReactMethod
     public void suspendInAppNotifications() {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1397,7 +1052,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
-    @ReactMethod
     public void discardInAppNotifications() {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1405,7 +1059,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
-    @ReactMethod
     public void resumeInAppNotifications() {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1416,7 +1069,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
     /**************************************************
      *  Product Experience Remote Config methods starts
      *************************************************/
-    @ReactMethod
     public void syncVariables() {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1424,12 +1076,10 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
-    @ReactMethod
     public void syncVariablesinProd(boolean isProduction, Callback callback) {
         Log.i(TAG, "CleverTap syncVariablesinProd is no-op in Android");
     }
 
-    @ReactMethod
     public void fetchVariables() {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1437,7 +1087,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
-    @ReactMethod
     public void defineVariables(ReadableMap object) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1449,7 +1098,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
-    @ReactMethod
     public void fetchVariables(final Callback callback) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1460,12 +1108,11 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 }
             });
         } else {
-            String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
             callbackWithErrorAndResult(callback, error, null);
         }
     }
 
-    @ReactMethod
     public void getVariable(String key, final Callback callback) {
         String error = null;
         Object result = null;
@@ -1477,24 +1124,21 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 error = e.getLocalizedMessage();
             }
         } else {
-            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
         }
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    @ReactMethod
     public void getVariables(final Callback callback) {
         callbackWithErrorAndResult(callback, null, getVariablesValues());
     }
 
-    @ReactMethod
     public void onValueChanged(final String name) {
         if (variables.containsKey(name)) {
 
             Var<Object> var = (Var<Object>) variables.get(name);
             if (var != null) {
                 var.addValueChangedCallback(new VariableCallback<Object>() {
-                    @SuppressLint("RestrictedApi")
                     @Override
                     public void onValueChanged(final Var<Object> variable) {
                         WritableMap result = null;
@@ -1503,7 +1147,7 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                         } catch (IllegalArgumentException e) {
                             Log.e(TAG, e.getLocalizedMessage());
                         }
-                        sendEvent(CLEVERTAP_ON_VALUE_CHANGED, result);
+                        sendEvent(CleverTapEvent.CLEVERTAP_ON_VALUE_CHANGED, result);
                     }
                 });
             } else {
@@ -1514,20 +1158,22 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
-    @ReactMethod
     public void onVariablesChanged() {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.addVariablesChangedCallback(new VariablesChangedCallback() {
                 @Override
                 public void variablesChanged() {
-                    sendEvent(CLEVERTAP_ON_VARIABLES_CHANGED, getVariablesValues());
+                    sendEvent(CleverTapEvent.CLEVERTAP_ON_VARIABLES_CHANGED, getVariablesValues());
                 }
             });
         }
     }
 
-    @ReactMethod
+    /************************************************
+     *  Product Experience Remote Config methods ends
+     ************************************************/
+
     public void clearInAppResources(final boolean expiredOnly) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1535,7 +1181,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
-    @ReactMethod
     public void fetchInApps(final Callback callback) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1546,15 +1191,30 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 }
             });
         } else {
-            String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED.getErrorMessage();
+            String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
             callbackWithErrorAndResult(callback, error, null);
         }
     }
 
-    /************************************************
-     *  Product Experience Remote Config methods ends
-     ************************************************/
+    public void onEventListenerAdded(String eventName) {
+        CleverTapEvent event = CleverTapEvent.fromName(eventName);
+        if (event == null) {
+            Log.e(TAG, "Event listener added for unsupported event " + eventName);
+            return;
+        }
+        // disable the buffering for the specified event as it already has attached listener and
+        // flush all buffered events
+        CleverTapEventEmitter.INSTANCE.disableBuffer(event);
+        CleverTapEventEmitter.INSTANCE.flushBuffer(event);
+    }
 
+    private void enableEventEmitter(ReactContext reactContext) {
+        CleverTapEventEmitter.INSTANCE.setReactContext(reactContext);
+        // disable buffers after a delay in order to give some time for event listeners to attach
+        // and receive initially buffered events. After that all buffers will be cleared and disabled
+        // and events will continue to be sent immediately.
+        new Handler().postDelayed(() -> CleverTapEventEmitter.INSTANCE.resetAllBuffers(false), 5000);
+    }
 
     /**
      * result must be primitive, String or com.facebook.react.bridge.WritableArray/WritableMap
@@ -1572,7 +1232,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
     }
 
-    @SuppressLint("RestrictedApi")
     private Object getVariableValue(String name) {
         if (variables.containsKey(name)) {
             Var<?> variable = (Var<?>) variables.get(name);
@@ -1591,7 +1250,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
                 "Variable name = " + name + " does not exist. Make sure you set variable first.");
     }
 
-    @SuppressLint("RestrictedApi")
     private WritableMap getVariableValueAsWritableMap(String name) {
         if (variables.containsKey(name)) {
             Var<?> variable = (Var<?>) variables.get(name);
@@ -1613,7 +1271,6 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         }
         return writableMap;
     }
-    // Listeners
 
     private boolean checkKitkatVersion(String methodName) {
         if (VERSION.SDK_INT < VERSION_CODES.KITKAT) {
@@ -1662,26 +1319,16 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         return props;
     }
 
-    private void registerListeners(CleverTapAPI clevertap) {
-        clevertap.registerPushPermissionNotificationResponseListener(this);
-        clevertap.setCTPushNotificationListener(this);
-        clevertap.setInAppNotificationListener(this);
-        clevertap.setSyncListener(this);
-        clevertap.setCTNotificationInboxListener(this);
-        clevertap.setInboxMessageButtonListener(this);
-        clevertap.setCTInboxMessageListener(this);
-        clevertap.setInAppNotificationButtonListener(this);
-        clevertap.setDisplayUnitListener(this);
-        clevertap.setCTProductConfigListener(this);
-        clevertap.setCTFeatureFlagsListener(this);
+    private void initCtInstance(CleverTapAPI clevertap) {
         clevertap.setLibrary("React-Native");
+        CleverTapListenerProxy.INSTANCE.attachToInstance(clevertap);
     }
 
     private CleverTapAPI getCleverTapAPI() {
         if (mCleverTap == null) {
             CleverTapAPI clevertap = CleverTapAPI.getDefaultInstance(this.context);
             if (clevertap != null) {
-                registerListeners(clevertap);
+                initCtInstance(clevertap);
             }
             mCleverTap = clevertap;
         }
@@ -1689,12 +1336,11 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         return mCleverTap;
     }
 
-    @ReactMethod
     public void setInstanceWithAccountId(String accountId) {
         if (mCleverTap == null || !accountId.equals(mCleverTap.getAccountId())) {
             CleverTapAPI cleverTap = CleverTapAPI.getGlobalInstance(this.context, accountId);
             if (cleverTap != null) {
-                registerListeners(cleverTap);
+                initCtInstance(cleverTap);
                 mCleverTap = cleverTap;
                 Log.i(TAG, "CleverTap instance changed for accountId " + accountId);
             }
@@ -1788,18 +1434,13 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
         return profile;
     }
 
-    private void sendEvent(String eventName, @Nullable Object params) {
-        try {
-            this.context
-                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit(eventName, params);
-        } catch (Throwable t) {
-            Log.e(TAG, t.getLocalizedMessage());
-        }
+    private void sendEvent(@NonNull CleverTapEvent eventName, @Nullable Object params) {
+        CleverTapEventEmitter.INSTANCE.emit(eventName, params);
     }
 
     /**
      * retrieves the localInAppConfig from the given ReadableMap.
+     *
      * @param readableMap - the map config, received from the host application
      * @return the Json of the localInAppConfig
      */
@@ -1912,11 +1553,11 @@ public class CleverTapModule extends ReactContextBaseJavaModule implements SyncL
      * @return the {@link CTLocalInApp.Builder.Builder6} instance
      */
     private CTLocalInApp.Builder.Builder6 getLocalInAppBuilderWithRequiredParam(CTLocalInApp.InAppType inAppType,
-            String titleText,
-            String messageText,
-            boolean followDeviceOrientation,
-            String positiveBtnText,
-            String negativeBtnText) {
+                                                                                String titleText,
+                                                                                String messageText,
+                                                                                boolean followDeviceOrientation,
+                                                                                String positiveBtnText,
+                                                                                String negativeBtnText) {
         //throws exception if any of the required parameter is missing
         if (inAppType == null || titleText == null || messageText == null || positiveBtnText == null
                 || negativeBtnText == null) {

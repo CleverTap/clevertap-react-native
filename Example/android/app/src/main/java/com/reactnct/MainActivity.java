@@ -1,10 +1,14 @@
 package com.reactnct;
 
-import android.os.Bundle;
+import android.content.Intent;
+import android.os.Build;
+import com.clevertap.android.sdk.CleverTapAPI;
 import com.facebook.react.ReactActivity;
+import com.facebook.react.ReactActivityDelegate;
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
+import com.facebook.react.defaults.DefaultReactActivityDelegate;
 
-
-public class MainActivity<packages> extends ReactActivity {
+public class MainActivity extends ReactActivity {
 
     /**
      * Returns the name of the main component registered from JavaScript. This is used to schedule
@@ -15,9 +19,30 @@ public class MainActivity<packages> extends ReactActivity {
         return "Example";
     }
 
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    /**
+     * Returns the instance of the {@link ReactActivityDelegate}. Here we use a util class {@link
+     * DefaultReactActivityDelegate} which allows you to easily enable Fabric and Concurrent React
+     * (aka React 18) with two boolean flags.
+     */
+    @Override
+    protected ReactActivityDelegate createReactActivityDelegate() {
+        return new DefaultReactActivityDelegate(
+                this,
+                getMainComponentName(),
+                // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+                DefaultNewArchitectureEntryPoint.getFabricEnabled(), // fabricEnabled
+                // If you opted-in for the New Architecture, we enable Concurrent React (i.e. React 18).
+                DefaultNewArchitectureEntryPoint.getConcurrentReactEnabled() // concurrentRootEnabled
+        );
     }
 
-
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (intent != null && intent.getExtras() != null) {
+                CleverTapAPI.getDefaultInstance(getApplicationContext()).pushNotificationClickedEvent(intent.getExtras());
+            }
+        }
+    }
 }

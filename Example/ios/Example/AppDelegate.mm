@@ -6,42 +6,32 @@
 #import <React/RCTRootView.h>
 #import <React/RCTLinkingManager.h>
 
-//@import CleverTapReact;
-//@import CleverTapSDK;
-
-//#import <CleverTapSDK/CleverTap.h>
-//#import <CleverTapReact/CleverTapReactManager.h>
-
 #import "CleverTap.h"
 #import "CleverTapReactManager.h"
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-                                                   moduleName:@"Example"
-                                            initialProperties:nil];
+# pragma mark - App Launch
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+  self.moduleName = @"Example";
+  // You can add your custom initial props in the dictionary below.
+  // They will be passed down to the ViewController used by React Native.
+  self.initialProps = @{};
   
-  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  UIViewController *rootViewController = [UIViewController new];
-  rootViewController.view = rootView;
-  self.window.rootViewController = rootViewController;
-  [self.window makeKeyAndVisible];
-  // Add CleverTap Account ID and Account Token in your .plist file)
-  // initialize CleverTap
+  // Add CleverTap Account ID and Account Token in your .plist file
+  // Initialize CleverTap
 #ifdef DEBUG
   [CleverTap setDebugLevel:CleverTapLogDebug];
 #endif
   [CleverTap autoIntegrate];
   [self addNotificationCategories];
+
   [[CleverTapReactManager sharedInstance] applicationDidLaunchWithOptions:launchOptions];
   
-  return YES;
+  return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
+# pragma mark - Notification Categories
 - (void)addNotificationCategories {
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     UNNotificationAction *action1 = [UNNotificationAction actionWithIdentifier:@"action_1" title:@"Back" options:UNNotificationActionOptionNone];
@@ -51,8 +41,7 @@
     [center setNotificationCategories:[NSSet setWithObjects:cat, nil]];
 }
 
-// Deep links
-
+# pragma mark - Deep links
 - (BOOL)application:(UIApplication *)app
             openURL:(NSURL *)url
             options:(NSDictionary *)options {
@@ -67,13 +56,16 @@
   
 }
 
-// Universal links
+# pragma mark - Universal links
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler {
   return [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
 }
 
-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
-{
+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
+  return [self bundleURL];
+}
+
+- (NSURL *)bundleURL {
 #if DEBUG
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
 #else

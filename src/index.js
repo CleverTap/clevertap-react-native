@@ -1,15 +1,17 @@
 import { DeviceEventEmitter, NativeEventEmitter, NativeModules } from 'react-native';
-
-const CleverTapReact = NativeModules.CleverTapReact;
-const EventEmitter = NativeModules.CleverTapReactEventEmitter ? new NativeEventEmitter(NativeModules.CleverTapReactEventEmitter) : DeviceEventEmitter;
-
+const CleverTapReact = require('./NativeCleverTapModule').default;
+const EventEmitter = Platform.select({
+    ios: new NativeEventEmitter(CleverTapReact),
+    android: DeviceEventEmitter
+  });
+// NativeModules.CleverTapReactEventEmitter ? new NativeEventEmitter(CleverTapReact) : DeviceEventEmitter;
 /**
 * Set the CleverTap React-Native library name with current version
 * @param {string} libName - Library name will be "React-Native"
 * @param {int} libVersion - The updated library version. If current version is 1.1.0 then pass as 10100  
 */
 const libName = 'React-Native';
-const libVersion = 20201;
+const libVersion = 30000;
 CleverTapReact.setLibrary(libName,libVersion);
 
 function defaultCallback(method, err, res) {
@@ -43,28 +45,27 @@ function callWithCallback(method, args, callback) {
 }
 
 var CleverTap = {
-
-    CleverTapProfileDidInitialize: CleverTapReact.CleverTapProfileDidInitialize,
-    CleverTapProfileSync: CleverTapReact.CleverTapProfileSync,
-    CleverTapInAppNotificationDismissed: CleverTapReact.CleverTapInAppNotificationDismissed,
-    CleverTapInAppNotificationShowed: CleverTapReact.CleverTapInAppNotificationShowed,
-    FCM: CleverTapReact.FCM,
-    BPS: CleverTapReact.BPS,
-    HPS: CleverTapReact.HPS,
-    CleverTapInboxDidInitialize: CleverTapReact.CleverTapInboxDidInitialize,
-    CleverTapInboxMessagesDidUpdate: CleverTapReact.CleverTapInboxMessagesDidUpdate,
-    CleverTapInboxMessageButtonTapped: CleverTapReact.CleverTapInboxMessageButtonTapped,
-    CleverTapInboxMessageTapped: CleverTapReact.CleverTapInboxMessageTapped,
-    CleverTapDisplayUnitsLoaded: CleverTapReact.CleverTapDisplayUnitsLoaded,
-    CleverTapInAppNotificationButtonTapped: CleverTapReact.CleverTapInAppNotificationButtonTapped,
-    CleverTapFeatureFlagsDidUpdate: CleverTapReact.CleverTapFeatureFlagsDidUpdate, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
-    CleverTapProductConfigDidInitialize: CleverTapReact.CleverTapProductConfigDidInitialize, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
-    CleverTapProductConfigDidFetch: CleverTapReact.CleverTapProductConfigDidFetch, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
-    CleverTapProductConfigDidActivate: CleverTapReact.CleverTapProductConfigDidActivate, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
-    CleverTapPushNotificationClicked: CleverTapReact.CleverTapPushNotificationClicked,
-    CleverTapPushPermissionResponseReceived: CleverTapReact.CleverTapPushPermissionResponseReceived,
-    CleverTapOnVariablesChanged: CleverTapReact.CleverTapOnVariablesChanged,
-    CleverTapOnValueChanged: CleverTapReact.CleverTapOnValueChanged,
+    CleverTapProfileDidInitialize: CleverTapReact.getConstants().CleverTapProfileDidInitialize,
+    CleverTapProfileSync: CleverTapReact.getConstants().CleverTapProfileSync,
+    CleverTapInAppNotificationDismissed: CleverTapReact.getConstants().CleverTapInAppNotificationDismissed,
+    CleverTapInAppNotificationShowed: CleverTapReact.getConstants().CleverTapInAppNotificationShowed,
+    FCM: CleverTapReact.getConstants().FCM,
+    BPS: CleverTapReact.getConstants().BPS,
+    HPS: CleverTapReact.getConstants().HPS,
+    CleverTapInboxDidInitialize: CleverTapReact.getConstants().CleverTapInboxDidInitialize,
+    CleverTapInboxMessagesDidUpdate: CleverTapReact.getConstants().CleverTapInboxMessagesDidUpdate,
+    CleverTapInboxMessageButtonTapped: CleverTapReact.getConstants().CleverTapInboxMessageButtonTapped,
+    CleverTapInboxMessageTapped: CleverTapReact.getConstants().CleverTapInboxMessageTapped,
+    CleverTapDisplayUnitsLoaded: CleverTapReact.getConstants().CleverTapDisplayUnitsLoaded,
+    CleverTapInAppNotificationButtonTapped: CleverTapReact.getConstants().CleverTapInAppNotificationButtonTapped,
+    CleverTapFeatureFlagsDidUpdate: CleverTapReact.getConstants().CleverTapFeatureFlagsDidUpdate, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapProductConfigDidInitialize: CleverTapReact.getConstants().CleverTapProductConfigDidInitialize, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapProductConfigDidFetch: CleverTapReact.getConstants().CleverTapProductConfigDidFetch, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapProductConfigDidActivate: CleverTapReact.getConstants().CleverTapProductConfigDidActivate, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
+    CleverTapPushNotificationClicked: CleverTapReact.getConstants().CleverTapPushNotificationClicked,
+    CleverTapPushPermissionResponseReceived: CleverTapReact.getConstants().CleverTapPushPermissionResponseReceived,
+    CleverTapOnVariablesChanged: CleverTapReact.getConstants().CleverTapOnVariablesChanged,
+    CleverTapOnValueChanged: CleverTapReact.getConstants().CleverTapOnValueChanged,
 
     /**
     * Add a CleverTap event listener
@@ -76,6 +77,7 @@ var CleverTap = {
     addListener: function (eventName, handler) {
         if (EventEmitter) {
             EventEmitter.addListener(eventName, handler);
+            CleverTapReact.onEventListenerAdded(eventName);
         }
     },
 
@@ -115,7 +117,7 @@ var CleverTap = {
     setLocale: function (locale) {
         CleverTapReact.setLocale(locale);
     },
-    
+
     /**
     * Registers the application to receive push notifications
     * only necessary for iOS.
@@ -930,7 +932,7 @@ var CleverTap = {
      */
     onVariablesChanged: function (handler) {
         CleverTapReact.onVariablesChanged();
-        this.addListener(CleverTapReact.CleverTapOnVariablesChanged, handler);
+        this.addListener(CleverTapReact.getConstants().CleverTapOnVariablesChanged, handler);
     },
 
     /**
@@ -941,7 +943,7 @@ var CleverTap = {
      */
     onValueChanged: function (name, handler) {
         CleverTapReact.onValueChanged(name);
-        this.addListener(CleverTapReact.CleverTapOnValueChanged, handler);
+        this.addListener(CleverTapReact.getConstants().CleverTapOnValueChanged, handler);
     },
 
     /**
@@ -958,7 +960,7 @@ var CleverTap = {
      *
      * @param {boolean} expiredOnly to clear only assets which will not be needed further for inapps
      */
-    clearInAppResources: function(expiredOnly) {
+    clearInAppResources: function (expiredOnly) {
         CleverTapReact.clearInAppResources(expiredOnly);
     }
 };

@@ -20,6 +20,7 @@ build/
 .gradle
 local.properties
 Example/android/app/google-services.json
+Example/android/app/.cxx
 *.iml
 .project
 .settings

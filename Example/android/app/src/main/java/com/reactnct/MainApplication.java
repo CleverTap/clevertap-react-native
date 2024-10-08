@@ -5,42 +5,30 @@ import android.app.Application.ActivityLifecycleCallbacks;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.clevertap.android.pushtemplates.PushTemplateNotificationHandler;
-import com.clevertap.android.sdk.ActivityLifecycleCallback;
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.android.sdk.CleverTapAPI.LogLevel;
-import com.clevertap.android.sdk.interfaces.NotificationHandler;
-import com.clevertap.android.sdk.pushnotification.CTPushNotificationListener;
 import com.clevertap.react.CleverTapApplication;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
-import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactHost;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
+import com.facebook.react.defaults.DefaultReactHost;
+import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Iterator;
+
 import java.util.List;
-import java.util.Map;
-import org.json.JSONObject;
 
-public class MainApplication extends CleverTapApplication
-        implements ActivityLifecycleCallbacks, ReactApplication{
-
-    private static final String TAG = "MainApplication";
+public class MainApplication extends CleverTapApplication implements ActivityLifecycleCallbacks, ReactApplication {
 
     private final ReactNativeHost mReactNativeHost =
-            new ReactNativeHost(this) {
+            new DefaultReactNativeHost(this) {
                 @Override
                 public boolean getUseDeveloperSupport() {
                     return BuildConfig.DEBUG;
@@ -52,7 +40,7 @@ public class MainApplication extends CleverTapApplication
                     List<ReactPackage> packages = new PackageList(this).getPackages();
                     // Packages that cannot be autolinked yet can be added manually here, for example:
                     // packages.add(new MyReactNativePackage());
-//            packages.add(new CleverTapPackage()); // not to add if done by autolinking
+                    // packages.add(new CleverTapPackage()); // not to add if done by autolinking
                     return packages;
                 }
 
@@ -60,7 +48,22 @@ public class MainApplication extends CleverTapApplication
                 protected String getJSMainModuleName() {
                     return "index";
                 }
+
+                @Override
+                protected boolean isNewArchEnabled() {
+                    return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
+                }
+
+                @Override
+                protected Boolean isHermesEnabled() {
+                    return BuildConfig.IS_HERMES_ENABLED;
+                }
             };
+
+    @Override
+    public ReactHost getReactHost() {
+        return DefaultReactHost.getDefaultReactHost(getApplicationContext(), mReactNativeHost);
+    }
 
     @Override
     public ReactNativeHost getReactNativeHost() {
@@ -70,39 +73,13 @@ public class MainApplication extends CleverTapApplication
     @Override
     public void onCreate() {
         CleverTapAPI.setDebugLevel(LogLevel.VERBOSE);
-        CleverTapAPI.setNotificationHandler((NotificationHandler) new PushTemplateNotificationHandler());
+        CleverTapAPI.setNotificationHandler(new PushTemplateNotificationHandler());
         CleverTapAPI.getDefaultInstance(getApplicationContext()).enableDeviceNetworkInfoReporting(true);
-        registerActivityLifecycleCallbacks(this);
         super.onCreate();
         SoLoader.init(this, /* native exopackage */ false);
-        initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
-    }
-
-    /**
-     * Loads Flipper in React Native templates. Call this in the onCreate method with something like
-     * initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
-     */
-    private static void initializeFlipper(
-            Context context, ReactInstanceManager reactInstanceManager) {
-        if (BuildConfig.DEBUG) {
-            try {
-        /*
-         We use reflection here to pick up the class that initializes Flipper,
-        since Flipper library is not available in release mode
-        */
-                Class<?> aClass = Class.forName("com.reactnct.ReactNativeFlipper");
-                aClass
-                        .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
-                        .invoke(null, context, reactInstanceManager);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            // If you opted-in for the New Architecture, we load the native entry point for this app.
+            DefaultNewArchitectureEntryPoint.load();
         }
     }
 
