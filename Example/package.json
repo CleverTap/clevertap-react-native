@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "postinstall": "react-native-asset",
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "android": "react-native-asset && react-native run-android",
+    "ios": "react-native-asset && react-native run-ios",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint ."
