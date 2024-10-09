@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
-const InAppMessagePopup = ({ visible, title, description, isFunction,
-   onCancel, onConfirm, onTriggerAction, onFileOpen }) => {
-  const [actionName, setActionName] = useState('');
+const FunctionPopup = ({ visible, title, description,
+   onClose, onFileOpen }) => {
   const [fileName, setFileName] = useState('');
 
   return (
@@ -26,31 +25,12 @@ const InAppMessagePopup = ({ visible, title, description, isFunction,
             onChangeText={setFileName}
           />
           <TouchableOpacity style={styles.submitButton} onPress={() => onFileOpen(fileName)}>
-            <Text style={styles.submitButtonText}>Open File</Text>
+            <Text style={styles.buttonText}>Open File</Text>
           </TouchableOpacity>
 
-          {!isFunction &&
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Action Arg name"
-                placeholderTextColor="grey"
-                autoCapitalize="none"
-                value={actionName}
-                onChangeText={setActionName}
-              />
-              <TouchableOpacity style={styles.submitButton} onPress={() => onTriggerAction(actionName)}>
-                <Text style={styles.submitButtonText}>Trigger Action</Text>
-              </TouchableOpacity>
-            </View>
-          }
-
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-              <Text style={styles.buttonText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
-              <Text style={styles.buttonText}>Confirm</Text>
+            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+              <Text style={styles.buttonText}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -103,10 +83,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 20,
   },
-  submitButtonText: {
-    color: 'white',
-    textAlign: 'center',
-  },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -117,14 +93,6 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#f44336',
     borderRadius: 5,
-    marginRight: 10,
-  },
-  confirmButton: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: '#4CAF50',
-    borderRadius: 5,
-    marginLeft: 10,
   },
   buttonText: {
     color: 'white',
@@ -132,4 +100,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default InAppMessagePopup;
+export default FunctionPopup;
