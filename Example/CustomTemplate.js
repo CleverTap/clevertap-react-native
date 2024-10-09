@@ -1,33 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import { View, Modal, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import InAppMessagePopup from './InAppMessagePopup';
+import FunctionPopup from './FunctionPopup';
 import { WebView } from 'react-native-webview';
 
 const CleverTap = require('clevertap-react-native');
 
+const WebViewCaller = Object.freeze({
+    INAPP_POPUP: "InAppPopup",
+    FUNCTION_POPUP: "FunctionPopup"
+});
+
 const CustomTemplate = () => {
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [templateName, setTemplateName] = useState('');
-    const [description, setDescription] = useState('');
-    const [isFunction, setIsFunction] = useState(false);
+    const [modalState, setModalState] = useState({
+        isTemplateVisible: false,
+        isNonVisualFunctionVisible: false,
+        templateName: '',
+        templateDescription: '',
+        isStandaloneFunction: false,
+        functionName: '',
+        functionDescription: '',
+        webViewCaller: ''
+    });
+
     const [filePath, setFilePath] = useState('');
     const [showWebView, setShowWebView] = useState(false);
-    const [templateNameVisual, setTemplateNameVisual] = useState('');
 
     useEffect(() => {
         CleverTap.addListener(CleverTap.CleverTapCustomTemplatePresent, templateName => {
-            setIsFunction(false);
-            presentInAppModal(templateName);
+            presentInAppModal(templateName, false);
         });
 
         CleverTap.addListener(CleverTap.CleverTapCustomTemplateClose, templateName => {
+            console.log('Closing template from "Close Notification" action.');
             CleverTap.customTemplateSetDismissed(templateName);
-            setIsModalVisible(true);
+            setModalState(prevState => ({ ...prevState, isTemplateVisible: false }));
         });
 
         CleverTap.addListener(CleverTap.CleverTapCustomFunctionPresent, templateName => {
-            setIsFunction(true);
-            presentInAppModal(templateName);
+            presentInAppModal(templateName, true);
         });
 
         return () => {
@@ -37,15 +48,35 @@ const CustomTemplate = () => {
         };
     }, []);
 
-    const presentInAppModal = (name) => {
-        if (isModalVisible) {
-            // Showing a custom function with isVisual:false
-            setTemplateNameVisual(templateName);
-        }
+    const presentInAppModal = (name, isFunction) => {
         getTemplateValuesString(name).then((str) => {
-            setDescription(str);
-            setTemplateName(name);
-            setIsModalVisible(true);
+            let description = `Arguments for "${name}":${str}`;
+            setModalState(prevState => {
+                // If the in-app template modal is already visible, this means `presentInAppModal`
+                // was called by a isVisual:false function triggered by an action.
+                if (prevState.isTemplateVisible) {
+                    console.log(`Showing a custom function "${name}" with isVisual:false,
+triggered by action from template "${prevState.templateName}".`);
+                    // Prepare to show the non-visual function popup
+                    return {
+                        ...prevState,
+                        isTemplateVisible: false,
+                        isNonVisualFunctionVisible: true,
+                        functionDescription: description,
+                        functionName: name,
+                    };
+                } else {
+                    // Show the InApp Popup
+                    return {
+                        ...prevState,
+                        isTemplateVisible: true,
+                        isNonVisualFunctionVisible: false,
+                        templateDescription: description,
+                        templateName: name,
+                        isStandaloneFunction: isFunction
+                    };
+                }
+            });
         });
     };
 
@@ -59,7 +90,7 @@ const CustomTemplate = () => {
                     var mapString = await CleverTap.customTemplateGetStringArg(templateName, "map.string");
                     var map = await CleverTap.customTemplateGetObjectArg(templateName, "map");
                     var file = await CleverTap.customTemplateGetFileArg(templateName, "file");
-                    return `Arguments for ${templateName}:
+                    return `
 bool=${bool}
 string=${string}
 map.int=${mapInt}
@@ -75,7 +106,7 @@ file=${file}`;
                     var double = await CleverTap.customTemplateGetNumberArg(templateName, "double");
                     var string = await CleverTap.customTemplateGetStringArg(templateName, "string");
                     var file = await CleverTap.customTemplateGetFileArg(templateName, "file");
-                    return `Arguments for ${templateName}:
+                    return `
 double=${double}
 string=${string}
 file=${file}`;
@@ -88,9 +119,9 @@ file=${file}`;
                     var color = await CleverTap.customTemplateGetStringArg(templateName, "color");
                     var enabled = await CleverTap.customTemplateGetBooleanArg(templateName, "enabled");
                     var image = await CleverTap.customTemplateGetFileArg(templateName, "image");
-                    return `Arguments for ${templateName}:
-color=${double}
-string=${string}
+                    return `
+color=${color}
+enabled=${enabled}
 image=${image}`;
                 } catch (e) {
                     return e.toString();
@@ -102,34 +133,54 @@ image=${image}`;
     };
 
     const handleCancel = () => {
-        CleverTap.customTemplateSetDismissed(templateName);
-        setIsModalVisible(false);
+        let name = modalState.templateName;
+        setModalState(prevState => ({
+            ...prevState,
+            isTemplateVisible: false,
+            templateName: '',
+            templateDescription: ''
+        }));
 
-        // If a function with isVisual:false was presented,
-        // show the template modal, so it can be dismissed
-        if (templateNameVisual && templateNameVisual != '') {
-            presentInAppModal(templateNameVisual);
-            setTemplateNameVisual('');
-        }
+        console.log(`Dismissing ${modalState.isStandaloneFunction ? 'standalone function' : 'template'} named: "${name}".`);
+        CleverTap.customTemplateSetDismissed(name);
+    };
+
+    const handleFunctionClose = () => {
+        console.log(`Closing isVisual:false function named: "${modalState.functionName}".`);
+        setModalState(prevState => ({
+            ...prevState,
+            isTemplateVisible: true,
+            isNonVisualFunctionVisible: false,
+            functionDescription: '',
+            functionName: ''
+        }));
     };
 
     const handleConfirm = () => {
-        CleverTap.customTemplateSetPresented(templateName);
-        setIsModalVisible(false);
+        CleverTap.customTemplateSetPresented(modalState.templateName);
     };
 
     const handleTriggerAction = (actionName) => {
-        console.log('trigger action:', actionName);
-        CleverTap.customTemplateRunAction(templateName, actionName);
+        console.log('Trigger action argument named:', actionName);
+        CleverTap.customTemplateRunAction(modalState.templateName, actionName);
     };
 
-    const handleOpenFile = (fileName) => {
-        console.log('open file name:', fileName);
-        CleverTap.customTemplateGetFileArg(templateName, fileName).then((filePath) => {
-            console.log('open file path:', filePath);
+    const getCurrentName = () => {
+        return modalState.isTemplateVisible ? modalState.templateName : modalState.functionName;
+    };
+
+    const handleOpenFile = (name) => {
+        console.log('Open file argument named:', name);
+        CleverTap.customTemplateGetFileArg(getCurrentName(), name).then((filePath) => {
+            console.log('Open file path:', filePath);
             setFilePath(filePath);
 
-            setIsModalVisible(false);
+            setModalState(prevState => ({
+                ...prevState,
+                isTemplateVisible: false,
+                isNonVisualFunctionVisible: false,
+                webViewCaller: prevState.isTemplateVisible ? WebViewCaller.INAPP_POPUP : WebViewCaller.FUNCTION_POPUP,
+            }));
             setShowWebView(true);
         });
     };
@@ -137,18 +188,20 @@ image=${image}`;
     const closeWebView = () => {
         setShowWebView(false);
         setFilePath('');
-        setIsModalVisible(true);
+        setModalState(prevState => ({
+            ...prevState,
+            isTemplateVisible: prevState.webViewCaller == WebViewCaller.INAPP_POPUP,
+            isNonVisualFunctionVisible: prevState.webViewCaller == WebViewCaller.FUNCTION_POPUP,
+        }));
     };
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            {/* <Button title="Show Modal" onPress={() => setIsModalVisible(true)} /> */}
-
+        <View style={styles.customTemplateContainer}>
             <InAppMessagePopup
-                visible={isModalVisible}
-                title={templateName}
-                description={description}
-                isFunction={isFunction}
+                visible={modalState.isTemplateVisible}
+                title={modalState.templateName}
+                description={modalState.templateDescription}
+                isFunction={modalState.isStandaloneFunction}
                 onCancel={handleCancel}
                 onConfirm={handleConfirm}
                 onTriggerAction={handleTriggerAction}
@@ -156,16 +209,14 @@ image=${image}`;
             >
             </InAppMessagePopup>
 
-            {/* {showWebView && (
-                <View style={{ height: 400, width: '90%', marginTop: 20 }}>
-                    <WebView
-                        source={{ uri: filePath }}
-                        style={{ flex: 1 }}
-                        originWhitelist={['*']}
-                        allowFileAccessFromFileURLs={true}
-                    />
-                </View>
-            )} */}
+            <FunctionPopup
+                visible={modalState.isNonVisualFunctionVisible}
+                title={modalState.functionName}
+                description={modalState.functionDescription}
+                onClose={handleFunctionClose}
+                onFileOpen={handleOpenFile}
+            >
+            </FunctionPopup>
 
             <Modal
                 visible={showWebView}
@@ -183,7 +234,7 @@ image=${image}`;
                     <View style={styles.webViewWrapper}>
                         <WebView
                             source={{ uri: filePath }}
-                            style={{ flex: 1, backgroundColor: 'transparent' }}
+                            style={styles.webView}
                             originWhitelist={['*']}
                             allowFileAccessFromFileURLs={true}
                         />
@@ -195,6 +246,11 @@ image=${image}`;
 };
 
 const styles = StyleSheet.create({
+    customTemplateContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     webViewContainer: {
         flex: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -212,6 +268,10 @@ const styles = StyleSheet.create({
         right: 20,
         zIndex: 1,
     },
+    webView: {
+        flex: 1,
+        backgroundColor: 'transparent'
+    },
     closeButton: {
         backgroundColor: '#fff',
         borderRadius: 15,
@@ -221,7 +281,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         color: 'red',
-    },
+    }
 });
 
 export default CustomTemplate;
