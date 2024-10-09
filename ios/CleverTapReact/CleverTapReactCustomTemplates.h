@@ -27,6 +27,16 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param ... A comma-separated list of additional file names, ending with nil.
 + (void)registerCustomTemplates:(NSString *)firstJsonAsset, ... NS_REQUIRES_NIL_TERMINATION;
 
+/// Registers Custom Templates and App Functions given JSON templates definition file names.
+/// Use the bundle where the resources are.
+/// Provide the file name only, without the json extension.
+/// Supports multiple file names with a nil termination.
+///
+/// @param bundle The bundle where the JSON resources are.
+/// @param firstJsonAsset The first JSON templates definition file name.
+/// @param ... A comma-separated list of additional file names, ending with nil.
++ (void)registerCustomTemplates:(NSBundle *)bundle jsonFileNames:(NSString *)firstJsonAsset, ... NS_REQUIRES_NIL_TERMINATION;
+
 @end
 
 NS_ASSUME_NONNULL_END
