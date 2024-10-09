@@ -39,13 +39,12 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-
     // add CleverTapPackage to react-native package list
         @Override
         protected List<ReactPackage> getPackages() {
-        List<ReactPackage> packages = new PackageList(this).getPackages();
-        // Packages that cannot be autolinked yet can be added manually here, for
-        // example:
-        packages.add(new CleverTapPackage());// only needed when not auto-linking
-        return packages;
-        
-    }
+            List<ReactPackage> packages = new PackageList(this).getPackages();
+            // Packages that cannot be autolinked yet can be added manually here, for
+            // example:
+            packages.add(new CleverTapPackage());// only needed when not auto-linking
+            return packages;
+        }
     ```
 
 3. Initialise Clevertap ReactNative Integration - This adds support for `ClevertapPushNotiificationClicked` from killed state and registers the `ActivityLifecycleCallback`
