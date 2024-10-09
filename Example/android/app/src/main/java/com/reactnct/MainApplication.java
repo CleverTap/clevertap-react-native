@@ -73,7 +73,7 @@ public class MainApplication extends CleverTapApplication implements ActivityLif
 
     @Override
     public void onCreate() {
-        CleverTapCustomTemplates.registerCustomTemplates(this, "templates.json");
+        CleverTapCustomTemplates.registerCustomTemplates(this, "custom/templates.json");
         CleverTapAPI.setDebugLevel(LogLevel.VERBOSE);
         CleverTapAPI.setNotificationHandler(new PushTemplateNotificationHandler());
         CleverTapAPI.getDefaultInstance(getApplicationContext()).enableDeviceNetworkInfoReporting(true);

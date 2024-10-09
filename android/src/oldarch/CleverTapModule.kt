@@ -1,6 +1,5 @@
 package com.clevertap.react
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Build.VERSION_CODES
 import androidx.annotation.RequiresApi
@@ -586,6 +585,16 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         promise: Promise?
     ) {
         cleverTapModuleImpl.customTemplateGetObjectArg(templateName, argName, promise)
+    }
+
+    @ReactMethod
+    fun syncCustomTemplates() {
+        cleverTapModuleImpl.syncCustomTemplates()
+    }
+
+    @ReactMethod
+    fun syncCustomTemplatesInProd(isProduction: Boolean) {
+        cleverTapModuleImpl.syncCustomTemplates()
     }
 
     @ReactMethod
