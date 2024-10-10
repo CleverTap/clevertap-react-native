@@ -1142,6 +1142,14 @@ public class CleverTapModuleImpl {
         );
     }
 
+    public void customTemplateContextToString(String templateName, Promise promise) {
+        resolveWithTemplateContext(
+                templateName,
+                promise,
+                templateContext -> templateContext.toString()
+        );
+    }
+
     public void syncCustomTemplates() {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {

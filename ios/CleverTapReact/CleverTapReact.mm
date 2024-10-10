@@ -1119,6 +1119,14 @@ RCT_EXPORT_METHOD(customTemplateSetPresented:(NSString *)templateName
     }];
 }
 
+RCT_EXPORT_METHOD(customTemplateContextToString:(NSString *)templateName
+                           resolve:(RCTPromiseResolveBlock)resolve
+                            reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+        return [context debugDescription];
+    }];
+}
+
 - (void)resolveWithTemplateContext:(NSString *)templateName
                            resolve:(RCTPromiseResolveBlock)resolve
                             reject:(RCTPromiseRejectBlock)reject
