@@ -25,6 +25,7 @@ const CustomTemplate = () => {
 
     const [filePath, setFilePath] = useState('');
     const [showWebView, setShowWebView] = useState(false);
+    const [webViewLoaded, setWebViewLoaded] = useState(false);
 
     useEffect(() => {
         CleverTap.addListener(CleverTap.CleverTapCustomTemplatePresent, templateName => {
@@ -121,7 +122,7 @@ triggered by action from template "${prevState.templateName}".`);
         console.log('Open file argument named:', name);
         CleverTap.customTemplateGetFileArg(getCurrentName(), name).then((filePath) => {
             console.log('Open file path:', filePath);
-            setFilePath(filePath);
+            setFilePath(filePath || '');
 
             setModalState(prevState => ({
                 ...prevState,
@@ -135,12 +136,18 @@ triggered by action from template "${prevState.templateName}".`);
 
     const closeWebView = () => {
         setShowWebView(false);
+        setWebViewLoaded(false);
         setFilePath('');
         setModalState(prevState => ({
             ...prevState,
             isTemplateVisible: prevState.webViewCaller == WebViewCaller.INAPP_POPUP,
             isNonVisualFunctionVisible: prevState.webViewCaller == WebViewCaller.FUNCTION_POPUP,
         }));
+    };
+
+    const updateSource = () => {
+        console.log('updated');
+        setWebViewLoaded(true);
     };
 
     return (
@@ -181,10 +188,13 @@ triggered by action from template "${prevState.templateName}".`);
 
                     <View style={styles.webViewWrapper}>
                         <WebView
-                            source={{ uri: filePath }}
+                            source={webViewLoaded ? { uri: filePath } : { uri: '' }}
                             style={styles.webView}
                             originWhitelist={['*']}
                             allowFileAccessFromFileURLs={true}
+                            allowFileAccess={true}
+                            allowUniversalAccessFromFileURLs={true}
+                            onLoad={updateSource}
                         />
                     </View>
                 </View>
