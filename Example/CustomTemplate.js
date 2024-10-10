@@ -49,7 +49,7 @@ const CustomTemplate = () => {
     }, []);
 
     const presentInAppModal = (name, isFunction) => {
-        getTemplateValuesString(name).then((str) => {
+        CleverTap.customTemplateContextToString(name).then((str) => {
             let description = `Arguments for "${name}":${str}`;
             setModalState(prevState => {
                 // If the in-app template modal is already visible, this means `presentInAppModal`
@@ -78,58 +78,6 @@ triggered by action from template "${prevState.templateName}".`);
                 }
             });
         });
-    };
-
-    const getTemplateValuesString = async (templateName) => {
-        switch (templateName) {
-            case "Example template":
-                try {
-                    var bool = await CleverTap.customTemplateGetBooleanArg(templateName, "bool");
-                    var string = await CleverTap.customTemplateGetStringArg(templateName, "string");
-                    var mapInt = await CleverTap.customTemplateGetNumberArg(templateName, "map.int");
-                    var mapString = await CleverTap.customTemplateGetStringArg(templateName, "map.string");
-                    var map = await CleverTap.customTemplateGetObjectArg(templateName, "map");
-                    var file = await CleverTap.customTemplateGetFileArg(templateName, "file");
-                    return `
-bool=${bool}
-string=${string}
-map.int=${mapInt}
-map.string=${mapString}
-map=${JSON.stringify(map)}
-file=${file}`;
-                } catch (e) {
-                    return e.toString();
-                }
-
-            case "Example function":
-                try {
-                    var double = await CleverTap.customTemplateGetNumberArg(templateName, "double");
-                    var string = await CleverTap.customTemplateGetStringArg(templateName, "string");
-                    var file = await CleverTap.customTemplateGetFileArg(templateName, "file");
-                    return `
-double=${double}
-string=${string}
-file=${file}`;
-                } catch (e) {
-                    return e.toString();
-                }
-
-            case "Example visual function":
-                try {
-                    var color = await CleverTap.customTemplateGetStringArg(templateName, "color");
-                    var enabled = await CleverTap.customTemplateGetBooleanArg(templateName, "enabled");
-                    var image = await CleverTap.customTemplateGetFileArg(templateName, "image");
-                    return `
-color=${color}
-enabled=${enabled}
-image=${image}`;
-                } catch (e) {
-                    return e.toString();
-                }
-
-            default:
-                return "Template not found"
-        }
     };
 
     const handleCancel = () => {
