@@ -882,6 +882,8 @@ export function isPushPermissionGranted(callback: CallbackString): void;
 
   export function customTemplateGetObjectArg(templateName: string, argName: string): Promise<any>;
 
+  export function customTemplateContextToString(templateName: string): Promise<string>;
+
   /*******************
    * Developer Options
    ******************/
