@@ -1014,7 +1014,11 @@ var CleverTap = {
     },
 
     customTemplateGetObjectArg: function (templateName, argName) {
-        return CleverTapReact.customTemplateGetObjectArg(templateName, argName)
+        return CleverTapReact.customTemplateGetObjectArg(templateName, argName);
+    },
+
+    customTemplateContextToString: function (templateName) {
+        return CleverTapReact.customTemplateContextToString(templateName);
     }
 };
 
