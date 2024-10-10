@@ -588,6 +588,14 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
+    fun customTemplateContextToString(
+        templateName: String?,
+        promise: Promise?
+    ) {
+        cleverTapModuleImpl.customTemplateContextToString(templateName, promise)
+    }
+
+    @ReactMethod
     fun syncCustomTemplates() {
         cleverTapModuleImpl.syncCustomTemplates()
     }

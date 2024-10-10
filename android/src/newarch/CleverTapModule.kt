@@ -500,6 +500,13 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.customTemplateGetObjectArg(templateName, argName, promise)
     }
 
+    override fun customTemplateContextToString(
+        templateName: String?,
+        promise: Promise?
+    ) {
+        cleverTapModuleImpl.customTemplateContextToString(templateName, promise)
+    }
+
     override fun syncCustomTemplates() {
         cleverTapModuleImpl.syncCustomTemplates()
     }
