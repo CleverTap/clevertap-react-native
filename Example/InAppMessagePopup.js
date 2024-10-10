@@ -49,10 +49,10 @@ const InAppMessagePopup = ({ visible, title, description, isFunction,
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-              <Text style={styles.buttonText}>Cancel</Text>
+              <Text style={styles.buttonText}>Dismiss</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
-              <Text style={styles.buttonText}>Confirm</Text>
+              <Text style={styles.buttonText}>Set Presented</Text>
             </TouchableOpacity>
           </View>
         </View>
