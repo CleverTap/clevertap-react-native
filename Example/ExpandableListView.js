@@ -47,6 +47,7 @@ export class ExpandableListView extends Component {
 
                 </TouchableOpacity>
                 <View style={{ height: this.state.layoutHeight, overflow: 'hidden' }}>
+                    {this.props.children}
                     {this.props.item.sub_Category && this.props.item.sub_Category.map((item, key) => (
                         <TouchableOpacity
                             key={key}
