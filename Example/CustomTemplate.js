@@ -146,7 +146,6 @@ triggered by action from template "${prevState.templateName}".`);
     };
 
     const updateSource = () => {
-        console.log('updated');
         setWebViewLoaded(true);
     };
 
