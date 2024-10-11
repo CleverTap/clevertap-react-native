@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Alert,
   StyleSheet,
   View,
   Text,
@@ -10,6 +11,7 @@ import {
   Linking
 } from 'react-native';
 import CustomTemplate from './CustomTemplate';
+import DynamicForm from './DynamicForm';
 import { ExpandableListView } from './ExpandableListView';
 import { Actions } from './constants';
 import * as Utils from './utils';
@@ -43,8 +45,65 @@ export default class App extends Component {
       }
     });
 
-    this.state = { AccordionData: [...this.accordionData]};
+    this.state = { AccordionData: [...this.accordionData], EventFormConfig: this.eventFormConfig, ProfileFormConfig: this.profileFormConfig };
   }
+
+  eventFormConfig = {
+    texts: {
+      add: 'Add param',
+      submit: 'Record event'
+    },
+    placeholders: {
+      namePlaceholder: 'Enter event name',
+      keyPlaceholder: 'Param key',
+      valuePlaceholder: 'Param value'
+    },
+    onSubmit: (data) => {
+      let props = Object.fromEntries(data.keyValues.filter(kv=> kv.key != '')
+                                                    .map(x => [x.key, x.value]));
+      console.log(`Recording event with name: ${data.name} and props: ${JSON.stringify(props)}`);
+      CleverTap.recordEvent(data.name, props);
+    }
+  };
+
+  profileFormConfig = {
+    texts: {
+      add: 'Add profile props',
+      submit: 'Push Profile / User Login'
+    },
+    placeholders: {
+      namePlaceholder: 'Identity or empty for current user',
+      keyPlaceholder: 'Prop key',
+      valuePlaceholder: 'Prop value'
+    },
+    onSubmit: (data) => {
+      if (data.name && data.name.trim() != '') {
+        var profile = {
+          "Identity": data.name
+        }
+        if (data.keyValues.length > 0) {
+          let props = Object.fromEntries(data.keyValues.filter(kv=> kv.key != '')
+          .map(x => [x.key, x.value]));
+
+          profile = {
+            ...profile,
+            ...props
+          }
+        }
+
+        console.log(`OnUserLogin: ${JSON.stringify(profile)}`);
+        CleverTap.onUserLogin(profile);
+      } else {
+        if (data.keyValues.length > 0) {
+          let props = Object.fromEntries(data.keyValues.filter(kv=> kv.key != '')
+          .map(x => [x.key, x.value]));
+
+          console.log(`Profile Push: ${JSON.stringify(props)}`);
+          CleverTap.profileSet(props);
+        }
+      }
+    }
+  };
 
   accordionData = [
     {
@@ -726,6 +785,12 @@ export default class App extends Component {
           <TouchableOpacity style={styles.header}>
             <Text style={styles.headerText}>CleverTap Example</Text>
           </TouchableOpacity>
+          <ExpandableListView item={{category_Name: 'Record Event'}}>
+            <DynamicForm config={this.state.EventFormConfig}></DynamicForm>
+          </ExpandableListView>
+          <ExpandableListView item={{category_Name: 'Update User'}}>
+            <DynamicForm config={this.state.ProfileFormConfig}></DynamicForm>
+          </ExpandableListView>
           {this.state.AccordionData.map((item, key) => (
             <ExpandableListView
               key={item.category_Name}
