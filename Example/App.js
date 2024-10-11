@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import CustomTemplate from './CustomTemplate';
 import {
-  LayoutAnimation,
   StyleSheet,
   View,
   Text,
@@ -11,6 +9,7 @@ import {
   Platform,
   Linking
 } from 'react-native';
+import CustomTemplate from './CustomTemplate';
 import { ExpandableListView } from './ExpandableListView';
 import { Actions } from './constants';
 import * as Utils from './utils';
@@ -44,12 +43,11 @@ export default class App extends Component {
       }
     });
 
-    this.state = { AccordionData: [...this.accordionData] };
+    this.state = { AccordionData: [...this.accordionData]};
   }
 
   accordionData = [
     {
-      expanded: false,
       category_Name: 'Product Experiences: Vars',
       sub_Category: [
         {
@@ -83,7 +81,6 @@ export default class App extends Component {
       ],
     },
     {
-      expanded: false,
       category_Name: 'Client Side InApps',
       sub_Category: [
         { action: Actions.FETCH_INAPPS, name: 'Fetch Client Side InApps' },
@@ -92,7 +89,6 @@ export default class App extends Component {
       ],
     },
     {
-      expanded: false,
       category_Name: 'User Properties',
       sub_Category: [
         { action: Actions.SET_USER_PROFILE, name: 'pushProfile' },
@@ -106,27 +102,21 @@ export default class App extends Component {
         { action: Actions.DECREMENT_VALUE, name: 'Decrement Value' },
       ],
     },
-
     {
-      expanded: false,
       category_Name: 'Identity Management',
       sub_Category: [
         { action: Actions.USER_LOGIN, name: 'onUserLogin' },
         { action: Actions.CLEVERTAP_ID, name: 'getCleverTapID' },
       ],
     },
-
     {
-      expanded: false,
       category_Name: 'Location ',
       sub_Category: [
         { action: Actions.USER_LOCATION, name: 'setLocation' },
         { action: Actions.USER_LOCALE, name: 'setLocale' },
       ],
     },
-
     {
-      expanded: false,
       category_Name: 'App Inbox',
       sub_Category: [
         { action: Actions.INITIALIZE_INBOX, name: 'initializeInbox' },
@@ -152,9 +142,7 @@ export default class App extends Component {
         },
       ],
     },
-
     {
-      expanded: false,
       category_Name: 'Events',
       sub_Category: [
         { action: Actions.PUSH_EVENT, name: 'pushEvent' },
@@ -162,12 +150,10 @@ export default class App extends Component {
       ],
     },
     {
-      expanded: false,
       category_Name: 'Enable Debugging',
       sub_Category: [{ action: Actions.SET_DEBUG, name: 'Set Debug Level' }],
     },
     {
-      expanded: false,
       category_Name: 'Push Notifications',
       sub_Category: [
         { action: Actions.CREATE_NOTIFICATION_GROUP, name: 'createNotificationChannelGroup' },
@@ -185,7 +171,6 @@ export default class App extends Component {
       ],
     },
     {
-      expanded: false,
       category_Name: 'Native Display',
       sub_Category: [
         { action: Actions.DISPLAY_UNIT_ID, name: 'getUnitID' },
@@ -193,7 +178,6 @@ export default class App extends Component {
       ],
     },
     {
-      expanded: false,
       category_Name: 'Product Config',
       sub_Category: [
         { action: Actions.PRODUCT_CONFIG_FETCH, name: 'fetch()' },
@@ -220,12 +204,10 @@ export default class App extends Component {
       ],
     },
     {
-      expanded: false,
       category_Name: 'Feature Flag',
       sub_Category: [{ action: Actions.GET_FEATURE_FLAG, name: 'getFeatureFlag' }],
     },
     {
-      expanded: false,
       category_Name: 'InApp Controls',
       sub_Category: [
         { action: Actions.IN_APPS_SUSPEND, name: 'suspendInAppNotifications' },
@@ -234,14 +216,12 @@ export default class App extends Component {
       ],
     },
     {
-      expanded: false,
       category_Name: 'App Personalisation',
       sub_Category: [
         { action: Actions.ENABLE_PERSONALIZATION, name: 'enablePersonalization' }
       ],
     },
     {
-      expanded: false,
       category_Name: 'Attributions',
       sub_Category: [
         {
@@ -251,7 +231,6 @@ export default class App extends Component {
       ],
     },
     {
-      expanded: false,
       category_Name: 'GDPR',
       sub_Category: [
         { action: Actions.OPT_OUT, name: 'setOptOut' },
@@ -259,7 +238,6 @@ export default class App extends Component {
       ],
     },
     {
-      expanded: false,
       category_Name: 'Listeners',
       sub_Category: [
         { action: Actions.ADD_CLEVERTAP_LISTENERS, name: 'addCleverTapAPIListeners' },
@@ -270,7 +248,6 @@ export default class App extends Component {
       ],
     },
     {
-      expanded: false,
       category_Name: 'Custom Templates',
       sub_Category: [
         { action: Actions.SYNC_CUSTOM_TEMPLATES, name: 'Sync Custom Templates' },
@@ -278,7 +255,6 @@ export default class App extends Component {
       ],
     },
     {
-      expanded: false,
       category_Name: 'Push Templates',
       sub_Category: [
         { action: Actions.RECORD_EVENT, name: 'Send Basic Push' },
@@ -306,7 +282,6 @@ export default class App extends Component {
       ],
     },
     {
-      expanded: false,
       category_Name: 'PROMPT LOCAL IAM',
       sub_Category: [
         { action: Actions.PUSH_PRIMER_HALF_INTERSTITIAL, name: 'Half-Interstitial Local IAM' },
@@ -744,13 +719,6 @@ export default class App extends Component {
     }
   }
 
-  updateLayout = (index) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    const array = [...this.state.AccordionData];
-    array[index].expanded = !array[index].expanded;
-    this.setState({ AccordionData: array });
-  };
-
   render() {
     return (
       <View style={styles.mainContainer}>
@@ -758,16 +726,16 @@ export default class App extends Component {
           <TouchableOpacity style={styles.header}>
             <Text style={styles.headerText}>CleverTap Example</Text>
           </TouchableOpacity>
-          <CustomTemplate />
           {this.state.AccordionData.map((item, key) => (
             <ExpandableListView
               key={item.category_Name}
-              onToggleView={() => this.updateLayout(key)}
               onItemPress={this.handleItemAction}
               item={item}
             />
           ))}
         </ScrollView>
+        {/* The CustomTemplate shows a modal only when a Custom Template or App Function is triggered */}
+        <CustomTemplate />
       </View>
     );
   }
