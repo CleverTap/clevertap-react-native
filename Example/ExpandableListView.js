@@ -4,7 +4,7 @@ import {
     View,
     Text,
     TouchableOpacity,
-    Image,
+    LayoutAnimation,
     StyleSheet
 } from 'react-native';
 
@@ -17,9 +17,9 @@ export class ExpandableListView extends Component {
     }
 
     onCategoryPress = () => {
-        let height = this.props.item.expanded ? 0 : null;
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        let height = this.state.layoutHeight != 0 ? 0 : null;
         this.setState({ layoutHeight: height });
-        this.props.onToggleView();
     };
 
     render() {
@@ -29,17 +29,17 @@ export class ExpandableListView extends Component {
                     activeOpacity={0.8}
                     onPress={this.onCategoryPress}
                     style={styles.categoryView}>
-                          
+
                     <Text style={styles.categoryText}>
                         {this.props.item.category_Name}
                     </Text>
-                    {this.props.item.expanded &&
+                    {this.state.layoutHeight != 0 &&
                         <Text style={styles.iconStyle} visible={false}>
                             {'^'}
                         </Text>
                     }
 
-                    {!this.props.item.expanded &&
+                    {this.state.layoutHeight == 0 &&
                         <Text style={styles.iconStyle}>
                             {'>'}
                         </Text>
@@ -47,7 +47,7 @@ export class ExpandableListView extends Component {
 
                 </TouchableOpacity>
                 <View style={{ height: this.state.layoutHeight, overflow: 'hidden' }}>
-                    {this.props.item.sub_Category.map((item, key) => (
+                    {this.props.item.sub_Category && this.props.item.sub_Category.map((item, key) => (
                         <TouchableOpacity
                             key={key}
                             style={styles.subCategory}
