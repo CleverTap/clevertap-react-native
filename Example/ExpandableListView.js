@@ -54,7 +54,7 @@ export class ExpandableListView extends Component {
                             style={styles.subCategory}
                             onPress={() => this.props.onItemPress(item)}>
                             <Text style={styles.subCategoryText}>{item.name}</Text>
-                            <View style={{ width: '100%', height: 1, backgroundColor: '#000' }} />
+                            <View style={styles.separator} />
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -92,5 +92,10 @@ const styles = StyleSheet.create({
     },
     subCategoryText: {
         fontSize: 18,
+    },
+    separator: {
+        width: '100%',
+        height: 1,
+        backgroundColor: '#000',
     },
 });
