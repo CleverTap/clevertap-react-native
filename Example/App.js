@@ -61,6 +61,7 @@ export default class App extends Component {
     onSubmit: (data) => {
       let props = Object.fromEntries(data.keyValues.filter(kv=> kv.key != '')
                                                     .map(x => [x.key, x.value]));
+      Utils.showToast(`Recording event with name: ${data.name}`, `props: ${JSON.stringify(props)}`);
       console.log(`Recording event with name: ${data.name} and props: ${JSON.stringify(props)}`);
       CleverTap.recordEvent(data.name, props);
     }
@@ -92,6 +93,7 @@ export default class App extends Component {
         }
 
         console.log(`OnUserLogin: ${JSON.stringify(profile)}`);
+        Utils.showToast(`OnUserLogin: ${data.name}`, JSON.stringify(profile));
         CleverTap.onUserLogin(profile);
       } else {
         if (data.keyValues.length > 0) {
@@ -99,6 +101,7 @@ export default class App extends Component {
           .map(x => [x.key, x.value]));
 
           console.log(`Profile Push: ${JSON.stringify(props)}`);
+          Utils.showToast('Profile Push', JSON.stringify(props));
           CleverTap.profileSet(props);
         }
       }

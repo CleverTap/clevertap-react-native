@@ -6,18 +6,38 @@ import {
 
 const CleverTap = require('clevertap-react-native');
 
-const showAlert = (text1, text2) => {
+const toastsQueue = [];
+var toastIsShowing = false;
+
+export const showToast = (text1, text2) => {
+
+    if (toastIsShowing) {
+        toastsQueue.push([text1, text2]);
+        return;
+    }
+
+    toastIsShowing = true;
+
+    const queueNext = () => {
+        toastIsShowing = false;
+        if (toastsQueue.length > 0) {
+            let item = toastsQueue.shift();
+            showToast(...item);
+        }
+    };
+
     Toast.show({
         type: 'info',
         position: 'bottom',
         visibilityTime: 2000,
         text1: text1,
-        text2: text2 ?? ''
+        text2: text2 ?? '',
+        onHide: queueNext,
     });
 };
 
 export const set_userProfile = () => {
-    alert('User Profile Updated');
+    showToast('User Profile Updated');
 
     CleverTap.profileSet({
         Name: 'testUserA1',
@@ -30,7 +50,7 @@ export const set_userProfile = () => {
 
 // Identity_Management
 export const onUser_Login = () => {
-    alert('User Profile Updated');
+    showToast('User Profile Updated');
 
     // On user Login
     CleverTap.onUserLogin({
@@ -58,21 +78,21 @@ export const getCleverTap_id = () => {
 
 // Location
 export const set_userLocation = () => {
-    alert('User Location set');
+    showToast('User Location set');
 
     CleverTap.setLocation(34.15, -118.2);
 };
 
 // Locale
 export const set_Locale = () => {
-    alert('User Locale set');
+    showToast('User Locale set');
 
     CleverTap.setLocale("en_IN");
 };
 
 // Events
 export const pushevent = () => {
-    alert('Event Recorded');
+    showToast('Event Recorded');
 
     // Recording an Event
     // CleverTap.recordEvent('testEvent');
@@ -82,7 +102,7 @@ export const pushevent = () => {
 };
 
 export const pushChargedEvent = () => {
-    alert('Charged Event Recorded');
+    showToast('Charged Event Recorded');
 
     // Recording an Event
     CleverTap.recordChargedEvent(
@@ -138,7 +158,7 @@ export const get_TotalMessageCount = () => {
     // Get the total message count
     CleverTap.getInboxMessageCount((err, res) => {
         console.log('Total Messages: ', res, err);
-        alert(`Total Messages: \n ${res}`);
+        showToast(`Total Messages: \n ${res}`);
     });
 };
 
@@ -146,7 +166,7 @@ export const get_UnreadMessageCount = () => {
     // Get the count of unread messages
     CleverTap.getInboxMessageUnreadCount((err, res) => {
         console.log('Unread Messages: ', res, err);
-        alert(`Unread Messages: \n ${res}`);
+        showToast(`Unread Messages: \n ${res}`);
     });
 };
 
@@ -154,7 +174,7 @@ export const Get_All_InboxMessages = () => {
     // Get All Inbox Messages
     CleverTap.getAllInboxMessages((err, res) => {
         console.log('All Inbox Messages: ', res, err);
-        alert(`All Inbox Messages: \n ${res}`);
+        showToast(`All Inbox Messages: \n ${res}`);
 
         // Uncomment to print payload data.
         // printInboxMessagesArray(res);
@@ -165,7 +185,7 @@ export const get_All_InboxUnreadMessages = () => {
     // Get all unread messages
     CleverTap.getUnreadInboxMessages((err, res) => {
         console.log('Unread Inbox Messages: ', res, err);
-        alert(`Unread Inbox Messages: \n ${res}`);
+        showToast(`Unread Inbox Messages: \n ${res}`);
 
         // Uncomment to print payload data.
         // printInboxMessagesArray(res);
@@ -176,7 +196,7 @@ export const Get_InboxMessageForId = () => {
     // Get inbox Id
     CleverTap.getInboxMessageForId('Message Id', (err, res) => {
         console.log('marking message read = ' + res);
-        alert(`marking message read: \n ${res}`);
+        showToast(`marking message read: \n ${res}`);
 
         // Uncomment to print payload data.
         // printInboxMessageMap(res);
@@ -184,22 +204,22 @@ export const Get_InboxMessageForId = () => {
 };
 
 export const delete_InboxMessageForId = () => {
-    alert('Check Console for values');
+    showToast('Check Console for values');
     CleverTap.deleteInboxMessageForId('Message Id');
 };
 
 export const markRead_InboxMessageForId = () => {
-    alert('Check Console for values');
+    showToast('Check Console for values');
     CleverTap.markReadInboxMessageForId('Message Id');
 };
 
 export const pushInboxNotificationViewed = () => {
-    alert('Check Console for values');
+    showToast('Check Console for values');
     CleverTap.pushInboxNotificationViewedEventForId('Message Id');
 };
 
 export const pushInboxNotificationClicked = () => {
-    alert('Check Console for values');
+    showToast('Check Console for values');
     CleverTap.pushInboxNotificationClickedEventForId('Message Id');
 };
 
@@ -233,7 +253,7 @@ export const printInboxMessageMap = (inboxMessage) => {
 
 // Push Notifications
 export const create_NotificationChannel = () => {
-    alert('Notification Channel Created');
+    showToast('Notification Channel Created');
     // Creating Notification Channel
     CleverTap.createNotificationChannel(
         'CtRNS',
@@ -259,13 +279,13 @@ export const create_NotificationChannel = () => {
 };
 
 export const delete_NotificationChannel = () => {
-    alert('Notification Channel Deleted');
+    showToast('Notification Channel Deleted');
     // Delete Notification Channel
     CleverTap.deleteNotificationChannel('CtRNS');
 };
 
 export const create_NotificationChannelGroup = () => {
-    alert('Notification Channel Group Created');
+    showToast('Notification Channel Group Created');
     // Creating a group notification channel
     CleverTap.createNotificationChannelGroup(
         'Offers',
@@ -274,13 +294,13 @@ export const create_NotificationChannelGroup = () => {
 };
 
 export const delete_NotificationChannelGroup = () => {
-    alert('Notification Channel Group Deleted');
+    showToast('Notification Channel Group Deleted');
     // Delete a group notification channel
     CleverTap.deleteNotificationChannelGroup('Offers');
 };
 
 export const pushFcmRegistrationId = () => {
-    alert('Registered FCM Id for Push');
+    showToast('Registered FCM Id for Push');
     // Setting up a Push Notification
     if (Platform.OS === 'android') {
         // Use only during custom implementation and make sure that FCM credentials used to generate token are same as CleverTap
@@ -378,7 +398,7 @@ export const createNotificationChannelWithGroupIdAndSound = () => {
 export const getUnitID = () => {
     CleverTap.getDisplayUnitForId('Unit Id', (err, res) => {
         console.log('Get Display Unit for Id:', res, err);
-        alert(`Get Display Unit for Id: ${res}`);
+        showToast(`Get Display Unit for Id: ${res}`);
 
         // Uncomment to access payload.
         // printDisplayUnit(res);
@@ -388,7 +408,7 @@ export const getUnitID = () => {
 export const getAllDisplayUnits = () => {
     CleverTap.getAllDisplayUnits((err, res) => {
         console.log('All Display Units: ', res, err);
-        alert(`All Display Units: ${res}`);
+        showToast(`All Display Units: ${res}`);
 
         // Uncomment to access payload.
         // printDisplayUnitsPayload(res);
@@ -397,7 +417,7 @@ export const getAllDisplayUnits = () => {
 
 // Product Config
 export const productConfig = () => {
-    alert('Product Configuration set to default');
+    showToast('Product Configuration set to default');
     CleverTap.setDefaultsMap({
         text_color: 'red',
         msg_count: 100,
@@ -408,76 +428,68 @@ export const productConfig = () => {
 };
 
 export const fetch = () => {
-    // alert('Check Console for update result');
     CleverTap.fetch();
 };
 
 export const activate = () => {
-    // alert('Check Console for update result');
     CleverTap.activate();
 };
 
 export const fetchAndActivate = () => {
-    // alert('Check Console for update result');
     CleverTap.fetchAndActivate();
 };
 
 export const fetchwithMinIntervalinsec = () => {
-    // alert('Check Console for update result');
     CleverTap.fetchWithMinimumIntervalInSeconds(60);
 };
 
 export const setMinimumFetchIntervalInSeconds = () => {
-    // alert('Check Console for update result');
     CleverTap.setMinimumFetchIntervalInSeconds(60);
 };
 
 export const getBoolean = () => {
     CleverTap.getProductConfigBoolean('is_shown', (err, res) => {
         console.log('PC is_shown val in boolean :', res, err);
-        alert(`PC is_shown val in boolean: ${res}`);
+        showToast(`PC is_shown val in boolean: ${res}`);
     });
 };
 
 export const getLong = () => {
     CleverTap.getNumber('msg_count', (err, res) => {
         console.log('PC is_shown val in number(long)  :', res, err);
-        alert(`PC is_shown val in number(long): ${res}`);
+        showToast(`PC is_shown val in number(long): ${res}`);
     });
 };
 
 export const getDouble = () => {
     CleverTap.getNumber('price', (err, res) => {
         console.log('PC price val in number :', res, err);
-        alert(`PC is_shown val in number(double) : ${res}`);
+        showToast(`PC is_shown val in number(double) : ${res}`);
     });
 };
 
 export const getString = () => {
-    // alert('Check Console for update result');
     CleverTap.getProductConfigString('text_color', (err, res) => {
         console.log('PC text_color val in string :', res, err);
-        alert(`PC is_shown val in String : ${res}`);
+        showToast(`PC is_shown val in String : ${res}`);
     });
 };
 
 export const getStrings = () => {
-    // alert('Check Console for update result');
     CleverTap.getProductConfigString('json', (err, res) => {
         console.log('PC json val in string :', res, err);
-        alert(`PC json val in String: ${res}`);
+        showToast(`PC json val in String: ${res}`);
     });
 };
 
 export const reset_config = () => {
-    // alert('Check Console for update result');
     CleverTap.resetProductConfig();
 };
 
 export const getLastFetchTimeStampInMillis = () => {
     CleverTap.getLastFetchTimeStampInMillis((err, res) => {
         console.log('LastFetchTimeStampInMillis in string: ', res, err);
-        alert(`LastFetchTimeStampInMillis in string: ${res}`);
+        showToast(`LastFetchTimeStampInMillis in string: ${res}`);
     });
 };
 
@@ -485,14 +497,14 @@ export const getLastFetchTimeStampInMillis = () => {
 export const getFeatureFlag = () => {
     CleverTap.getFeatureFlag('is_dark_mode', false, (err, res) => {
         console.log('FF is_dark_mode val in boolean :', res, err);
-        alert(`FF is_dark_mode val in boolean: ${res}`);
+        showToast(`FF is_dark_mode val in boolean: ${res}`);
     });
 };
 
 // App Personalisation
 export const enablePersonalization = () => {
     CleverTap.enablePersonalization();
-    alert('enabled Personalization');
+    showToast('Personalization enabled');
 };
 
 // Attributions
@@ -501,13 +513,14 @@ export const GetCleverTapAttributionIdentifier = () => {
     // Default Instance
     CleverTap.profileGetCleverTapAttributionIdentifier((err, res) => {
         console.log('CleverTapAttributionIdentifier', res, err);
-        alert(`CleverTapAttributionIdentifier: ${res}`);
+        showToast(`CleverTapAttributionIdentifier: ${res}`);
     });
 };
 
 // CleverTap Listeners
 export const _handleOpenUrl = (event, from) => {
     console.log('handleOpenUrl', event.url, from);
+    showToast(`handleOpenUrl: ${event.url}, ${from}`);
 };
 
 export const removeCleverTapAPIListeners = () => {
@@ -528,7 +541,7 @@ export const removeCleverTapAPIListeners = () => {
     CleverTap.removeListener(CleverTap.CleverTapProductConfigDidActivate);
     CleverTap.removeListener(CleverTap.CleverTapPushNotificationClicked);
     CleverTap.removeListener(CleverTap.CleverTapPushPermissionResponseReceived);
-    alert('Listeners removed successfully');
+    showToast('Listeners removed successfully');
 };
 
 export const addCleverTapAPIListeners = (fromClick) => {
@@ -619,14 +632,14 @@ export const addCleverTapAPIListeners = (fromClick) => {
         },
     );
     if (fromClick) {
-        alert('Listeners added successfully');
+        showToast('Listeners added successfully');
     }
 };
 
 // CleverTap Event Handlers
 export const _handleCleverTapEvent = (eventName, event) => {
     console.log('handleCleverTapEvent', eventName, event);
-    showAlert(`${eventName} called!`);
+    showToast(`${eventName} called!`);
 
     // Uncomment to access payload for each events.
     // if (eventName == 'CleverTapProfileDidInitialize') {
@@ -639,7 +652,7 @@ export const _handleCleverTapEvent = (eventName, event) => {
 
 export const _handleCleverTapInboxEvent = (eventName, event) => {
     console.log('handleCleverTapInbox', eventName, event);
-    showAlert(`${eventName} called!`);
+    showToast(`${eventName} called!`);
 
     // Uncomment to access payload for each events.
     // if (eventName == CleverTap.CleverTapInboxMessageTapped) {
@@ -714,7 +727,7 @@ export const _dismissAppInbox = () => {
 
 export const _handleCleverTapInAppEvent = (eventName, event) => {
     console.log('handleCleverTapInApp', eventName, event);
-    showAlert(`${eventName} called!`);
+    showToast(`${eventName} called!`);
 
     // Uncomment to access payload for each events.
     // if (eventName == 'CleverTapInAppNotificationButtonTapped') {
@@ -743,7 +756,7 @@ export const _handleCleverTapInAppEvent = (eventName, event) => {
 
 export const _handleCleverTapPushEvent = (eventName, event) => {
     console.log('handleCleverTapPush', eventName, event);
-    showAlert(`${JSON.stringify(eventName)} called!`);
+    showToast(`${JSON.stringify(eventName)} called!`);
 
     // Uncomment to access payload for each events.
     // if (eventName == 'CleverTapPushNotificationClicked') {
@@ -760,7 +773,7 @@ export const _handleCleverTapPushEvent = (eventName, event) => {
 
 export const _handleCleverTapDisplayUnitsLoaded = (eventName, event) => {
     console.log('handleCleverTapDisplayUnitsLoaded', eventName, event);
-    showAlert(`${eventName} called!`);
+    showToast(`${eventName} called!`);
 
     let data = event['displayUnits'];
 
