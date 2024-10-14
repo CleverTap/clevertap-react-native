@@ -1,10 +1,20 @@
+import Toast from 'react-native-toast-message';
 import {
-    ToastAndroid,
     Platform,
     Linking
   } from 'react-native';
 
 const CleverTap = require('clevertap-react-native');
+
+const showAlert = (text1, text2) => {
+    Toast.show({
+        type: 'info',
+        position: 'bottom',
+        visibilityTime: 2000,
+        text1: text1,
+        text2: text2 ?? ''
+      });
+};
 
 export const set_userProfile = () => {
     alert('User Profile Updated');
@@ -664,7 +674,7 @@ export const set_userProfile = () => {
   
   export const _handleCleverTapEvent = (eventName, event) => {
     console.log('handleCleverTapEvent', eventName, event);
-    ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
+    showAlert(`${eventName} called!`);
   
     // Uncomment to access payload for each events.
     // if (eventName == 'CleverTapProfileDidInitialize') {
@@ -677,7 +687,7 @@ export const set_userProfile = () => {
   
   export const _handleCleverTapInboxEvent = (eventName, event) => {
     console.log('handleCleverTapInbox', eventName, event);
-    ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
+    showAlert(`${eventName} called!`);
   
     // Uncomment to access payload for each events.
     // if (eventName == CleverTap.CleverTapInboxMessageTapped) {
@@ -752,7 +762,7 @@ export const set_userProfile = () => {
   
   export const _handleCleverTapInAppEvent = (eventName, event) => {
     console.log('handleCleverTapInApp', eventName, event);
-    ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
+    showAlert(`${eventName} called!`);
   
     // Uncomment to access payload for each events.
     // if (eventName == 'CleverTapInAppNotificationButtonTapped') {
@@ -781,7 +791,7 @@ export const set_userProfile = () => {
   
   export const _handleCleverTapPushEvent = (eventName, event) => {
     console.log('handleCleverTapPush', eventName, event);
-    ToastAndroid.show(`${JSON.stringify(eventName)} called!`, ToastAndroid.SHORT);
+    showAlert(`${JSON.stringify(eventName)} called!`);
   
     // Uncomment to access payload for each events.
     // if (eventName == 'CleverTapPushNotificationClicked') {
@@ -798,7 +808,8 @@ export const set_userProfile = () => {
   
   export const _handleCleverTapDisplayUnitsLoaded = (eventName, event) => {
     console.log('handleCleverTapDisplayUnitsLoaded', eventName, event);
-    ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
+    showAlert(`${eventName} called!`);
+
     let data = event['displayUnits'];
   
     // Uncomment to access payload.

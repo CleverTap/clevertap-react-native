@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
+import Toast from 'react-native-toast-message';
 import {
-  Alert,
   StyleSheet,
   View,
   Text,
@@ -801,6 +801,8 @@ export default class App extends Component {
         </ScrollView>
         {/* The CustomTemplate shows a modal only when a Custom Template or App Function is triggered */}
         <CustomTemplate />
+        {/* Toast for showing messages */}
+        <Toast />
       </View>
     );
   }
