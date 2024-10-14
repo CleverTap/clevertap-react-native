@@ -14,7 +14,7 @@ import CustomTemplate from './CustomTemplate';
 import DynamicForm from './DynamicForm';
 import { ExpandableListView } from './ExpandableListView';
 import { Actions } from './constants';
-import * as Utils from './utils';
+import * as AppUtils from './app-utils';
 
 const CleverTap = require('clevertap-react-native');
 
@@ -29,7 +29,7 @@ export default class App extends Component {
     CleverTap.setDebugLevel(3);
 
     // Add CleverTap listeners
-    Utils.addCleverTapAPIListeners(false);
+    AppUtils.addCleverTapAPIListeners(false);
 
     // iOS push notification registration
     CleverTap.registerForPush();
@@ -38,17 +38,17 @@ export default class App extends Component {
     CleverTap.initializeInbox();
 
     // Deep link listener
-    Linking.addEventListener('url', Utils._handleOpenUrl);
+    Linking.addEventListener('url', AppUtils._handleOpenUrl);
     Linking.getInitialURL().then((url) => {
       if (url) {
-        Utils._handleOpenUrl({ url });
+        AppUtils._handleOpenUrl({ url });
       }
     }).catch((err) => console.error('launch url error', err));
 
     // Check CleverTap deep link
     CleverTap.getInitialUrl((err, url) => {
       if (url) {
-        Utils._handleOpenUrl({ url }, 'CleverTap');
+        AppUtils._handleOpenUrl({ url }, 'CleverTap');
       }
     });
 
@@ -73,7 +73,7 @@ export default class App extends Component {
     onSubmit: (data) => {
       let props = Object.fromEntries(data.keyValues.filter(kv=> kv.key != '')
                                                     .map(x => [x.key, x.value]));
-      Utils.showToast(`Recording event with name: ${data.name}`, `props: ${JSON.stringify(props)}`);
+      AppUtils.showToast(`Recording event with name: ${data.name}`, `props: ${JSON.stringify(props)}`);
       console.log(`Recording event with name: ${data.name} and props: ${JSON.stringify(props)}`);
       CleverTap.recordEvent(data.name, props);
     }
@@ -105,7 +105,7 @@ export default class App extends Component {
         }
 
         console.log(`OnUserLogin: ${JSON.stringify(profile)}`);
-        Utils.showToast(`OnUserLogin: ${data.name}`, JSON.stringify(profile));
+        AppUtils.showToast(`OnUserLogin: ${data.name}`, JSON.stringify(profile));
         CleverTap.onUserLogin(profile);
       } else {
         if (data.keyValues.length > 0) {
@@ -113,7 +113,7 @@ export default class App extends Component {
           .map(x => [x.key, x.value]));
 
           console.log(`Profile Push: ${JSON.stringify(props)}`);
-          Utils.showToast('Profile Push', JSON.stringify(props));
+          AppUtils.showToast('Profile Push', JSON.stringify(props));
           CleverTap.profileSet(props);
         }
       }
@@ -385,7 +385,7 @@ export default class App extends Component {
   handleItemAction = (item) => {
     switch (item.action) {
       case Actions.SET_USER_PROFILE:
-        Utils.set_userProfile();
+        AppUtils.set_userProfile();
         break;
       case Actions.SET_MULTI_VALUES:
         CleverTap.profileSetMultiValuesForKey(['a', 'b', 'c'], 'letters');
@@ -413,133 +413,133 @@ export default class App extends Component {
         );
         break;
       case Actions.USER_LOGIN:
-        Utils.onUser_Login();
+        AppUtils.onUser_Login();
         break;
       case Actions.CLEVERTAP_ID:
-        Utils.getCleverTap_id();
+        AppUtils.getCleverTap_id();
         break;
       case Actions.USER_LOCATION:
-        Utils.set_userLocation();
+        AppUtils.set_userLocation();
         break;
       case Actions.USER_LOCALE:
-        Utils.set_Locale();
+        AppUtils.set_Locale();
         break;
       case Actions.INITIALIZE_INBOX:
         CleverTap.initializeInbox();
         break;
       case Actions.SHOW_INBOX:
-        Utils.show_appInbox();
+        AppUtils.show_appInbox();
         break;
       case Actions.SHOW_INBOX_TABS:
-        Utils.show_appInboxwithTabs();
+        AppUtils.show_appInboxwithTabs();
         break;
       case Actions.INBOX_TOTAL_MESSAGE_COUNT:
-        Utils.get_TotalMessageCount();
+        AppUtils.get_TotalMessageCount();
         break;
       case Actions.INBOX_UNREAD_MESSAGE_COUNT:
-        Utils.get_UnreadMessageCount();
+        AppUtils.get_UnreadMessageCount();
         break;
       case Actions.INBOX_ALL_MESSAGES:
-        Utils.Get_All_InboxMessages();
+        AppUtils.Get_All_InboxMessages();
         break;
       case Actions.INBOX_UNREAD_MESSAGES:
-        Utils.get_All_InboxUnreadMessages();
+        AppUtils.get_All_InboxUnreadMessages();
         break;
       case Actions.INBOX_MESSAGE_FOR_ID:
-        Utils.Get_InboxMessageForId();
+        AppUtils.Get_InboxMessageForId();
         break;
       case Actions.INBOX_DELETE_MESSAGE_FOR_ID:
-        Utils.delete_InboxMessageForId();
+        AppUtils.delete_InboxMessageForId();
         break;
       case Actions.INBOX_READ_MESSAGE_FOR_ID:
-        Utils.markRead_InboxMessageForId();
+        AppUtils.markRead_InboxMessageForId();
         break;
       case Actions.INBOX_NOTIFICATION_VIEWED:
-        Utils.pushInboxNotificationViewed();
+        AppUtils.pushInboxNotificationViewed();
         break;
       case Actions.INBOX_NOTIFICATION_CLICKED:
-        Utils.pushInboxNotificationClicked();
+        AppUtils.pushInboxNotificationClicked();
         break;
       case Actions.PUSH_EVENT:
-        Utils.pushevent();
+        AppUtils.pushevent();
         break;
       case Actions.PUSH_CHARGED_EVENT:
-        Utils.pushChargedEvent();
+        AppUtils.pushChargedEvent();
         break;
       case Actions.SET_DEBUG:
         CleverTap.setDebugLevel(3);
         break;
       case Actions.CREATE_NOTIFICATION_GROUP:
-        Utils.create_NotificationChannelGroup();
+        AppUtils.create_NotificationChannelGroup();
         break;
       case Actions.CREATE_NOTIFICATION_CHANNEL:
-        Utils.create_NotificationChannel();
+        AppUtils.create_NotificationChannel();
         break;
       case Actions.DELETE_NOTIFICATION_CHANNEL:
-        Utils.delete_NotificationChannel();
+        AppUtils.delete_NotificationChannel();
         break;
       case Actions.DELETE_NOTIFICATION_GROUP:
-        Utils.delete_NotificationChannelGroup();
+        AppUtils.delete_NotificationChannelGroup();
         break;
       case Actions.PUSH_FCM:
-        Utils.pushFcmRegistrationId();
+        AppUtils.pushFcmRegistrationId();
         break;
       case Actions.CREATE_NOTIFICATION:
-        Utils.create_notification();
+        AppUtils.create_notification();
         break;
       case Actions.CREATE_NOTIFICATION_CHANNEL_WITH_SOUND:
-        Utils.createNotificationChannelWithSound();
+        AppUtils.createNotificationChannelWithSound();
         break;
       case Actions.CREATE_NOTIFICATION_CHANNEL_WITH_GROUP:
-        Utils.createNotificationChannelWithGroupId();
+        AppUtils.createNotificationChannelWithGroupId();
         break;
       case Actions.CREATE_NOTIFICATION_CHANNEL_WITH_GROUP_AND_SOUND:
-        Utils.createNotificationChannelWithGroupIdAndSound();
+        AppUtils.createNotificationChannelWithGroupIdAndSound();
         break;
       case Actions.DISPLAY_UNIT_ID:
-        Utils.getUnitID();
+        AppUtils.getUnitID();
         break;
       case Actions.ALL_DISPLAY_UNITS:
-        Utils.getAllDisplayUnits();
+        AppUtils.getAllDisplayUnits();
         break;
       case Actions.PRODUCT_CONFIG_FETCH:
-        Utils.fetch();
+        AppUtils.fetch();
         break;
       case Actions.PRODUCT_CONFIG_ACTIVATE:
-        Utils.activate();
+        AppUtils.activate();
         break;
       case Actions.PRODUCT_CONFIG_FETCH_AND_ACTIVATE:
-        Utils.fetchAndActivate();
+        AppUtils.fetchAndActivate();
         break;
       case Actions.PRODUCT_CONFIG_FETCH_INTERVAL:
-        Utils.fetchwithMinIntervalinsec();
+        AppUtils.fetchwithMinIntervalinsec();
         break;
       case Actions.PRODUCT_CONFIG_SET_INTERVAL:
-        Utils.setMinimumFetchIntervalInSeconds();
+        AppUtils.setMinimumFetchIntervalInSeconds();
         break;
       case Actions.PRODUCT_CONFIG_GET_BOOL:
-        Utils.getBoolean();
+        AppUtils.getBoolean();
         break;
       case Actions.PRODUCT_CONFIG_GET_DOUBLE:
-        Utils.getDouble();
+        AppUtils.getDouble();
         break;
       case Actions.PRODUCT_CONFIG_GET_LONG:
-        Utils.getLong();
+        AppUtils.getLong();
         break;
       case Actions.PRODUCT_CONFIG_GET_STRING:
-        Utils.getString();
+        AppUtils.getString();
         break;
       case Actions.PRODUCT_CONFIG_GET_STRINGS:
-        Utils.getStrings();
+        AppUtils.getStrings();
         break;
       case Actions.PRODUCT_CONFIG_RESET:
-        Utils.reset_config();
+        AppUtils.reset_config();
         break;
       case Actions.PRODUCT_CONFIG_LAST_FETCH_TS:
-        Utils.getLastFetchTimeStampInMillis();
+        AppUtils.getLastFetchTimeStampInMillis();
         break;
       case Actions.GET_FEATURE_FLAG:
-        Utils.getFeatureFlag();
+        AppUtils.getFeatureFlag();
         break;
       case Actions.IN_APPS_SUSPEND:
         CleverTap.suspendInAppNotifications();
@@ -551,10 +551,10 @@ export default class App extends Component {
         CleverTap.resumeInAppNotifications();
         break;
       case Actions.ENABLE_PERSONALIZATION:
-        Utils.enablePersonalization();
+        AppUtils.enablePersonalization();
         break;
       case Actions.ATTRIBUTION_IDENTIFIER:
-        Utils.GetCleverTapAttributionIdentifier();
+        AppUtils.GetCleverTapAttributionIdentifier();
         break;
       case Actions.OPT_OUT:
         CleverTap.setOptOut(false);
@@ -563,10 +563,10 @@ export default class App extends Component {
         CleverTap.enableDeviceNetworkInfoReporting(true);
         break;
       case Actions.ADD_CLEVERTAP_LISTENERS:
-        Utils.addCleverTapAPIListeners(true);
+        AppUtils.addCleverTapAPIListeners(true);
         break;
       case Actions.REMOVE_CLEVERTAP_LISTENERS:
-        Utils.removeCleverTapAPIListeners();
+        AppUtils.removeCleverTapAPIListeners();
         break;
       case Actions.RECORD_EVENT:
         console.log('name: ', item.name);
