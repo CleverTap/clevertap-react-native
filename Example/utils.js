@@ -203,7 +203,35 @@ export const pushInboxNotificationClicked = () => {
     CleverTap.pushInboxNotificationClickedEventForId('Message Id');
 };
 
-// Push Notification
+export const printInboxMessagesArray = (data) => {
+    if (data != null) {
+        console.log('Total Inbox Message count = ' + data.length);
+        data.forEach(inboxMessage => {
+            printInboxMessageMap(inboxMessage);
+        });
+    }
+};
+
+export const printInboxMessageMap = (inboxMessage) => {
+    if (inboxMessage != null) {
+        console.log('Inbox Message wzrk_id = ' + inboxMessage['wzrk_id']);
+        let msg = inboxMessage['msg'];
+        console.log('Type of Inbox = ' + msg['type']);
+        let content = msg['content'];
+        content.forEach(element => {
+            let title = element['title'];
+            let message = element['message'];
+            console.log('Inbox Message Title = ' + title['text'] + ' and message = ' + message['text']);
+            let action = element['action'];
+            let links = action['links'];
+            links.forEach(link => {
+                console.log('Inbox Message have link type = ' + link['type']);
+            });
+        });
+    }
+};
+
+// Push Notifications
 export const create_NotificationChannel = () => {
     alert('Notification Channel Created');
     // Creating Notification Channel
@@ -287,6 +315,63 @@ export const create_notification = () => {
         wzrk_id: '1624627506_20210625',
         wzrk_pn: true,
     });
+};
+
+export const createNotificationChannelWithSound = () => {
+    // https://developer.clevertap.com/docs/add-a-sound-file-to-your-android-app
+
+    CleverTap.createNotificationChannelWithSound(
+        'CtRNS',
+        'Clever Tap React Native Testing',
+        'CT React Native Testing',
+        1,
+        true,
+        'glitch.mp3',
+    );
+};
+
+export const createNotificationChannelWithGroupId = () => {
+    // https://developer.clevertap.com/docs/android#section-push-notifications-for-android-o
+
+    CleverTap.createNotificationChannelWithGroupId(
+        'offersMonthly',
+        'Monthly Offers',
+        'Offers given at every month',
+        1,
+        'Offers',
+        true,
+    );
+    CleverTap.createNotificationChannelWithGroupId(
+        'offersQuarterly',
+        'Quarterly Offers',
+        'Offers given at every Quarter',
+        1,
+        'Offers',
+        true,
+    );
+};
+
+export const createNotificationChannelWithGroupIdAndSound = () => {
+    // https://developer.clevertap.com/docs/android#section-push-notifications-for-android-o
+
+    CleverTap.createNotificationChannelWithGroupIdAndSound(
+        'offersMonthly',
+        'Monthly Offers',
+        'Offers given at every month',
+        1,
+        'Offers',
+        true,
+        'glitch.mp3',
+    );
+    CleverTap.createNotificationChannelWithGroupIdAndSound(
+        'offersQuarterly',
+        'Quarterly Offers',
+        'Offers given at every Quarter',
+        1,
+        'Offers',
+        true,
+        'glitch.mp3',
+    );
 };
 
 // Native Display
@@ -420,34 +505,7 @@ export const GetCleverTapAttributionIdentifier = () => {
     });
 };
 
-export const printInboxMessagesArray = (data) => {
-    if (data != null) {
-        console.log('Total Inbox Message count = ' + data.length);
-        data.forEach(inboxMessage => {
-            printInboxMessageMap(inboxMessage);
-        });
-    }
-};
-
-export const printInboxMessageMap = (inboxMessage) => {
-    if (inboxMessage != null) {
-        console.log('Inbox Message wzrk_id = ' + inboxMessage['wzrk_id']);
-        let msg = inboxMessage['msg'];
-        console.log('Type of Inbox = ' + msg['type']);
-        let content = msg['content'];
-        content.forEach(element => {
-            let title = element['title'];
-            let message = element['message'];
-            console.log('Inbox Message Title = ' + title['text'] + ' and message = ' + message['text']);
-            let action = element['action'];
-            let links = action['links'];
-            links.forEach(link => {
-                console.log('Inbox Message have link type = ' + link['type']);
-            });
-        });
-    }
-};
-
+// CleverTap Listeners
 export const _handleOpenUrl = (event, from) => {
     console.log('handleOpenUrl', event.url, from);
 };
@@ -474,7 +532,7 @@ export const removeCleverTapAPIListeners = () => {
 };
 
 export const addCleverTapAPIListeners = (fromClick) => {
-    // Optional: add listeners for CleverTap Events
+    // Add listeners for CleverTap Events
     CleverTap.addListener(CleverTap.CleverTapProfileDidInitialize, event => {
         _handleCleverTapEvent(CleverTap.CleverTapProfileDidInitialize, event);
     });
@@ -565,63 +623,7 @@ export const addCleverTapAPIListeners = (fromClick) => {
     }
 };
 
-export const createNotificationChannelWithSound = () => {
-    // https://developer.clevertap.com/docs/add-a-sound-file-to-your-android-app
-
-    CleverTap.createNotificationChannelWithSound(
-        'CtRNS',
-        'Clever Tap React Native Testing',
-        'CT React Native Testing',
-        1,
-        true,
-        'glitch.mp3',
-    );
-};
-
-export const createNotificationChannelWithGroupId = () => {
-    // https://developer.clevertap.com/docs/android#section-push-notifications-for-android-o
-
-    CleverTap.createNotificationChannelWithGroupId(
-        'offersMonthly',
-        'Monthly Offers',
-        'Offers given at every month',
-        1,
-        'Offers',
-        true,
-    );
-    CleverTap.createNotificationChannelWithGroupId(
-        'offersQuarterly',
-        'Quarterly Offers',
-        'Offers given at every Quarter',
-        1,
-        'Offers',
-        true,
-    );
-};
-
-export const createNotificationChannelWithGroupIdAndSound = () => {
-    // https://developer.clevertap.com/docs/android#section-push-notifications-for-android-o
-
-    CleverTap.createNotificationChannelWithGroupIdAndSound(
-        'offersMonthly',
-        'Monthly Offers',
-        'Offers given at every month',
-        1,
-        'Offers',
-        true,
-        'glitch.mp3',
-    );
-    CleverTap.createNotificationChannelWithGroupIdAndSound(
-        'offersQuarterly',
-        'Quarterly Offers',
-        'Offers given at every Quarter',
-        1,
-        'Offers',
-        true,
-        'glitch.mp3',
-    );
-};
-
+// CleverTap Event Handlers
 export const _handleCleverTapEvent = (eventName, event) => {
     console.log('handleCleverTapEvent', eventName, event);
     showAlert(`${eventName} called!`);
