@@ -25,9 +25,16 @@ export default class App extends Component {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
 
+    // Enable debug logs
     CleverTap.setDebugLevel(3);
-    CleverTap.registerForPush(); // iOS push notification registration
+
+    // Add CleverTap listeners
     Utils.addCleverTapAPIListeners(false);
+
+    // iOS push notification registration
+    CleverTap.registerForPush();
+
+    // Initialize App Inbox
     CleverTap.initializeInbox();
 
     // Deep link listener
@@ -45,7 +52,12 @@ export default class App extends Component {
       }
     });
 
-    this.state = { AccordionData: [...this.accordionData], EventFormConfig: this.eventFormConfig, ProfileFormConfig: this.profileFormConfig };
+    // Set initial state
+    this.state = {
+      AccordionData: [...this.accordionData],
+      EventFormConfig: this.eventFormConfig,
+      ProfileFormConfig: this.profileFormConfig
+    };
   }
 
   eventFormConfig = {
@@ -110,6 +122,41 @@ export default class App extends Component {
 
   accordionData = [
     {
+      category_Name: 'User Properties',
+      sub_Category: [
+        { action: Actions.SET_USER_PROFILE, name: 'pushProfile' },
+        { action: Actions.SET_MULTI_VALUES, name: 'set Multi Values For Key' },
+        {
+          action: Actions.REMOVE_MULTI_VALUE,
+          name: 'removeMultiValueForKey',
+        },
+        { action: Actions.ADD_MULTI_VALUE, name: 'addMultiValueForKey' },
+        { action: Actions.INCREMENT_VALUE, name: 'Increment Value' },
+        { action: Actions.DECREMENT_VALUE, name: 'Decrement Value' },
+      ],
+    },
+    {
+      category_Name: 'Identity Management',
+      sub_Category: [
+        { action: Actions.USER_LOGIN, name: 'onUserLogin' },
+        { action: Actions.CLEVERTAP_ID, name: 'getCleverTapID' },
+      ],
+    },
+    {
+      category_Name: 'Location ',
+      sub_Category: [
+        { action: Actions.USER_LOCATION, name: 'setLocation' },
+        { action: Actions.USER_LOCALE, name: 'setLocale' },
+      ],
+    },
+    {
+      category_Name: 'Events',
+      sub_Category: [
+        { action: Actions.PUSH_EVENT, name: 'pushEvent' },
+        { action: Actions.PUSH_CHARGED_EVENT, name: 'pushChargedEvent' },
+      ],
+    },
+    {
       category_Name: 'Product Experiences: Vars',
       sub_Category: [
         {
@@ -143,39 +190,20 @@ export default class App extends Component {
       ],
     },
     {
-      category_Name: 'Client Side InApps',
+      category_Name: 'Push Notifications',
       sub_Category: [
-        { action: Actions.FETCH_INAPPS, name: 'Fetch Client Side InApps' },
-        { action: Actions.CLEAR_INAPPS, name: 'Clear All InApp Resources' },
-        { action: Actions.CLEAR_INAPPS_EXPIRED, name: 'Clear Expired Only InApp Resources' }
-      ],
-    },
-    {
-      category_Name: 'User Properties',
-      sub_Category: [
-        { action: Actions.SET_USER_PROFILE, name: 'pushProfile' },
-        { action: Actions.SET_MULTI_VALUES, name: 'set Multi Values For Key' },
+        { action: Actions.CREATE_NOTIFICATION_GROUP, name: 'createNotificationChannelGroup' },
+        { action: Actions.CREATE_NOTIFICATION_CHANNEL, name: 'createNotificationChannel' },
+        { action: Actions.DELETE_NOTIFICATION_CHANNEL, name: 'deleteNotificationChannel' },
         {
-          action: Actions.REMOVE_MULTI_VALUE,
-          name: 'removeMultiValueForKey',
+          action: Actions.DELETE_NOTIFICATION_GROUP,
+          name: 'deleteNotificationChannelGroup',
         },
-        { action: Actions.ADD_MULTI_VALUE, name: 'addMultiValueForKey' },
-        { action: Actions.INCREMENT_VALUE, name: 'Increment Value' },
-        { action: Actions.DECREMENT_VALUE, name: 'Decrement Value' },
-      ],
-    },
-    {
-      category_Name: 'Identity Management',
-      sub_Category: [
-        { action: Actions.USER_LOGIN, name: 'onUserLogin' },
-        { action: Actions.CLEVERTAP_ID, name: 'getCleverTapID' },
-      ],
-    },
-    {
-      category_Name: 'Location ',
-      sub_Category: [
-        { action: Actions.USER_LOCATION, name: 'setLocation' },
-        { action: Actions.USER_LOCALE, name: 'setLocale' },
+        { action: Actions.PUSH_FCM, name: 'pushFcmRegistrationId' },
+        { action: Actions.CREATE_NOTIFICATION, name: 'createNotification' },
+        { action: Actions.CREATE_NOTIFICATION_CHANNEL_WITH_SOUND, name: 'createNotificationChannelWithSound' },
+        { action: Actions.CREATE_NOTIFICATION_CHANNEL_WITH_GROUP, name: 'createNotificationChannelWithGroupId' },
+        { action: Actions.CREATE_NOTIFICATION_CHANNEL_WITH_GROUP_AND_SOUND, name: 'createNotificationChannelWithGroupIdAndSound' },
       ],
     },
     {
@@ -205,31 +233,70 @@ export default class App extends Component {
       ],
     },
     {
-      category_Name: 'Events',
+      category_Name: 'Push Templates',
       sub_Category: [
-        { action: Actions.PUSH_EVENT, name: 'pushEvent' },
-        { action: Actions.PUSH_CHARGED_EVENT, name: 'pushChargedEvent' },
+        { action: Actions.RECORD_EVENT, name: 'Send Basic Push' },
+        { action: Actions.RECORD_EVENT, name: 'Send Carousel Push' },
+        { action: Actions.RECORD_EVENT, name: 'Send Manual Carousel Push' },
+        { action: Actions.RECORD_EVENT, name: 'Send Filmstrip Carousel Push' },
+        { action: Actions.RECORD_EVENT, name: 'Send Rating Push' },
+        { action: Actions.RECORD_EVENT, name: 'Send Product Display Notification' },
+        { action: Actions.RECORD_EVENT, name: 'Send Linear Product Display Push' },
+        { action: Actions.RECORD_EVENT, name: 'Send CTA Notification' },
+        { action: Actions.RECORD_EVENT, name: 'Send Zero Bezel Notification' },
+        { action: Actions.RECORD_EVENT, name: 'Send Zero Bezel Text Only Notification' },
+        { action: Actions.RECORD_EVENT, name: 'Send Timer Notification' },
+        { action: Actions.RECORD_EVENT, name: 'Send Input Box Notification' },
+        { action: Actions.RECORD_EVENT, name: 'Send Input Box Reply with Event Notification' },
+        {
+          action: Actions.RECORD_EVENT,
+          name: 'Send Input Box Reply with Auto Open Notification',
+        },
+        { action: Actions.RECORD_EVENT, name: 'Send Input Box Remind Notification DOC FALSE' },
+        { action: Actions.RECORD_EVENT, name: 'Send Input Box CTA DOC true' },
+        { action: Actions.RECORD_EVENT, name: 'Send Input Box CTA DOC false' },
+        { action: Actions.RECORD_EVENT, name: 'Send Input Box Reminder DOC true' },
+        { action: Actions.RECORD_EVENT, name: 'Send Input Box Reminder DOC false' },
       ],
     },
     {
-      category_Name: 'Enable Debugging',
-      sub_Category: [{ action: Actions.SET_DEBUG, name: 'Set Debug Level' }],
+      category_Name: 'Push Primer Local InApp',
+      sub_Category: [
+        { action: Actions.PUSH_PRIMER_HALF_INTERSTITIAL, name: 'Half-Interstitial Local IAM' },
+        { action: Actions.PUSH_PRIMER_HALF_INTERSTITIAL_IMAGE, name: 'Half-Interstitial Local IAM with image URL' },
+        {
+          action: Actions.PUSH_PRIMER_HALF_INTERSTITIAL_FALLBACK,
+          name: 'Half-Interstitial Local IAM with fallbackToSettings - true',
+        },
+        { action: Actions.PUSH_PRIMER_ALERT, name: 'Alert Local IAM' },
+        {
+          action: Actions.PUSH_PRIMER_ALERT_ORIENTATION,
+          name: 'Alert Local IAM with followDeviceOrientation - false',
+        },
+        { action: Actions.PUSH_PRIMER_ALERT_FALLBACK, name: 'Alert Local IAM with fallbackToSettings - true' },
+        {
+          action: Actions.HARD_PERMISSION,
+          name: 'Hard permission dialog with fallbackToSettings - false',
+        },
+        {
+          action: Actions.HARD_PERMISSION_FALLBACK,
+          name: 'Hard permission dialog with fallbackToSettings - true',
+        },
+      ],
     },
     {
-      category_Name: 'Push Notifications',
+      category_Name: 'InApp Controls',
       sub_Category: [
-        { action: Actions.CREATE_NOTIFICATION_GROUP, name: 'createNotificationChannelGroup' },
-        { action: Actions.CREATE_NOTIFICATION_CHANNEL, name: 'createNotificationChannel' },
-        { action: Actions.DELETE_NOTIFICATION_CHANNEL, name: 'deleteNotificationChannel' },
-        {
-          action: Actions.DELETE_NOTIFICATION_GROUP,
-          name: 'deleteNotificationChannelGroup',
-        },
-        { action: Actions.PUSH_FCM, name: 'pushFcmRegistrationId' },
-        { action: Actions.CREATE_NOTIFICATION, name: 'createNotification' },
-        { action: Actions.CREATE_NOTIFICATION_CHANNEL_WITH_SOUND, name: 'createNotificationChannelWithSound' },
-        { action: Actions.CREATE_NOTIFICATION_CHANNEL_WITH_GROUP, name: 'createNotificationChannelWithGroupId' },
-        { action: Actions.CREATE_NOTIFICATION_CHANNEL_WITH_GROUP_AND_SOUND, name: 'createNotificationChannelWithGroupIdAndSound' },
+        { action: Actions.IN_APPS_SUSPEND, name: 'suspendInAppNotifications' },
+        { action: Actions.IN_APPS_DISCARD, name: 'discardInAppNotifications' },
+        { action: Actions.IN_APPS_RESUME, name: 'resumeInAppNotifications' },
+      ],
+    },
+    {
+      category_Name: 'Custom Templates',
+      sub_Category: [
+        { action: Actions.SYNC_CUSTOM_TEMPLATES, name: 'Sync Custom Templates' },
+        { action: Actions.SYNC_CUSTOM_TEMPLATES_PROD, name: 'Sync Custom Templates In Prod' }
       ],
     },
     {
@@ -237,6 +304,14 @@ export default class App extends Component {
       sub_Category: [
         { action: Actions.DISPLAY_UNIT_ID, name: 'getUnitID' },
         { action: Actions.ALL_DISPLAY_UNITS, name: 'getAllDisplayUnits' },
+      ],
+    },
+    {
+      category_Name: 'Client Side InApps',
+      sub_Category: [
+        { action: Actions.FETCH_INAPPS, name: 'Fetch Client Side InApps' },
+        { action: Actions.CLEAR_INAPPS, name: 'Clear All InApp Resources' },
+        { action: Actions.CLEAR_INAPPS_EXPIRED, name: 'Clear Expired Only InApp Resources' }
       ],
     },
     {
@@ -270,17 +345,16 @@ export default class App extends Component {
       sub_Category: [{ action: Actions.GET_FEATURE_FLAG, name: 'getFeatureFlag' }],
     },
     {
-      category_Name: 'InApp Controls',
-      sub_Category: [
-        { action: Actions.IN_APPS_SUSPEND, name: 'suspendInAppNotifications' },
-        { action: Actions.IN_APPS_DISCARD, name: 'discardInAppNotifications' },
-        { action: Actions.IN_APPS_RESUME, name: 'resumeInAppNotifications' },
-      ],
-    },
-    {
       category_Name: 'App Personalisation',
       sub_Category: [
         { action: Actions.ENABLE_PERSONALIZATION, name: 'enablePersonalization' }
+      ],
+    },
+    {
+      category_Name: 'GDPR',
+      sub_Category: [
+        { action: Actions.OPT_OUT, name: 'setOptOut' },
+        { action: Actions.ENABLE_NETWORK_INFO, name: 'enableDeviceNetworkInfoReporting' },
       ],
     },
     {
@@ -290,13 +364,6 @@ export default class App extends Component {
           action: Actions.ATTRIBUTION_IDENTIFIER,
           name: '(Deprecated) get CleverTap Attribution Identifier',
         },
-      ],
-    },
-    {
-      category_Name: 'GDPR',
-      sub_Category: [
-        { action: Actions.OPT_OUT, name: 'setOptOut' },
-        { action: Actions.ENABLE_NETWORK_INFO, name: 'enableDeviceNetworkInfoReporting' },
       ],
     },
     {
@@ -310,63 +377,8 @@ export default class App extends Component {
       ],
     },
     {
-      category_Name: 'Custom Templates',
-      sub_Category: [
-        { action: Actions.SYNC_CUSTOM_TEMPLATES, name: 'Sync Custom Templates' },
-        { action: Actions.SYNC_CUSTOM_TEMPLATES_PROD, name: 'Sync Custom Templates In Prod' }
-      ],
-    },
-    {
-      category_Name: 'Push Templates',
-      sub_Category: [
-        { action: Actions.RECORD_EVENT, name: 'Send Basic Push' },
-        { action: Actions.RECORD_EVENT, name: 'Send Carousel Push' },
-        { action: Actions.RECORD_EVENT, name: 'Send Manual Carousel Push' },
-        { action: Actions.RECORD_EVENT, name: 'Send Filmstrip Carousel Push' },
-        { action: Actions.RECORD_EVENT, name: 'Send Rating Push' },
-        { action: Actions.RECORD_EVENT, name: 'Send Product Display Notification' },
-        { action: Actions.RECORD_EVENT, name: 'Send Linear Product Display Push' },
-        { action: Actions.RECORD_EVENT, name: 'Send CTA Notification' },
-        { action: Actions.RECORD_EVENT, name: 'Send Zero Bezel Notification' },
-        { action: Actions.RECORD_EVENT, name: 'Send Zero Bezel Text Only Notification' },
-        { action: Actions.RECORD_EVENT, name: 'Send Timer Notification' },
-        { action: Actions.RECORD_EVENT, name: 'Send Input Box Notification' },
-        { action: Actions.RECORD_EVENT, name: 'Send Input Box Reply with Event Notification' },
-        {
-          action: Actions.RECORD_EVENT,
-          name: 'Send Input Box Reply with Auto Open Notification',
-        },
-        { action: Actions.RECORD_EVENT, name: 'Send Input Box Remind Notification DOC FALSE' },
-        { action: Actions.RECORD_EVENT, name: 'Send Input Box CTA DOC true' },
-        { action: Actions.RECORD_EVENT, name: 'Send Input Box CTA DOC false' },
-        { action: Actions.RECORD_EVENT, name: 'Send Input Box Reminder DOC true' },
-        { action: Actions.RECORD_EVENT, name: 'Send Input Box Reminder DOC false' },
-      ],
-    },
-    {
-      category_Name: 'PROMPT LOCAL IAM',
-      sub_Category: [
-        { action: Actions.PUSH_PRIMER_HALF_INTERSTITIAL, name: 'Half-Interstitial Local IAM' },
-        { action: Actions.PUSH_PRIMER_HALF_INTERSTITIAL_IMAGE, name: 'Half-Interstitial Local IAM with image URL' },
-        {
-          action: Actions.PUSH_PRIMER_HALF_INTERSTITIAL_FALLBACK,
-          name: 'Half-Interstitial Local IAM with fallbackToSettings - true',
-        },
-        { action: Actions.PUSH_PRIMER_ALERT, name: 'Alert Local IAM' },
-        {
-          action: Actions.PUSH_PRIMER_ALERT_ORIENTATION,
-          name: 'Alert Local IAM with followDeviceOrientation - false',
-        },
-        { action: Actions.PUSH_PRIMER_ALERT_FALLBACK, name: 'Alert Local IAM with fallbackToSettings - true' },
-        {
-          action: Actions.HARD_PERMISSION,
-          name: 'Hard permission dialog with fallbackToSettings - false',
-        },
-        {
-          action: Actions.HARD_PERMISSION_FALLBACK,
-          name: 'Hard permission dialog with fallbackToSettings - true',
-        },
-      ],
+      category_Name: 'Enable Debugging',
+      sub_Category: [{ action: Actions.SET_DEBUG, name: 'Set Debug Level' }],
     },
   ];
 
