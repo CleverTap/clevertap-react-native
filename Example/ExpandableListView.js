@@ -31,7 +31,7 @@ export class ExpandableListView extends Component {
                     style={styles.categoryView}>
 
                     <Text style={styles.categoryText}>
-                        {this.props.item.category_Name}
+                        {this.props.item.categoryName}
                     </Text>
                     {this.state.layoutHeight != 0 &&
                         <Text style={styles.iconStyle} visible={false}>
@@ -48,7 +48,7 @@ export class ExpandableListView extends Component {
                 </TouchableOpacity>
                 <View style={{ height: this.state.layoutHeight, overflow: 'hidden' }}>
                     {this.props.children}
-                    {this.props.item.sub_Category && this.props.item.sub_Category.map((item, key) => (
+                    {this.props.item.subCategory && this.props.item.subCategory.map((item, key) => (
                         <TouchableOpacity
                             key={key}
                             style={styles.subCategory}
