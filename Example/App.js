@@ -122,8 +122,8 @@ export default class App extends Component {
 
   accordionData = [
     {
-      category_Name: 'User Properties',
-      sub_Category: [
+      categoryName: 'User Properties',
+      subCategory: [
         { action: Actions.SET_USER_PROFILE, name: 'pushProfile' },
         { action: Actions.SET_MULTI_VALUES, name: 'set Multi Values For Key' },
         {
@@ -136,29 +136,29 @@ export default class App extends Component {
       ],
     },
     {
-      category_Name: 'Identity Management',
-      sub_Category: [
+      categoryName: 'Identity Management',
+      subCategory: [
         { action: Actions.USER_LOGIN, name: 'onUserLogin' },
         { action: Actions.CLEVERTAP_ID, name: 'getCleverTapID' },
       ],
     },
     {
-      category_Name: 'Location ',
-      sub_Category: [
+      categoryName: 'Location ',
+      subCategory: [
         { action: Actions.USER_LOCATION, name: 'setLocation' },
         { action: Actions.USER_LOCALE, name: 'setLocale' },
       ],
     },
     {
-      category_Name: 'Events',
-      sub_Category: [
+      categoryName: 'Events',
+      subCategory: [
         { action: Actions.PUSH_EVENT, name: 'pushEvent' },
         { action: Actions.PUSH_CHARGED_EVENT, name: 'pushChargedEvent' },
       ],
     },
     {
-      category_Name: 'Product Experiences: Vars',
-      sub_Category: [
+      categoryName: 'Product Experiences: Vars',
+      subCategory: [
         {
           action: Actions.SYNC_VARIABLES,
           name: 'Sync Variables'
@@ -190,8 +190,8 @@ export default class App extends Component {
       ],
     },
     {
-      category_Name: 'Push Notifications',
-      sub_Category: [
+      categoryName: 'Push Notifications',
+      subCategory: [
         { action: Actions.CREATE_NOTIFICATION_GROUP, name: 'createNotificationChannelGroup' },
         { action: Actions.CREATE_NOTIFICATION_CHANNEL, name: 'createNotificationChannel' },
         { action: Actions.DELETE_NOTIFICATION_CHANNEL, name: 'deleteNotificationChannel' },
@@ -207,8 +207,8 @@ export default class App extends Component {
       ],
     },
     {
-      category_Name: 'App Inbox',
-      sub_Category: [
+      categoryName: 'App Inbox',
+      subCategory: [
         { action: Actions.INITIALIZE_INBOX, name: 'initializeInbox' },
         { action: Actions.SHOW_INBOX, name: 'showAppInbox' },
         { action: Actions.SHOW_INBOX_TABS, name: 'showAppInboxwithTabs' },
@@ -233,8 +233,8 @@ export default class App extends Component {
       ],
     },
     {
-      category_Name: 'Push Templates',
-      sub_Category: [
+      categoryName: 'Push Templates',
+      subCategory: [
         { action: Actions.RECORD_EVENT, name: 'Send Basic Push' },
         { action: Actions.RECORD_EVENT, name: 'Send Carousel Push' },
         { action: Actions.RECORD_EVENT, name: 'Send Manual Carousel Push' },
@@ -260,8 +260,8 @@ export default class App extends Component {
       ],
     },
     {
-      category_Name: 'Push Primer Local InApp',
-      sub_Category: [
+      categoryName: 'Push Primer Local InApp',
+      subCategory: [
         { action: Actions.PUSH_PRIMER_HALF_INTERSTITIAL, name: 'Half-Interstitial Local IAM' },
         { action: Actions.PUSH_PRIMER_HALF_INTERSTITIAL_IMAGE, name: 'Half-Interstitial Local IAM with image URL' },
         {
@@ -285,38 +285,38 @@ export default class App extends Component {
       ],
     },
     {
-      category_Name: 'InApp Controls',
-      sub_Category: [
+      categoryName: 'InApp Controls',
+      subCategory: [
         { action: Actions.IN_APPS_SUSPEND, name: 'suspendInAppNotifications' },
         { action: Actions.IN_APPS_DISCARD, name: 'discardInAppNotifications' },
         { action: Actions.IN_APPS_RESUME, name: 'resumeInAppNotifications' },
       ],
     },
     {
-      category_Name: 'Custom Templates',
-      sub_Category: [
+      categoryName: 'Custom Templates',
+      subCategory: [
         { action: Actions.SYNC_CUSTOM_TEMPLATES, name: 'Sync Custom Templates' },
         { action: Actions.SYNC_CUSTOM_TEMPLATES_PROD, name: 'Sync Custom Templates In Prod' }
       ],
     },
     {
-      category_Name: 'Native Display',
-      sub_Category: [
+      categoryName: 'Native Display',
+      subCategory: [
         { action: Actions.DISPLAY_UNIT_ID, name: 'getUnitID' },
         { action: Actions.ALL_DISPLAY_UNITS, name: 'getAllDisplayUnits' },
       ],
     },
     {
-      category_Name: 'Client Side InApps',
-      sub_Category: [
+      categoryName: 'Client Side InApps',
+      subCategory: [
         { action: Actions.FETCH_INAPPS, name: 'Fetch Client Side InApps' },
         { action: Actions.CLEAR_INAPPS, name: 'Clear All InApp Resources' },
         { action: Actions.CLEAR_INAPPS_EXPIRED, name: 'Clear Expired Only InApp Resources' }
       ],
     },
     {
-      category_Name: 'Product Config',
-      sub_Category: [
+      categoryName: 'Product Config',
+      subCategory: [
         { action: Actions.PRODUCT_CONFIG_FETCH, name: 'fetch()' },
         { action: Actions.PRODUCT_CONFIG_ACTIVATE, name: 'activate' },
         { action: Actions.PRODUCT_CONFIG_FETCH_AND_ACTIVATE, name: 'fetchAndActivate' },
@@ -341,25 +341,25 @@ export default class App extends Component {
       ],
     },
     {
-      category_Name: 'Feature Flag',
-      sub_Category: [{ action: Actions.GET_FEATURE_FLAG, name: 'getFeatureFlag' }],
+      categoryName: 'Feature Flag',
+      subCategory: [{ action: Actions.GET_FEATURE_FLAG, name: 'getFeatureFlag' }],
     },
     {
-      category_Name: 'App Personalisation',
-      sub_Category: [
+      categoryName: 'App Personalisation',
+      subCategory: [
         { action: Actions.ENABLE_PERSONALIZATION, name: 'enablePersonalization' }
       ],
     },
     {
-      category_Name: 'GDPR',
-      sub_Category: [
+      categoryName: 'GDPR',
+      subCategory: [
         { action: Actions.OPT_OUT, name: 'setOptOut' },
         { action: Actions.ENABLE_NETWORK_INFO, name: 'enableDeviceNetworkInfoReporting' },
       ],
     },
     {
-      category_Name: 'Attributions',
-      sub_Category: [
+      categoryName: 'Attributions',
+      subCategory: [
         {
           action: Actions.ATTRIBUTION_IDENTIFIER,
           name: '(Deprecated) get CleverTap Attribution Identifier',
@@ -367,8 +367,8 @@ export default class App extends Component {
       ],
     },
     {
-      category_Name: 'Listeners',
-      sub_Category: [
+      categoryName: 'Listeners',
+      subCategory: [
         { action: Actions.ADD_CLEVERTAP_LISTENERS, name: 'addCleverTapAPIListeners' },
         {
           action: Actions.REMOVE_CLEVERTAP_LISTENERS,
@@ -377,8 +377,8 @@ export default class App extends Component {
       ],
     },
     {
-      category_Name: 'Enable Debugging',
-      sub_Category: [{ action: Actions.SET_DEBUG, name: 'Set Debug Level' }],
+      categoryName: 'Enable Debugging',
+      subCategory: [{ action: Actions.SET_DEBUG, name: 'Set Debug Level' }],
     },
   ];
 
@@ -800,15 +800,15 @@ export default class App extends Component {
           <TouchableOpacity style={styles.header}>
             <Text style={styles.headerText}>CleverTap Example</Text>
           </TouchableOpacity>
-          <ExpandableListView item={{category_Name: 'Record Event'}}>
+          <ExpandableListView item={{categoryName: 'Record Event'}}>
             <DynamicForm config={this.state.EventFormConfig}></DynamicForm>
           </ExpandableListView>
-          <ExpandableListView item={{category_Name: 'Update User'}}>
+          <ExpandableListView item={{categoryName: 'Update User'}}>
             <DynamicForm config={this.state.ProfileFormConfig}></DynamicForm>
           </ExpandableListView>
           {this.state.AccordionData.map((item, key) => (
             <ExpandableListView
-              key={item.category_Name}
+              key={item.categoryName}
               onItemPress={this.handleItemAction}
               item={item}
             />
