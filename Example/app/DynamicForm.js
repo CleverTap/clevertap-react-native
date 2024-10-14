@@ -7,7 +7,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-var styles = require('./styles');
+var styles = require('../styles');
 
 const DynamicForm = ({ config }) => {
   const { texts, placeholders, onSubmit } = config;

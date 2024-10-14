@@ -10,7 +10,7 @@ import {
   Platform,
   Linking
 } from 'react-native';
-import CustomTemplate from './CustomTemplate';
+import CustomTemplate from '../custom-templates/CustomTemplate';
 import DynamicForm from './DynamicForm';
 import { ExpandableListView } from './ExpandableListView';
 import { Actions } from './constants';
