@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  TextInput,
+  Text,
+  ScrollView,
+  TouchableOpacity
+} from 'react-native';
 
 var styles = require('./styles');
 
@@ -45,7 +51,6 @@ const DynamicForm = ({ config }) => {
           onChangeText={setName}
           style={styles.input}
         />
-        {/* <Button title="Add Parameter" onPress={addKeyValue} /> */}
         <View>
           <TouchableOpacity style={styles.confirmButton} onPress={addKeyValue}>
             <Text style={styles.buttonText}>{texts.add || 'Add Key-Value'}</Text>
@@ -73,7 +78,6 @@ const DynamicForm = ({ config }) => {
             onChangeText={(text) => handleValueChange(index, text)}
             style={styles.smallInput}
           />
-          {/* <Button title="Remove" onPress={() => removeKeyValue(index)} /> */}
           <View>
             <TouchableOpacity style={styles.cancelButton} onPress={() => removeKeyValue(index)}>
               <Text style={styles.buttonText}>Remove</Text>
@@ -81,10 +85,6 @@ const DynamicForm = ({ config }) => {
           </View>
         </View>
       ))}
-
-      {/* Submit Button */}
-      {/* <Button style={styles.submitButton} title="Submit" onPress={handleSubmit} /> */}
-
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.buttonText}>{texts.submit || 'Submit'}</Text>
@@ -98,7 +98,8 @@ const DynamicForm = ({ config }) => {
 styles = {
   ...styles,
   container: {
-    padding: 20,
+    padding: 5,
+    paddingBottom: 0,
   },
   row: {
     flexDirection: 'row',
