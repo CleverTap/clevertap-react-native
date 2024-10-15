@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
-const styles = require('./styles');
+const styles = require('../styles');
 
 const InAppMessagePopup = ({ visible, title, description, isFunction,
    onCancel, onConfirm, onTriggerAction, onFileOpen }) => {
