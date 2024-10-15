@@ -913,6 +913,14 @@ var CleverTap = {
     },
 
     /**
+    * Create File Variable
+    * @param {string} fileVariable - the file variable string
+    */
+        defineFileVariables: function (fileVariable) {
+            CleverTapReact.defineFileVariables(fileVariable)
+    },
+    
+    /**
      * Get a variable or a group for the specified name.
      * 
      * @param {string} name - name.

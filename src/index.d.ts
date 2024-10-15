@@ -742,6 +742,13 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function defineVariables(variables: object): void;
   
   /**
+   *  Create File variables. 
+   * 
+   * @param {string} fileVariable - the file variable string.
+   */
+  export function defineFileVariables(fileVariable: string): void;
+
+  /**
    * Get all variables via a JSON object.
    * 
    */

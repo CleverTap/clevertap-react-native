@@ -14,7 +14,7 @@
     "@react-navigation/drawer": "^6.6.2",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
-    "clevertap-react-native": "file:..",
+    "clevertap-react-native": "file:.yalc/clevertap-react-native",
     "react": "18.2.0",
     "react-native": "^0.74.1",
     "react-native-asset": "^2.1.1",
