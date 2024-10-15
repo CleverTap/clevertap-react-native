@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
-const styles = require('./styles');
+const styles = require('../styles');
 
 const FunctionPopup = ({ visible, title, description,
    onClose, onFileOpen }) => {
