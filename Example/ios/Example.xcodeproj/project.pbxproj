@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		073713724F3E41CA93910592 /* templates.json in Resources */ = {isa = PBXBuildFile; fileRef = E1BA1A91DB434DB49CBCE26A /* templates.json */; };
 		12C81FF128A273D97535D021 /* libPods-NotificationServiceSwift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D06E088C940DCB0A8669EA1D /* libPods-NotificationServiceSwift.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -123,6 +124,7 @@
 		A946B77F4A55E2F0A9626B3E /* libPods-NotificationContent.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NotificationContent.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D013BEB1731AF31201C704C9 /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
 		D06E088C940DCB0A8669EA1D /* libPods-NotificationServiceSwift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NotificationServiceSwift.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E1BA1A91DB434DB49CBCE26A /* templates.json */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = templates.json; path = ../assets/templates.json; sourceTree = "<group>"; };
 		EA0D3B1737830C6A0F746039 /* Pods-NotificationContentSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationContentSwift.release.xcconfig"; path = "Target Support Files/Pods-NotificationContentSwift/Pods-NotificationContentSwift.release.xcconfig"; sourceTree = "<group>"; };
 		EA111CE95E8961048E4F17B9 /* Pods-Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.debug.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -247,6 +249,15 @@
 			path = NotificationContentSwift;
 			sourceTree = "<group>";
 		};
+		6DD9B5B337054DCBBAD650A9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E1BA1A91DB434DB49CBCE26A /* templates.json */,
+			);
+			name = Resources;
+			path = "";
+			sourceTree = "<group>";
+		};
 		7168044AA71FBFBA4A3B8E24 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -285,6 +296,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				7168044AA71FBFBA4A3B8E24 /* Pods */,
+				6DD9B5B337054DCBBAD650A9 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -318,7 +330,6 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				51DDA552D9AF9418BF524734 /* [CP] Copy Pods Resources */,
 				48BF78CA2AA5B5110091FF16 /* Embed Foundation Extensions */,
-				EE8BE2A176A1E36DB5CD78E0 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -465,6 +476,7 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				685D0A42F74FC38D84284799 /* PrivacyInfo.xcprivacy in Resources */,
+				073713724F3E41CA93910592 /* templates.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -686,23 +698,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		EE8BE2A176A1E36DB5CD78E0 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F87394BCB1BC4CF5053ECB9F /* [CP] Check Pods Manifest.lock */ = {
@@ -1305,7 +1300,7 @@
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
-				USE_HERMES = true;
+				USE_HERMES = false;
 			};
 			name = Debug;
 		};
@@ -1376,7 +1371,7 @@
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
-				USE_HERMES = true;
+				USE_HERMES = false;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
