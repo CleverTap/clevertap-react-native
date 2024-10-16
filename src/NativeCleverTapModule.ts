@@ -219,6 +219,7 @@ export interface Spec extends TurboModule {
   defineVariables(
     variables: Object | null
   ): void;
+  defineFileVariable(name: string): void;
   onVariablesChanged(): void;
   onValueChanged(name: string): void;
 

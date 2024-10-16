@@ -527,6 +527,10 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.defineVariables(`object`)
     }
 
+    override fun defineFileVariable(name: String) {
+        cleverTapModuleImpl.defineFileVariable(name)
+    }
+
     override fun fetchVariables(callback: Callback?) {
         cleverTapModuleImpl.fetchVariables(callback)
     }

@@ -1208,6 +1208,13 @@ public class CleverTapModuleImpl {
         }
     }
 
+    public void defineFileVariable(String name) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            variables.put(name, cleverTap.defineFileVariable(name));
+        }
+    }
+
     public void fetchVariables(final Callback callback) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
