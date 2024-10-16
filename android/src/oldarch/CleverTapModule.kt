@@ -621,6 +621,11 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
+    fun defineFileVariable(name: String) {
+        cleverTapModuleImpl.defineFileVariable(name)
+    }
+
+    @ReactMethod
     fun fetchVariables(callback: Callback?) {
         cleverTapModuleImpl.fetchVariables(callback)
     }

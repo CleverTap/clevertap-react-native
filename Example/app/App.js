@@ -752,8 +752,8 @@ export default class App extends Component {
         });
         break;
         case Actions.GET_FILE_VARIABLE:
-          CleverTap.getVariable('fileVariable', (err, variable) => {
-            console.log(`variable value for key \'fileVariable\': ${variable}`);
+          CleverTap.getVariable('pk.fileVariable', (err, variable) => {
+            console.log(`variable value for key \'pk.fileVariable\': ${variable}`);
           });
           break;
       case Actions.DEFINE_VARIABLES:
@@ -771,7 +771,7 @@ export default class App extends Component {
         break;
       case Actions.DEFINE_FILE_VARIABLES:
           console.log(`Creating file variables: folder1.fileVariable`);
-          CleverTap.defineFileVariables("folder1.folder3.fileVariable");
+          CleverTap.defineFileVariable("pk.fileVariable");
           break;
       case Actions.FETCH_VARIABLES:
         CleverTap.fetchVariables((err, success) => {
@@ -786,6 +786,9 @@ export default class App extends Component {
       case Actions.VALUE_CHANGED:
         CleverTap.onValueChanged('reactnative_var_string', (variable) => {
           console.log('onValueChanged: ', variable);
+        });
+        CleverTap.onValueChanged('pk.fileVariable', (variable) => {
+          console.log('onValueChanged:pk.fileVariable: ', variable);
         });
         break;
       case Actions.FETCH_INAPPS:
