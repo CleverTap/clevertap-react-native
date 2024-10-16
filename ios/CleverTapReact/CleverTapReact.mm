@@ -63,6 +63,8 @@ RCT_EXPORT_MODULE();
         kCleverTapInAppNotificationShowed: kCleverTapInAppNotificationShowed,
         kCleverTapOnVariablesChanged: kCleverTapOnVariablesChanged,
         kCleverTapOnValueChanged: kCleverTapOnValueChanged,
+        kCleverTapOnFileVariablesChangedAndNoDownloadsPending: kCleverTapOnFileVariablesChangedAndNoDownloadsPending,
+        kCleverTapOnFileChanged: kCleverTapOnFileChanged,
         kCleverTapCustomTemplatePresent: kCleverTapCustomTemplatePresent,
         kCleverTapCustomFunctionPresent: kCleverTapCustomFunctionPresent,
         kCleverTapCustomTemplateClose: kCleverTapCustomTemplateClose,
@@ -1063,6 +1065,26 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
     }
 }
 
+RCT_EXPORT_METHOD(onFileVariablesChangedAndNoDownloadsPending) {
+    RCTLogInfo(@"[CleverTap onFileVariablesChangedAndNoDownloadsPending]");
+    [[self cleverTapInstance]onVariablesChangedAndNoDownloadsPending:^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnFileVariablesChangedAndNoDownloadsPending object:nil userInfo:[self getVariableValues]];
+    }];
+}
+
+RCT_EXPORT_METHOD(onFileChanged:(NSString*)name) {
+    RCTLogInfo(@"[CleverTap onFileChanged]");
+    CTVar *var = self.allVariables[name];
+    if (var) {
+        [var onFileIsReady:^{
+            NSDictionary *varFileResult = @{
+                var.name: var.value
+            };
+            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnFileChanged object:nil userInfo:varFileResult];
+        }];
+    }
+}
+
 # pragma mark - Custom Code Templates
 
 RCT_EXPORT_METHOD(syncCustomTemplates) {
@@ -1252,6 +1274,8 @@ RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
              kCleverTapPushPermissionResponseReceived,
              kCleverTapOnVariablesChanged,
              kCleverTapOnValueChanged,
+             kCleverTapOnFileVariablesChangedAndNoDownloadsPending,
+             kCleverTapOnFileChanged,
              kCleverTapCustomTemplatePresent,
              kCleverTapCustomFunctionPresent,
              kCleverTapCustomTemplateClose];

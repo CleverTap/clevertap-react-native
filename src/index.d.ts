@@ -775,6 +775,21 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     */
   export function onValueChanged(name: string, handler: Function): void;
 
+  /**
+    * Adds a callback to be invoked when no files need to be downloaded or all downloads have been completed. It is called each time new values are fetched and downloads are completed.    * 
+    *   
+    * @param {function} handler The callback to add
+    */
+  export function onFileVariablesChangedAndNoDownloadsPending(handler: Function): void;
+
+  /**
+    * Called when the value of the file variable is downloaded and ready. This is only available for File variables.
+    * 
+    * @param {name} string the name of the file variable
+    * @param {function} handler The callback to add
+    */
+  export function onFileChanged(name: string, handler: Function): void;
+
   /*******************
    * Custom Templates
    ******************/
@@ -909,3 +924,5 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export const CleverTapPushPermissionResponseReceived: string;
   export const CleverTapOnVariablesChanged: string;
   export const CleverTapOnValueChanged: string;
+  export const CleverTapOnFileVariablesChangedAndNoDownloadsPending: string;
+  export const CleverTapOnFileChanged: string;
