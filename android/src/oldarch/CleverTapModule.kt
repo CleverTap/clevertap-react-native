@@ -651,6 +651,16 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
+    fun onFileValueChanged(name: String) {
+        cleverTapModuleImpl.onFileValueChanged(name)
+    }
+
+    @ReactMethod
+    fun onVariablesChangedAndNoDownloadsPending() {
+        cleverTapModuleImpl.onVariablesChangedAndNoDownloadsPending()
+    }
+
+    @ReactMethod
     fun onEventListenerAdded(eventName: String) {
         cleverTapModuleImpl.onEventListenerAdded(eventName)
     }

@@ -551,6 +551,14 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.onValueChanged(name)
     }
 
+    override fun onFileValueChanged(name: String) {
+        cleverTapModuleImpl.onFileValueChanged(name)
+    }
+
+    override fun onVariablesChangedAndNoDownloadsPending() {
+        cleverTapModuleImpl.onVariablesChangedAndNoDownloadsPending()
+    }
+
     override fun onEventListenerAdded(eventName: String) {
         cleverTapModuleImpl.onEventListenerAdded(eventName)
     }

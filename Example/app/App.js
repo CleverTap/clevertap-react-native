@@ -800,13 +800,13 @@ export default class App extends Component {
         });
         break;
       case Actions.FILES_VARIABLES_CHANGED_AND_DOWNLOADED:
-        CleverTap.onFileVariablesChangedAndNoDownloadsPending((variables) => {
-          console.log('onFilesDownloaded', variables);
+        CleverTap.onVariablesChangedAndNoDownloadsPending((variables) => {
+          console.log('onVariablesChangedAndNoDownloadsPending', variables);
         });
         break;
       case Actions.FILE_CHANGED:
-      CleverTap.onFileChanged('fileVariable', (variable) => {
-        console.log('onFileChanged: ', variable);
+      CleverTap.onFileValueChanged('pk.fileVariable', (variable) => {
+        console.log('onFileValueChanged: ', variable);
       });
       break;
       case Actions.FETCH_INAPPS:
