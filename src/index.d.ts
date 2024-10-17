@@ -784,6 +784,13 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function onVariablesChangedAndNoDownloadsPending(handler: Function): void;
 
   /**
+    * Adds a callback to be invoked only once for when new values are fetched and downloaded
+    *
+    * @param {function} handler The callback to add
+    */
+  export function onceVariablesChangedAndNoDownloadsPending(handler: Function): void;
+
+  /**
     * Called when the value of the file variable is downloaded and ready. This is only available for File variables.
     * 
     * @param {name} string the name of the file variable
@@ -863,4 +870,5 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export const CleverTapOnVariablesChanged: string;
   export const CleverTapOnValueChanged: string;
   export const CleverTapOnVariablesChangedAndNoDownloadsPending: string;
+  export const CleverTapOnceVariablesChangedAndNoDownloadsPending: string;
   export const CleverTapOnFileValueChanged: string;

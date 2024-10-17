@@ -71,6 +71,7 @@ var CleverTap = {
     CleverTapOnVariablesChanged: CleverTapReact.getConstants().CleverTapOnVariablesChanged,
     CleverTapOnValueChanged: CleverTapReact.getConstants().CleverTapOnValueChanged,
     CleverTapOnVariablesChangedAndNoDownloadsPending: CleverTapReact.getConstants().CleverTapOnVariablesChangedAndNoDownloadsPending,
+    CleverTapOnceVariablesChangedAndNoDownloadsPending: CleverTapReact.getConstants().CleverTapOnceVariablesChangedAndNoDownloadsPending,
     CleverTapOnFileValueChanged: CleverTapReact.getConstants().CleverTapOnFileValueChanged,
 
     /**
@@ -83,6 +84,17 @@ var CleverTap = {
     addListener: function (eventName, handler) {
         if (EventEmitter) {
             EventEmitter.addListener(eventName, handler);
+            CleverTapReact.onEventListenerAdded(eventName);
+        }
+    },
+    addOneTimeListener: function (eventName, handler) {
+        if (EventEmitter) {
+            const subscription = EventEmitter.addListener(eventName, (args) =>
+             {
+              console.log("one time listener invoked = "+eventName);
+              handler(args);
+              subscription.remove();
+              });
             CleverTapReact.onEventListenerAdded(eventName);
         }
     },
@@ -968,6 +980,16 @@ var CleverTap = {
     onVariablesChangedAndNoDownloadsPending: function (handler) {
         this.addListener(CleverTapReact.getConstants().CleverTapOnVariablesChangedAndNoDownloadsPending, handler);
         CleverTapReact.onVariablesChangedAndNoDownloadsPending();
+    },
+
+    /**
+     *  Adds a callback to be invoked only once for when new values are fetched and downloaded
+     *
+     * @param {function} handler The callback to add
+     */
+    onceVariablesChangedAndNoDownloadsPending: function (handler) {
+        this.addOneTimeListener(CleverTapReact.getConstants().CleverTapOnceVariablesChangedAndNoDownloadsPending, handler);
+        CleverTapReact.onceVariablesChangedAndNoDownloadsPending();
     },
 
     /**
