@@ -24,6 +24,8 @@ export interface Spec extends TurboModule {
     CleverTapPushPermissionResponseReceived: string;
     CleverTapOnVariablesChanged: string;
     CleverTapOnValueChanged: string;
+    CleverTapOnVariablesChangedAndNoDownloadsPending: string;
+    CleverTapOnFileValueChanged: string;
     HPS: string;
     FCM: string;
     BPS: string;
@@ -222,6 +224,8 @@ export interface Spec extends TurboModule {
   defineFileVariable(name: string): void;
   onVariablesChanged(): void;
   onValueChanged(name: string): void;
+  onVariablesChangedAndNoDownloadsPending(): void;
+  onFileValueChanged(name: string): void;
 
   onEventListenerAdded(eventType: string): void;
   // NativeEventEmitter methods for the New Architecture.

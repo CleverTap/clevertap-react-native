@@ -22,7 +22,9 @@ enum class CleverTapEvent(val eventName: String, val bufferable: Boolean = false
     CLEVERTAP_ON_VALUE_CHANGED("CleverTapOnValueChanged"),
     CLEVERTAP_CUSTOM_TEMPLATE_PRESENT("CleverTapCustomTemplatePresent", bufferable = true),
     CLEVERTAP_CUSTOM_FUNCTION_PRESENT("CleverTapCustomFunctionPresent", bufferable = true),
-    CLEVERTAP_CUSTOM_TEMPLATE_CLOSE("CleverTapCustomTemplateClose");
+    CLEVERTAP_CUSTOM_TEMPLATE_CLOSE("CleverTapCustomTemplateClose"),
+    CLEVERTAP_ON_FILE_VALUE_CHANGED("CleverTapOnFileValueChanged"),
+    CLEVERTAP_ON_VARIABLES_CHANGED_AND_NO_DOWNLOADS_PENDING("CleverTapOnVariablesChangedAndNoDownloadsPending");
 
     override fun toString(): String {
         return eventName

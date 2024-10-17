@@ -781,7 +781,7 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     *   
     * @param {function} handler The callback to add
     */
-  export function onFileVariablesChangedAndNoDownloadsPending(handler: Function): void;
+  export function onVariablesChangedAndNoDownloadsPending(handler: Function): void;
 
   /**
     * Called when the value of the file variable is downloaded and ready. This is only available for File variables.
@@ -789,7 +789,7 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     * @param {name} string the name of the file variable
     * @param {function} handler The callback to add
     */
-  export function onFileChanged(name: string, handler: Function): void;
+  export function onFileValueChanged(name: string, handler: Function): void;
 
   /*******************
    * Custom Templates
@@ -862,5 +862,5 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export const CleverTapPushPermissionResponseReceived: string;
   export const CleverTapOnVariablesChanged: string;
   export const CleverTapOnValueChanged: string;
-  export const CleverTapOnFileVariablesChangedAndNoDownloadsPending: string;
-  export const CleverTapOnFileChanged: string;
+  export const CleverTapOnVariablesChangedAndNoDownloadsPending: string;
+  export const CleverTapOnFileValueChanged: string;

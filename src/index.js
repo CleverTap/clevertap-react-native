@@ -70,8 +70,8 @@ var CleverTap = {
     CleverTapPushPermissionResponseReceived: CleverTapReact.getConstants().CleverTapPushPermissionResponseReceived,
     CleverTapOnVariablesChanged: CleverTapReact.getConstants().CleverTapOnVariablesChanged,
     CleverTapOnValueChanged: CleverTapReact.getConstants().CleverTapOnValueChanged,
-    CleverTapOnFileVariablesChangedAndNoDownloadsPending: CleverTapReact.getConstants().CleverTapOnFileVariablesChangedAndNoDownloadsPending,
-    CleverTapOnFileChanged: CleverTapReact.getConstants().CleverTapOnFileChanged,
+    CleverTapOnVariablesChangedAndNoDownloadsPending: CleverTapReact.getConstants().CleverTapOnVariablesChangedAndNoDownloadsPending,
+    CleverTapOnFileValueChanged: CleverTapReact.getConstants().CleverTapOnFileValueChanged,
 
     /**
     * Add a CleverTap event listener
@@ -965,9 +965,9 @@ var CleverTap = {
      * 
      * @param {function} handler The callback to add
      */
-    onFileVariablesChangedAndNoDownloadsPending: function (handler) {
-        CleverTapReact.onFileVariablesChangedAndNoDownloadsPending();
-        this.addListener(CleverTapReact.getConstants().CleverTapOnFileVariablesChangedAndNoDownloadsPending, handler);
+    onVariablesChangedAndNoDownloadsPending: function (handler) {
+        this.addListener(CleverTapReact.getConstants().CleverTapOnVariablesChangedAndNoDownloadsPending, handler);
+        CleverTapReact.onVariablesChangedAndNoDownloadsPending();
     },
 
     /**
@@ -976,9 +976,9 @@ var CleverTap = {
      * @param {name} string the name of the file variable
      * @param {function} handler The callback to add
      */
-    onFileChanged: function (name, handler) {
-        CleverTapReact.onFileChanged(name);
-        this.addListener(CleverTapReact.getConstants().CleverTapOnFileChanged, handler);
+    onFileValueChanged: function (name, handler) {
+        this.addListener(CleverTapReact.getConstants().CleverTapOnFileValueChanged, handler);
+        CleverTapReact.onFileValueChanged(name);
     },
 
     /**
