@@ -25,6 +25,7 @@ export interface Spec extends TurboModule {
     CleverTapOnVariablesChanged: string;
     CleverTapOnValueChanged: string;
     CleverTapOnVariablesChangedAndNoDownloadsPending: string;
+    CleverTapOnceVariablesChangedAndNoDownloadsPending: string;
     CleverTapOnFileValueChanged: string;
     HPS: string;
     FCM: string;
@@ -225,6 +226,7 @@ export interface Spec extends TurboModule {
   onVariablesChanged(): void;
   onValueChanged(name: string): void;
   onVariablesChangedAndNoDownloadsPending(): void;
+  onceVariablesChangedAndNoDownloadsPending(): void;
   onFileValueChanged(name: string): void;
 
   onEventListenerAdded(eventType: string): void;

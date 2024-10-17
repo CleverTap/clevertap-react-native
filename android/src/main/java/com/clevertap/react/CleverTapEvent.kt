@@ -24,7 +24,8 @@ enum class CleverTapEvent(val eventName: String, val bufferable: Boolean = false
     CLEVERTAP_CUSTOM_FUNCTION_PRESENT("CleverTapCustomFunctionPresent", bufferable = true),
     CLEVERTAP_CUSTOM_TEMPLATE_CLOSE("CleverTapCustomTemplateClose"),
     CLEVERTAP_ON_FILE_VALUE_CHANGED("CleverTapOnFileValueChanged"),
-    CLEVERTAP_ON_VARIABLES_CHANGED_AND_NO_DOWNLOADS_PENDING("CleverTapOnVariablesChangedAndNoDownloadsPending");
+    CLEVERTAP_ON_VARIABLES_CHANGED_AND_NO_DOWNLOADS_PENDING("CleverTapOnVariablesChangedAndNoDownloadsPending"),
+    CLEVERTAP_ONCE_VARIABLES_CHANGED_AND_NO_DOWNLOADS_PENDING("CleverTapOnceVariablesChangedAndNoDownloadsPending");
 
     override fun toString(): String {
         return eventName

@@ -1325,6 +1325,19 @@ public class CleverTapModuleImpl {
         }
     }
 
+    public void onceVariablesChangedAndNoDownloadsPending() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.onceVariablesChangedAndNoDownloadsPending(new VariablesChangedCallback() {
+                @Override
+                public void variablesChanged() {
+                    sendEvent(CleverTapEvent.CLEVERTAP_ONCE_VARIABLES_CHANGED_AND_NO_DOWNLOADS_PENDING,
+                            getVariablesValues());
+                }
+            });
+        }
+    }
+
     /************************************************
      *  Product Experience Remote Config methods ends
      ************************************************/

@@ -200,6 +200,10 @@ export default class App extends Component {
           name: 'Add \'onFileVariablesChangedAndNoDownloadsPending\' listener'
         },
         {
+          action: Actions.FILES_VARIABLES_CHANGED_AND_DOWNLOADED_ONCE,
+          name: 'Add \'onceFileVariablesChangedAndNoDownloadsPending\' listener'
+        },
+        {
           action: Actions.FILE_CHANGED,
           name: 'Add \'OnFileChanged\' listener for name \'fileVariable\''
         }
@@ -802,6 +806,11 @@ export default class App extends Component {
       case Actions.FILES_VARIABLES_CHANGED_AND_DOWNLOADED:
         CleverTap.onVariablesChangedAndNoDownloadsPending((variables) => {
           console.log('onVariablesChangedAndNoDownloadsPending', variables);
+        });
+        break;
+      case Actions.FILES_VARIABLES_CHANGED_AND_DOWNLOADED_ONCE:
+        CleverTap.onceVariablesChangedAndNoDownloadsPending((variables) => {
+          console.log('onceVariablesChangedAndNoDownloadsPending', variables);
         });
         break;
       case Actions.FILE_CHANGED:
