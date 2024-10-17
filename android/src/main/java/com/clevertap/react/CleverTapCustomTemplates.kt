@@ -1,6 +1,7 @@
 package com.clevertap.react
 
 import android.content.Context
+import android.util.Log
 import com.clevertap.android.sdk.CleverTapAPI
 import com.clevertap.android.sdk.inapp.customtemplates.CustomTemplateContext.FunctionContext
 import com.clevertap.android.sdk.inapp.customtemplates.CustomTemplateContext.TemplateContext
@@ -14,8 +15,18 @@ import java.nio.charset.StandardCharsets
 
 object CleverTapCustomTemplates {
 
+    private val LOG_TAG = Constants.REACT_MODULE_NAME
+
+    var autoDismissTemplates = true
+    var autoDismissFunctions = true
+
     private val templatePresenter: TemplatePresenter = object : TemplatePresenter {
         override fun onPresent(context: TemplateContext) {
+            if (autoDismissTemplates) {
+                Log.i(LOG_TAG, "Auto dismissing custom template ${context.templateName}")
+                context.setDismissed()
+                return
+            }
             CleverTapEventEmitter.emit(
                 CleverTapEvent.CLEVERTAP_CUSTOM_TEMPLATE_PRESENT, context.templateName
             )
@@ -29,6 +40,11 @@ object CleverTapCustomTemplates {
     }
 
     private val functionPresenter = FunctionPresenter { context: FunctionContext ->
+        if (autoDismissFunctions) {
+            Log.i(LOG_TAG, "Auto dismissing custom function ${context.templateName}")
+            context.setDismissed()
+            return@FunctionPresenter
+        }
         CleverTapEventEmitter.emit(
             CleverTapEvent.CLEVERTAP_CUSTOM_FUNCTION_PRESENT, context.templateName
         )

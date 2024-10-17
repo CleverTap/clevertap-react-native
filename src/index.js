@@ -93,6 +93,7 @@ var CleverTap = {
     removeListener: function (eventName) {
         if (EventEmitter) {
             EventEmitter.removeAllListeners(eventName);
+            CleverTapReact.onAllEventListenersRemoved(eventName);
         }
     },
 
@@ -103,6 +104,7 @@ var CleverTap = {
     removeListeners: function () {
         if (DeviceEventEmitter) {
             DeviceEventEmitter.removeAllListeners();
+            CleverTapReact.onAllListenersRemoved();
         }
     },
 

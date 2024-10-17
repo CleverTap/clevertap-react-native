@@ -1312,10 +1312,37 @@ public class CleverTapModuleImpl {
             Log.e(TAG, "Event listener added for unsupported event " + eventName);
             return;
         }
+
+        switch (event) {
+            case CLEVERTAP_CUSTOM_TEMPLATE_PRESENT ->
+                    CleverTapCustomTemplates.INSTANCE.setAutoDismissTemplates(false);
+            case CLEVERTAP_CUSTOM_FUNCTION_PRESENT ->
+                    CleverTapCustomTemplates.INSTANCE.setAutoDismissFunctions(false);
+        }
         // disable the buffering for the specified event as it already has attached listener and
         // flush all buffered events
         CleverTapEventEmitter.INSTANCE.disableBuffer(event);
         CleverTapEventEmitter.INSTANCE.flushBuffer(event);
+    }
+
+    public void onAllEventListenersRemoved(String eventName) {
+        CleverTapEvent event = CleverTapEvent.fromName(eventName);
+        if (event == null) {
+            Log.e(TAG, "Event listener removed for unsupported event " + eventName);
+            return;
+        }
+
+        switch (event) {
+            case CLEVERTAP_CUSTOM_TEMPLATE_PRESENT ->
+                    CleverTapCustomTemplates.INSTANCE.setAutoDismissTemplates(true);
+            case CLEVERTAP_CUSTOM_FUNCTION_PRESENT ->
+                    CleverTapCustomTemplates.INSTANCE.setAutoDismissFunctions(true);
+        }
+    }
+
+    public void onAllListenersRemoved() {
+        CleverTapCustomTemplates.INSTANCE.setAutoDismissTemplates(true);
+        CleverTapCustomTemplates.INSTANCE.setAutoDismissFunctions(true);
     }
 
     private void enableEventEmitter(ReactContext reactContext) {

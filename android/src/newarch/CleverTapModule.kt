@@ -551,6 +551,14 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.onEventListenerAdded(eventName)
     }
 
+    override fun onAllEventListenersRemoved(eventName: String) {
+        cleverTapModuleImpl.onAllEventListenersRemoved(eventName)
+    }
+
+    override fun onAllListenersRemoved() {
+        cleverTapModuleImpl.onAllListenersRemoved()
+    }
+
     override fun addListener(name: String) {
         return
     }

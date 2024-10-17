@@ -650,6 +650,16 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.onEventListenerAdded(eventName)
     }
 
+    @ReactMethod
+    fun onAllEventListenersRemoved(eventName: String) {
+        cleverTapModuleImpl.onAllEventListenersRemoved(eventName)
+    }
+
+    @ReactMethod
+    fun onAllListenersRemoved() {
+        cleverTapModuleImpl.onAllListenersRemoved()
+    }
+
     override fun getConstants(): Map<String, Any> {
         return cleverTapModuleImpl.getClevertapConstants()
     }
