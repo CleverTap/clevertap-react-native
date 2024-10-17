@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// when a Custom Template `onCloseClicked:` is called.
 @interface CleverTapReactTemplatePresenter : NSObject <CTTemplatePresenter>
 
+@property (class) BOOL autoDismiss;
+
 @end
 
 NS_ASSUME_NONNULL_END

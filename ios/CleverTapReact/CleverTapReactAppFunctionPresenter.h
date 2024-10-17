@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// when an App Function onPresent is called.
 @interface CleverTapReactAppFunctionPresenter : NSObject <CTTemplatePresenter>
 
+@property (class) BOOL autoDismiss;
+
 @end
 
 NS_ASSUME_NONNULL_END

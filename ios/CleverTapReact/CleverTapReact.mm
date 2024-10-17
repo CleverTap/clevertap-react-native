@@ -21,6 +21,8 @@
 #import "CTVar.h"
 #import "CleverTapReactPendingEvent.h"
 #import "CTTemplateContext.h"
+#import "CleverTapReactAppFunctionPresenter.h"
+#import "CleverTapReactTemplatePresenter.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <CTTurboModuleSpec/CTTurboModuleSpec.h>
@@ -1181,6 +1183,13 @@ const int PENDING_EVENTS_TIME_OUT = 5;
 /// @param name The name of the observed event.
 RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
     [observedEvents addObject:name];
+    
+    if ([name isEqualToString:kCleverTapCustomTemplatePresent]) {
+        [CleverTapReactTemplatePresenter setAutoDismiss:NO];
+    } else if ([name isEqualToString:kCleverTapCustomFunctionPresent]) {
+        [CleverTapReactAppFunctionPresenter setAutoDismiss:NO];
+    }
+    
     NSArray *pendingEventsForName = pendingEvents[name];
     if (pendingEventsForName) {
         RCTLogInfo(@"[CleverTap: Posting pending events for event: %@]", name);
@@ -1189,6 +1198,19 @@ RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
             [[NSNotificationCenter defaultCenter] postNotificationName:event.name object:nil userInfo:event.body];
         }
     }
+}
+
+RCT_EXPORT_METHOD(onAllEventListenersRemoved:(NSString*)eventName) {
+    if ([eventName isEqualToString:kCleverTapCustomTemplatePresent]) {
+        [CleverTapReactTemplatePresenter setAutoDismiss:YES];
+    } else if ([eventName isEqualToString:kCleverTapCustomFunctionPresent]) {
+        [CleverTapReactAppFunctionPresenter setAutoDismiss:YES];
+    }
+}
+
+RCT_EXPORT_METHOD(onAllListenersRemoved) {
+    [CleverTapReactTemplatePresenter setAutoDismiss:YES];
+    [CleverTapReactAppFunctionPresenter setAutoDismiss:YES];
 }
 
 /// Send event when ReactNative has started observing events.

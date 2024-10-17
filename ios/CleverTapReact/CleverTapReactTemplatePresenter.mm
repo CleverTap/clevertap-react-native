@@ -7,10 +7,27 @@
 
 #import "CleverTapReactTemplatePresenter.h"
 #import "CleverTapReact.h"
+#import <React/RCTLog.h>
 
 @implementation CleverTapReactTemplatePresenter
 
-- (void)onPresent:(nonnull CTTemplateContext *)context { 
+static BOOL _autoDismiss;
+
++ (BOOL)autoDismiss {
+    return _autoDismiss;
+}
+
++ (void)setAutoDismiss:(BOOL)value {
+    _autoDismiss = value;
+}
+
+- (void)onPresent:(nonnull CTTemplateContext *)context {
+    if ([self.class autoDismiss]) {
+        RCTLogInfo(@"[CleverTap: Auto dismissing custom template: %@]", [context templateName]);
+        [context dismissed];
+        return;
+    }
+    
     [CleverTapReact sendEventOnObserving:kCleverTapCustomTemplatePresent body:context.templateName];
 }
 

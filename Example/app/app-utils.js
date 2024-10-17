@@ -541,6 +541,10 @@ export const removeCleverTapAPIListeners = () => {
     CleverTap.removeListener(CleverTap.CleverTapProductConfigDidActivate);
     CleverTap.removeListener(CleverTap.CleverTapPushNotificationClicked);
     CleverTap.removeListener(CleverTap.CleverTapPushPermissionResponseReceived);
+
+    CleverTap.removeListener(CleverTap.CleverTapCustomTemplatePresent);
+    CleverTap.removeListener(CleverTap.CleverTapCustomTemplateClose);
+    CleverTap.removeListener(CleverTap.CleverTapCustomFunctionPresent);
     showToast('Listeners removed successfully');
 };
 
