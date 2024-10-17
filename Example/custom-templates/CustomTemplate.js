@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Modal, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import InAppMessagePopup from './InAppMessagePopup';
 import FunctionPopup from './FunctionPopup';
@@ -27,6 +27,12 @@ const CustomTemplate = () => {
     const [showWebView, setShowWebView] = useState(false);
     const [webViewLoaded, setWebViewLoaded] = useState(false);
 
+    const templateNameRef = useRef();
+
+    useEffect(() => {
+        templateNameRef.current = modalState.templateName;
+    }, [modalState.templateName]);
+
     useEffect(() => {
         CleverTap.addListener(CleverTap.CleverTapCustomTemplatePresent, templateName => {
             presentInAppModal(templateName, false);
@@ -43,6 +49,11 @@ const CustomTemplate = () => {
         });
 
         return () => {
+            let name = templateNameRef.current;
+            if (name) {
+                console.log(`Closing template "${name}" from unmount.`);
+                CleverTap.customTemplateSetDismissed(name);
+            }
             CleverTap.removeListener(CleverTap.CleverTapCustomTemplatePresent);
             CleverTap.removeListener(CleverTap.CleverTapCustomTemplateClose);
             CleverTap.removeListener(CleverTap.CleverTapCustomFunctionPresent);
