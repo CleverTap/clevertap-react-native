@@ -201,7 +201,7 @@ export default class App extends Component {
         },
         {
           action: Actions.FILES_VARIABLES_CHANGED_AND_DOWNLOADED,
-          name: 'Add \'onFileVariablesChangedAndNoDownloadsPending\' listener'
+          name: 'Add \'OnFileVariablesChangedAndNoDownloadsPending\' listener'
         },
         {
           action: Actions.FILES_VARIABLES_CHANGED_AND_DOWNLOADED_ONCE,

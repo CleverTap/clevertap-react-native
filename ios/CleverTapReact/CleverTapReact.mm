@@ -553,6 +553,16 @@ RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
     return varValues;
 }
 
+- (NSMutableDictionary *)getFileVariableValues {
+    NSMutableDictionary *fileVarValues = [NSMutableDictionary dictionary];
+    [self.allVariables enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, CTVar*  _Nonnull var, BOOL * _Nonnull stop) {
+        if ([key isEqual: @"fileVariable"]){
+            fileVarValues[key] = var.value;
+        }
+    }];
+    return fileVarValues;
+}
+
 #pragma mark - App Inbox
 
 RCT_EXPORT_METHOD(getInboxMessageCount:(RCTResponseSenderBlock)callback) {
