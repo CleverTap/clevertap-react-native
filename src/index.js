@@ -918,8 +918,8 @@ var CleverTap = {
     * Create File Variable
     * @param {string} fileVariable - the file variable string
     */
-        defineFileVariables: function (fileVariable) {
-            CleverTapReact.defineFileVariables(fileVariable)
+    defineFileVariables: function (fileVariable) {
+        CleverTapReact.defineFileVariables(fileVariable)
     },
     
     /**

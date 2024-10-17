@@ -551,6 +551,16 @@ RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
     return varValues;
 }
 
+- (NSMutableDictionary *)getFileVariableValues {
+    NSMutableDictionary *fileVarValues = [NSMutableDictionary dictionary];
+    [self.allVariables enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, CTVar*  _Nonnull var, BOOL * _Nonnull stop) {
+        if ([key isEqual: @"fileVariable"]){
+            fileVarValues[key] = var.value;
+        }
+    }];
+    return fileVarValues;
+}
+
 #pragma mark - App Inbox
 
 RCT_EXPORT_METHOD(getInboxMessageCount:(RCTResponseSenderBlock)callback) {
@@ -1068,7 +1078,7 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
 RCT_EXPORT_METHOD(onFileVariablesChangedAndNoDownloadsPending) {
     RCTLogInfo(@"[CleverTap onFileVariablesChangedAndNoDownloadsPending]");
     [[self cleverTapInstance]onVariablesChangedAndNoDownloadsPending:^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnFileVariablesChangedAndNoDownloadsPending object:nil userInfo:[self getVariableValues]];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnFileVariablesChangedAndNoDownloadsPending object:nil userInfo:[self getFileVariableValues]];
     }];
 }
 
