@@ -19,6 +19,7 @@ enum class CleverTapEvent(val eventName: String, val bufferable: Boolean = false
     CLEVERTAP_PUSH_NOTIFICATION_CLICKED("CleverTapPushNotificationClicked", bufferable = true),
     CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE("CleverTapPushPermissionResponseReceived"),
     CLEVERTAP_ON_VARIABLES_CHANGED("CleverTapOnVariablesChanged"),
+    CLEVERTAP_ON_ONE_TIME_VARIABLES_CHANGED("CleverTapOnOneTimeVariablesChanged"),
     CLEVERTAP_ON_VALUE_CHANGED("CleverTapOnValueChanged"),
     CLEVERTAP_CUSTOM_TEMPLATE_PRESENT("CleverTapCustomTemplatePresent", bufferable = true),
     CLEVERTAP_CUSTOM_FUNCTION_PRESENT("CleverTapCustomFunctionPresent", bufferable = true),

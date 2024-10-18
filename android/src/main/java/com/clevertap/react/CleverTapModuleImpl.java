@@ -1312,6 +1312,18 @@ public class CleverTapModuleImpl {
         }
     }
 
+    public void onOneTimeVariablesChanged() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.addOneTimeVariablesChangedCallback(new VariablesChangedCallback() {
+                @Override
+                public void variablesChanged() {
+                    sendEvent(CleverTapEvent.CLEVERTAP_ON_ONE_TIME_VARIABLES_CHANGED, getVariablesValues());
+                }
+            });
+        }
+    }
+
     public void onVariablesChangedAndNoDownloadsPending() {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {

@@ -768,6 +768,13 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function onVariablesChanged(handler: Function): void;
 
   /**
+    *  Adds a callback to be invoked only once on app start, or when added if server values are already received
+    *
+    * @param {function} handler The callback to add
+    */
+  export function onOneTimeVariablesChanged(handler: Function): void;
+
+  /**
     * Called when the value of the variable changes.
     * 
     * @param {name} string the name of the variable
@@ -948,6 +955,7 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export const CleverTapPushNotificationClicked: string;
   export const CleverTapPushPermissionResponseReceived: string;
   export const CleverTapOnVariablesChanged: string;
+  export const CleverTapOnOneTimeVariablesChanged: string;
   export const CleverTapOnValueChanged: string;
   export const CleverTapOnVariablesChangedAndNoDownloadsPending: string;
   export const CleverTapOnceVariablesChangedAndNoDownloadsPending: string;

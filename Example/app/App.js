@@ -192,6 +192,10 @@ export default class App extends Component {
           name: 'Add \'OnVariablesChanged\' listener'
         },
         {
+          action: Actions.ONE_TIME_VARIABLES_CHANGED,
+          name: 'Add \'OnOneTimeVariablesChanged\' listener'
+        },
+        {
           action: Actions.VALUE_CHANGED,
           name: 'Add \'OnValueChanged\' listener for name \'reactnative_var_string\''
         },
@@ -793,6 +797,11 @@ export default class App extends Component {
       case Actions.VARIABLES_CHANGED:
         CleverTap.onVariablesChanged((variables) => {
           console.log('onVariablesChanged: ', variables);
+        });
+        break;
+      case Actions.ONE_TIME_VARIABLES_CHANGED:
+        CleverTap.onOneTimeVariablesChanged((variables) => {
+          console.log('onOneTimeVariablesChanged: ', variables);
         });
         break;
       case Actions.VALUE_CHANGED:
