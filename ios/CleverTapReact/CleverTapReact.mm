@@ -1174,7 +1174,8 @@ static NSMutableSet<NSString *> *observableEvents = [NSMutableSet setWithObjects
                                                      kCleverTapProductConfigDidInitialize,
                                                      kCleverTapCustomTemplatePresent,
                                                      kCleverTapCustomFunctionPresent,
-                                                     kCleverTapCustomTemplateClose, nil];
+                                                     kCleverTapCustomTemplateClose,
+                                                     kCleverTapFeatureFlagsDidUpdate, nil];
 
 /// Time out in seconds, after which pending events are cleared.
 /// See ``startObserving`` for details.
