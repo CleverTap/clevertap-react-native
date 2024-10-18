@@ -31,6 +31,7 @@ static NSDateFormatter *dateFormatter;
 @interface CleverTapReact()
 @property CleverTap *cleverTapInstance;
 @property(nonatomic, strong) NSMutableDictionary *allVariables;
+@property(nonatomic, strong) NSString *fileVariable;
 @end
 
 @implementation CleverTapReact
@@ -90,6 +91,7 @@ RCT_EXPORT_MODULE();
     self = [super init];
     if (self) {
         self.allVariables = [NSMutableDictionary dictionary];
+        self.fileVariable = [NSString string];
     }
     return self;
 }
@@ -553,14 +555,10 @@ RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
     return varValues;
 }
 
-- (NSMutableDictionary *)getFileVariableValues {
-    NSMutableDictionary *fileVarValues = [NSMutableDictionary dictionary];
-    [self.allVariables enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, CTVar*  _Nonnull var, BOOL * _Nonnull stop) {
-        if ([key isEqual: @"fileVariable"]){
-            fileVarValues[key] = var.value;
-        }
-    }];
-    return fileVarValues;
+- (NSString *)getFileVariableValue {
+    NSString *fileVarValue = [NSString string];
+    fileVarValue = self.fileVariable
+    return fileVarValue;
 }
 
 #pragma mark - App Inbox
@@ -1016,14 +1014,26 @@ RCT_EXPORT_METHOD(syncVariablesinProd:(BOOL)isProduction) {
 
 RCT_EXPORT_METHOD(getVariable:(NSString * _Nonnull)name callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getVariable:name]");
-    CTVar *var = self.allVariables[name];
-    [self returnResult:var.value withCallback:callback andError:nil];
+    if (name == self.fileVariable){
+        CTVar *fileVar = self.fileVariable;
+        [self returnResult:fileVar.value withCallback:callback andError:nil];
+    }
+    else {
+        CTVar *var = self.allVariables[name];
+        [self returnResult:var.value withCallback:callback andError:nil];
+    }
 }
 
 RCT_EXPORT_METHOD(getVariables:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getVariables]");
 
     NSMutableDictionary *varValues = [self getVariableValues];
+    NSString *fileVariableValue = [self getFileVariableValue];
+    CTVar *fileVar = fileVariableValue;
+    if (fileVar) {
+        NSString *fileVarVal = fileVar.val;
+        [varValues setObject:fileVarVal forKey:fileVar];
+    }
     [self returnResult:varValues withCallback:callback andError:nil];
 }
 

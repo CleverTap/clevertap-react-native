@@ -983,7 +983,17 @@ var CleverTap = {
     },
 
     /**
-     *  Adds a callback to be invoked when variables are initialised with server values. Will be called each time new values are fetched.
+     *  Adds a callback to be invoked when no files need to be downloaded or all downloads have been completed. It is called each time new values are fetched and downloads are completed.
+     *
+     * @param {function} handler The callback to add
+     */
+    onVariablesChangedAndNoDownloadsPending: function (handler) {
+        CleverTapReact.onVariablesChangedAndNoDownloadsPending();
+        this.addListener(CleverTapReact.getConstants().CleverTapOnVariablesChangedAndNoDownloadsPending, handler);
+    },
+
+    /**
+     *  Adds a callback to be invoked when no files need to be downloaded or all downloads have been completed, but It is called only once.
      * 
      * @param {function} handler The callback to add
      */
@@ -1003,7 +1013,7 @@ var CleverTap = {
     },
 
     /**
-     * Called when the value of the file variable is downloaded and ready.
+     * Called when the value of the file variable is downloaded and ready. This is only available for File variables.
      * 
      * @param {name} string the name of the file variable
      * @param {function} handler The callback to add
