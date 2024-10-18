@@ -56,9 +56,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
-        <meta-data
-            android:name="CLEVERTAP_HANDSHAKE_DOMAIN"
-            android:value="YOUR HANDSHAKE DOMAIN"/>
         <service
             android:name="com.clevertap.android.sdk.pushnotification.CTNotificationIntentService"
             android:exported="false">
@@ -69,6 +66,10 @@
         <meta-data android:name="CLEVERTAP_ACCOUNT_ID" android:value="4WK-RWR-796Z" />
         <meta-data android:name="CLEVERTAP_TOKEN" android:value="202-304" />
         <meta-data android:name="CLEVERTAP_USE_GOOGLE_AD_ID" android:value="1"/>
+        <!--  Add your custom handshake domain if any  -->
+        <!--<meta-data
+            android:name="CLEVERTAP_HANDSHAKE_DOMAIN"
+            android:value="YOUR HANDSHAKE DOMAIN"/>-->
     </application>
 
 </manifest>
