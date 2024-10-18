@@ -746,7 +746,7 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    * 
    * @param {string} fileVariable - the file variable string.
    */
-  export function defineFileVariables(fileVariable: string): void;
+  export function defineFileVariable(fileVariable: string): void;
 
   /**
    * Get all variables via a JSON object.
@@ -769,6 +769,13 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function onVariablesChanged(handler: Function): void;
 
   /**
+    *  Adds a callback to be invoked when variables are initialized with values fetched from the server. It is called only once.
+    * 
+    * @param {function} handler The callback to add
+    */
+  export function onceVariablesChanged(handler: Function): void;
+
+  /**
     * Called when the value of the variable changes.
     * 
     * @param {name} string the name of the variable
@@ -781,7 +788,14 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     *   
     * @param {function} handler The callback to add
     */
-  export function onFileVariablesChangedAndNoDownloadsPending(handler: Function): void;
+  export function onVariablesChangedAndNoDownloadsPending(handler: Function): void;
+
+    /**
+    * Adds a callback to be invoked when no files need to be downloaded or all downloads have been completed, but It is called only once. 
+    *   
+    * @param {function} handler The callback to add
+    */
+    export function onceVariablesChangedAndNoDownloadsPending(handler: Function): void;
 
   /**
     * Called when the value of the file variable is downloaded and ready. This is only available for File variables.
@@ -789,7 +803,7 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     * @param {name} string the name of the file variable
     * @param {function} handler The callback to add
     */
-  export function onFileChanged(name: string, handler: Function): void;
+  export function onFileValueChanged(name: string, handler: Function): void;
 
   /*******************
    * Custom Templates
@@ -861,6 +875,8 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export const CleverTapPushNotificationClicked: string;
   export const CleverTapPushPermissionResponseReceived: string;
   export const CleverTapOnVariablesChanged: string;
+  export const CleverTapOnceVariablesChanged: string;
   export const CleverTapOnValueChanged: string;
-  export const CleverTapOnFileVariablesChangedAndNoDownloadsPending: string;
-  export const CleverTapOnFileChanged: string;
+  export const CleverTapOnVariablesChangedAndNoDownloadsPending: string;
+  export const CleverTapOnceVariablesChangedAndNoDownloadsPending: string;
+  export const CleverTapOnFileValueChanged: string;

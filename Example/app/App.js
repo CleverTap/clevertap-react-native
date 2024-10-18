@@ -180,8 +180,8 @@ export default class App extends Component {
           name: 'Define Variables'
         },
         {
-          action: Actions.DEFINE_FILE_VARIABLES,
-          name: 'Define File Variables'
+          action: Actions.DEFINE_FILE_VARIABLE,
+          name: 'Define File Variable'
         },
         {
           action: Actions.FETCH_VARIABLES,
@@ -192,16 +192,24 @@ export default class App extends Component {
           name: 'Add \'OnVariablesChanged\' listener'
         },
         {
+          action: Actions.VARIABLES_ONCE_CHANGED,
+          name: 'Add \'OnceVariablesChanged\' listener'
+        },
+        {
           action: Actions.VALUE_CHANGED,
           name: 'Add \'OnValueChanged\' listener for name \'reactnative_var_string\''
         },
         {
-          action: Actions.FILES_VARIABLES_CHANGED_AND_DOWNLOADED,
-          name: 'Add \'OnFileVariablesChangedAndNoDownloadsPending\' listener'
+          action: Actions.VARIABLES_CHANGED_AND_NO_DOWNLOADS_PENDING,
+          name: 'Add \'OnVariablesChangedAndNoDownloadsPending\' listener'
         },
         {
-          action: Actions.FILE_CHANGED,
-          name: 'Add \'OnFileChanged\' listener for name \'fileVariable\''
+          action: Actions.VARIABLES_ONCE_CHANGED_AND_NO_DOWNLOADS_PENDING,
+          name: 'Add \'OnOnceVariablesChangedAndNoDownloadsPending\' listener'
+        },
+        {
+          action: Actions.FILE_VALUE_CHANGED,
+          name: 'Add \'OnFileValueChanged\' listener for name \'fileVariable\''
         }
       ],
     },
@@ -777,9 +785,9 @@ export default class App extends Component {
         console.log(`Creating variables: ${JSON.stringify(variables)}`);
         CleverTap.defineVariables(variables);
         break;
-      case Actions.DEFINE_FILE_VARIABLES:
+      case Actions.DEFINE_FILE_VARIABLE:
           console.log(`Creating file variables: folder1.fileVariable`);
-          CleverTap.defineFileVariables("folder1.folder3.fileVariable");
+          CleverTap.defineFileVariable("folder1.folder3.fileVariable");
           break;
       case Actions.FETCH_VARIABLES:
         CleverTap.fetchVariables((err, success) => {
@@ -791,20 +799,29 @@ export default class App extends Component {
           console.log('onVariablesChanged: ', variables);
         });
         break;
+      case Actions.VARIABLES_ONCE_CHANGED:
+      CleverTap.onceVariablesChanged((variables) => {
+        console.log('OnceVariablesChanged: ', variables);
+      });
+        break;
       case Actions.VALUE_CHANGED:
         CleverTap.onValueChanged('reactnative_var_string', (variable) => {
           console.log('onValueChanged: ', variable);
         });
         break;
-      case Actions.FILES_VARIABLES_CHANGED_AND_DOWNLOADED:
-        CleverTap.onFileVariablesChangedAndNoDownloadsPending((variables) => {
-          console.log('onFilesDownloaded', variables);
+      case Actions.VARIABLES_CHANGED_AND_NO_DOWNLOADS_PENDING:
+        CleverTap.onVariablesChangedAndNoDownloadsPending((variables) => {
+          console.log('onVariablesChangedAndNoDownloadsPending', variables);
         });
         break;
-      case Actions.FILE_CHANGED:
-        console.log('onFileChanged: ', variable);
-      CleverTap.onFileChanged('fileVariable', (variable) => {
-        console.log('onFileChanged: ', variable);
+      case Actions.VARIABLES_ONCE_CHANGED_AND_NO_DOWNLOADS_PENDING:
+        CleverTap.onceVariablesChangedAndNoDownloadsPending((variables) => {
+          console.log('onceVariablesChangedAndNoDownloadsPending', variables);
+        });
+          break;
+      case Actions.FILE_VALUE_CHANGED:
+      CleverTap.onFileValueChanged('fileVariable', (variable) => {
+        console.log('onFileValueChanged: ', variable);
       });
       break;
       case Actions.FETCH_INAPPS:
