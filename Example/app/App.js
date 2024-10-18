@@ -180,8 +180,8 @@ export default class App extends Component {
           name: 'Define Variables'
         },
         {
-          action: Actions.DEFINE_FILE_VARIABLES,
-          name: 'Define File Variables'
+          action: Actions.DEFINE_FILE_VARIABLE,
+          name: 'Define File Variable'
         },
         {
           action: Actions.FETCH_VARIABLES,
@@ -200,8 +200,12 @@ export default class App extends Component {
           name: 'Add \'OnValueChanged\' listener for name \'reactnative_var_string\''
         },
         {
-          action: Actions.FILES_VARIABLES_CHANGED_AND_DOWNLOADED,
-          name: 'Add \'OnFileVariablesChangedAndNoDownloadsPending\' listener'
+          action: Actions.VARIABLES_CHANGED_AND_NO_DOWNLOADS_PENDING,
+          name: 'Add \'OnVariablesChangedAndNoDownloadsPending\' listener'
+        },
+        {
+          action: Actions.VARIABLES_ONCE_CHANGED_AND_NO_DOWNLOADS_PENDING,
+          name: 'Add \'OnOnceVariablesChangedAndNoDownloadsPending\' listener'
         },
         {
           action: Actions.FILES_VARIABLES_CHANGED_AND_DOWNLOADED_ONCE,
