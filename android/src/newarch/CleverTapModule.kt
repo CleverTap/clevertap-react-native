@@ -547,6 +547,10 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.onVariablesChanged()
     }
 
+    override fun onOneTimeVariablesChanged() {
+        cleverTapModuleImpl.onOneTimeVariablesChanged()
+    }
+
     override fun onValueChanged(name: String) {
         cleverTapModuleImpl.onValueChanged(name)
     }

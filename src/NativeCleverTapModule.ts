@@ -23,6 +23,7 @@ export interface Spec extends TurboModule {
     CleverTapPushNotificationClicked: string;
     CleverTapPushPermissionResponseReceived: string;
     CleverTapOnVariablesChanged: string;
+    CleverTapOnOneTimeVariablesChanged: string;
     CleverTapOnValueChanged: string;
     CleverTapOnVariablesChangedAndNoDownloadsPending: string;
     CleverTapOnceVariablesChangedAndNoDownloadsPending: string;
@@ -224,6 +225,7 @@ export interface Spec extends TurboModule {
   ): void;
   defineFileVariable(name: string): void;
   onVariablesChanged(): void;
+  onOneTimeVariablesChanged(): void;
   onValueChanged(name: string): void;
   onVariablesChangedAndNoDownloadsPending(): void;
   onceVariablesChangedAndNoDownloadsPending(): void;
