@@ -56,6 +56,9 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
+        <meta-data
+            android:name="CLEVERTAP_HANDSHAKE_DOMAIN"
+            android:value="YOUR HANDSHAKE DOMAIN"/>
         <service
             android:name="com.clevertap.android.sdk.pushnotification.CTNotificationIntentService"
             android:exported="false">
