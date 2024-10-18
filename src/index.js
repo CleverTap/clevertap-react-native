@@ -69,6 +69,7 @@ var CleverTap = {
     CleverTapPushNotificationClicked: CleverTapReact.getConstants().CleverTapPushNotificationClicked,
     CleverTapPushPermissionResponseReceived: CleverTapReact.getConstants().CleverTapPushPermissionResponseReceived,
     CleverTapOnVariablesChanged: CleverTapReact.getConstants().CleverTapOnVariablesChanged,
+    CleverTapOnOneTimeVariablesChanged: CleverTapReact.getConstants().CleverTapOnOneTimeVariablesChanged,
     CleverTapOnValueChanged: CleverTapReact.getConstants().CleverTapOnValueChanged,
     CleverTapOnVariablesChangedAndNoDownloadsPending: CleverTapReact.getConstants().CleverTapOnVariablesChangedAndNoDownloadsPending,
     CleverTapOnceVariablesChangedAndNoDownloadsPending: CleverTapReact.getConstants().CleverTapOnceVariablesChangedAndNoDownloadsPending,
@@ -959,6 +960,16 @@ var CleverTap = {
     onVariablesChanged: function (handler) {
         CleverTapReact.onVariablesChanged();
         this.addListener(CleverTapReact.getConstants().CleverTapOnVariablesChanged, handler);
+    },
+
+    /**
+     *  Adds a callback to be invoked only once on app start, or when added if server values are already received
+     *
+     * @param {function} handler The callback to add
+     */
+    onOneTimeVariablesChanged: function (handler) {
+        this.addOneTimeListener(CleverTapReact.getConstants().CleverTapOnOneTimeVariablesChanged, handler);
+        CleverTapReact.onOneTimeVariablesChanged();
     },
 
     /**
