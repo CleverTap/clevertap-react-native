@@ -768,8 +768,8 @@ export default class App extends Component {
         });
         break;
         case Actions.GET_FILE_VARIABLE:
-          CleverTap.getVariable('pk.fileVariable', (err, variable) => {
-            console.log(`variable value for key \'pk.fileVariable\': ${variable}`);
+          CleverTap.getVariable('folder1.fileVariable', (err, variable) => {
+            console.log(`variable value for key \'folder1.fileVariable\': ${variable}`);
           });
           break;
       case Actions.DEFINE_VARIABLES:
@@ -787,7 +787,7 @@ export default class App extends Component {
         break;
       case Actions.DEFINE_FILE_VARIABLES:
           console.log(`Creating file variables: folder1.fileVariable`);
-          CleverTap.defineFileVariable("pk.fileVariable");
+          CleverTap.defineFileVariable("folder1.fileVariable");
           break;
       case Actions.FETCH_VARIABLES:
         CleverTap.fetchVariables((err, success) => {
