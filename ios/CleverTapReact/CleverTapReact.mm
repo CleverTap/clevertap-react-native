@@ -66,9 +66,11 @@ RCT_EXPORT_MODULE();
         kCleverTapPushPermissionResponseReceived: kCleverTapPushPermissionResponseReceived,
         kCleverTapInAppNotificationShowed: kCleverTapInAppNotificationShowed,
         kCleverTapOnVariablesChanged: kCleverTapOnVariablesChanged,
+        kCleverTapOnOneTimeVariablesChanged: kCleverTapOnOneTimeVariablesChanged,
         kCleverTapOnValueChanged: kCleverTapOnValueChanged,
-        kCleverTapOnFileVariablesChangedAndNoDownloadsPending: kCleverTapOnFileVariablesChangedAndNoDownloadsPending,
-        kCleverTapOnFileChanged: kCleverTapOnFileChanged,
+        kCleverTapOnVariablesChangedAndNoDownloadsPending: kCleverTapOnVariablesChangedAndNoDownloadsPending,
+        kCleverTapOnceVariablesChangedAndNoDownloadsPending: kCleverTapOnceVariablesChangedAndNoDownloadsPending,
+        kCleverTapOnFileValueChanged: kCleverTapOnFileValueChanged,
         kCleverTapCustomTemplatePresent: kCleverTapCustomTemplatePresent,
         kCleverTapCustomFunctionPresent: kCleverTapCustomFunctionPresent,
         kCleverTapCustomTemplateClose: kCleverTapCustomTemplateClose,
@@ -1056,6 +1058,13 @@ RCT_EXPORT_METHOD(onVariablesChanged) {
     }];
 }
 
+RCT_EXPORT_METHOD(onOneTimeVariablesChanged) {
+    RCTLogInfo(@"[CleverTap onOneTimeVariablesChanged]");
+    [[self cleverTapInstance]onceVariablesChanged:^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnOneTimeVariablesChanged object:nil userInfo:[self getVariableValues]];
+    }];
+}
+
 RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
     RCTLogInfo(@"[CleverTap onValueChanged]");
     CTVar *var = self.allVariables[name];
@@ -1069,14 +1078,21 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
     }
 }
 
-RCT_EXPORT_METHOD(onFileVariablesChangedAndNoDownloadsPending) {
-    RCTLogInfo(@"[CleverTap onFileVariablesChangedAndNoDownloadsPending]");
+RCT_EXPORT_METHOD(onVariablesChangedAndNoDownloadsPending) {
+    RCTLogInfo(@"[CleverTap onVariablesChangedAndNoDownloadsPending]");
     [[self cleverTapInstance]onVariablesChangedAndNoDownloadsPending:^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnFileVariablesChangedAndNoDownloadsPending object:nil userInfo:[self getVariableValues]];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnVariablesChangedAndNoDownloadsPending object:nil userInfo:[self getVariableValues]];
     }];
 }
 
-RCT_EXPORT_METHOD(onFileChanged:(NSString*)name) {
+RCT_EXPORT_METHOD(onceVariablesChangedAndNoDownloadsPending) {
+    RCTLogInfo(@"[CleverTap onceVariablesChangedAndNoDownloadsPending]");
+    [[self cleverTapInstance]onceVariablesChangedAndNoDownloadsPending:^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnceVariablesChangedAndNoDownloadsPending object:nil userInfo:[self getVariableValues]];
+    }];
+}
+
+RCT_EXPORT_METHOD(onFileValueChanged:(NSString*)name) {
     RCTLogInfo(@"[CleverTap onFileChanged]");
     CTVar *var = self.allVariables[name];
     if (var) {
@@ -1084,7 +1100,7 @@ RCT_EXPORT_METHOD(onFileChanged:(NSString*)name) {
             NSDictionary *varFileResult = @{
                 var.name: var.value
             };
-            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnFileChanged object:nil userInfo:varFileResult];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnFileValueChanged object:nil userInfo:varFileResult];
         }];
     }
 }
@@ -1277,9 +1293,11 @@ RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
              kCleverTapPushNotificationClicked,
              kCleverTapPushPermissionResponseReceived,
              kCleverTapOnVariablesChanged,
+             kCleverTapOnOneTimeVariablesChanged,
              kCleverTapOnValueChanged,
-             kCleverTapOnFileVariablesChangedAndNoDownloadsPending,
-             kCleverTapOnFileChanged,
+             kCleverTapOnVariablesChangedAndNoDownloadsPending,
+             kCleverTapOnceVariablesChangedAndNoDownloadsPending,
+             kCleverTapOnFileValueChanged,
              kCleverTapCustomTemplatePresent,
              kCleverTapCustomFunctionPresent,
              kCleverTapCustomTemplateClose];
