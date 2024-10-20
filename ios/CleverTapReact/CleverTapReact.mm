@@ -1038,12 +1038,12 @@ RCT_EXPORT_METHOD(defineVariables:(NSDictionary*)variables) {
     }];
 }
 
-RCT_EXPORT_METHOD(defineFileVariable:(NSString*)fileVariables) {
+RCT_EXPORT_METHOD(defineFileVariable:(NSString*)fileVariable) {
     RCTLogInfo(@"[CleverTap defineFileVariable]");
-    if (!fileVariables) return;
-    CTVar *fileVar = [[self cleverTapInstance]defineFileVar:fileVariables];
+    if (!fileVariable) return;
+    CTVar *fileVar = [[self cleverTapInstance]defineFileVar:fileVariable];
     if (fileVar) {
-        self.allVariables[@"fileVariable"] = fileVar;
+        self.allVariables[fileVariable] = fileVar;
     }
 }
 
