@@ -769,11 +769,11 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function onVariablesChanged(handler: Function): void;
 
   /**
-    *  Adds a callback to be invoked when variables are initialized with values fetched from the server. It is called only once.
-    * 
+    *  Adds a callback to be invoked only once on app start, or when added if server values are already received
+    *
     * @param {function} handler The callback to add
     */
-  export function onceVariablesChanged(handler: Function): void;
+  export function onOneTimeVariablesChanged(handler: Function): void;
 
   /**
     * Called when the value of the variable changes.
@@ -790,12 +790,12 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     */
   export function onVariablesChangedAndNoDownloadsPending(handler: Function): void;
 
-    /**
-    * Adds a callback to be invoked when no files need to be downloaded or all downloads have been completed, but It is called only once. 
-    *   
+  /**
+    * Adds a callback to be invoked only once for when new values are fetched and downloaded
+    *
     * @param {function} handler The callback to add
     */
-    export function onceVariablesChangedAndNoDownloadsPending(handler: Function): void;
+  export function onceVariablesChangedAndNoDownloadsPending(handler: Function): void;
 
   /**
     * Called when the value of the file variable is downloaded and ready. This is only available for File variables.
@@ -875,7 +875,7 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export const CleverTapPushNotificationClicked: string;
   export const CleverTapPushPermissionResponseReceived: string;
   export const CleverTapOnVariablesChanged: string;
-  export const CleverTapOnceVariablesChanged: string;
+  export const CleverTapOnOneTimeVariablesChanged: string;
   export const CleverTapOnValueChanged: string;
   export const CleverTapOnVariablesChangedAndNoDownloadsPending: string;
   export const CleverTapOnceVariablesChangedAndNoDownloadsPending: string;

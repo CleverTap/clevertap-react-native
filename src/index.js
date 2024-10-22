@@ -12,7 +12,7 @@ const EventEmitter = Platform.select({
 * @param {int} libVersion - The updated library version. If current version is 1.1.0 then pass as 10100  
 */
 const libName = 'React-Native';
-const libVersion = 30000;
+const libVersion = 30100;
 CleverTapReact.setLibrary(libName,libVersion);
 
 function defaultCallback(method, err, res) {
@@ -69,7 +69,7 @@ var CleverTap = {
     CleverTapPushNotificationClicked: CleverTapReact.getConstants().CleverTapPushNotificationClicked,
     CleverTapPushPermissionResponseReceived: CleverTapReact.getConstants().CleverTapPushPermissionResponseReceived,
     CleverTapOnVariablesChanged: CleverTapReact.getConstants().CleverTapOnVariablesChanged,
-    CleverTapOnceVariablesChanged: CleverTapReact.getConstants().CleverTapOnceVariablesChanged,
+    CleverTapOnOneTimeVariablesChanged: CleverTapReact.getConstants().CleverTapOnOneTimeVariablesChanged,
     CleverTapOnValueChanged: CleverTapReact.getConstants().CleverTapOnValueChanged,
     CleverTapOnVariablesChangedAndNoDownloadsPending: CleverTapReact.getConstants().CleverTapOnVariablesChangedAndNoDownloadsPending,
     CleverTapOnceVariablesChangedAndNoDownloadsPending: CleverTapReact.getConstants().CleverTapOnceVariablesChangedAndNoDownloadsPending,
@@ -85,6 +85,16 @@ var CleverTap = {
     addListener: function (eventName, handler) {
         if (EventEmitter) {
             EventEmitter.addListener(eventName, handler);
+            CleverTapReact.onEventListenerAdded(eventName);
+        }
+    },
+    addOneTimeListener: function (eventName, handler) {
+        if (EventEmitter) {
+            const subscription = EventEmitter.addListener(eventName, (args) =>
+             {
+              handler(args);
+              subscription.remove();
+              });
             CleverTapReact.onEventListenerAdded(eventName);
         }
     },
@@ -952,13 +962,13 @@ var CleverTap = {
     },
 
     /**
-     *  Adds a callback to be invoked when variables are initialized with values fetched from the server. It is called only once.
-     * 
+     *  Adds a callback to be invoked only once on app start, or when added if server values are already received
+     *
      * @param {function} handler The callback to add
      */
-    onceVariablesChanged: function (handler) {
-        CleverTapReact.onceVariablesChanged();
-        this.addListener(CleverTapReact.getConstants().CleverTapOnceVariablesChanged, handler);
+    onOneTimeVariablesChanged: function (handler) {
+        this.addOneTimeListener(CleverTapReact.getConstants().CleverTapOnOneTimeVariablesChanged, handler);
+        CleverTapReact.onOneTimeVariablesChanged();
     },
 
     /**
@@ -973,34 +983,34 @@ var CleverTap = {
     },
 
     /**
-     *  Adds a callback to be invoked when no files need to be downloaded or all downloads have been completed. It is called each time new values are fetched and downloads are completed.
+     *  Adds a callback to be invoked when variables are initialised with server values. Will be called each time new values are fetched.
      * 
      * @param {function} handler The callback to add
      */
     onVariablesChangedAndNoDownloadsPending: function (handler) {
-        CleverTapReact.onVariablesChangedAndNoDownloadsPending();
         this.addListener(CleverTapReact.getConstants().CleverTapOnVariablesChangedAndNoDownloadsPending, handler);
+        CleverTapReact.onVariablesChangedAndNoDownloadsPending();
     },
 
     /**
-     *  Adds a callback to be invoked when no files need to be downloaded or all downloads have been completed, but It is called only once.
-     * 
+     *  Adds a callback to be invoked only once for when new values are fetched and downloaded
+     *
      * @param {function} handler The callback to add
      */
     onceVariablesChangedAndNoDownloadsPending: function (handler) {
+        this.addOneTimeListener(CleverTapReact.getConstants().CleverTapOnceVariablesChangedAndNoDownloadsPending, handler);
         CleverTapReact.onceVariablesChangedAndNoDownloadsPending();
-        this.addListener(CleverTapReact.getConstants().CleverTapOnceVariablesChangedAndNoDownloadsPending, handler);
     },
 
     /**
-     * Called when the value of the file variable is downloaded and ready. This is only available for File variables.
+     * Called when the value of the file variable is downloaded and ready.
      * 
      * @param {name} string the name of the file variable
      * @param {function} handler The callback to add
      */
     onFileValueChanged: function (name, handler) {
-        CleverTapReact.onFileValueChanged(name);
         this.addListener(CleverTapReact.getConstants().CleverTapOnFileValueChanged, handler);
+        CleverTapReact.onFileValueChanged(name);
     },
 
     /**

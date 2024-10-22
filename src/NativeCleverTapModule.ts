@@ -23,7 +23,7 @@ export interface Spec extends TurboModule {
     CleverTapPushNotificationClicked: string;
     CleverTapPushPermissionResponseReceived: string;
     CleverTapOnVariablesChanged: string;
-    CleverTapOnceVariablesChanged: string;
+    CleverTapOnOneTimeVariablesChanged: string;
     CleverTapOnValueChanged: string;
     CleverTapOnVariablesChangedAndNoDownloadsPending: string;
     CleverTapOnceVariablesChangedAndNoDownloadsPending: string;
@@ -223,13 +223,13 @@ export interface Spec extends TurboModule {
   defineVariables(
     variables: Object | null
   ): void;
-  defineFileVariable(fileVariable: string): void;
+  defineFileVariable(name: string): void;
   onVariablesChanged(): void;
-  onceVariablesChanged(): void;
+  onOneTimeVariablesChanged(): void;
   onValueChanged(name: string): void;
   onVariablesChangedAndNoDownloadsPending(): void;
   onceVariablesChangedAndNoDownloadsPending(): void;
-  onFileValueChanged(): void;
+  onFileValueChanged(name: string): void;
 
   onEventListenerAdded(eventType: string): void;
   // NativeEventEmitter methods for the New Architecture.
