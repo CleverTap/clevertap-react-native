@@ -173,7 +173,7 @@ export default class App extends Component {
         },
         {
           action: Actions.GET_FILE_VARIABLE,
-          name: 'Get Variable Value for name \'fileVariable\''
+          name: 'Get Variable Value for name \'folder1.fileVariable\''
         },
         {
           action: Actions.DEFINE_VARIABLES,
@@ -209,7 +209,7 @@ export default class App extends Component {
         },
         {
           action: Actions.FILE_CHANGED,
-          name: 'Add \'OnFileChanged\' listener for name \'fileVariable\''
+          name: 'Add \'OnFileChanged\' listener for name \'folder1.fileVariable\''
         }
       ],
     },
@@ -769,7 +769,7 @@ export default class App extends Component {
         break;
         case Actions.GET_FILE_VARIABLE:
           CleverTap.getVariable('fileVariable', (err, variable) => {
-            console.log(`variable value for key \'fileVariable\': ${variable}`);
+            console.log(`variable value for key \'folder1.fileVariable\': ${variable}`);
           });
           break;
       case Actions.DEFINE_VARIABLES:
@@ -786,8 +786,8 @@ export default class App extends Component {
         CleverTap.defineVariables(variables);
         break;
       case Actions.DEFINE_FILE_VARIABLES:
-          console.log(`Creating file variables: fileVariable`);
-          CleverTap.defineFileVariable("fileVariable");
+          console.log(`Creating file variables: folder1.fileVariable`);
+          CleverTap.defineFileVariable("folder1.fileVariable");
           break;
       case Actions.FETCH_VARIABLES:
         CleverTap.fetchVariables((err, success) => {
@@ -809,7 +809,7 @@ export default class App extends Component {
           console.log('onValueChanged: ', variable);
         });
         CleverTap.onValueChanged('fileVariable', (variable) => {
-          console.log('onValueChanged:fileVariable: ', variable);
+          console.log('onValueChanged:folder1.fileVariable: ', variable);
         });
         break;
       case Actions.FILES_VARIABLES_CHANGED_AND_DOWNLOADED:
