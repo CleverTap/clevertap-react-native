@@ -808,7 +808,7 @@ export default class App extends Component {
         CleverTap.onValueChanged('reactnative_var_string', (variable) => {
           console.log('onValueChanged: ', variable);
         });
-        CleverTap.onValueChanged('fileVariable', (variable) => {
+        CleverTap.onValueChanged('folder1.fileVariable', (variable) => {
           console.log('onValueChanged:folder1.fileVariable: ', variable);
         });
         break;
@@ -823,7 +823,7 @@ export default class App extends Component {
         });
         break;
       case Actions.FILE_CHANGED:
-      CleverTap.onFileValueChanged('fileVariable', (variable) => {
+      CleverTap.onFileValueChanged('folder1.fileVariable', (variable) => {
         console.log('onFileValueChanged: ', variable);
       });
       break;
