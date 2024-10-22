@@ -1115,31 +1115,36 @@ RCT_EXPORT_METHOD(syncCustomTemplatesInProd:(BOOL)isProduction) {
 
 RCT_EXPORT_METHOD(customTemplateGetBooleanArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
-        return [NSNumber numberWithBool:[context boolNamed:argName]];
+        NSNumber *number = [context numberNamed:argName];
+        return number ? number : [NSNull null];
     }];
 }
 
 RCT_EXPORT_METHOD(customTemplateGetFileArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
-        return [context fileNamed:argName];
+        NSString *filePath = [context fileNamed:argName];
+        return filePath ? filePath : [NSNull null];
     }];
 }
 
 RCT_EXPORT_METHOD(customTemplateGetNumberArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
-        return [context numberNamed:argName];
+        NSNumber *number = [context numberNamed:argName];
+        return number ? number : [NSNull null];
     }];
 }
 
 RCT_EXPORT_METHOD(customTemplateGetObjectArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
-        return [context dictionaryNamed:argName];
+        NSDictionary *dictionary = [context dictionaryNamed:argName];
+        return dictionary ? dictionary : [NSNull null];
     }];
 }
 
 RCT_EXPORT_METHOD(customTemplateGetStringArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
-        return [context stringNamed:argName];
+        NSString *str = [context stringNamed:argName];
+        return str ? str : [NSNull null];
     }];
 }
 
@@ -1216,7 +1221,8 @@ static NSMutableSet<NSString *> *observableEvents = [NSMutableSet setWithObjects
                                                      kCleverTapProductConfigDidInitialize,
                                                      kCleverTapCustomTemplatePresent,
                                                      kCleverTapCustomFunctionPresent,
-                                                     kCleverTapCustomTemplateClose, nil];
+                                                     kCleverTapCustomTemplateClose,
+                                                     kCleverTapFeatureFlagsDidUpdate, nil];
 
 /// Time out in seconds, after which pending events are cleared.
 /// See ``startObserving`` for details.

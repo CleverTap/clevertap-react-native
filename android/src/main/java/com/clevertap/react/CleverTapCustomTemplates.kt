@@ -13,7 +13,8 @@ import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 
 object CleverTapCustomTemplates {
-    private val mTemplatePresenter: TemplatePresenter = object : TemplatePresenter {
+
+    private val templatePresenter: TemplatePresenter = object : TemplatePresenter {
         override fun onPresent(context: TemplateContext) {
             CleverTapEventEmitter.emit(
                 CleverTapEvent.CLEVERTAP_CUSTOM_TEMPLATE_PRESENT, context.templateName
@@ -27,7 +28,7 @@ object CleverTapCustomTemplates {
         }
     }
 
-    private val mFunctionPresenter = FunctionPresenter { context: FunctionContext ->
+    private val functionPresenter = FunctionPresenter { context: FunctionContext ->
         CleverTapEventEmitter.emit(
             CleverTapEvent.CLEVERTAP_CUSTOM_FUNCTION_PRESENT, context.templateName
         )
@@ -38,7 +39,7 @@ object CleverTapCustomTemplates {
         for (jsonAsset in jsonAssets) {
             val jsonDefinitions = readAsset(context, jsonAsset)
             CleverTapAPI.registerCustomInAppTemplates(
-                jsonDefinitions, mTemplatePresenter, mFunctionPresenter
+                jsonDefinitions, templatePresenter, functionPresenter
             )
         }
     }

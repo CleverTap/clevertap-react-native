@@ -1,5 +1,35 @@
 Change Log
 ==========
+
+Version 3.0.0 *(8 October 2024)*
+-------------------------------------------
+**What's new**
+
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v7.0.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-701-september-2-2024).
+  * Removes character limit of maximum 3 lines from `AppInbox` messages.
+  * Deprecates `CleverTapModule.setInitialUri()` in favour of `CleverTapRnAPI.setInitialUri()`. Refer to [step 4](docs/integration.md#step4)
+
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.0.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-701-august-22-2024).
+
+* **[Android and iOS Platform]**
+  * Adds support for triggering InApps based on user attribute changes.
+  * Migrates the bridge to a backwards-compatible [New Architecture Turbo Module](docs/integration.md).
+    * The CleverTap ReactNative SDK continues to be compatible with both the Old and the New Architecture.
+
+**Breaking Changes**
+* **[Android Platform]**
+  * Ensure that your custom `Application` class, extends the `CleverTapApplication` or calls `CleverTapRnAPI.initReactNativeIntegration(this);` to enable the functionality of `ClevertapPushNotificationClicked` and few other callbacks linked to killed state. Refer to [step 3](docs/integration.md#step3a)
+
+**Bug Fixes**
+* **[Android Platform]**
+  * Fixes an ANR caused by extremely old InApp campaigns.
+  * Fixes an issue where incorrect callbacks were sent for InApps when the phone was rotated.
+  * Fixes an issue where an InApp was displayed even after all the campaigns were stopped.
+  * Fixes an issue where the InApp image was not shown when the phone was rotated to landscape.
+  * Fixes an issue where certain URLs loaded incorrectly in custom HTML InApp templates.
+
 Version 2.2.1 *(12 April 2024)*
 -------------------------------------------
 **What's new**

@@ -4,9 +4,8 @@
 
    /**
     * Add a CleverTap event listener
-    * supported events are CleverTap.CleverTapProfileDidInitialize, CleverTap.CleverTapProfileSync and CleverTap.CleverTapInAppNotificationDismissed
     * @param {string} eventName - the CleverTap event name
-    * @param {function(event)} your event handler
+    * @param {function(event)} handler - Event handler
     */
    export function addListener(
    eventName: string,
@@ -805,6 +804,7 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     */
   export function onFileValueChanged(name: string, handler: Function): void;
 
+  /**
   /*******************
    * Custom Templates
    ******************/
@@ -822,22 +822,85 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    */
   export function syncCustomTemplatesInProd(isProduction: boolean): void;
 
+  /**
+   * Notify the SDK that an active custom template is dismissed. The active custom template is considered to be
+   * visible to the user until this method is called. Since the SDK can show only one InApp message at a time, all
+   * other messages will be queued until the current one is dismissed.
+   * 
+   * @param templateName The name of the active template
+   */
   export function customTemplateSetDismissed(templateName: string): Promise<void>;
 
+  /**
+   * Notify the SDK that an active custom template is presented to the user
+   * 
+   * @param templateName The name of the active template
+   */
   export function customTemplateSetPresented(templateName: string): Promise<void>;
 
+  /**
+   * Trigger a custom template action argument by name.
+   * 
+   * @param templateName The name of an active template for which the action is defined
+   * @param argName The action argument name
+   */
   export function customTemplateRunAction(templateName: string, argName: string): Promise<void>;
 
+  /**
+   * Retrieve a string argument by name.
+   *
+   * @param templateName The name of an active template for which the argument is defined
+   * @param argName The action argument name
+   * 
+   * @returns The argument value or null if no such argument is defined for the template.
+   */
   export function customTemplateGetStringArg(templateName: string, argName: string): Promise<string>;
 
+  /**
+   * Retrieve a number argument by name.
+   *
+   * @param templateName The name of an active template for which the argument is defined
+   * @param argName The action argument name
+   * 
+   * @returns The argument value or null if no such argument is defined for the template.
+   */
   export function customTemplateGetNumberArg(templateName: string, argName: string): Promise<number>;
 
+  /**
+   * Retrieve a boolean argument by name.
+   *
+   * @param templateName The name of an active template for which the argument is defined
+   * @param argName The action argument name
+   * 
+   * @returns The argument value or null if no such argument is defined for the template.
+   */
   export function customTemplateGetBooleanArg(templateName: string, argName: string): Promise<boolean>;
 
+  /**
+   * Retrieve a file argument by name.
+   *
+   * @param templateName The name of an active template for which the argument is defined
+   * @param argName The action argument name
+   * 
+   * @returns The file path to the file or null if no such argument is defined for the template.
+   */
   export function customTemplateGetFileArg(templateName: string, argName: string): Promise<string>;
 
+  /**
+   * Retrieve an object argument by name.
+   *
+   * @param templateName The name of an active template for which the argument is defined
+   * @param argName The action argument name
+   * 
+   * @returns The argument value or null if no such argument is defined for the template.
+   */
   export function customTemplateGetObjectArg(templateName: string, argName: string): Promise<any>;
 
+  /**
+   * Get a string representation of an active's template context with information about all arguments. 
+   * 
+   * @param templateName The name of an active template
+   */
   export function customTemplateContextToString(templateName: string): Promise<string>;
 
   /*******************

@@ -12,7 +12,7 @@ enum class CleverTapEvent(val eventName: String, val bufferable: Boolean = false
     CLEVERTAP_ON_INBOX_MESSAGE_CLICK("CleverTapInboxMessageTapped"),
     CLEVERTAP_ON_INAPP_BUTTON_CLICK("CleverTapInAppNotificationButtonTapped", bufferable = true),
     CLEVERTAP_ON_DISPLAY_UNITS_LOADED("CleverTapDisplayUnitsLoaded", bufferable = true),
-    CLEVERTAP_FEATURE_FLAGS_DID_UPDATE("CleverTapFeatureFlagsDidUpdate"),
+    CLEVERTAP_FEATURE_FLAGS_DID_UPDATE("CleverTapFeatureFlagsDidUpdate", bufferable = true),
     CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE("CleverTapProductConfigDidInitialize", bufferable = true),
     CLEVERTAP_PRODUCT_CONFIG_DID_FETCH("CleverTapProductConfigDidFetch"),
     CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE("CleverTapProductConfigDidActivate"),
