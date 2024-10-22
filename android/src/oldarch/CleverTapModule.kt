@@ -1,11 +1,11 @@
 package com.clevertap.react
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Build.VERSION_CODES
 import androidx.annotation.RequiresApi
 import com.clevertap.android.sdk.CleverTapAPI
 import com.facebook.react.bridge.Callback
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
@@ -37,7 +37,6 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         return Constants.REACT_MODULE_NAME
     }
 
-    @SuppressLint("RestrictedApi")
     @ReactMethod
     fun setLibrary(libName: String?, libVersion: Int) {
         cleverTapModuleImpl.setLibrary(libName, libVersion)
@@ -522,6 +521,88 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     @ReactMethod
     fun clearInAppResources(expiredOnly: Boolean) {
         cleverTapModuleImpl.clearInAppResources(expiredOnly)
+    }
+
+    @ReactMethod
+    fun customTemplateSetDismissed(templateName: String?, promise: Promise?) {
+        cleverTapModuleImpl.customTemplateSetDismissed(templateName, promise)
+    }
+
+    @ReactMethod
+    fun customTemplateSetPresented(templateName: String?, promise: Promise?) {
+        cleverTapModuleImpl.customTemplateSetPresented(templateName, promise)
+    }
+
+    @ReactMethod
+    fun customTemplateRunAction(
+        templateName: String?,
+        argName: String?,
+        promise: Promise?
+    ) {
+        cleverTapModuleImpl.customTemplateRunAction(templateName, argName, promise)
+    }
+
+    @ReactMethod
+    fun customTemplateGetStringArg(
+        templateName: String?,
+        argName: String?,
+        promise: Promise?
+    ) {
+        cleverTapModuleImpl.customTemplateGetStringArg(templateName, argName, promise)
+    }
+
+    @ReactMethod
+    fun customTemplateGetNumberArg(
+        templateName: String?,
+        argName: String?,
+        promise: Promise?
+    ) {
+        cleverTapModuleImpl.customTemplateGetNumberArg(templateName, argName, promise)
+    }
+
+    @ReactMethod
+    fun customTemplateGetBooleanArg(
+        templateName: String?,
+        argName: String?,
+        promise: Promise?
+    ) {
+        cleverTapModuleImpl.customTemplateGetBooleanArg(templateName, argName, promise)
+    }
+
+    @ReactMethod
+    fun customTemplateGetFileArg(
+        templateName: String?,
+        argName: String?,
+        promise: Promise?
+    ) {
+        cleverTapModuleImpl.customTemplateGetFileArg(templateName, argName, promise)
+    }
+
+    @ReactMethod
+    fun customTemplateGetObjectArg(
+        templateName: String?,
+        argName: String?,
+        promise: Promise?
+    ) {
+        cleverTapModuleImpl.customTemplateGetObjectArg(templateName, argName, promise)
+    }
+
+    @ReactMethod
+    fun customTemplateContextToString(
+        templateName: String?,
+        promise: Promise?
+    ) {
+        cleverTapModuleImpl.customTemplateContextToString(templateName, promise)
+    }
+
+    @ReactMethod
+    fun syncCustomTemplates() {
+        cleverTapModuleImpl.syncCustomTemplates()
+    }
+
+    @ReactMethod
+    fun syncCustomTemplatesInProd(isProduction: Boolean) {
+        cleverTapModuleImpl.syncCustomTemplates()
     }
 
     @ReactMethod

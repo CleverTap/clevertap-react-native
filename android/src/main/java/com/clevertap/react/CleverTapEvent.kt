@@ -12,14 +12,17 @@ enum class CleverTapEvent(val eventName: String, val bufferable: Boolean = false
     CLEVERTAP_ON_INBOX_MESSAGE_CLICK("CleverTapInboxMessageTapped"),
     CLEVERTAP_ON_INAPP_BUTTON_CLICK("CleverTapInAppNotificationButtonTapped", bufferable = true),
     CLEVERTAP_ON_DISPLAY_UNITS_LOADED("CleverTapDisplayUnitsLoaded", bufferable = true),
-    CLEVERTAP_FEATURE_FLAGS_DID_UPDATE("CleverTapFeatureFlagsDidUpdate"),
+    CLEVERTAP_FEATURE_FLAGS_DID_UPDATE("CleverTapFeatureFlagsDidUpdate", bufferable = true),
     CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE("CleverTapProductConfigDidInitialize", bufferable = true),
     CLEVERTAP_PRODUCT_CONFIG_DID_FETCH("CleverTapProductConfigDidFetch"),
     CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE("CleverTapProductConfigDidActivate"),
     CLEVERTAP_PUSH_NOTIFICATION_CLICKED("CleverTapPushNotificationClicked", bufferable = true),
     CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE("CleverTapPushPermissionResponseReceived"),
     CLEVERTAP_ON_VARIABLES_CHANGED("CleverTapOnVariablesChanged"),
-    CLEVERTAP_ON_VALUE_CHANGED("CleverTapOnValueChanged");
+    CLEVERTAP_ON_VALUE_CHANGED("CleverTapOnValueChanged"),
+    CLEVERTAP_CUSTOM_TEMPLATE_PRESENT("CleverTapCustomTemplatePresent", bufferable = true),
+    CLEVERTAP_CUSTOM_FUNCTION_PRESENT("CleverTapCustomFunctionPresent", bufferable = true),
+    CLEVERTAP_CUSTOM_TEMPLATE_CLOSE("CleverTapCustomTemplateClose");
 
     override fun toString(): String {
         return eventName

@@ -1,4 +1,5 @@
 import { DeviceEventEmitter, NativeEventEmitter, NativeModules } from 'react-native';
+
 const CleverTapReact = require('./NativeCleverTapModule').default;
 const EventEmitter = Platform.select({
     ios: new NativeEventEmitter(CleverTapReact),
@@ -49,6 +50,10 @@ var CleverTap = {
     CleverTapProfileSync: CleverTapReact.getConstants().CleverTapProfileSync,
     CleverTapInAppNotificationDismissed: CleverTapReact.getConstants().CleverTapInAppNotificationDismissed,
     CleverTapInAppNotificationShowed: CleverTapReact.getConstants().CleverTapInAppNotificationShowed,
+    CleverTapInAppNotificationButtonTapped: CleverTapReact.getConstants().CleverTapInAppNotificationButtonTapped,
+    CleverTapCustomTemplatePresent: CleverTapReact.getConstants().CleverTapCustomTemplatePresent,
+    CleverTapCustomFunctionPresent: CleverTapReact.getConstants().CleverTapCustomFunctionPresent,
+    CleverTapCustomTemplateClose: CleverTapReact.getConstants().CleverTapCustomTemplateClose,
     FCM: CleverTapReact.getConstants().FCM,
     BPS: CleverTapReact.getConstants().BPS,
     HPS: CleverTapReact.getConstants().HPS,
@@ -57,7 +62,6 @@ var CleverTap = {
     CleverTapInboxMessageButtonTapped: CleverTapReact.getConstants().CleverTapInboxMessageButtonTapped,
     CleverTapInboxMessageTapped: CleverTapReact.getConstants().CleverTapInboxMessageTapped,
     CleverTapDisplayUnitsLoaded: CleverTapReact.getConstants().CleverTapDisplayUnitsLoaded,
-    CleverTapInAppNotificationButtonTapped: CleverTapReact.getConstants().CleverTapInAppNotificationButtonTapped,
     CleverTapFeatureFlagsDidUpdate: CleverTapReact.getConstants().CleverTapFeatureFlagsDidUpdate, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
     CleverTapProductConfigDidInitialize: CleverTapReact.getConstants().CleverTapProductConfigDidInitialize, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
     CleverTapProductConfigDidFetch: CleverTapReact.getConstants().CleverTapProductConfigDidFetch, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
@@ -962,6 +966,123 @@ var CleverTap = {
      */
     clearInAppResources: function (expiredOnly) {
         CleverTapReact.clearInAppResources(expiredOnly);
+    },
+
+    /**
+     * Uploads Custom in-app templates and app functions to the server.
+     * Requires Development/Debug build/configuration.
+     */
+    syncCustomTemplates: function () {
+        CleverTapReact.syncCustomTemplates();
+    },
+
+    /**
+     * Uploads Custom in-app templates and app functions to the server.
+     *
+     * @param {boolean} isProduction Provide `true` if templates must be sync in Productuon build/configuration.
+     */
+    syncCustomTemplatesInProd: function (isProduction) {
+        CleverTapReact.syncCustomTemplatesInProd(isProduction)
+    },
+
+    /**
+     * Notify the SDK that an active custom template is dismissed. The active custom template is considered to be
+     * visible to the user until this method is called. Since the SDK can show only one InApp message at a time, all
+     * other messages will be queued until the current one is dismissed.
+     * 
+     * @param {string} templateName The name of the active template
+     */
+    customTemplateSetDismissed: function (templateName) {
+        return CleverTapReact.customTemplateSetDismissed(templateName);
+    },
+
+    /**
+     * Notify the SDK that an active custom template is presented to the user
+     * 
+     * @param {string} templateName The name of the active template
+     */
+    customTemplateSetPresented: function (templateName) {
+        return CleverTapReact.customTemplateSetPresented(templateName);
+    },
+
+    /**
+     * Trigger a custom template action argument by name.
+     * 
+     * @param {string} templateName The name of an active template for which the action is defined
+     * @param {string} argName The action argument name
+     */
+    customTemplateRunAction: function (templateName, argName) {
+        return CleverTapReact.customTemplateRunAction(templateName, argName);
+    },
+
+    /**
+     * Retrieve a string argument by name.
+     *
+     * @param {string} templateName The name of an active template for which the argument is defined
+     * @param {string} argName The action argument name
+     * 
+     * @returns {string} The argument value or null if no such argument is defined for the template.
+     */
+    customTemplateGetStringArg: function (templateName, argName) {
+       return CleverTapReact.customTemplateGetStringArg(templateName, argName);
+    },
+
+    /**
+     * Retrieve a number argument by name.
+     *
+     * @param {string} templateName The name of an active template for which the argument is defined
+     * @param {string} argName The action argument name
+     * 
+     * @returns {number} The argument value or null if no such argument is defined for the template.
+     */
+    customTemplateGetNumberArg: function (templateName, argName) {
+        return CleverTapReact.customTemplateGetNumberArg(templateName, argName);
+    },
+
+    /**
+     * Retrieve a boolean argument by name.
+     *
+     * @param {string} templateName The name of an active template for which the argument is defined
+     * @param {stirng} argName The action argument name
+     * 
+     * @returns {boolean} The argument value or null if no such argument is defined for the template.
+     */
+    customTemplateGetBooleanArg: function (templateName, argName) {
+        return CleverTapReact.customTemplateGetBooleanArg(templateName, argName);
+    },
+
+    /**
+     * Retrieve a file argument by name.
+     *
+     * @param {string} templateName The name of an active template for which the argument is defined
+     * @param {string} argName The action argument name
+     * 
+     * @returns {string} The file path to the file or null if no such argument is defined for the template.
+     */
+    customTemplateGetFileArg: function (templateName, argName) {
+        return CleverTapReact.customTemplateGetFileArg(templateName, argName);
+    },
+
+    /**
+     * Retrieve an object argument by name.
+     *
+     * @param {string} templateName The name of an active template for which the argument is defined
+     * @param {string} argName The action argument name
+     * 
+     * @returns {any} The argument value or null if no such argument is defined for the template.
+     */
+    customTemplateGetObjectArg: function (templateName, argName) {
+        return CleverTapReact.customTemplateGetObjectArg(templateName, argName);
+    },
+
+    /**
+     * Get a string representation of an active's template context with information about all arguments. 
+     * 
+     * @param {string} templateName The name of an active template
+     * @returns {string}
+     */
+    customTemplateContextToString: function (templateName) {
+        return CleverTapReact.customTemplateContextToString(templateName);
     }
 };
 

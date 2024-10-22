@@ -3,8 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "postinstall": "react-native-asset",
+    "android": "react-native-asset && react-native run-android",
+    "ios": "react-native-asset && react-native run-ios",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint ."
@@ -16,6 +17,7 @@
     "clevertap-react-native": "../",
     "react": "18.2.0",
     "react-native": "^0.74.1",
+    "react-native-asset": "^2.1.1",
     "react-native-drawer": "^2.5.1",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-pager-view": "^5.1.2",
@@ -23,7 +25,9 @@
     "react-native-safe-area-context": "^3.2.0",
     "react-native-screens": "3.31.1",
     "react-native-svg-transformer": "^1.3.0",
-    "react-native-tab-view": "^3.0.1"
+    "react-native-tab-view": "^3.0.1",
+    "react-native-toast-message": "^2.2.1",
+    "react-native-webview": "^13.12.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
