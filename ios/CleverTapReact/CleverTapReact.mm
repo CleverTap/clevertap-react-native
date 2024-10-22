@@ -1045,7 +1045,7 @@ RCT_EXPORT_METHOD(defineVariables:(NSDictionary*)variables) {
 RCT_EXPORT_METHOD(defineFileVariable:(NSString*)fileVariable) {
     RCTLogInfo(@"[CleverTap defineFileVariable]");
     if (!fileVariable) return;
-    CTVar *fileVar = [[self cleverTapInstance]defineFileVar:fileVariable];
+    CTVar *fileVar = [[self cleverTapInstance] defineFileVar:fileVariable];
     if (fileVar) {
         self.allVariables[fileVariable] = fileVar;
     }
@@ -1060,7 +1060,7 @@ RCT_EXPORT_METHOD(onVariablesChanged) {
 
 RCT_EXPORT_METHOD(onOneTimeVariablesChanged) {
     RCTLogInfo(@"[CleverTap onOneTimeVariablesChanged]");
-    [[self cleverTapInstance]onceVariablesChanged:^{
+    [[self cleverTapInstance] onceVariablesChanged:^{
         [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnOneTimeVariablesChanged object:nil userInfo:[self getVariableValues]];
     }];
 }
@@ -1087,7 +1087,7 @@ RCT_EXPORT_METHOD(onVariablesChangedAndNoDownloadsPending) {
 
 RCT_EXPORT_METHOD(onceVariablesChangedAndNoDownloadsPending) {
     RCTLogInfo(@"[CleverTap onceVariablesChangedAndNoDownloadsPending]");
-    [[self cleverTapInstance]onceVariablesChangedAndNoDownloadsPending:^{
+    [[self cleverTapInstance] onceVariablesChangedAndNoDownloadsPending:^{
         [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnceVariablesChangedAndNoDownloadsPending object:nil userInfo:[self getVariableValues]];
     }];
 }

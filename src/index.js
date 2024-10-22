@@ -92,7 +92,6 @@ var CleverTap = {
         if (EventEmitter) {
             const subscription = EventEmitter.addListener(eventName, (args) =>
              {
-              console.log("one time listener invoked = "+eventName);
               handler(args);
               subscription.remove();
               });
@@ -931,8 +930,8 @@ var CleverTap = {
     * Create File Variable
     * @param {string} fileVariable - the file variable string
     */
-        defineFileVariable: function (fileVariable) {
-            CleverTapReact.defineFileVariable(fileVariable)
+    defineFileVariable: function (fileVariable) {
+        CleverTapReact.defineFileVariable(fileVariable)
     },
     
     /**
