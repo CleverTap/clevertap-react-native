@@ -527,6 +527,10 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.defineVariables(`object`)
     }
 
+    override fun defineFileVariable(name: String) {
+        cleverTapModuleImpl.defineFileVariable(name)
+    }
+
     override fun fetchVariables(callback: Callback?) {
         cleverTapModuleImpl.fetchVariables(callback)
     }
@@ -543,8 +547,24 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.onVariablesChanged()
     }
 
+    override fun onOneTimeVariablesChanged() {
+        cleverTapModuleImpl.onOneTimeVariablesChanged()
+    }
+
     override fun onValueChanged(name: String) {
         cleverTapModuleImpl.onValueChanged(name)
+    }
+
+    override fun onFileValueChanged(name: String) {
+        cleverTapModuleImpl.onFileValueChanged(name)
+    }
+
+    override fun onVariablesChangedAndNoDownloadsPending() {
+        cleverTapModuleImpl.onVariablesChangedAndNoDownloadsPending()
+    }
+
+    override fun onceVariablesChangedAndNoDownloadsPending() {
+        cleverTapModuleImpl.onceVariablesChangedAndNoDownloadsPending()
     }
 
     override fun onEventListenerAdded(eventName: String) {
