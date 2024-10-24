@@ -31,6 +31,7 @@ static NSDateFormatter *dateFormatter;
 @interface CleverTapReact()
 @property CleverTap *cleverTapInstance;
 @property(nonatomic, strong) NSMutableDictionary *allVariables;
+@property(nonatomic, strong) NSString *fileVariable;
 @end
 
 @implementation CleverTapReact
@@ -62,7 +63,11 @@ RCT_EXPORT_MODULE();
         kCleverTapPushPermissionResponseReceived: kCleverTapPushPermissionResponseReceived,
         kCleverTapInAppNotificationShowed: kCleverTapInAppNotificationShowed,
         kCleverTapOnVariablesChanged: kCleverTapOnVariablesChanged,
+        kCleverTapOnOneTimeVariablesChanged: kCleverTapOnOneTimeVariablesChanged,
         kCleverTapOnValueChanged: kCleverTapOnValueChanged,
+        kCleverTapOnVariablesChangedAndNoDownloadsPending: kCleverTapOnVariablesChangedAndNoDownloadsPending,
+        kCleverTapOnceVariablesChangedAndNoDownloadsPending: kCleverTapOnceVariablesChangedAndNoDownloadsPending,
+        kCleverTapOnFileValueChanged: kCleverTapOnFileValueChanged,
         kCleverTapCustomTemplatePresent: kCleverTapCustomTemplatePresent,
         kCleverTapCustomFunctionPresent: kCleverTapCustomFunctionPresent,
         kCleverTapCustomTemplateClose: kCleverTapCustomTemplateClose,
@@ -86,6 +91,7 @@ RCT_EXPORT_MODULE();
     self = [super init];
     if (self) {
         self.allVariables = [NSMutableDictionary dictionary];
+        self.fileVariable = [NSString string];
     }
     return self;
 }
@@ -549,6 +555,12 @@ RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
     return varValues;
 }
 
+- (NSString *)getFileVariableValue {
+    NSString *fileVarValue = [NSString string];
+    fileVarValue = self.fileVariable
+    return fileVarValue;
+}
+
 #pragma mark - App Inbox
 
 RCT_EXPORT_METHOD(getInboxMessageCount:(RCTResponseSenderBlock)callback) {
@@ -1002,14 +1014,26 @@ RCT_EXPORT_METHOD(syncVariablesinProd:(BOOL)isProduction) {
 
 RCT_EXPORT_METHOD(getVariable:(NSString * _Nonnull)name callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getVariable:name]");
-    CTVar *var = self.allVariables[name];
-    [self returnResult:var.value withCallback:callback andError:nil];
+    if (name == self.fileVariable){
+        CTVar *fileVar = self.fileVariable;
+        [self returnResult:fileVar.value withCallback:callback andError:nil];
+    }
+    else {
+        CTVar *var = self.allVariables[name];
+        [self returnResult:var.value withCallback:callback andError:nil];
+    }
 }
 
 RCT_EXPORT_METHOD(getVariables:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getVariables]");
 
     NSMutableDictionary *varValues = [self getVariableValues];
+    NSString *fileVariableValue = [self getFileVariableValue];
+    CTVar *fileVar = fileVariableValue;
+    if (fileVar) {
+        NSString *fileVarVal = fileVar.val;
+        [varValues setObject:fileVarVal forKey:fileVar];
+    }
     [self returnResult:varValues withCallback:callback andError:nil];
 }
 
@@ -1034,10 +1058,26 @@ RCT_EXPORT_METHOD(defineVariables:(NSDictionary*)variables) {
     }];
 }
 
+RCT_EXPORT_METHOD(defineFileVariable:(NSString*)fileVariable) {
+    RCTLogInfo(@"[CleverTap defineFileVariable]");
+    if (!fileVariable) return;
+    CTVar *fileVar = [[self cleverTapInstance] defineFileVar:fileVariable];
+    if (fileVar) {
+        self.allVariables[fileVariable] = fileVar;
+    }
+}
+
 RCT_EXPORT_METHOD(onVariablesChanged) {
     RCTLogInfo(@"[CleverTap onVariablesChanged]");
     [[self cleverTapInstance]onVariablesChanged:^{
         [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnVariablesChanged object:nil userInfo:[self getVariableValues]];
+    }];
+}
+
+RCT_EXPORT_METHOD(onOneTimeVariablesChanged) {
+    RCTLogInfo(@"[CleverTap onOneTimeVariablesChanged]");
+    [[self cleverTapInstance] onceVariablesChanged:^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnOneTimeVariablesChanged object:nil userInfo:[self getVariableValues]];
     }];
 }
 
@@ -1050,6 +1090,33 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
                 var.name: var.value
             };
             [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnValueChanged object:nil userInfo:varResult];
+        }];
+    }
+}
+
+RCT_EXPORT_METHOD(onVariablesChangedAndNoDownloadsPending) {
+    RCTLogInfo(@"[CleverTap onVariablesChangedAndNoDownloadsPending]");
+    [[self cleverTapInstance]onVariablesChangedAndNoDownloadsPending:^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnVariablesChangedAndNoDownloadsPending object:nil userInfo:[self getVariableValues]];
+    }];
+}
+
+RCT_EXPORT_METHOD(onceVariablesChangedAndNoDownloadsPending) {
+    RCTLogInfo(@"[CleverTap onceVariablesChangedAndNoDownloadsPending]");
+    [[self cleverTapInstance] onceVariablesChangedAndNoDownloadsPending:^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnceVariablesChangedAndNoDownloadsPending object:nil userInfo:[self getVariableValues]];
+    }];
+}
+
+RCT_EXPORT_METHOD(onFileValueChanged:(NSString*)name) {
+    RCTLogInfo(@"[CleverTap onFileChanged]");
+    CTVar *var = self.allVariables[name];
+    if (var) {
+        [var onFileIsReady:^{
+            NSDictionary *varFileResult = @{
+                var.name: var.value
+            };
+            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnFileValueChanged object:nil userInfo:varFileResult];
         }];
     }
 }
@@ -1242,7 +1309,11 @@ RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
              kCleverTapPushNotificationClicked,
              kCleverTapPushPermissionResponseReceived,
              kCleverTapOnVariablesChanged,
+             kCleverTapOnOneTimeVariablesChanged,
              kCleverTapOnValueChanged,
+             kCleverTapOnVariablesChangedAndNoDownloadsPending,
+             kCleverTapOnceVariablesChangedAndNoDownloadsPending,
+             kCleverTapOnFileValueChanged,
              kCleverTapCustomTemplatePresent,
              kCleverTapCustomFunctionPresent,
              kCleverTapCustomTemplateClose];

@@ -27,6 +27,14 @@ let variables = {
 CleverTap.defineVariables(variables);
 ```
 
+# Define File Variables
+
+CleverTap React Native SDK supports file types for variables from version `3.1.0`. Supported file types include but are not limited to images (jpg, jpeg, png, gif), text files, and PDFs.
+
+```javascript
+CleverTap.defineFileVariable("fileVariable");
+```
+
 # Setup Callbacks
 
 CleverTap React Native SDK provides several callbacks for the developer to receive feedback from the SDK. You can use them as per your requirement, using all of them is not mandatory. They are as follows:
@@ -34,6 +42,13 @@ CleverTap React Native SDK provides several callbacks for the developer to recei
 - Status of fetch variables request
 - `onVariablesChanged`
 - `onValueChanged`
+
+From version `3.1.0` onwards, the following callbacks are also supported:
+
+- `onOneTimeVariablesChanged`
+- `onVariablesChangedAndNoDownloadsPending`
+- `onceVariablesChangedAndNoDownloadsPending`
+- `onFileValueChanged`
 
 ## Status of Variables Fetch Request
 
@@ -55,6 +70,16 @@ CleverTap.onVariablesChanged((variables) => {
 });
 ```
 
+## `onOneTimeVariablesChanged`
+
+This callback is invoked once when variables are initialized with a value or changed with a new server value. Callback is triggered only once on app start, or when added if server values are already received
+
+```javascript
+ CleverTap.onOneTimeVariablesChanged((variables) => {
+    console.log('onOneTimeVariablesChanged: ', variables);
+});
+```
+
 ## `onValueChanged`
 
 This callback is invoked when the value of the variable changes. You must provide the name of the variable whose value needs to be observed.
@@ -62,6 +87,36 @@ This callback is invoked when the value of the variable changes. You must provid
 ```javascript
 CleverTap.onValueChanged('reactnative_var_string', (variable) => {
     console.log('onValueChanged: ', variable);
+});
+```
+
+## `onVariablesChangedAndNoDownloadsPending`
+
+This callback is invoked when variable values are changed and the files associated with it are downloaded and ready to be used. Callback is triggered each time new values are fetched and downloaded.
+
+```javascript
+CleverTap.onVariablesChangedAndNoDownloadsPending((variables) => {
+    console.log('onVariablesChangedAndNoDownloadsPending', variables);
+});
+```
+
+## `onceVariablesChangedAndNoDownloadsPending`
+
+This callback is invoked only once when variable values are changed and the files associated with it are downloaded and ready to be used. Callback is triggered only once for when new values are fetched and downloaded 
+
+```javascript
+CleverTap.onceVariablesChangedAndNoDownloadsPending((variables) => {
+    console.log('onceVariablesChangedAndNoDownloadsPending', variables);
+});
+```
+
+## `onFileValueChanged`
+
+This callback is registered per file variable. It is called when the file associated with the file variable is downloaded and ready to be used.
+
+```javascript
+CleverTap.onFileValueChanged('fileVariable', (variable) => {
+    console.log('onFileValueChanged: ', variable);
 });
 ```
 
