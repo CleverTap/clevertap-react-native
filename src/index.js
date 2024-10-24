@@ -384,7 +384,7 @@ var CleverTap = {
     * Set the user's location as a latitude,longitude coordinate
     * @param {float} latitude
     * @param {float} longitude
-    // */
+    */
     setLocation: function (latitude, longitude) {
         CleverTapReact.setLocation(latitude, longitude);
     },
