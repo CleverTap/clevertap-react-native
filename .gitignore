@@ -36,3 +36,9 @@ node_modules
 # CocoaPods
 Pods
 Podfile.lock
+
+# Ignore assets in custom directory
+android/app/src/main/assets/custom/*
+
+# Ignore all link-assets-manifest.json files
+**/link-assets-manifest.json

@@ -8,6 +8,7 @@
 
 #import "CleverTap.h"
 #import "CleverTapReactManager.h"
+#import "CleverTapReactCustomTemplates.h"
 
 @implementation AppDelegate
 
@@ -23,6 +24,8 @@
 #ifdef DEBUG
   [CleverTap setDebugLevel:CleverTapLogDebug];
 #endif
+  
+  [CleverTapReactCustomTemplates registerCustomTemplates:@"templates", nil];
   [CleverTap autoIntegrate];
   [self addNotificationCategories];
 
