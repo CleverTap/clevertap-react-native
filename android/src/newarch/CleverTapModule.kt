@@ -5,6 +5,7 @@ import android.os.Build.VERSION_CODES
 import androidx.annotation.RequiresApi
 import com.clevertap.android.sdk.CleverTapAPI
 import com.facebook.react.bridge.Callback
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
@@ -443,6 +444,77 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.clearInAppResources(expiredOnly)
     }
 
+    override fun customTemplateSetDismissed(templateName: String?, promise: Promise?) {
+        cleverTapModuleImpl.customTemplateSetDismissed(templateName, promise)
+    }
+
+    override fun customTemplateSetPresented(templateName: String?, promise: Promise?) {
+        cleverTapModuleImpl.customTemplateSetPresented(templateName, promise)
+    }
+
+    override fun customTemplateRunAction(
+        templateName: String?,
+        argName: String?,
+        promise: Promise?
+    ) {
+        cleverTapModuleImpl.customTemplateRunAction(templateName, argName, promise)
+    }
+
+    override fun customTemplateGetStringArg(
+        templateName: String?,
+        argName: String?,
+        promise: Promise?
+    ) {
+        cleverTapModuleImpl.customTemplateGetStringArg(templateName, argName, promise)
+    }
+
+    override fun customTemplateGetNumberArg(
+        templateName: String?,
+        argName: String?,
+        promise: Promise?
+    ) {
+        cleverTapModuleImpl.customTemplateGetNumberArg(templateName, argName, promise)
+    }
+
+    override fun customTemplateGetBooleanArg(
+        templateName: String?,
+        argName: String?,
+        promise: Promise?
+    ) {
+        cleverTapModuleImpl.customTemplateGetBooleanArg(templateName, argName, promise)
+    }
+
+    override fun customTemplateGetFileArg(
+        templateName: String?,
+        argName: String?,
+        promise: Promise?
+    ) {
+        cleverTapModuleImpl.customTemplateGetFileArg(templateName, argName, promise)
+    }
+
+    override fun customTemplateGetObjectArg(
+        templateName: String?,
+        argName: String?,
+        promise: Promise?
+    ) {
+        cleverTapModuleImpl.customTemplateGetObjectArg(templateName, argName, promise)
+    }
+
+    override fun customTemplateContextToString(
+        templateName: String?,
+        promise: Promise?
+    ) {
+        cleverTapModuleImpl.customTemplateContextToString(templateName, promise)
+    }
+
+    override fun syncCustomTemplates() {
+        cleverTapModuleImpl.syncCustomTemplates()
+    }
+
+    override fun syncCustomTemplatesInProd(isProduction: Boolean) {
+        cleverTapModuleImpl.syncCustomTemplates()
+    }
+
     override fun syncVariables() {
         cleverTapModuleImpl.syncVariables()
     }
@@ -453,6 +525,10 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
 
     override fun defineVariables(`object`: ReadableMap?) {
         cleverTapModuleImpl.defineVariables(`object`)
+    }
+
+    override fun defineFileVariable(name: String) {
+        cleverTapModuleImpl.defineFileVariable(name)
     }
 
     override fun fetchVariables(callback: Callback?) {
@@ -471,8 +547,24 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.onVariablesChanged()
     }
 
+    override fun onOneTimeVariablesChanged() {
+        cleverTapModuleImpl.onOneTimeVariablesChanged()
+    }
+
     override fun onValueChanged(name: String) {
         cleverTapModuleImpl.onValueChanged(name)
+    }
+
+    override fun onFileValueChanged(name: String) {
+        cleverTapModuleImpl.onFileValueChanged(name)
+    }
+
+    override fun onVariablesChangedAndNoDownloadsPending() {
+        cleverTapModuleImpl.onVariablesChangedAndNoDownloadsPending()
+    }
+
+    override fun onceVariablesChangedAndNoDownloadsPending() {
+        cleverTapModuleImpl.onceVariablesChangedAndNoDownloadsPending()
     }
 
     override fun onEventListenerAdded(eventName: String) {

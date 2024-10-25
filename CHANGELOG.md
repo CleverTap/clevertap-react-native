@@ -1,6 +1,28 @@
 Change Log
 ==========
 
+Version 3.1.0 *(25 October 2024)*
+-------------------------------------------
+**What's new**
+
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v7.0.2](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-702-october-10-2024).
+  * Adds support for custom handshake domain configuration in android manifest
+
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.0.2](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-702-october-10-2024).
+  * Adds support for custom handshake domains.
+
+* **[Android and iOS Platform]**
+  * Adds support for File Type Variables in Remote Config. Please refer to the [Remote Config Variables](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/docs/Variables.md) doc to read more on how to integrate this in your app.
+  * Adds support for Custom Code Templates. Please refer to the [CustomCodeTemplates.md](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CustomCodeTemplates.md) doc to read more on how to integrate this in your app.
+  * Adds support for custom code in-app templates definitions through a json scheme.
+
+**Bug Fixes**
+* **[Android and iOS Platform]**
+  * Fixes a missing import statement in the index.js file https://github.com/CleverTap/clevertap-react-native/issues/431
+  * Fixes https://github.com/CleverTap/clevertap-react-native/issues/426
+
 Version 3.0.0 *(8 October 2024)*
 -------------------------------------------
 **What's new**

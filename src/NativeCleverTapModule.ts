@@ -7,12 +7,15 @@ export interface Spec extends TurboModule {
     CleverTapProfileSync: string;
     CleverTapInAppNotificationDismissed: string;
     CleverTapInAppNotificationShowed: string;
+    CleverTapInAppNotificationButtonTapped: string;
+    CleverTapCustomTemplatePresent: string;
+    CleverTapCustomTemplateClose: string;
+    CleverTapCustomFunctionPresent: string;
     CleverTapInboxDidInitialize: string;
     CleverTapInboxMessagesDidUpdate: string;
     CleverTapInboxMessageButtonTapped: string;
     CleverTapInboxMessageTapped: string;
     CleverTapDisplayUnitsLoaded: string;
-    CleverTapInAppNotificationButtonTapped: string;
     CleverTapFeatureFlagsDidUpdate: string;
     CleverTapProductConfigDidInitialize: string;
     CleverTapProductConfigDidFetch: string;
@@ -20,7 +23,11 @@ export interface Spec extends TurboModule {
     CleverTapPushNotificationClicked: string;
     CleverTapPushPermissionResponseReceived: string;
     CleverTapOnVariablesChanged: string;
+    CleverTapOnOneTimeVariablesChanged: string;
     CleverTapOnValueChanged: string;
+    CleverTapOnVariablesChangedAndNoDownloadsPending: string;
+    CleverTapOnceVariablesChangedAndNoDownloadsPending: string;
+    CleverTapOnFileValueChanged: string;
     HPS: string;
     FCM: string;
     BPS: string;
@@ -191,6 +198,17 @@ export interface Spec extends TurboModule {
   resumeInAppNotifications(): void;
   fetchInApps(callback: ((error: Object, result: boolean) => void) | null): void;
   clearInAppResources(expiredOnly: boolean): void;
+  customTemplateSetDismissed(templateName: string): Promise<void>;
+  customTemplateSetPresented(templateName: string): Promise<void>;
+  customTemplateRunAction(templateName: string, argName: string): Promise<void>;
+  customTemplateGetStringArg(templateName: string, argName: string): Promise<string>;
+  customTemplateGetNumberArg(templateName: string, argName: string): Promise<number>;
+  customTemplateGetBooleanArg(templateName: string, argName: string): Promise<boolean>;
+  customTemplateGetFileArg(templateName: string, argName: string): Promise<string>;
+  customTemplateGetObjectArg(templateName: string, argName: string): Promise<any>;
+  customTemplateContextToString(templateName: string): Promise<string>;
+  syncCustomTemplates(): void;
+  syncCustomTemplatesInProd(isProduction: boolean): void;
   promptForPushPermission(showFallbackSettings: boolean): void;
   promptPushPrimer(json: Object): void;
   isPushPermissionGranted(callback: ((error: Object, result: boolean) => void) | null): void;
@@ -205,8 +223,13 @@ export interface Spec extends TurboModule {
   defineVariables(
     variables: Object | null
   ): void;
+  defineFileVariable(name: string): void;
   onVariablesChanged(): void;
+  onOneTimeVariablesChanged(): void;
   onValueChanged(name: string): void;
+  onVariablesChangedAndNoDownloadsPending(): void;
+  onceVariablesChangedAndNoDownloadsPending(): void;
+  onFileValueChanged(name: string): void;
 
   onEventListenerAdded(eventType: string): void;
   // NativeEventEmitter methods for the New Architecture.

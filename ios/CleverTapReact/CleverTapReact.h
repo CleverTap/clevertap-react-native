@@ -18,7 +18,14 @@ static NSString *const kCleverTapPushNotificationClicked = @"CleverTapPushNotifi
 static NSString *const kCleverTapPushPermissionResponseReceived = @"CleverTapPushPermissionResponseReceived";
 static NSString *const kCleverTapInAppNotificationShowed = @"CleverTapInAppNotificationShowed";
 static NSString *const kCleverTapOnVariablesChanged = @"CleverTapOnVariablesChanged";
+static NSString *const kCleverTapOnOneTimeVariablesChanged = @"CleverTapOnOneTimeVariablesChanged";
 static NSString *const kCleverTapOnValueChanged = @"CleverTapOnValueChanged";
+static NSString *const kCleverTapOnVariablesChangedAndNoDownloadsPending = @"CleverTapOnVariablesChangedAndNoDownloadsPending";
+static NSString *const kCleverTapOnceVariablesChangedAndNoDownloadsPending = @"CleverTapOnceVariablesChangedAndNoDownloadsPending";
+static NSString *const kCleverTapOnFileValueChanged = @"CleverTapOnFileValueChanged";
+static NSString *const kCleverTapCustomTemplatePresent = @"CleverTapCustomTemplatePresent";
+static NSString *const kCleverTapCustomFunctionPresent = @"CleverTapCustomFunctionPresent";
+static NSString *const kCleverTapCustomTemplateClose = @"CleverTapCustomTemplateClose";
 static NSString *const kXPS = @"XPS";
 
 #ifdef RCT_NEW_ARCH_ENABLED

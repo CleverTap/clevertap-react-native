@@ -28,6 +28,7 @@ import com.clevertap.android.sdk.events.EventDetail;
 import com.clevertap.android.sdk.featureFlags.CTFeatureFlagsController;
 import com.clevertap.android.sdk.inapp.CTLocalInApp;
 import com.clevertap.android.sdk.inapp.callbacks.FetchInAppsCallback;
+import com.clevertap.android.sdk.inapp.customtemplates.CustomTemplateContext;
 import com.clevertap.android.sdk.inbox.CTInboxMessage;
 import com.clevertap.android.sdk.interfaces.OnInitCleverTapIDListener;
 import com.clevertap.android.sdk.product_config.CTProductConfigController;
@@ -38,6 +39,7 @@ import com.clevertap.android.sdk.variables.callbacks.VariableCallback;
 import com.clevertap.android.sdk.variables.callbacks.VariablesChangedCallback;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableArray;
@@ -1066,6 +1068,114 @@ public class CleverTapModuleImpl {
         }
     }
 
+    public void customTemplateSetDismissed(String templateName, Promise promise) {
+        resolveWithTemplateContext(templateName, promise, templateContext -> {
+            templateContext.setDismissed();
+            return null;
+        });
+    }
+
+    public void customTemplateSetPresented(String templateName, Promise promise) {
+        resolveWithTemplateContext(templateName, promise, templateContext -> {
+            templateContext.setPresented();
+            return null;
+        });
+    }
+
+    public void customTemplateRunAction(String templateName, String argName, Promise promise) {
+        resolveWithTemplateContext(
+                templateName,
+                promise,
+                customTemplateContext -> {
+                    if (customTemplateContext instanceof CustomTemplateContext.TemplateContext) {
+                        ((CustomTemplateContext.TemplateContext) customTemplateContext).triggerActionArgument(argName, null);
+                    }
+                    return null;
+                }
+        );
+    }
+
+    public void customTemplateGetStringArg(String templateName, String argName, Promise promise) {
+        resolveWithTemplateContext(
+                templateName,
+                promise,
+                templateContext -> templateContext.getString(argName)
+        );
+    }
+
+    public void customTemplateGetNumberArg(String templateName, String argName, Promise promise) {
+        resolveWithTemplateContext(
+                templateName,
+                promise,
+                templateContext -> templateContext.getDouble(argName)
+        );
+    }
+
+    public void customTemplateGetBooleanArg(String templateName, String argName, Promise promise) {
+        resolveWithTemplateContext(
+                templateName,
+                promise,
+                templateContext -> templateContext.getBoolean(argName)
+        );
+    }
+
+    public void customTemplateGetFileArg(String templateName, String argName, Promise promise) {
+        resolveWithTemplateContext(
+                templateName,
+                promise,
+                templateContext -> templateContext.getFile(argName)
+        );
+    }
+
+    public void customTemplateGetObjectArg(String templateName, String argName, Promise promise) {
+        resolveWithTemplateContext(
+                templateName,
+                promise,
+                templateContext -> {
+                    Map<String, Object> mapArg = templateContext.getMap(argName);
+                    if (mapArg != null) {
+                        return CleverTapUtils.MapUtil.toWritableMap(mapArg);
+                    } else {
+                        return null;
+                    }
+                }
+        );
+    }
+
+    public void customTemplateContextToString(String templateName, Promise promise) {
+        resolveWithTemplateContext(
+                templateName,
+                promise,
+                templateContext -> templateContext.toString()
+        );
+    }
+
+    public void syncCustomTemplates() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.syncRegisteredInAppTemplates();
+        }
+    }
+
+    private void resolveWithTemplateContext(String templateName, Promise promise, TemplateContextAction action) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            CustomTemplateContext templateContext = cleverTap.getActiveContextForTemplate(templateName);
+            if (templateContext != null) {
+                promise.resolve(action.execute(templateContext));
+            } else {
+                promise.reject("CustomTemplateError", "Custom template: " + templateName + " is not currently being presented");
+            }
+        } else {
+            promise.reject("CustomTemplateError", "CleverTap is not initialized");
+        }
+    }
+
+    @FunctionalInterface
+    private interface TemplateContextAction {
+        Object execute(CustomTemplateContext context);
+    }
+
     /**************************************************
      *  Product Experience Remote Config methods starts
      *************************************************/
@@ -1095,6 +1205,13 @@ public class CleverTapModuleImpl {
                 Object value = entry.getValue();
                 variables.put(key, cleverTap.defineVariable(key, value));
             }
+        }
+    }
+
+    public void defineFileVariable(String name) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            variables.put(name, cleverTap.defineFileVariable(name));
         }
     }
 
@@ -1158,6 +1275,31 @@ public class CleverTapModuleImpl {
         }
     }
 
+    public void onFileValueChanged(final String name) {
+        if (variables.containsKey(name)) {
+
+            Var<Object> var = (Var<Object>) variables.get(name);
+            if (var != null) {
+                var.addFileReadyHandler(new VariableCallback<Object>() {
+                    @Override
+                    public void onValueChanged(final Var<Object> variable) {
+                        WritableMap result = null;
+                        try {
+                            result = getVariableValueAsWritableMap(name);
+                        } catch (IllegalArgumentException e) {
+                            Log.e(TAG, e.getLocalizedMessage());
+                        }
+                        sendEvent(CleverTapEvent.CLEVERTAP_ON_FILE_VALUE_CHANGED, result);
+                    }
+                });
+            } else {
+                Log.d(TAG, "File variable object with name = " + name + " contains null value. Not setting onFileValueChanged callback.");
+            }
+        } else {
+            Log.e(TAG, "File variable name = " + name + " does not exist. Make sure you set file variable first.");
+        }
+    }
+
     public void onVariablesChanged() {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1165,6 +1307,44 @@ public class CleverTapModuleImpl {
                 @Override
                 public void variablesChanged() {
                     sendEvent(CleverTapEvent.CLEVERTAP_ON_VARIABLES_CHANGED, getVariablesValues());
+                }
+            });
+        }
+    }
+
+    public void onOneTimeVariablesChanged() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.addOneTimeVariablesChangedCallback(new VariablesChangedCallback() {
+                @Override
+                public void variablesChanged() {
+                    sendEvent(CleverTapEvent.CLEVERTAP_ON_ONE_TIME_VARIABLES_CHANGED, getVariablesValues());
+                }
+            });
+        }
+    }
+
+    public void onVariablesChangedAndNoDownloadsPending() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.onVariablesChangedAndNoDownloadsPending(new VariablesChangedCallback() {
+                @Override
+                public void variablesChanged() {
+                    sendEvent(CleverTapEvent.CLEVERTAP_ON_VARIABLES_CHANGED_AND_NO_DOWNLOADS_PENDING,
+                            getVariablesValues());
+                }
+            });
+        }
+    }
+
+    public void onceVariablesChangedAndNoDownloadsPending() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.onceVariablesChangedAndNoDownloadsPending(new VariablesChangedCallback() {
+                @Override
+                public void variablesChanged() {
+                    sendEvent(CleverTapEvent.CLEVERTAP_ONCE_VARIABLES_CHANGED_AND_NO_DOWNLOADS_PENDING,
+                            getVariablesValues());
                 }
             });
         }

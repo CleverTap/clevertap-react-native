@@ -23,9 +23,11 @@
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>CleverTapAccountID</key>
-	<string>RKW-R77-KW6Z</string>
+	<string>TEST_ACC_ID</string>
 	<key>CleverTapToken</key>
-	<string>aa2-032</string>
+	<string>TEST_ACC_TOKEN</string>
+	<key>CleverTapRegion</key>
+	<string>TEST_ACC_REGION</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
