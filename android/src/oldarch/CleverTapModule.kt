@@ -621,6 +621,11 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
+    fun defineFileVariable(name: String) {
+        cleverTapModuleImpl.defineFileVariable(name)
+    }
+
+    @ReactMethod
     fun fetchVariables(callback: Callback?) {
         cleverTapModuleImpl.fetchVariables(callback)
     }
@@ -641,8 +646,28 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
+    fun onOneTimeVariablesChanged() {
+        cleverTapModuleImpl.onOneTimeVariablesChanged()
+    }
+
+    @ReactMethod
     fun onValueChanged(name: String) {
         cleverTapModuleImpl.onValueChanged(name)
+    }
+
+    @ReactMethod
+    fun onFileValueChanged(name: String) {
+        cleverTapModuleImpl.onFileValueChanged(name)
+    }
+
+    @ReactMethod
+    fun onVariablesChangedAndNoDownloadsPending() {
+        cleverTapModuleImpl.onVariablesChangedAndNoDownloadsPending()
+    }
+
+    @ReactMethod
+    fun onceVariablesChangedAndNoDownloadsPending() {
+        cleverTapModuleImpl.onceVariablesChangedAndNoDownloadsPending()
     }
 
     @ReactMethod

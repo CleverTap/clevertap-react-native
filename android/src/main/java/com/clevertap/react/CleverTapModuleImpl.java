@@ -1208,6 +1208,13 @@ public class CleverTapModuleImpl {
         }
     }
 
+    public void defineFileVariable(String name) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            variables.put(name, cleverTap.defineFileVariable(name));
+        }
+    }
+
     public void fetchVariables(final Callback callback) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1268,6 +1275,31 @@ public class CleverTapModuleImpl {
         }
     }
 
+    public void onFileValueChanged(final String name) {
+        if (variables.containsKey(name)) {
+
+            Var<Object> var = (Var<Object>) variables.get(name);
+            if (var != null) {
+                var.addFileReadyHandler(new VariableCallback<Object>() {
+                    @Override
+                    public void onValueChanged(final Var<Object> variable) {
+                        WritableMap result = null;
+                        try {
+                            result = getVariableValueAsWritableMap(name);
+                        } catch (IllegalArgumentException e) {
+                            Log.e(TAG, e.getLocalizedMessage());
+                        }
+                        sendEvent(CleverTapEvent.CLEVERTAP_ON_FILE_VALUE_CHANGED, result);
+                    }
+                });
+            } else {
+                Log.d(TAG, "File variable object with name = " + name + " contains null value. Not setting onFileValueChanged callback.");
+            }
+        } else {
+            Log.e(TAG, "File variable name = " + name + " does not exist. Make sure you set file variable first.");
+        }
+    }
+
     public void onVariablesChanged() {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1275,6 +1307,44 @@ public class CleverTapModuleImpl {
                 @Override
                 public void variablesChanged() {
                     sendEvent(CleverTapEvent.CLEVERTAP_ON_VARIABLES_CHANGED, getVariablesValues());
+                }
+            });
+        }
+    }
+
+    public void onOneTimeVariablesChanged() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.addOneTimeVariablesChangedCallback(new VariablesChangedCallback() {
+                @Override
+                public void variablesChanged() {
+                    sendEvent(CleverTapEvent.CLEVERTAP_ON_ONE_TIME_VARIABLES_CHANGED, getVariablesValues());
+                }
+            });
+        }
+    }
+
+    public void onVariablesChangedAndNoDownloadsPending() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.onVariablesChangedAndNoDownloadsPending(new VariablesChangedCallback() {
+                @Override
+                public void variablesChanged() {
+                    sendEvent(CleverTapEvent.CLEVERTAP_ON_VARIABLES_CHANGED_AND_NO_DOWNLOADS_PENDING,
+                            getVariablesValues());
+                }
+            });
+        }
+    }
+
+    public void onceVariablesChangedAndNoDownloadsPending() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.onceVariablesChangedAndNoDownloadsPending(new VariablesChangedCallback() {
+                @Override
+                public void variablesChanged() {
+                    sendEvent(CleverTapEvent.CLEVERTAP_ONCE_VARIABLES_CHANGED_AND_NO_DOWNLOADS_PENDING,
+                            getVariablesValues());
                 }
             });
         }
