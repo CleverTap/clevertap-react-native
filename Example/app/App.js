@@ -768,7 +768,7 @@ export default class App extends Component {
         });
         break;
       case Actions.GET_FILE_VARIABLE:
-        CleverTap.getVariable('fileVariable', (err, variable) => {
+        CleverTap.getVariable('folder1.fileVariable', (err, variable) => {
           console.log(`variable value for key \'folder1.fileVariable\': ${variable}`);
         });
         break;
