@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 3.1.0 *(24 October 2024)*
+Version 3.1.0 *(25 October 2024)*
 -------------------------------------------
 **What's new**
 
@@ -20,7 +20,8 @@ Version 3.1.0 *(24 October 2024)*
 
 **Bug Fixes**
 * **[Android and iOS Platform]**
-  * Fixed a missing import statement in the index.js file
+  * Fixes a missing import statement in the index.js file https://github.com/CleverTap/clevertap-react-native/issues/431
+  * Fixes https://github.com/CleverTap/clevertap-react-native/issues/426
 
 Version 3.0.0 *(8 October 2024)*
 -------------------------------------------
