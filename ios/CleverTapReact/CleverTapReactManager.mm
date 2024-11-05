@@ -38,11 +38,6 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleContentDidAppearNotification:)
-                                                     name:RCTContentDidAppearNotification
-                                                   object:nil];
         CleverTap *clevertap = [CleverTap sharedInstance];
         [self setDelegates:clevertap];
     }
@@ -169,17 +164,6 @@
     NSMutableDictionary *body = [NSMutableDictionary new];
     body[@"accepted"] = [NSNumber numberWithBool:accepted];
     [self postNotificationWithName:kCleverTapPushPermissionResponseReceived andBody:body];
-}
-
-- (void)handleContentDidAppearNotification:(NSNotification *)notification {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-    NSMutableDictionary *pushNotificationExtras = [NSMutableDictionary new];
-    NSDictionary *customExtras = self.pendingPushNotificationExtras;
-    if (customExtras != nil) {
-        pushNotificationExtras = [NSMutableDictionary dictionaryWithDictionary:customExtras];
-        [self  postNotificationWithName:kCleverTapPushNotificationClicked andBody:pushNotificationExtras];
-    }
 }
 
 @end
