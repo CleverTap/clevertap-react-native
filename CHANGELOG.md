@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+Version 3.1.1 *(6 November 2024)*
+-------------------------------------------
+**What's new**
+
+* **[iOS Platform]**
+  * Fixes a bug where the push notification callback was getting triggered twice.
+
 Version 3.1.0 *(25 October 2024)*
 -------------------------------------------
 **What's new**

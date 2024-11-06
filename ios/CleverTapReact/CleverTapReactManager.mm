@@ -58,7 +58,6 @@
 - (void)applicationDidLaunchWithOptions:(NSDictionary *)options {
     NSDictionary *notification = [options valueForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
     if (notification){
-        self.pendingPushNotificationExtras = notification;
         if (notification[@"wzrk_dl"]) {
             self.launchDeepLink = notification[@"wzrk_dl"];
             RCTLogInfo(@"CleverTapReact: setting launch deeplink: %@", self.launchDeepLink);
