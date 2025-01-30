@@ -500,6 +500,6 @@ CleverTap.resumeInAppNotifications();
 
 
 ### For more information,
- - [See included Example Application](/Example/App.js) 
- - [See CleverTap JS interface](/index.js)
- - [See CleverTap TS interface](/index.d.ts)
+ - [See included Example Application](/Example/app/App.js) 
+ - [See CleverTap JS interface](/src/index.js)
+ - [See CleverTap TS interface](/src/index.d.ts)
