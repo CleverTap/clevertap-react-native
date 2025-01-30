@@ -23,11 +23,15 @@ buildscript {
 
         maven { url 'https://www.jitpack.io' }
         maven { url "https://maven.google.com" }
+        maven {
+            url = uri("https://storage.googleapis.com/r8-releases/raw")
+        }
     }
     dependencies {
         classpath('com.android.tools.build:gradle:7.3.1')
         classpath ('com.google.gms:google-services:4.4.1')
         classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("com.android.tools:r8:8.1.44")
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
