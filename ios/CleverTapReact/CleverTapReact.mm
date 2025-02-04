@@ -264,6 +264,31 @@ RCT_EXPORT_METHOD(getEventHistory:(RCTResponseSenderBlock)callback) {
     [self returnResult:result withCallback:callback andError:nil];
 }
 
+RCT_EXPORT_METHOD(getUserEventLog:(NSString*)eventName callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getUserEventLog: %@]", eventName);
+    CleverTapEventDetail *detail = [[self cleverTapInstance] getUserEventLog:eventName];
+    NSDictionary *result = [self _eventDetailToDict:detail];
+    [self returnResult:result withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(getUserEventLogCount:(NSString*)eventName callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getUserEventLogCount: %@]", eventName);
+    int result = [[self cleverTapInstance] getUserEventLogCount:eventName];
+    [self returnResult:@(result) withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(getUserEventLogHistory:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getUserEventLogHistory]");
+    NSDictionary *history = [[self cleverTapInstance] getUserEventLogHistory];
+    NSMutableDictionary *result = [NSMutableDictionary new];
+    
+    for (NSString *eventName in [history keyEnumerator]) {
+        CleverTapEventDetail *detail = history[eventName];
+        NSDictionary * _inner = [self _eventDetailToDict:detail];
+        result[eventName] = _inner;
+    }
+    [self returnResult:result withCallback:callback andError:nil];
+}
 
 #pragma mark - Profile API
 
@@ -387,6 +412,17 @@ RCT_EXPORT_METHOD(sessionGetUTMDetails:(RCTResponseSenderBlock)callback) {
     [self returnResult:result withCallback:callback andError:nil];
 }
 
+RCT_EXPORT_METHOD(getUserLastVisitTs:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getUserLastVisitTs]");
+    NSTimeInterval result = [[self cleverTapInstance] getUserLastVisitTs];
+    [self returnResult:@(result) withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(getUserAppLaunchCount:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getUserAppLaunchCount]");
+    int result = [[self cleverTapInstance] getUserAppLaunchCount];
+    [self returnResult:@(result) withCallback:callback andError:nil];
+}
 
 #pragma mark - no-op Android O methods
 
