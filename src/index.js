@@ -338,6 +338,7 @@ var CleverTap = {
 
     /**
     * Get the time of the first occurrence of an event
+    * @deprecated - Since version 3.2.0. Use getUserEventLog() instead
     * @param {string} eventName - the name of the event
     * @param {function(err, res)} callback that returns a res of epoch seconds or -1
     */
@@ -347,6 +348,7 @@ var CleverTap = {
 
     /**
     * Get the time of the most recent occurrence of an event
+    * @deprecated - Since version 3.2.0. Use getUserEventLog() instead
     * @param {string} eventName - the name of the event
     * @param {function(err, res)} callback that returns a res of epoch seconds or -1
     */
@@ -356,6 +358,7 @@ var CleverTap = {
 
     /**
     * Get the number of occurrences of an event
+    * @deprecated - Since version 3.2.0. Use getUserEventLogCount() instead
     * @param {string} eventName - the name of the event
     * @param {function(err, res)} callback that returns a res of int
     */
@@ -365,15 +368,16 @@ var CleverTap = {
 
     /**
     * Get the summary details of an event
+    * @deprecated - Since version 3.2.0. Use getUserEventLog() instead
     * @param {string} eventName - the name of the event
     * @param {function(err, res)} callback that returns a res of object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>} or empty object
     */
     eventGetDetail: function (eventName, callback) {
         callWithCallback('eventGetDetail', [eventName], callback);
     },
-
     /**
     * Get the user's event history
+    * @deprecated - Since version 3.2.0. Use getUserEventLogHistory() instead
     * @param {function(err, res)} callback that returns a res of object {"eventName1":<event1 details object>, "eventName2":<event2 details object>}
     */
     getEventHistory: function (callback) {
@@ -539,6 +543,7 @@ var CleverTap = {
 
     /**
     * Get the total number of vists by the user
+    * @deprecated - Since version 3.2.0. Use getUserAppLaunchCount() instead
     * @param {function(err, res)} callback that returns a res of int
     */
     sessionGetTotalVisits: function (callback) {
@@ -555,6 +560,7 @@ var CleverTap = {
 
     /**
     * Get the most recent previous visit time of the user
+    * @deprecated - Since version 3.2.0. Use getUserLastVisits() instead
     * @param {function(err, res)} callback that returns a res of epoch seconds or -1
     */
     sessionGetPreviousVisitTime: function (callback) {
