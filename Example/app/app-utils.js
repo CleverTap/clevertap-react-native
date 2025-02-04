@@ -120,14 +120,14 @@ export const pushChargedEvent = () => {
 };
 
 export const getUserEventLog = () => {
-    CleverTap.getUserEventLog((err, res) => {
+    CleverTap.getUserEventLog("testEvent", (err, res) => {
         console.log('User Event Log: ', res, err);
         showToast(`User Event Log: \n ${JSON.stringify(res)}`);
     });
 };
 
 export const getUserEventLogCount = () => {
-    CleverTap.getUserEventLogCount((err, res) => {
+    CleverTap.getUserEventLogCount("testEvent", (err, res) => {
         console.log('User Event Log Count: ', res, err);
         showToast(`User Event Log Count: \n ${res}`);
     });
