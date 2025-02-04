@@ -487,6 +487,10 @@ RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
             [_dict setObject:detail.eventName forKey:@"eventName"];
         }
         
+        if(detail.normalizedEventName){
+            [_dict setObject:detail.normalizedEventName forKey:@"normalizedEventName"];
+        }
+        
         if(detail.firstTime){
             [_dict setObject:@(detail.firstTime) forKey:@"firstTime"];
         }
@@ -497,6 +501,10 @@ RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
         
         if(detail.count){
             [_dict setObject:@(detail.count) forKey:@"count"];
+        }
+        
+        if(detail.deviceID){
+            [_dict setObject:detail.deviceID forKey:@"deviceID"];
         }
     }
     
