@@ -375,6 +375,7 @@ var CleverTap = {
     eventGetDetail: function (eventName, callback) {
         callWithCallback('eventGetDetail', [eventName], callback);
     },
+
     /**
     * Get the user's event history
     * @deprecated - Since version 3.2.0. Use getUserEventLogHistory() instead
@@ -382,6 +383,32 @@ var CleverTap = {
     */
     getEventHistory: function (callback) {
         callWithCallback('getEventHistory', null, callback);
+    },
+
+    /**
+    * Get the details of a specific event
+    * @param {string} eventName - the name of the event
+    * @param {function(err, res)} callback that returns a res of object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>} or empty object
+    */
+    getUserEventLog: function (eventName, callback) {
+        callWithCallback('getUserEventLog', [eventName], callback);
+    },
+    
+    /**
+    * Get the count of times an event occured
+    * @param {string} eventName - the name of the event
+    * @param {function(err, res)} callback that returns a res of int
+    */
+    getUserEventLogCount: function (eventName, callback) {
+        callWithCallback('getUserEventLogCount', [eventName], callback);
+    },
+
+    /**
+    * Get full event hostory for current user
+    * @param {function(err, res)} callback that returns a res of object {"eventName1":<event1 details object>, "eventName2":<event2 details object>}
+    */
+    getUserEventLogHistory: function (callback) {
+        callWithCallback('getUserEventLogHistory', null, callback);
     },
 
     /**
@@ -548,6 +575,22 @@ var CleverTap = {
     */
     sessionGetTotalVisits: function (callback) {
         callWithCallback('sessionGetTotalVisits', null, callback);
+    },
+
+    /**
+    * Get timestamp of user's last app visit
+    * @param {function(err, res)} callback that returns a res of epoch seconds or -1
+    */
+    getUserLastVisitTs: function (callback) {
+        callWithCallback('getUserLastVisitTs', null, callback);
+    },
+    
+    /**
+    * Get the total number of times user has launched the app
+    * @param {function(err, res)} callback that returns a res of int
+    */
+    getUserAppLaunchCount: function (callback) {
+        callWithCallback('getUserAppLaunchCount', null, callback);
     },
 
     /**

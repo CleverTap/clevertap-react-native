@@ -269,6 +269,27 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function getEventHistory(callback: Callback): void;
 
   /**
+   *
+   * Get Event Details
+   * @param eventName {string}
+   * calls back with object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>} or empty object
+   */
+  export function getuserEventLog(eventName: string, callback: Callback): void;
+    
+  /**
+   * Get count of times an event occured
+   * @param eventName {string}
+   * calls back with int or -1
+   */
+  export function getuserEventLogCount(eventName: string, callback: Callback): void;
+
+  /**
+   * Get Event History
+   * calls back with object {"eventName1":<event1 details object>, "eventName2":<event2 details object>}
+   */
+  export function getUserEventLogHistory(callback: Callback): void;
+
+  /**
    * Set location
    * @param lat {number}
    * @param lon {number}
@@ -413,6 +434,26 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    */
   export function sessionGetTotalVisits(callback: Callback): void;
 
+  /**
+   * Get timestamp of user's last app visit
+   * calls back with epoch seconds or -1
+   */
+  export function getUserLastVisitTs(callback: Callback): void;
+
+  /**
+   * Get total number of times user has lanched the app
+   * calls back with int or -1
+   */
+  export function getuserAppLaunchCount(callback: Callback): void;
+
+  /**
+   * @deprecated
+   * Since version 3.2.0. Use `getUserAppLaunchCount()` instead.
+   * Get Session Total Visits
+   * calls back with int or -1
+   */
+    export function sessionGetTotalVisits(callback: Callback): void;
+  
   /**
    * Get Session Screen Count
    * calls back with with int
