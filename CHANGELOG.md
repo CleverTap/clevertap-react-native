@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 3.1.2 *(xx January 2025)*
+Version 3.2.0 *(xx January 2025)*
 -------------------------------------------
 **What's new**
 
