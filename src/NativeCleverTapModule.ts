@@ -70,7 +70,16 @@ export interface Spec extends TurboModule {
     eventName: string,
     callback: ((error: Object, result: boolean) => void) | null
   ): void;
+  getUserEventLog(
+    eventName: string,
+    callback: ((error: Object, result: boolean) => void) | null
+  ): void;
+  getUserEventLogCount(
+    eventName: string,
+    callback: ((error: Object, result: boolean) => void) | null
+  ): void;
   getEventHistory(callback: ((error: Object, result: boolean) => void) | null): void;
+  getUserEventLogHistory(callback: ((error: Object, result: boolean) => void) | null): void;
   setLocation(location: number, longitude: number): void;
   profileGetCleverTapAttributionIdentifier(callback: ((error: Object, result: boolean) => void) | null): void;
   profileGetCleverTapID(callback: ((error: Object, result: boolean) => void) | null): void;
@@ -104,6 +113,8 @@ export interface Spec extends TurboModule {
   sessionGetScreenCount(callback: ((error: Object, result: boolean) => void) | null): void;
   sessionGetPreviousVisitTime(callback: ((error: Object, result: boolean) => void) | null): void;
   sessionGetUTMDetails(callback: ((error: Object, result: boolean) => void) | null): void;
+  getUserLastVisitTs(callback: ((error: Object, result: boolean) => void) | null): void;
+  getUserAppLaunchCount(callback: ((error: Object, result: boolean) => void) | null): void;
   createNotificationChannel(
     channelId: string,
     withChannelName: string,

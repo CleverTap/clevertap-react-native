@@ -12,7 +12,7 @@ const EventEmitter = Platform.select({
 * @param {int} libVersion - The updated library version. If current version is 1.1.0 then pass as 10100  
 */
 const libName = 'React-Native';
-const libVersion = 30101;
+const libVersion = 30200;
 CleverTapReact.setLibrary(libName,libVersion);
 
 function defaultCallback(method, err, res) {
@@ -338,6 +338,7 @@ var CleverTap = {
 
     /**
     * Get the time of the first occurrence of an event
+    * @deprecated - Since version 3.2.0. Use getUserEventLog() instead
     * @param {string} eventName - the name of the event
     * @param {function(err, res)} callback that returns a res of epoch seconds or -1
     */
@@ -347,6 +348,7 @@ var CleverTap = {
 
     /**
     * Get the time of the most recent occurrence of an event
+    * @deprecated - Since version 3.2.0. Use getUserEventLog() instead
     * @param {string} eventName - the name of the event
     * @param {function(err, res)} callback that returns a res of epoch seconds or -1
     */
@@ -356,6 +358,7 @@ var CleverTap = {
 
     /**
     * Get the number of occurrences of an event
+    * @deprecated - Since version 3.2.0. Use getUserEventLogCount() instead
     * @param {string} eventName - the name of the event
     * @param {function(err, res)} callback that returns a res of int
     */
@@ -365,6 +368,7 @@ var CleverTap = {
 
     /**
     * Get the summary details of an event
+    * @deprecated - Since version 3.2.0. Use getUserEventLog() instead
     * @param {string} eventName - the name of the event
     * @param {function(err, res)} callback that returns a res of object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>} or empty object
     */
@@ -374,10 +378,36 @@ var CleverTap = {
 
     /**
     * Get the user's event history
+    * @deprecated - Since version 3.2.0. Use getUserEventLogHistory() instead
     * @param {function(err, res)} callback that returns a res of object {"eventName1":<event1 details object>, "eventName2":<event2 details object>}
     */
     getEventHistory: function (callback) {
         callWithCallback('getEventHistory', null, callback);
+    },
+    /**
+    * Get the details of a specific event
+    * @param {string} eventName - the name of the event
+    * @param {function(err, res)} callback that returns a res of object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>, "deviceID": <string>, "normalizedEventName": <string>} or empty object
+    */
+    getUserEventLog: function (eventName, callback) {
+        callWithCallback('getUserEventLog', [eventName], callback);
+    },
+    
+    /**
+    * Get the count of times an event occured
+    * @param {string} eventName - the name of the event
+    * @param {function(err, res)} callback that returns a res of int
+    */
+    getUserEventLogCount: function (eventName, callback) {
+        callWithCallback('getUserEventLogCount', [eventName], callback);
+    },
+
+    /**
+    * Get full event hostory for current user
+    * @param {function(err, res)} callback that returns a res of object {"eventName1":<event1 details object>, "eventName2":<event2 details object>}
+    */
+    getUserEventLogHistory: function (callback) {
+        callWithCallback('getUserEventLogHistory', null, callback);
     },
 
     /**
@@ -539,10 +569,27 @@ var CleverTap = {
 
     /**
     * Get the total number of vists by the user
+    * @deprecated - Since version 3.2.0. Use getUserAppLaunchCount() instead
     * @param {function(err, res)} callback that returns a res of int
     */
     sessionGetTotalVisits: function (callback) {
         callWithCallback('sessionGetTotalVisits', null, callback);
+    },
+
+    /**
+    * Get timestamp of user's last app visit
+    * @param {function(err, res)} callback that returns a res of epoch seconds or -1
+    */
+    getUserLastVisitTs: function (callback) {
+        callWithCallback('getUserLastVisitTs', null, callback);
+    },
+    
+    /**
+    * Get the total number of times user has launched the app
+    * @param {function(err, res)} callback that returns a res of int
+    */
+    getUserAppLaunchCount: function (callback) {
+        callWithCallback('getUserAppLaunchCount', null, callback);
     },
 
     /**
@@ -555,6 +602,7 @@ var CleverTap = {
 
     /**
     * Get the most recent previous visit time of the user
+    * @deprecated - Since version 3.2.0. Use getUserLastVisits() instead
     * @param {function(err, res)} callback that returns a res of epoch seconds or -1
     */
     sessionGetPreviousVisitTime: function (callback) {

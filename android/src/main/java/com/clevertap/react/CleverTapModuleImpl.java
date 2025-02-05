@@ -32,6 +32,7 @@ import com.clevertap.android.sdk.inapp.customtemplates.CustomTemplateContext;
 import com.clevertap.android.sdk.inbox.CTInboxMessage;
 import com.clevertap.android.sdk.interfaces.OnInitCleverTapIDListener;
 import com.clevertap.android.sdk.product_config.CTProductConfigController;
+import com.clevertap.android.sdk.usereventlogs.UserEventLog;
 import com.clevertap.android.sdk.variables.CTVariableUtils;
 import com.clevertap.android.sdk.variables.Var;
 import com.clevertap.android.sdk.variables.callbacks.FetchVariablesCallback;
@@ -295,6 +296,75 @@ public class CleverTapModuleImpl {
         clevertap.enablePersonalization();
     }
 
+
+    public void getUserEventLog(String eventName, Callback callback) {
+        String error = null;
+        WritableMap result = null;
+
+        CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap != null) {
+            UserEventLog eventLog = clevertap.getUserEventLog(eventName);
+            result = eventLogToWritableMap(eventLog);
+        } else {
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback, error, result);
+    }
+
+    public void getUserEventLogCount(String eventName, Callback callback) {
+        String error = null;
+        int result = -1;
+
+        CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap != null) {
+            result = clevertap.getUserEventLogCount(eventName);
+        } else {
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback, error, result);
+    }
+
+    public void getUserLastVisitTs(Callback callback) {
+        String error = null;
+        double result = -1;
+
+        CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap != null) {
+            result = clevertap.getUserLastVisitTs();
+        } else {
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback, error, result);
+    }
+
+    public void getUserAppLaunchCount(Callback callback) {
+        String error = null;
+        int result = -1;
+
+        CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap != null) {
+            result = clevertap.getUserAppLaunchCount();
+        } else {
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback, error, result);
+    }
+
+    public void getUserEventLogHistory(Callback callback) {
+        String error = null;
+        WritableMap result = null;
+
+        CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap != null) {
+            Map<String, UserEventLog> history = clevertap.getUserEventLogHistory();
+            result = eventLogHistoryToWritableMap(history);
+        } else {
+            error = "CleverTap not initialized";
+        }
+        callbackWithErrorAndResult(callback, error, result);
+    }
+
+    @Deprecated(since = "3.2.0")
     public void eventGetDetail(String eventName, Callback callback) {
         String error = null;
         WritableMap result = null;
@@ -309,6 +379,8 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
+
+    @Deprecated(since = "3.2.0")
     public void eventGetFirstTime(String eventName, Callback callback) {
         String error = null;
         int result = -1;
@@ -322,6 +394,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
+    @Deprecated(since = "3.2.0")
     public void eventGetLastTime(String eventName, Callback callback) {
         String error = null;
         int result = -1;
@@ -335,6 +408,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
+    @Deprecated(since = "3.2.0")
     public void eventGetOccurrences(String eventName, Callback callback) {
         String error = null;
         int result = -1;
@@ -440,6 +514,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
+    @Deprecated(since = "3.2.0")
     public void getEventHistory(Callback callback) {
         String error = null;
         WritableMap result = null;
@@ -890,6 +965,7 @@ public class CleverTapModuleImpl {
         productConfigController.reset();
     }
 
+    @Deprecated(since = "3.2.0")
     public void sessionGetPreviousVisitTime(Callback callback) {
         String error = null;
         int result = -1;
@@ -929,6 +1005,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
+    @Deprecated(since = "3.2.0")
     public void sessionGetTotalVisits(Callback callback) {
         String error = null;
         int result = -1;
@@ -1866,6 +1943,32 @@ public class CleverTapModuleImpl {
         return array;
     }
 
+    private static WritableMap eventLogToWritableMap(UserEventLog eventLog) {
+        WritableMap ret = Arguments.createMap();
+
+        if (eventLog != null) {
+            ret.putString("eventName", eventLog.getEventName());
+            ret.putString("normalizedEventName", eventLog.getNormalizedEventName());
+            ret.putDouble("firstTime", eventLog.getFirstTs());
+            ret.putDouble("lastTime", eventLog.getLastTs());
+            ret.putInt("count", eventLog.getCountOfEvents());
+            ret.putString("deviceID", eventLog.getDeviceID());
+        }
+        return ret;
+    }
+
+    private static WritableMap eventLogHistoryToWritableMap(Map<String, UserEventLog> history) {
+        WritableMap ret = Arguments.createMap();
+
+        if (history != null) {
+            for (String key : history.keySet()) {
+                ret.putMap(key, eventLogToWritableMap(history.get(key)));
+            }
+        }
+        return ret;
+    }
+
+    @Deprecated(since = "3.2.0")
     private static WritableMap eventDetailToWritableMap(EventDetail details) {
         WritableMap ret = Arguments.createMap();
 
@@ -1878,6 +1981,7 @@ public class CleverTapModuleImpl {
         return ret;
     }
 
+    @Deprecated(since = "3.2.0")
     private static WritableMap eventHistoryToWritableMap(Map<String, EventDetail> history) {
         WritableMap ret = Arguments.createMap();
 

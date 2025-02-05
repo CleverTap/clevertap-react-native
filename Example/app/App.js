@@ -157,6 +157,16 @@ export default class App extends Component {
       ],
     },
     {
+      categoryName: 'Event History',
+      subCategory: [
+        { action: Actions.GET_USER_EVENT_LOG, name: 'getUserEventLog' },  
+        { action: Actions.GET_USER_EVENT_LOG_COUNT, name: 'getUserEventLogCount' },  
+        { action: Actions.GET_USER_LAST_VISIT_TS, name: 'getUserLastVisitTs' },  
+        { action: Actions.GET_USER_APP_LAUNCH_COUNT, name: 'getUserAppLaunchCount' },  
+        { action: Actions.GET_USER_EVENT_LOG_HISTORY, name: 'getUserEventLogHistory' },  
+      ],
+    },
+    {
       categoryName: 'Product Experiences: Vars',
       subCategory: [
         {
@@ -489,6 +499,21 @@ export default class App extends Component {
         break;
       case Actions.PUSH_CHARGED_EVENT:
         AppUtils.pushChargedEvent();
+        break;
+      case Actions.GET_USER_EVENT_LOG:
+        AppUtils.getUserEventLog();
+        break;
+      case Actions.GET_USER_EVENT_LOG_COUNT:
+        AppUtils.getUserEventLogCount();
+        break;
+      case Actions.GET_USER_LAST_VISIT_TS:
+        AppUtils.getUserLastVisitTs();
+        break;
+      case Actions.GET_USER_APP_LAUNCH_COUNT:
+        AppUtils.getUserAppLaunchCount();
+        break;
+      case Actions.GET_USER_EVENT_LOG_HISTORY:
+        AppUtils.getUserEventLogHistory();
         break;
       case Actions.SET_DEBUG:
         CleverTap.setDebugLevel(3);
