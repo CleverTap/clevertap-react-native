@@ -22,8 +22,8 @@ To get started, sign up [here](https://clevertap.com/live-product-demo/).
 3. Follow the [integration instructions](./docs/integration.md)
 
 ## 📚 Additional Resources
-- [CleverTap iOS SDK Integration guide](https://support.clevertap.com/docs/ios/getting-started.html)
-- [CleverTap Android SDK Integration guide](https://support.clevertap.com/docs/android/getting-started.html)
+- [CleverTap iOS SDK Integration guide](https://developer.clevertap.com/docs/ios)
+- [CleverTap Android SDK Integration guide](https://developer.clevertap.com/docs/android)
 
 ## 📲 CleverTap iOS Push Templates SDK
 

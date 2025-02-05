@@ -8,7 +8,7 @@ Clevertap supports the [ReactNative New Architecture](https://reactnative.dev/do
 
 
 ### iOS
-1. Follow the integration instructions [starting with Step 2 here](https://support.clevertap.com/docs/ios/getting-started.html).
+1. Follow the integration instructions [here](https://developer.clevertap.com/docs/react-native-quick-start-guide#ios-integration).
 2. In your `AppDelegate didFinishLaunchingWithOptions:` notify the CleverTap React SDK of application launch:
 ```objc
 [CleverTap autoIntegrate]; // integrate CleverTap SDK using the autoIntegrate option
@@ -22,10 +22,10 @@ NOTE:  Don't forget to add the CleverTap imports at the top of the file.
 
 Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-SDK/CleverTap.h>** and **@import CleverTapReact;** instead of **#import <clevertap-react-native/CleverTapReactManager.h>** in the AppDelegate class in case if using ```use_modular_headers!``` in the podfile.
 
-[See the Example Project](/Example/ios/Example/AppDelegate.m).
+[See the Example Project](/Example/ios/Example/AppDelegate.mm).
 
 ### Android
-1. Follow the integration instructions [starting with Step 2 here](https://support.clevertap.com/docs/android/getting-started.html).
+1. Follow the integration instructions [here](https://developer.clevertap.com/docs/react-native-quick-start-guide#android-integration).
 
 2. Add CleverTapPackage to the packages list in MainApplication.java (`android/app/src/[...]/MainApplication.java`)
     ```java
@@ -118,5 +118,5 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-
     }
     ```
 
-[See the Example Project](/Example/App.js) 
+[See the Example Project](/Example/app/App.js) 
 
