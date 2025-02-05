@@ -426,14 +426,6 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function sessionGetTimeElapsed(callback: Callback): void;
 
   /**
-   * @deprecated
-   * Since version 3.2.0. Use `getUserAppLaunchCount()` instead.
-   * Get Session Total Visits
-   * calls back with int or -1
-   */
-  export function sessionGetTotalVisits(callback: Callback): void;
-
-  /**
    * Get timestamp of user's last app visit
    * calls back with epoch seconds or -1
    */
@@ -443,7 +435,7 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    * Get total number of times user has lanched the app
    * calls back with int or -1
    */
-  export function getuserAppLaunchCount(callback: Callback): void;
+  export function getUserAppLaunchCount(callback: Callback): void;
 
   /**
    * @deprecated
