@@ -57,9 +57,11 @@ object CleverTapEventEmitter {
      */
     fun flushBuffer(event: CleverTapEvent) {
         val buffer = eventsBuffers[event] ?: return
-        while (buffer.size() > 0) {
-            val params = buffer.remove()
-            sendEvent(event, params)
+        synchronized(buffer) {
+            while (buffer.size() > 0) {
+                val params = buffer.remove()
+                sendEvent(event, params)
+            }
         }
     }
 
