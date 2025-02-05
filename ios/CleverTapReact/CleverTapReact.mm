@@ -426,8 +426,8 @@ RCT_EXPORT_METHOD(sessionGetUTMDetails:(RCTResponseSenderBlock)callback) {
 
 RCT_EXPORT_METHOD(getUserLastVisitTs:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getUserLastVisitTs]");
-        NSTimeInterval result = [[self cleverTapInstance] getUserLastVisitTs];
-            [self returnResult:@(result) withCallback:callback andError:nil];
+    NSTimeInterval result = [[self cleverTapInstance] getUserLastVisitTs];
+    [self returnResult:@(result) withCallback:callback andError:nil];
 }
 
 RCT_EXPORT_METHOD(getUserAppLaunchCount:(RCTResponseSenderBlock)callback) {
