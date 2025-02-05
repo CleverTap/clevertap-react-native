@@ -13,7 +13,6 @@ Version 3.2.0 *(5 February 2025)*
   * Supports [CleverTap iOS SDK v7.1.0](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-710-january-21-2024).
 
 * **[Android and iOS Platform]**
-#### Added
 - Adds support for triggering InApps based on first-time event filtering in multiple triggers. Now you can create campaign triggers that combine recurring and first-time events. For example: Trigger a campaign when "Charged" occurs (every time) OR "App Launched" occurs (first time only).
 - Adds new user-level event log tracking system to store and manage user event history. New APIs include:
   - `getUserEventLog(<eventName>)`: Get details about a specific event
