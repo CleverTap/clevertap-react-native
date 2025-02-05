@@ -266,7 +266,7 @@ RCT_EXPORT_METHOD(getEventHistory:(RCTResponseSenderBlock)callback) {
 
 RCT_EXPORT_METHOD(getUserEventLog:(NSString*)eventName callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getUserEventLog: %@]", eventName);
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         CleverTapEventDetail *detail = [[self cleverTapInstance] getUserEventLog:eventName];
         NSDictionary *result = [self _eventDetailToDict:detail];
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -277,7 +277,7 @@ RCT_EXPORT_METHOD(getUserEventLog:(NSString*)eventName callback:(RCTResponseSend
 
 RCT_EXPORT_METHOD(getUserEventLogCount:(NSString*)eventName callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getUserEventLogCount: %@]", eventName);
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         int result = [[self cleverTapInstance] getUserEventLogCount:eventName];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self returnResult:@(result) withCallback:callback andError:nil];
@@ -287,7 +287,7 @@ RCT_EXPORT_METHOD(getUserEventLogCount:(NSString*)eventName callback:(RCTRespons
 
 RCT_EXPORT_METHOD(getUserEventLogHistory:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getUserEventLogHistory]");
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSDictionary *history = [[self cleverTapInstance] getUserEventLogHistory];
         NSMutableDictionary *result = [NSMutableDictionary new];
     
@@ -426,22 +426,18 @@ RCT_EXPORT_METHOD(sessionGetUTMDetails:(RCTResponseSenderBlock)callback) {
 
 RCT_EXPORT_METHOD(getUserLastVisitTs:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getUserLastVisitTs]");
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         NSTimeInterval result = [[self cleverTapInstance] getUserLastVisitTs];
-        dispatch_async(dispatch_get_main_queue(), ^{
             [self returnResult:@(result) withCallback:callback andError:nil];
-        });
-    });
 }
 
 RCT_EXPORT_METHOD(getUserAppLaunchCount:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getUserAppLaunchCount]");
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         int result = [[self cleverTapInstance] getUserAppLaunchCount];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self returnResult:@(result) withCallback:callback andError:nil];
-            });
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self returnResult:@(result) withCallback:callback andError:nil];
         });
+    });
 }
 
 #pragma mark - no-op Android O methods

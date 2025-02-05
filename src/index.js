@@ -384,11 +384,10 @@ var CleverTap = {
     getEventHistory: function (callback) {
         callWithCallback('getEventHistory', null, callback);
     },
-
     /**
     * Get the details of a specific event
     * @param {string} eventName - the name of the event
-    * @param {function(err, res)} callback that returns a res of object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>} or empty object
+    * @param {function(err, res)} callback that returns a res of object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>, "deviceID": <string>, "normalizedEventName": <string>} or empty object
     */
     getUserEventLog: function (eventName, callback) {
         callWithCallback('getUserEventLog', [eventName], callback);

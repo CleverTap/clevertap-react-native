@@ -267,12 +267,11 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    * calls back with object {"eventName1":<event1 details object>, "eventName2":<event2 details object>}
    */
   export function getEventHistory(callback: Callback): void;
-
   /**
    *
    * Get Event Details
    * @param eventName {string}
-   * calls back with object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>} or empty object
+   * calls back with object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>, "deviceID": <string>, "normalizedEventName": <string>} or empty object
    */
   export function getuserEventLog(eventName: string, callback: Callback): void;
     
