@@ -6,7 +6,8 @@ Version 3.2.0 *(5 February 2025)*
 **What's new**
 
 * **[Android Platform]**
-  * Supports [CleverTap Android SDK v7.2.2](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-722-january-21-2025).
+  * Supports [CleverTap Android SDK v7.1.2](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-712-january-29-2025).
+  * Adds support to hide large icon in android notifications by sending `wzrk_hide_large_icon` key in notification payload.
   
 * **[iOS Platform]**
   * Supports [CleverTap iOS SDK v7.1.0](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-710-january-21-2024).
@@ -23,14 +24,14 @@ Version 3.2.0 *(5 February 2025)*
 
 #### API Changes
 
-- **Deprecated:**  The old event tracking APIs tracked events at the device level rather than the user level, making it difficult to maintain accurate user-specific event histories, especially in multi-user scenarios. The following methods have been deprecated in favor of new user-specific event tracking APIs that provide more accurate, user-level analytics. These deprecated methods will be removed in future versions with prior notice:
+- **Deprecates:**  The old event tracking APIs tracked events at the device level rather than the user level, making it difficult to maintain accurate user-specific event histories, especially in multi-user scenarios. The following methods have been deprecated in favor of new user-specific event tracking APIs that provide more accurate, user-level analytics. These deprecated methods will be removed in future versions with prior notice:
   - `eventGetDetail(:)`: Use `getUserEventLog()` instead for user-specific event details
   - `eventGetOccurrences(:)`: Use `getUserEventLogCount()` instead for user-specific event counts
   - `eventGetFirstTime(:)`: Use `getUserEventLog()` instead for user-specific first occurrence timestamp
   - `eventGetLastTime(:)`: Use `getUserEventLog()` instead for user-specific last occurrence timestamp
-  - `userGetPreviousVisitTime()`: Use `getUserLastVisitTs()` instead for user-specific last visit timestamp
-  - `userGetTotalVisits()`: Use `getUserAppLaunchCount()` instead for user-specific app launch count
-  - `userGetEventHistory()`: Use `getUserEventLogHistory()` instead for user-specific event history
+  - `sessionGetPreviousVisitTime()`: Use `getUserLastVisitTs()` instead for user-specific last visit timestamp
+  - `sessionGetTotalVisits()`: Use `getUserAppLaunchCount()` instead for user-specific app launch count
+  - `getEventHistory()`: Use `getUserEventLogHistory()` instead for user-specific event history
 
 Version 3.1.1 *(6 November 2024)*
 -------------------------------------------
