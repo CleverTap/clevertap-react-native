@@ -6,7 +6,7 @@ Version 3.2.0 *(5 February 2025)*
 **What's new**
 
 * **[Android Platform]**
-  * Supports [CleverTap Android SDK v7.1.2](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-712-january-29-2025).
+  * Supports [CleverTap Android SDK v7.1.2](https://github.com/CleverTap/clevertap-android-sdk/blob/develop/docs/CTCORECHANGELOG.md#version-712-january-29-2025).
   * Adds support to hide large icon in android notifications by sending `wzrk_hide_large_icon` key in notification payload.
   
 * **[iOS Platform]**
