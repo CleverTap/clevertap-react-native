@@ -224,6 +224,8 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   ): void;
 
   /**
+   * @deprecated
+   * Since version 3.2.0. Use `getUserEventLog()` instead.
    * Get Event First Time
    * @param eventName {string}
    * callback returns epoch seconds or -1
@@ -231,6 +233,8 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function eventGetFirstTime(eventName: string, callback: Callback): void;
 
   /**
+   * @deprecated
+   * Since version 3.2.0. Use `getUserEventLog()` instead.
    * Get Event Last Time
    * @param eventName {string}
    * callback returns epoch seconds or -1
@@ -238,6 +242,8 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function eventGetLastTime(eventName: string, callback: Callback): void;
 
   /**
+   * @deprecated
+   * Since version 3.2.0. Use `getUserEventLogCount()` instead.
    * Get Event Number of Occurrences
    * @param eventName {string}
    * calls back with int or -1
@@ -245,6 +251,9 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function eventGetOccurrences(eventName: string, callback: Callback): void;
 
   /**
+   * @deprecated
+   * Since version 3.2.0. Use `getUserEventLog()` instead.
+   *
    * Get Event Details
    * @param eventName {string}
    * calls back with object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>} or empty object
@@ -252,10 +261,32 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function eventGetDetail(eventName: string, callback: Callback): void;
 
   /**
+   * @deprecated
+   * Since version 3.2.0. Use `getUserEventLogHistory()` instead.
    * Get Event History
    * calls back with object {"eventName1":<event1 details object>, "eventName2":<event2 details object>}
    */
   export function getEventHistory(callback: Callback): void;
+  /**
+   *
+   * Get Event Details
+   * @param eventName {string}
+   * calls back with object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>, "deviceID": <string>, "normalizedEventName": <string>} or empty object
+   */
+  export function getUserEventLog(eventName: string, callback: Callback): void;
+    
+  /**
+   * Get count of times an event occured
+   * @param eventName {string}
+   * calls back with int or -1
+   */
+  export function getUserEventLogCount(eventName: string, callback: Callback): void;
+
+  /**
+   * Get Event History
+   * calls back with object {"eventName1":<event1 details object>, "eventName2":<event2 details object>}
+   */
+  export function getUserEventLogHistory(callback: Callback): void;
 
   /**
    * Set location
@@ -395,11 +426,25 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function sessionGetTimeElapsed(callback: Callback): void;
 
   /**
+   * Get timestamp of user's last app visit
+   * calls back with epoch seconds or -1
+   */
+  export function getUserLastVisitTs(callback: Callback): void;
+
+  /**
+   * Get total number of times user has lanched the app
+   * calls back with int or -1
+   */
+  export function getUserAppLaunchCount(callback: Callback): void;
+
+  /**
+   * @deprecated
+   * Since version 3.2.0. Use `getUserAppLaunchCount()` instead.
    * Get Session Total Visits
    * calls back with int or -1
    */
-  export function sessionGetTotalVisits(callback: Callback): void;
-
+    export function sessionGetTotalVisits(callback: Callback): void;
+  
   /**
    * Get Session Screen Count
    * calls back with with int
@@ -407,6 +452,8 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function sessionGetScreenCount(callback: Callback): void;
 
   /**
+   * @deprecated
+   * Since version 3.2.0. Use `getUserLastVisits()` instead.
    * Get Session Previous Visit Time
    * calls back with epoch seconds or -1
    */

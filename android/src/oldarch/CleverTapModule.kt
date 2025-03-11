@@ -675,6 +675,31 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.onEventListenerAdded(eventName)
     }
 
+    @ReactMethod
+    fun getUserEventLog(eventName: String, callback: Callback) {
+        cleverTapModuleImpl.getUserEventLog(eventName, callback)
+    }
+
+    @ReactMethod
+    fun getUserEventLogCount(eventName: String, callback: Callback) {
+        cleverTapModuleImpl.getUserEventLogCount(eventName, callback)
+    }
+
+    @ReactMethod
+    fun getUserLastVisitTs(callback: Callback) {
+        cleverTapModuleImpl.getUserLastVisitTs(callback)
+    }
+
+    @ReactMethod
+    fun getUserAppLaunchCount(callback: Callback) {
+        cleverTapModuleImpl.getUserAppLaunchCount(callback)
+    }
+
+    @ReactMethod
+    fun getUserEventLogHistory(callback: Callback) {
+        cleverTapModuleImpl.getUserEventLogHistory(callback)
+    }
+
     override fun getConstants(): Map<String, Any> {
         return cleverTapModuleImpl.getClevertapConstants()
     }

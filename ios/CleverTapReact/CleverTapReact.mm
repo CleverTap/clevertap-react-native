@@ -264,6 +264,43 @@ RCT_EXPORT_METHOD(getEventHistory:(RCTResponseSenderBlock)callback) {
     [self returnResult:result withCallback:callback andError:nil];
 }
 
+RCT_EXPORT_METHOD(getUserEventLog:(NSString*)eventName callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getUserEventLog: %@]", eventName);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        CleverTapEventDetail *detail = [[self cleverTapInstance] getUserEventLog:eventName];
+        NSDictionary *result = [self _eventDetailToDict:detail];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self returnResult:result withCallback:callback andError:nil];
+        });
+    });
+}
+
+RCT_EXPORT_METHOD(getUserEventLogCount:(NSString*)eventName callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getUserEventLogCount: %@]", eventName);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        int result = [[self cleverTapInstance] getUserEventLogCount:eventName];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self returnResult:@(result) withCallback:callback andError:nil];
+        });
+    });
+}
+
+RCT_EXPORT_METHOD(getUserEventLogHistory:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getUserEventLogHistory]");
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSDictionary *history = [[self cleverTapInstance] getUserEventLogHistory];
+        NSMutableDictionary *result = [NSMutableDictionary new];
+    
+        for (NSString *eventName in [history keyEnumerator]) {
+            CleverTapEventDetail *detail = history[eventName];
+            NSDictionary * _inner = [self _eventDetailToDict:detail];
+            result[eventName] = _inner;
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self returnResult:result withCallback:callback andError:nil];
+        });
+    });
+}
 
 #pragma mark - Profile API
 
@@ -387,6 +424,21 @@ RCT_EXPORT_METHOD(sessionGetUTMDetails:(RCTResponseSenderBlock)callback) {
     [self returnResult:result withCallback:callback andError:nil];
 }
 
+RCT_EXPORT_METHOD(getUserLastVisitTs:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getUserLastVisitTs]");
+    NSTimeInterval result = [[self cleverTapInstance] getUserLastVisitTs];
+    [self returnResult:@(result) withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(getUserAppLaunchCount:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getUserAppLaunchCount]");
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        int result = [[self cleverTapInstance] getUserAppLaunchCount];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self returnResult:@(result) withCallback:callback andError:nil];
+        });
+    });
+}
 
 #pragma mark - no-op Android O methods
 
@@ -451,6 +503,10 @@ RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
             [_dict setObject:detail.eventName forKey:@"eventName"];
         }
         
+        if(detail.normalizedEventName){
+            [_dict setObject:detail.normalizedEventName forKey:@"normalizedEventName"];
+        }
+        
         if(detail.firstTime){
             [_dict setObject:@(detail.firstTime) forKey:@"firstTime"];
         }
@@ -461,6 +517,10 @@ RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
         
         if(detail.count){
             [_dict setObject:@(detail.count) forKey:@"count"];
+        }
+        
+        if(detail.deviceID){
+            [_dict setObject:detail.deviceID forKey:@"deviceID"];
         }
     }
     
