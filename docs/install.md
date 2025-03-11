@@ -4,7 +4,7 @@
 
      Link CleverTap for React Native 0.59 or below & Not Using Cocoapods
 
-2. `react-native link clevertap-react-native` **or** [follow the manual linking instructions below](#manual-linking).
+2. `react-native link clevertap-react-native` **or** [follow the manual linking instructions below](install.md#manual-linking).
 
     **Note:**
     
@@ -143,7 +143,7 @@ maven {
       }
 ```
 
-## Manual Linking ##
+## Manual Linking
 
 #### iOS:
 - Drag and Drop node_modules/clevertap-react-native/ios/CleverTapReact.xcodeproj into the Libraries folder of your project in XCode ([see Step 1 here](http://facebook.github.io/react-native/docs/linking-libraries-ios.html#manual-linking)).

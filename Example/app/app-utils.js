@@ -119,6 +119,42 @@ export const pushChargedEvent = () => {
     );
 };
 
+export const getUserEventLog = () => {
+    CleverTap.getUserEventLog("testEvent", (err, res) => {
+        console.log('User Event Log: ', res);
+        showToast(`User Event Log: ${JSON.stringify(res)}`);
+    });
+};
+
+export const getUserEventLogCount = () => {
+    CleverTap.getUserEventLogCount("testEvent", (err, res) => {
+        console.log('User Event Log Count: ', res);
+        showToast(`User Event Log Count: ${res}`);
+    });
+};
+
+export const getUserLastVisitTs = () => {
+    CleverTap.getUserLastVisitTs((err, res) => {
+        console.log('User Last Visit Timestamp: ', res);
+        showToast(`User Last Visit Timestamp: ${res}`);
+    });
+};
+
+export const getUserAppLaunchCount = () => {
+    CleverTap.getUserAppLaunchCount((err, res) => {
+        console.log('User App Launch Count: ', res);
+        showToast(`User App Launch Count: ${res}`);
+    });
+};
+
+export const getUserEventLogHistory = () => {
+    CleverTap.getUserEventLogHistory((err, res) => {
+        console.log('User Event Log History: ', res);
+        showToast(`User Event Log History: ${JSON.stringify(res)}`);
+    });
+};
+
+
 // App Inbox
 export const show_appInbox = () => {
     // Show Inbox
