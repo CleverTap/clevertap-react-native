@@ -33,7 +33,7 @@ android {
     compileSdk 35
     buildToolsVersion '35.0.0'
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 35
         versionCode 330
         versionName "3.3.0"
