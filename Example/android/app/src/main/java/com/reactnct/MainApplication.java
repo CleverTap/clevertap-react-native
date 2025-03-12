@@ -5,6 +5,10 @@ import android.app.Application.ActivityLifecycleCallbacks;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.clevertap.android.pushtemplates.PushTemplateNotificationHandler;
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.android.sdk.CleverTapAPI.LogLevel;
@@ -20,7 +24,7 @@ import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
 import java.util.List;
 
-public class MainApplication extends CleverTapApplication implements ReactApplication {
+public class MainApplication extends CleverTapApplication implements ActivityLifecycleCallbacks, ReactApplication {
 
     private final ReactNativeHost mReactNativeHost =
             new DefaultReactNativeHost(this) {
@@ -107,6 +111,11 @@ public class MainApplication extends CleverTapApplication implements ReactApplic
 
     @Override
     public void onActivitySaveInstanceState(@NonNull final Activity activity, @NonNull final Bundle outState) {
+
+    }
+
+    @Override
+    public void onActivityDestroyed(@NonNull final Activity activity) {
 
     }
 }
