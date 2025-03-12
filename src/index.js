@@ -1,4 +1,5 @@
-import { DeviceEventEmitter, NativeEventEmitter, NativeModules } from 'react-native';
+import { DeviceEventEmitter, NativeEventEmitter, NativeModules, Platform } from 'react-native';
+
 const CleverTapReact = require('./NativeCleverTapModule').default;
 const EventEmitter = Platform.select({
     ios: new NativeEventEmitter(CleverTapReact),
@@ -11,7 +12,7 @@ const EventEmitter = Platform.select({
 * @param {int} libVersion - The updated library version. If current version is 1.1.0 then pass as 10100  
 */
 const libName = 'React-Native';
-const libVersion = 30000;
+const libVersion = 30300;
 CleverTapReact.setLibrary(libName,libVersion);
 
 function defaultCallback(method, err, res) {
@@ -49,6 +50,10 @@ var CleverTap = {
     CleverTapProfileSync: CleverTapReact.getConstants().CleverTapProfileSync,
     CleverTapInAppNotificationDismissed: CleverTapReact.getConstants().CleverTapInAppNotificationDismissed,
     CleverTapInAppNotificationShowed: CleverTapReact.getConstants().CleverTapInAppNotificationShowed,
+    CleverTapInAppNotificationButtonTapped: CleverTapReact.getConstants().CleverTapInAppNotificationButtonTapped,
+    CleverTapCustomTemplatePresent: CleverTapReact.getConstants().CleverTapCustomTemplatePresent,
+    CleverTapCustomFunctionPresent: CleverTapReact.getConstants().CleverTapCustomFunctionPresent,
+    CleverTapCustomTemplateClose: CleverTapReact.getConstants().CleverTapCustomTemplateClose,
     FCM: CleverTapReact.getConstants().FCM,
     BPS: CleverTapReact.getConstants().BPS,
     HPS: CleverTapReact.getConstants().HPS,
@@ -57,7 +62,6 @@ var CleverTap = {
     CleverTapInboxMessageButtonTapped: CleverTapReact.getConstants().CleverTapInboxMessageButtonTapped,
     CleverTapInboxMessageTapped: CleverTapReact.getConstants().CleverTapInboxMessageTapped,
     CleverTapDisplayUnitsLoaded: CleverTapReact.getConstants().CleverTapDisplayUnitsLoaded,
-    CleverTapInAppNotificationButtonTapped: CleverTapReact.getConstants().CleverTapInAppNotificationButtonTapped,
     CleverTapFeatureFlagsDidUpdate: CleverTapReact.getConstants().CleverTapFeatureFlagsDidUpdate, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
     CleverTapProductConfigDidInitialize: CleverTapReact.getConstants().CleverTapProductConfigDidInitialize, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
     CleverTapProductConfigDidFetch: CleverTapReact.getConstants().CleverTapProductConfigDidFetch, // @deprecated - Since version 1.1.0 and will be removed in the future versions of this SDK.
@@ -65,7 +69,11 @@ var CleverTap = {
     CleverTapPushNotificationClicked: CleverTapReact.getConstants().CleverTapPushNotificationClicked,
     CleverTapPushPermissionResponseReceived: CleverTapReact.getConstants().CleverTapPushPermissionResponseReceived,
     CleverTapOnVariablesChanged: CleverTapReact.getConstants().CleverTapOnVariablesChanged,
+    CleverTapOnOneTimeVariablesChanged: CleverTapReact.getConstants().CleverTapOnOneTimeVariablesChanged,
     CleverTapOnValueChanged: CleverTapReact.getConstants().CleverTapOnValueChanged,
+    CleverTapOnVariablesChangedAndNoDownloadsPending: CleverTapReact.getConstants().CleverTapOnVariablesChangedAndNoDownloadsPending,
+    CleverTapOnceVariablesChangedAndNoDownloadsPending: CleverTapReact.getConstants().CleverTapOnceVariablesChangedAndNoDownloadsPending,
+    CleverTapOnFileValueChanged: CleverTapReact.getConstants().CleverTapOnFileValueChanged,
 
     /**
     * Add a CleverTap event listener
@@ -77,6 +85,16 @@ var CleverTap = {
     addListener: function (eventName, handler) {
         if (EventEmitter) {
             EventEmitter.addListener(eventName, handler);
+            CleverTapReact.onEventListenerAdded(eventName);
+        }
+    },
+    addOneTimeListener: function (eventName, handler) {
+        if (EventEmitter) {
+            const subscription = EventEmitter.addListener(eventName, (args) =>
+             {
+              handler(args);
+              subscription.remove();
+              });
             CleverTapReact.onEventListenerAdded(eventName);
         }
     },
@@ -320,6 +338,7 @@ var CleverTap = {
 
     /**
     * Get the time of the first occurrence of an event
+    * @deprecated - Since version 3.2.0. Use getUserEventLog() instead
     * @param {string} eventName - the name of the event
     * @param {function(err, res)} callback that returns a res of epoch seconds or -1
     */
@@ -329,6 +348,7 @@ var CleverTap = {
 
     /**
     * Get the time of the most recent occurrence of an event
+    * @deprecated - Since version 3.2.0. Use getUserEventLog() instead
     * @param {string} eventName - the name of the event
     * @param {function(err, res)} callback that returns a res of epoch seconds or -1
     */
@@ -338,6 +358,7 @@ var CleverTap = {
 
     /**
     * Get the number of occurrences of an event
+    * @deprecated - Since version 3.2.0. Use getUserEventLogCount() instead
     * @param {string} eventName - the name of the event
     * @param {function(err, res)} callback that returns a res of int
     */
@@ -347,6 +368,7 @@ var CleverTap = {
 
     /**
     * Get the summary details of an event
+    * @deprecated - Since version 3.2.0. Use getUserEventLog() instead
     * @param {string} eventName - the name of the event
     * @param {function(err, res)} callback that returns a res of object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>} or empty object
     */
@@ -356,10 +378,36 @@ var CleverTap = {
 
     /**
     * Get the user's event history
+    * @deprecated - Since version 3.2.0. Use getUserEventLogHistory() instead
     * @param {function(err, res)} callback that returns a res of object {"eventName1":<event1 details object>, "eventName2":<event2 details object>}
     */
     getEventHistory: function (callback) {
         callWithCallback('getEventHistory', null, callback);
+    },
+    /**
+    * Get the details of a specific event
+    * @param {string} eventName - the name of the event
+    * @param {function(err, res)} callback that returns a res of object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>, "deviceID": <string>, "normalizedEventName": <string>} or empty object
+    */
+    getUserEventLog: function (eventName, callback) {
+        callWithCallback('getUserEventLog', [eventName], callback);
+    },
+    
+    /**
+    * Get the count of times an event occured
+    * @param {string} eventName - the name of the event
+    * @param {function(err, res)} callback that returns a res of int
+    */
+    getUserEventLogCount: function (eventName, callback) {
+        callWithCallback('getUserEventLogCount', [eventName], callback);
+    },
+
+    /**
+    * Get full event hostory for current user
+    * @param {function(err, res)} callback that returns a res of object {"eventName1":<event1 details object>, "eventName2":<event2 details object>}
+    */
+    getUserEventLogHistory: function (callback) {
+        callWithCallback('getUserEventLogHistory', null, callback);
     },
 
     /**
@@ -521,10 +569,27 @@ var CleverTap = {
 
     /**
     * Get the total number of vists by the user
+    * @deprecated - Since version 3.2.0. Use getUserAppLaunchCount() instead
     * @param {function(err, res)} callback that returns a res of int
     */
     sessionGetTotalVisits: function (callback) {
         callWithCallback('sessionGetTotalVisits', null, callback);
+    },
+
+    /**
+    * Get timestamp of user's last app visit
+    * @param {function(err, res)} callback that returns a res of epoch seconds or -1
+    */
+    getUserLastVisitTs: function (callback) {
+        callWithCallback('getUserLastVisitTs', null, callback);
+    },
+    
+    /**
+    * Get the total number of times user has launched the app
+    * @param {function(err, res)} callback that returns a res of int
+    */
+    getUserAppLaunchCount: function (callback) {
+        callWithCallback('getUserAppLaunchCount', null, callback);
     },
 
     /**
@@ -537,6 +602,7 @@ var CleverTap = {
 
     /**
     * Get the most recent previous visit time of the user
+    * @deprecated - Since version 3.2.0. Use getUserLastVisits() instead
     * @param {function(err, res)} callback that returns a res of epoch seconds or -1
     */
     sessionGetPreviousVisitTime: function (callback) {
@@ -909,6 +975,14 @@ var CleverTap = {
     },
 
     /**
+    * Create File Variable
+    * @param {string} fileVariable - the file variable string
+    */
+    defineFileVariable: function (fileVariable) {
+        CleverTapReact.defineFileVariable(fileVariable)
+    },
+    
+    /**
      * Get a variable or a group for the specified name.
      * 
      * @param {string} name - name.
@@ -936,6 +1010,16 @@ var CleverTap = {
     },
 
     /**
+     *  Adds a callback to be invoked only once on app start, or when added if server values are already received
+     *
+     * @param {function} handler The callback to add
+     */
+    onOneTimeVariablesChanged: function (handler) {
+        this.addOneTimeListener(CleverTapReact.getConstants().CleverTapOnOneTimeVariablesChanged, handler);
+        CleverTapReact.onOneTimeVariablesChanged();
+    },
+
+    /**
      * Called when the value of the variable changes.
      * 
      * @param {name} string the name of the variable
@@ -944,6 +1028,37 @@ var CleverTap = {
     onValueChanged: function (name, handler) {
         CleverTapReact.onValueChanged(name);
         this.addListener(CleverTapReact.getConstants().CleverTapOnValueChanged, handler);
+    },
+
+    /**
+     *  Adds a callback to be invoked when variables are initialised with server values. Will be called each time new values are fetched.
+     * 
+     * @param {function} handler The callback to add
+     */
+    onVariablesChangedAndNoDownloadsPending: function (handler) {
+        this.addListener(CleverTapReact.getConstants().CleverTapOnVariablesChangedAndNoDownloadsPending, handler);
+        CleverTapReact.onVariablesChangedAndNoDownloadsPending();
+    },
+
+    /**
+     *  Adds a callback to be invoked only once for when new values are fetched and downloaded
+     *
+     * @param {function} handler The callback to add
+     */
+    onceVariablesChangedAndNoDownloadsPending: function (handler) {
+        this.addOneTimeListener(CleverTapReact.getConstants().CleverTapOnceVariablesChangedAndNoDownloadsPending, handler);
+        CleverTapReact.onceVariablesChangedAndNoDownloadsPending();
+    },
+
+    /**
+     * Called when the value of the file variable is downloaded and ready.
+     * 
+     * @param {name} string the name of the file variable
+     * @param {function} handler The callback to add
+     */
+    onFileValueChanged: function (name, handler) {
+        this.addListener(CleverTapReact.getConstants().CleverTapOnFileValueChanged, handler);
+        CleverTapReact.onFileValueChanged(name);
     },
 
     /**
@@ -962,6 +1077,123 @@ var CleverTap = {
      */
     clearInAppResources: function (expiredOnly) {
         CleverTapReact.clearInAppResources(expiredOnly);
+    },
+
+    /**
+     * Uploads Custom in-app templates and app functions to the server.
+     * Requires Development/Debug build/configuration.
+     */
+    syncCustomTemplates: function () {
+        CleverTapReact.syncCustomTemplates();
+    },
+
+    /**
+     * Uploads Custom in-app templates and app functions to the server.
+     *
+     * @param {boolean} isProduction Provide `true` if templates must be sync in Productuon build/configuration.
+     */
+    syncCustomTemplatesInProd: function (isProduction) {
+        CleverTapReact.syncCustomTemplatesInProd(isProduction)
+    },
+
+    /**
+     * Notify the SDK that an active custom template is dismissed. The active custom template is considered to be
+     * visible to the user until this method is called. Since the SDK can show only one InApp message at a time, all
+     * other messages will be queued until the current one is dismissed.
+     * 
+     * @param {string} templateName The name of the active template
+     */
+    customTemplateSetDismissed: function (templateName) {
+        return CleverTapReact.customTemplateSetDismissed(templateName);
+    },
+
+    /**
+     * Notify the SDK that an active custom template is presented to the user
+     * 
+     * @param {string} templateName The name of the active template
+     */
+    customTemplateSetPresented: function (templateName) {
+        return CleverTapReact.customTemplateSetPresented(templateName);
+    },
+
+    /**
+     * Trigger a custom template action argument by name.
+     * 
+     * @param {string} templateName The name of an active template for which the action is defined
+     * @param {string} argName The action argument name
+     */
+    customTemplateRunAction: function (templateName, argName) {
+        return CleverTapReact.customTemplateRunAction(templateName, argName);
+    },
+
+    /**
+     * Retrieve a string argument by name.
+     *
+     * @param {string} templateName The name of an active template for which the argument is defined
+     * @param {string} argName The action argument name
+     * 
+     * @returns {string} The argument value or null if no such argument is defined for the template.
+     */
+    customTemplateGetStringArg: function (templateName, argName) {
+       return CleverTapReact.customTemplateGetStringArg(templateName, argName);
+    },
+
+    /**
+     * Retrieve a number argument by name.
+     *
+     * @param {string} templateName The name of an active template for which the argument is defined
+     * @param {string} argName The action argument name
+     * 
+     * @returns {number} The argument value or null if no such argument is defined for the template.
+     */
+    customTemplateGetNumberArg: function (templateName, argName) {
+        return CleverTapReact.customTemplateGetNumberArg(templateName, argName);
+    },
+
+    /**
+     * Retrieve a boolean argument by name.
+     *
+     * @param {string} templateName The name of an active template for which the argument is defined
+     * @param {stirng} argName The action argument name
+     * 
+     * @returns {boolean} The argument value or null if no such argument is defined for the template.
+     */
+    customTemplateGetBooleanArg: function (templateName, argName) {
+        return CleverTapReact.customTemplateGetBooleanArg(templateName, argName);
+    },
+
+    /**
+     * Retrieve a file argument by name.
+     *
+     * @param {string} templateName The name of an active template for which the argument is defined
+     * @param {string} argName The action argument name
+     * 
+     * @returns {string} The file path to the file or null if no such argument is defined for the template.
+     */
+    customTemplateGetFileArg: function (templateName, argName) {
+        return CleverTapReact.customTemplateGetFileArg(templateName, argName);
+    },
+
+    /**
+     * Retrieve an object argument by name.
+     *
+     * @param {string} templateName The name of an active template for which the argument is defined
+     * @param {string} argName The action argument name
+     * 
+     * @returns {any} The argument value or null if no such argument is defined for the template.
+     */
+    customTemplateGetObjectArg: function (templateName, argName) {
+        return CleverTapReact.customTemplateGetObjectArg(templateName, argName);
+    },
+
+    /**
+     * Get a string representation of an active's template context with information about all arguments. 
+     * 
+     * @param {string} templateName The name of an active template
+     * @returns {string}
+     */
+    customTemplateContextToString: function (templateName) {
+        return CleverTapReact.customTemplateContextToString(templateName);
     }
 };
 

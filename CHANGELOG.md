@@ -1,6 +1,77 @@
 Change Log
 ==========
 
+Version 3.3.0 *(xx March 2025)*
+-------------------------------------------
+**What's new**
+
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v7.2.2](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-722-january-21-2025).
+  * Adds support for Android 15, making it compliant with Android 15 requirements. Details [here](https://developer.android.com/about/versions/15/summary).
+  * Upgrades the algorithm used for encryption of PII data, making it compliant with [OWASP](https://mas.owasp.org/MASTG/0x04g-Testing-Cryptography/). Uses `AndroidKeyStore` for securely backing up encryption key on API levels 23+.
+  * Updates `minSdkVersion` to API 21 (Android 5.0).
+  * Upgrades `Android Gradle Plugin (A.G.P)` to 8.6.1 as [recommended for Android 15](https://developer.android.com/about/versions/15/setup-sdk#:~:text=Update%20your%20app's%20build%20configuration,-Warning%3A%20If%20your&text=1%20or%20higher%2C%20first%20run,1.)
+
+Version 3.2.0 *(5 February 2025)*
+-------------------------------------------
+**What's new**
+
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v7.1.2](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-712-january-29-2025).
+  * Adds support to hide large icon in android notifications by sending `wzrk_hide_large_icon` key in notification payload.
+  
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.1.0](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-710-january-21-2024).
+
+* **[Android and iOS Platform]**
+- Adds support for triggering InApps based on first-time event filtering in multiple triggers. Now you can create campaign triggers that combine recurring and first-time events. For example: Trigger a campaign when "Charged" occurs (every time) OR "App Launched" occurs (first time only).
+- Adds new user-level event log tracking system to store and manage user event history. New APIs include:
+  - `getUserEventLog(<eventName>)`: Get details about a specific event
+  - `getUserEventLogCount(<eventName>)`: Get count of times an event occurred
+  - `getUserLastVisitTs()`: Get timestamp of user's last app visit
+  - `getUserAppLaunchCount()`: Get total number of times user has launched the app
+  - `getUserEventLogHistory()`: Get full event history for current user
+
+#### API Changes
+
+- **Deprecates:**  The old event tracking APIs tracked events at the device level rather than the user level, making it difficult to maintain accurate user-specific event histories, especially in multi-user scenarios. The following methods have been deprecated in favor of new user-specific event tracking APIs that provide more accurate, user-level analytics. These deprecated methods will be removed in future versions with prior notice:
+  - `eventGetDetail()`: Use `getUserEventLog()` instead for user-specific event details
+  - `eventGetOccurrences()`: Use `getUserEventLogCount()` instead for user-specific event counts
+  - `eventGetFirstTime()`: Use `getUserEventLog()` instead for user-specific first occurrence timestamp
+  - `eventGetLastTime()`: Use `getUserEventLog()` instead for user-specific last occurrence timestamp
+  - `sessionGetPreviousVisitTime()`: Use `getUserLastVisitTs()` instead for user-specific last visit timestamp
+  - `sessionGetTotalVisits()`: Use `getUserAppLaunchCount()` instead for user-specific app launch count
+  - `getEventHistory()`: Use `getUserEventLogHistory()` instead for user-specific event history
+
+Version 3.1.1 *(6 November 2024)*
+-------------------------------------------
+**Bug Fixes**
+
+* **[iOS Platform]**
+  * Fixes a bug where the push notification callback was getting triggered twice in killed state.
+
+Version 3.1.0 *(25 October 2024)*
+-------------------------------------------
+**What's new**
+
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v7.0.2](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-702-october-10-2024).
+  * Adds support for custom handshake domain configuration in android manifest
+
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.0.2](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-702-october-10-2024).
+  * Adds support for custom handshake domains.
+
+* **[Android and iOS Platform]**
+  * Adds support for File Type Variables in Remote Config. Please refer to the [Remote Config Variables](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/docs/Variables.md) doc to read more on how to integrate this in your app.
+  * Adds support for Custom Code Templates. Please refer to the [CustomCodeTemplates.md](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CustomCodeTemplates.md) doc to read more on how to integrate this in your app.
+  * Adds support for custom code in-app templates definitions through a json scheme.
+
+**Bug Fixes**
+* **[Android and iOS Platform]**
+  * Fixes a missing import statement in the index.js file https://github.com/CleverTap/clevertap-react-native/issues/431
+  * Fixes https://github.com/CleverTap/clevertap-react-native/issues/426
+
 Version 3.0.0 *(8 October 2024)*
 -------------------------------------------
 **What's new**

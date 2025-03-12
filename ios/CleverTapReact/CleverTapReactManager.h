@@ -10,6 +10,5 @@
 - (void)setDelegates:(CleverTap *)cleverTapInstance;
 
 @property NSString *launchDeepLink;
-@property(nonatomic, strong) NSDictionary *pendingPushNotificationExtras;
 
 @end

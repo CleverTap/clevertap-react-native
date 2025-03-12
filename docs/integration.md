@@ -8,7 +8,7 @@ Clevertap supports the [ReactNative New Architecture](https://reactnative.dev/do
 
 
 ### iOS
-1. Follow the integration instructions [starting with Step 2 here](https://support.clevertap.com/docs/ios/getting-started.html).
+1. Follow the integration instructions [here](https://developer.clevertap.com/docs/react-native-quick-start-guide#ios-integration).
 2. In your `AppDelegate didFinishLaunchingWithOptions:` notify the CleverTap React SDK of application launch:
 ```objc
 [CleverTap autoIntegrate]; // integrate CleverTap SDK using the autoIntegrate option
@@ -22,33 +22,29 @@ NOTE:  Don't forget to add the CleverTap imports at the top of the file.
 
 Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-SDK/CleverTap.h>** and **@import CleverTapReact;** instead of **#import <clevertap-react-native/CleverTapReactManager.h>** in the AppDelegate class in case if using ```use_modular_headers!``` in the podfile.
 
-[See the Example Project](/Example/ios/Example/AppDelegate.m).
+[See the Example Project](/Example/ios/Example/AppDelegate.mm).
 
 ### Android
-1. Follow the integration instructions [starting with Step 2 here](https://support.clevertap.com/docs/android/getting-started.html).
+1. Follow the integration instructions [here](https://developer.clevertap.com/docs/react-native-quick-start-guide#android-integration).
 
 2. Add CleverTapPackage to the packages list in MainApplication.java (`android/app/src/[...]/MainApplication.java`)
     ```java
     // ...
-
+    
     // CleverTap imports
-    import com.clevertap.android.sdk.ActivityLifecycleCallback;
     import com.clevertap.react.CleverTapPackage;
-    import com.clevertap.react.CleverTapRnAPI;
-
-
+    
     //...
-
+    
     // add CleverTapPackage to react-native package list
-    @Override
-      protected List<ReactPackage> getPackages() {
-        List<ReactPackage> packages = new PackageList(this).getPackages();
-        // Packages that cannot be autolinked yet can be added manually here, for
-        // example:
-        packages.add(new CleverTapPackage());// only needed when not auto-linking
-        return packages;
-        
-    }
+        @Override
+        protected List<ReactPackage> getPackages() {
+            List<ReactPackage> packages = new PackageList(this).getPackages();
+            // Packages that cannot be autolinked yet can be added manually here, for
+            // example:
+            packages.add(new CleverTapPackage());// only needed when not auto-linking
+            return packages;
+        }
     ```
 
 3. Initialise Clevertap ReactNative Integration - This adds support for `ClevertapPushNotiificationClicked` from killed state and registers the `ActivityLifecycleCallback`
@@ -60,52 +56,52 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-
     import com.clevertap.android.sdk.CleverTapAPI;
     import com.clevertap.android.sdk.CleverTapAPI.LogLevel;
     // ...
-
-        public class MainApplication implements ReactApplication {
-            // ...
-
-            @Override
-            public void onCreate() {
-                CleverTapAPI.setDebugLevel(LogLevel.VERBOSE);
-                ActivityLifecycleCallback.register(this);
-                CleverTapRnAPI.initReactNativeIntegration(this);
-                super.onCreate();
-                // ...
-            }
-
+    
+    public class MainApplication implements ReactApplication 
+    {
         // ...
+    
+        @Override
+        public void onCreate() {
+            CleverTapAPI.setDebugLevel(LogLevel.VERBOSE);
+            ActivityLifecycleCallback.register(this);
+            CleverTapRnAPI.initReactNativeIntegration(this);
+            super.onCreate();
+            // ...
         }
+    
+    // ...
+    }
     ```
 
 <div style="text-align:center; font-size: larger; font-weight: bold;">OR</div>
 <br>
 
-
 - From clevertap-react-native **v3.0.0** onwards developers can make their `Application` class extend `CleverTapApplication` to support out of the box integration. Before **v3.0.0** developers were forced to register activity lifecycle in their `Application` class manually which is being abstract out in `CleverTapApplication` class.
  
     ```java
-  import com.clevertap.react.CleverTapApplication;
-  import com.clevertap.android.sdk.ActivityLifecycleCallback;
-  import com.clevertap.android.sdk.CleverTapAPI;
-  import com.clevertap.android.sdk.CleverTapAPI.LogLevel;
-   // other imports
-   
-   public class MainApplication extends CleverTapApplication
+    import com.clevertap.react.CleverTapApplication;
+    import com.clevertap.android.sdk.ActivityLifecycleCallback;
+    import com.clevertap.android.sdk.CleverTapAPI;
+    import com.clevertap.android.sdk.CleverTapAPI.LogLevel;
+    // other imports
+    
+    public class MainApplication extends CleverTapApplication
            implements ActivityLifecycleCallbacks, ReactApplication
-   {
+    {
         // ...
         @Override
-          public void onCreate() {
-              CleverTapAPI.setDebugLevel(LogLevel.VERBOSE);
-              ActivityLifecycleCallback.register(this); // Not required for v3.0.0+
-              super.onCreate();
-              // ...
-          }
-   }
+        public void onCreate() {
+          CleverTapAPI.setDebugLevel(LogLevel.VERBOSE);
+          ActivityLifecycleCallback.register(this); // Not required for v3.0.0+
+          super.onCreate();
+          // ...
+        }
+    }
     ```
 4. <a name="step4"></a> Optionally override onCreate in MainActivity.java to notify CleverTap of a launch deep link  (`android/app/src/[...]/MainActivity.java`)
     ```java
-    import com.clevertap.react.CleverTapModule;
+    import com.clevertap.react.CleverTapRnAPI;
     import android.os.Bundle;
    
     
@@ -115,12 +111,12 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            CleverTapRnAPI.setInitialUri(getIntent().getData());
+            CleverTapRnAPI.setInitialUri(getIntent().getData()); // From v3.0.0+
     	}
 
         // ...
     }
     ```
 
-[See the Example Project](/Example/App.js) 
+[See the Example Project](/Example/app/App.js) 
 
