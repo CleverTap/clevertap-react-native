@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 3.3.0 *(xx March 2025)*
+Version 3.3.0 *(17 March 2025)*
 -------------------------------------------
 Refer to the [troubleshoot guide](docs/install.md#troubleshooting) if you encounter any errors while upgrading to this version.
 
