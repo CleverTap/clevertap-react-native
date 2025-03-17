@@ -1,12 +1,24 @@
 Change Log
 ==========
 
+Version 3.3.0 *(xx March 2025)*
+-------------------------------------------
+Refer to the [troubleshoot guide](docs/install.md#troubleshooting) if you encounter any errors while upgrading to this version.
+
+**What's new**
+
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v7.2.2](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-722-january-21-2025).
+  * Adds support for Android 15, making it compliant with Android 15 requirements. Details [here](https://developer.android.com/about/versions/15/summary).
+  * Upgrades the algorithm used for encryption of PII data, making it compliant with [OWASP](https://mas.owasp.org/MASTG/0x04g-Testing-Cryptography/). Uses `AndroidKeyStore` for securely backing up encryption key on API levels 23+.
+  * Updates `minSdkVersion` to API 21 (Android 5.0).
+
 Version 3.2.0 *(5 February 2025)*
 -------------------------------------------
 **What's new**
 
 * **[Android Platform]**
-  * Supports [CleverTap Android SDK v7.1.2](https://github.com/CleverTap/clevertap-android-sdk/blob/develop/docs/CTCORECHANGELOG.md#version-712-january-29-2025).
+  * Supports [CleverTap Android SDK v7.1.2](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-712-january-29-2025).
   * Adds support to hide large icon in android notifications by sending `wzrk_hide_large_icon` key in notification payload.
   
 * **[iOS Platform]**

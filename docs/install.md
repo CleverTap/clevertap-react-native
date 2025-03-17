@@ -107,42 +107,6 @@ Clevertap ReactNative SDK supports `AndroidX Media3` from `v3.0.0+` to replace t
 |  `com.google.android.exoplayer:exoplayer-ui:2.19.1` | `androidx.media3:media3-ui:1.1.1`  |
 
 
-### Troubleshooting  
-
-If you face the following crash at runtime -
-
-```java.lang.UnsatisfiedLinkError: couldn't find DSO to load: libhermes.so```
-
-Add the following in your app/build.gradle -
-
-```
-project.ext.react = [
-    entryFile: "index.js",
-    enableHermes: false //add this
-]
-def jscFlavor = 'org.webkit:android-jsc:+'
-def enableHermes = project.ext.react.get("enableHermes", false);
-def jscFlavor = 'org.webkit:android-jsc:+'
-def enableHermes = project.ext.react.get("enableHermes", false);
-dependencies {
-if (enableHermes) {
-      // For RN 0.60.x
-      def hermesPath = "../../node_modules/hermesvm/android/"
-      debugImplementation files(hermesPath + "hermes-debug.aar")
-      releaseImplementation files(hermesPath + "hermes-release.aar")
-    } else {
-      implementation jscFlavor
-    }
-}
-```
-In android/build.gradle add this -
-
-```
-maven {
-        url "$rootDir/../node_modules/jsc-android/dist"
-      }
-```
-
 ## Manual Linking
 
 #### iOS:
@@ -166,5 +130,33 @@ dependencies {
     implementation project(':clevertap-react-native')
 }
 ```
+
+### Troubleshooting
+#### Upgrading to clevertap-react-native v3.3.0
+
+To use `clevertap-react-native v3.3.0`, it is recommended to upgrade to **React Native v0.74+**.
+
+If you insist on using an older version of React Native, consider the following possible resolutions for common issues:
+
+##### For ReactNative v0.73
+**Error:** `Compiled with an incompatible version of Kotlin`
+
+**Resolution:** Force the Kotlin version in your root `build.gradle`:
+```gradle
+dependencies {
+  ....
+  classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.0"
+
+  // NOTE: Do not place your application dependencies here; they belong
+  // in the individual module build.gradle files
+}
+```
+
+##### For ReactNative v0.71 or v0.72
+**Error:** `java.lang.NullPointerException: Cannot invoke "String.length()" because "<parameter1>" is null`
+
+**Reference:** https://issuetracker.google.com/issues/342522142
+
+**Resolution:** Either upgrade to `AGP 8.0.0+` or use a specific version of D8/R8 compiler as recommended in [this comment](https://issuetracker.google.com/issues/342522142#comment8) 
 
 Now move on to [integrating the SDK](./integration.md).
