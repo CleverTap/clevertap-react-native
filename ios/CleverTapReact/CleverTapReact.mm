@@ -174,7 +174,7 @@ RCT_EXPORT_METHOD(pushRegistrationToken:(NSString*)token withPushType:(NSDiction
     if ([type isEqualToString:@"fcm"]) {
         [self setFCMPushTokenAsString:token];
     } else {
-        RCTLogInfo(@"[CleverTap pushRegistrationToken for Huawei/Baidu types is no-op in iOS]");
+        RCTLogInfo(@"[CleverTap pushRegistrationToken for types other than FCM is no-op in iOS]");
     }
 }
 
