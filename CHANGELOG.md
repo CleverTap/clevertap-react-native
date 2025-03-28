@@ -17,6 +17,9 @@ Version 3.4.0 *(28 March 2025)*
 - **Removes:** The legacy token registration APIs have been removed to make push providers injectable. The removed APIs include:
   - `setPushToken(value, type)`
 
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.1.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-711-march-17-2024).
+
 Version 3.3.0 *(17 March 2025)*
 -------------------------------------------
 Refer to the [troubleshoot guide](docs/install.md#troubleshooting) if you encounter any errors while upgrading to this version.
