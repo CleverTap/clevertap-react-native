@@ -404,8 +404,12 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.setOptOut(value)
     }
 
-    override fun setPushTokenAsString(token: String?, type: String?) {
-        cleverTapModuleImpl.setPushTokenAsString(token, type)
+    override fun pushRegistrationToken(token: String?, pushType: ReadableMap?) {
+        cleverTapModuleImpl.pushRegistrationToken(token, pushType)
+    }
+
+    override fun setFCMPushTokenAsString(token: String?) {
+        cleverTapModuleImpl.setFCMPushTokenAsString(token)
     }
 
     // Increment/Decrement Operator

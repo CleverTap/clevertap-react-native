@@ -2,9 +2,7 @@ package com.clevertap.react;
 
 import static com.clevertap.react.CleverTapUtils.convertObjectToWritableMap;
 import static com.clevertap.react.CleverTapUtils.getWritableArrayFromDisplayUnitList;
-import static com.clevertap.react.Constants.BPS;
 import static com.clevertap.react.Constants.FCM;
-import static com.clevertap.react.Constants.HPS;
 import static com.clevertap.react.Constants.REACT_MODULE_NAME;
 
 import android.annotation.SuppressLint;
@@ -32,6 +30,7 @@ import com.clevertap.android.sdk.inapp.customtemplates.CustomTemplateContext;
 import com.clevertap.android.sdk.inbox.CTInboxMessage;
 import com.clevertap.android.sdk.interfaces.OnInitCleverTapIDListener;
 import com.clevertap.android.sdk.product_config.CTProductConfigController;
+import com.clevertap.android.sdk.pushnotification.PushType;
 import com.clevertap.android.sdk.usereventlogs.UserEventLog;
 import com.clevertap.android.sdk.variables.CTVariableUtils;
 import com.clevertap.android.sdk.variables.Var;
@@ -105,8 +104,6 @@ public class CleverTapModuleImpl {
             constants.put(event.getEventName(), event.getEventName());
         }
         constants.put(FCM, FCM);
-        constants.put(BPS, BPS);
-        constants.put(HPS, HPS);
         return constants;
     }
 
@@ -1084,28 +1081,26 @@ public class CleverTapModuleImpl {
         clevertap.setOptOut(value);
     }
 
-
-    public void setPushTokenAsString(String token, String type) {
-        Logger.v("setPushTokenAsString() called with: token = [" + token + "], type = [" + type + "]");
+    public void pushRegistrationToken(String token, ReadableMap type) {
+        Logger.v("pushRegistrationToken called with: token = [" + token + "], type = [" + type + "]");
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null || token == null || type == null) {
             return;
         }
 
-        switch (type) {
-            case FCM:
-                clevertap.pushFcmRegistrationId(token, true);
-                break;
-            case BPS:
-                clevertap.pushBaiduRegistrationId(token, true);
-                break;
-            case HPS:
-                clevertap.pushHuaweiRegistrationId(token, true);
-                break;
-            default:
-                Log.e(TAG, "Unknown push token type " + type);
-                break;
+        PushType pushType = pushTypeFromReadableMap(type);
+        if (pushType != null) {
+            clevertap.pushRegistrationToken(token, pushType, true);
         }
+    }
+
+    public void setFCMPushTokenAsString(String token) {
+        Logger.v("setFCMPushTokenAsString called with: token = [" + token + "]");
+        CleverTapAPI clevertap = getCleverTapAPI();
+        if (clevertap == null || token == null) {
+            return;
+        }
+        clevertap.pushFcmRegistrationId(token, true);
     }
 
     // Increment/Decrement Operator
@@ -1535,6 +1530,21 @@ public class CleverTapModuleImpl {
             return false;
         }
         return true;
+    }
+
+    private PushType pushTypeFromReadableMap(ReadableMap readableMap) {
+        String type = readableMap.getString("type");
+        String prefKey =  readableMap.getString("prefKey");
+
+        if (type == null || prefKey == null) {
+            return null;
+        }
+
+        return new PushType(
+                type,
+                prefKey,
+                readableMap.getString("className"),
+                readableMap.getString("messagingSDKClassName"));
     }
 
     @SuppressWarnings("SameParameterValue")
