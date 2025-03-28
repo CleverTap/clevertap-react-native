@@ -164,10 +164,18 @@ RCT_EXPORT_METHOD(registerForPush) {
     }
 }
 
-RCT_EXPORT_METHOD(setPushTokenAsString:(NSString*)token withType:(NSString *)type) {
-    // type is a no-op in iOS
+RCT_EXPORT_METHOD(setFCMPushTokenAsString:(NSString*)token) {
     RCTLogInfo(@"[CleverTap setPushTokenAsString: %@]", token);
     [[self cleverTapInstance] setPushTokenAsString:token];
+}
+
+RCT_EXPORT_METHOD(pushRegistrationToken:(NSString*)token withPushType:(NSDictionary*)pushType) {
+    NSString *type = pushType[@"type"];
+    if ([type isEqualToString:@"fcm"]) {
+        [self setFCMPushTokenAsString:token];
+    } else {
+        RCTLogInfo(@"[CleverTap pushRegistrationToken for Huawei/Baidu types is no-op in iOS]");
+    }
 }
 
 // setPushTokenAsStringWithRegion is a no-op in iOS

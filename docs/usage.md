@@ -301,7 +301,25 @@ CleverTap.deleteNotificationChannelGroup(String groupId);
 #### Registering Fcm Token
 
 ```javascript 
-CleverTap.setPushToken("<Replace with FCM Token value>", CleverTap.FCM);
+CleverTap.setFCMPushToken("<Replace with FCM Token value>");
+```
+
+#### Registering HPS/Baidu token
+
+```javascript 
+CleverTap.pushRegistrationToken("my_hms_token", {
+  type: 'hps',
+  prefKey: 'hps_token',
+  className: 'com.clevertap.android.hms.HmsPushProvider',
+  messagingSDKClassName: 'com.huawei.hms.push.HmsMessageService'
+});
+
+CleverTap.pushRegistrationToken("my_bps_token", {
+  type: 'bps',
+  prefKey: 'bps_token',
+  className: 'com.clevertap.android.bps.BaiduPushProvider',
+  messagingSDKClassName: 'com.baidu.android.pushservice.PushMessageReceiver'
+});
 ```
 
 -----------

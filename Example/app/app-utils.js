@@ -343,10 +343,32 @@ export const pushFcmRegistrationId = () => {
         // or else two different tokens will be pushed to BackEnd resulting in unwanted behavior
         // => https://github.com/CleverTap/clevertap-react-native/issues/166
         // => https://developer.clevertap.com/docs/android#section-custom-android-push-notifications-handling
-        CleverTap.setPushToken('1000test000token000fcm', CleverTap.FCM);
-        // CleverTap.setPushToken("111056687894", CleverTap.HMS);//for Huawei push
-        // CleverTap.setPushToken("111056687894", CleverTap.BPS);//for Baidu push
+        CleverTap.setFCMPushToken('1000test000token000fcm');
     }
+};
+
+export const pushBaiduRegistrationId = () => {
+    showToast('Registered Baidu Id for Push');
+        if (Platform.OS === 'android') {
+            CleverTap.pushRegistrationToken("my_bps_token", {
+               type: 'bps',
+               prefKey: 'bps_token',
+               className: 'com.clevertap.android.bps.BaiduPushProvider',
+               messagingSDKClassName: 'com.baidu.android.pushservice.PushMessageReceiver'
+            });
+       }
+};
+
+export const pushHuaweiRegistrationId = () => {
+    showToast('Registered HPS Id for Push');
+        if (Platform.OS === 'android') {
+            CleverTap.pushRegistrationToken("my_hms_token", {
+               type: 'hps',
+               prefKey: 'hps_token',
+               className: 'com.clevertap.android.hms.HmsPushProvider',
+               messagingSDKClassName: 'com.huawei.hms.push.HmsMessageService'
+            });
+       }
 };
 
 export const create_notification = () => {

@@ -477,8 +477,13 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
-    fun setPushTokenAsString(token: String?, type: String?) {
-        cleverTapModuleImpl.setPushTokenAsString(token, type)
+    fun pushRegistrationToken(token: String?, type: ReadableMap?) {
+        cleverTapModuleImpl.pushRegistrationToken(token, type)
+    }
+
+    @ReactMethod
+    fun setFCMPushTokenAsString(token: String?) {
+        cleverTapModuleImpl.setFCMPushTokenAsString(token)
     }
 
     // Increment/Decrement Operator

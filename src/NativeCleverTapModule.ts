@@ -28,9 +28,7 @@ export interface Spec extends TurboModule {
     CleverTapOnVariablesChangedAndNoDownloadsPending: string;
     CleverTapOnceVariablesChangedAndNoDownloadsPending: string;
     CleverTapOnFileValueChanged: string;
-    HPS: string;
     FCM: string;
-    BPS: string;
   };
   
   setInstanceWithAccountId(accountId: string): void;
@@ -38,7 +36,8 @@ export interface Spec extends TurboModule {
   setLibrary(name: string, andVersion: number): void;
   setLocale(locale: string): void;
   registerForPush(): void;
-  setPushTokenAsString(token: string, withType: string): void;
+  setFCMPushTokenAsString(token: string): void;
+  pushRegistrationToken(token: string, pushType: Object | null): void;
   setPushTokenAsStringWithRegion(token: string, withType: string, withRegion: string): void;
   enablePersonalization(): void;
   disablePersonalization(): void;
