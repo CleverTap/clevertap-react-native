@@ -308,7 +308,7 @@ CleverTap.setFCMPushToken("<Replace with FCM Token value>");
 
 ```javascript 
 CleverTap.pushRegistrationToken("my_hms_token", {
-  typ: 'hps',
+  type: 'hps',
   prefKey: 'hps_token',
   className: 'com.clevertap.android.hms.HmsPushProvider',
   messagingSDKClassName: 'com.huawei.hms.push.HmsMessageService'
