@@ -1084,11 +1084,14 @@ public class CleverTapModuleImpl {
     public void pushRegistrationToken(String token, ReadableMap type) {
         Logger.v("pushRegistrationToken called with: token = [" + token + "], type = [" + type + "]");
         CleverTapAPI clevertap = getCleverTapAPI();
-        if (clevertap == null || token == null) {
+        if (clevertap == null || token == null || type == null) {
             return;
         }
+
         PushType pushType = pushTypeFromReadableMap(type);
-        clevertap.pushRegistrationToken(token, pushType, true);
+        if (pushType != null) {
+            clevertap.pushRegistrationToken(token, pushType, true);
+        }
     }
 
     public void setFCMPushTokenAsString(String token) {
@@ -1530,9 +1533,16 @@ public class CleverTapModuleImpl {
     }
 
     private PushType pushTypeFromReadableMap(ReadableMap readableMap) {
+        String type = readableMap.getString("type");
+        String prefKey =  readableMap.getString("prefKey");
+
+        if (type == null || prefKey == null) {
+            return null;
+        }
+
         return new PushType(
-                readableMap.getString("type"),
-                readableMap.getString("prefKey"),
+                type,
+                prefKey,
                 readableMap.getString("className"),
                 readableMap.getString("messagingSDKClassName"));
     }
