@@ -69,11 +69,17 @@
   export function registerForPush(): void;
 
   /**
-   * Manually set the push token on the CleverTap user profile
+   * Manually set the FCM push token on the CleverTap user profile
    * @param {string} token - the device token
-   * @param {string} type - for Android only, specifying the type of push service token. Values can be CleverTap.FCM for Firebase or CleverTap.BPS for Baidu or CleverTap.HPS for Huawei,
    */
-  export function setPushToken(token: string, type: string): void;
+  export function setFCMPushToken(token: string): void;
+
+    /**
+     * Manually set the push token on the CleverTap user profile for providers other than FCM
+     * @param {string} token - the device token
+     * @param {any} type - object with the following keys "type", "prefKey", "className", "messagingSDKClassName";
+     */
+    export function pushRegistrationToken(token: string, pushType: any): void;
 
   /**
    * Create Notification Channel for Android O+
@@ -963,8 +969,6 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   type CallbackString = (err: object, res: string) => void;
 
   export const FCM: string;
-  export const BPS: string;
-  export const HPS: string;
   export const CleverTapProfileDidInitialize: string;
   export const CleverTapProfileSync: string;
   export const CleverTapInAppNotificationDismissed: string;

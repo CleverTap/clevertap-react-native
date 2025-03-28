@@ -234,6 +234,8 @@ export default class App extends Component {
           name: 'deleteNotificationChannelGroup',
         },
         { action: Actions.PUSH_FCM, name: 'pushFcmRegistrationId' },
+        { action: Actions.PUSH_BPS, name: 'pushBaiduRegistrationId' },
+        { action: Actions.PUSH_HPS, name: 'pushHuaweiRegistrationId' },
         { action: Actions.CREATE_NOTIFICATION, name: 'createNotification' },
         { action: Actions.CREATE_NOTIFICATION_CHANNEL_WITH_SOUND, name: 'createNotificationChannelWithSound' },
         { action: Actions.CREATE_NOTIFICATION_CHANNEL_WITH_GROUP, name: 'createNotificationChannelWithGroupId' },
@@ -532,6 +534,12 @@ export default class App extends Component {
         break;
       case Actions.PUSH_FCM:
         AppUtils.pushFcmRegistrationId();
+        break;
+      case Actions.PUSH_BPS:
+        AppUtils.pushBaiduRegistrationId();
+        break;
+      case Actions.PUSH_HPS:
+        AppUtils.pushHuaweiRegistrationId();
         break;
       case Actions.CREATE_NOTIFICATION:
         AppUtils.create_notification();

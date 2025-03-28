@@ -12,7 +12,7 @@ const EventEmitter = Platform.select({
 * @param {int} libVersion - The updated library version. If current version is 1.1.0 then pass as 10100  
 */
 const libName = 'React-Native';
-const libVersion = 30300;
+const libVersion = 30400;
 CleverTapReact.setLibrary(libName,libVersion);
 
 function defaultCallback(method, err, res) {
@@ -55,8 +55,6 @@ var CleverTap = {
     CleverTapCustomFunctionPresent: CleverTapReact.getConstants().CleverTapCustomFunctionPresent,
     CleverTapCustomTemplateClose: CleverTapReact.getConstants().CleverTapCustomTemplateClose,
     FCM: CleverTapReact.getConstants().FCM,
-    BPS: CleverTapReact.getConstants().BPS,
-    HPS: CleverTapReact.getConstants().HPS,
     CleverTapInboxDidInitialize: CleverTapReact.getConstants().CleverTapInboxDidInitialize,
     CleverTapInboxMessagesDidUpdate: CleverTapReact.getConstants().CleverTapInboxMessagesDidUpdate,
     CleverTapInboxMessageButtonTapped: CleverTapReact.getConstants().CleverTapInboxMessageButtonTapped,
@@ -147,11 +145,20 @@ var CleverTap = {
     /**
      * Manually set the push token on the CleverTap user profile
      * @param {string} token - the device token
-     * @param {string} type - for Android only, specifying the type of push service token. Values can be CleverTap.FCM for Firebase or CleverTap.BPS for Baidu or CleverTap.HPS for Huawei,
+     * @param {object} pushType - object with the following keys "type", "prefKey", "className", "messagingSDKClassName";
      */
-    setPushToken: function (token, type) {
-        console.log(`CleverTap RN | setPushToken | received : token: '${token}' | type:'${type}' `)
-        CleverTapReact.setPushTokenAsString(token, type);
+    pushRegistrationToken: function (token, pushType) {
+        console.log(`CleverTap RN | pushRegistrationToken| received : token: '${token}'`)
+        CleverTapReact.pushRegistrationToken(token, pushType);
+    },
+
+    /**
+     * Manually set the push token on the CleverTap user profile
+     * @param {string} token - the fcm device token
+     */
+    setFCMPushToken: function (token) {
+        console.log(`CleverTap RN | setFCMPushToken | received : token: '${token}'`)
+        CleverTapReact.setFCMPushTokenAsString(token);
     },
 
     /**

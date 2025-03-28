@@ -10,6 +10,4 @@ object Constants {
     const val REACT_MODULE_NAME = "CleverTapReact"
 
     const val FCM = "FCM"
-    const val BPS = "BPS"
-    const val HPS = "HPS"
 }
