@@ -24,6 +24,8 @@ let localInApp = {
               btnBackgroundColor: '#0000FF',
               btnBorderRadius: '2',
               fallbackToSettings: true,
+              imageUrl: 'https://icons.iconarchive.com/icons/treetog/junior/64/camera-icon.png',
+              altText: 'Altenate Image'
             };
 
 CleverTap.promptPushPrimer(localInApp);
