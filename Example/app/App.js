@@ -677,7 +677,7 @@ export default class App extends Component {
               btnTextColor: '#FFFFFF',
               btnBackgroundColor: '#0000FF',
               imageUrl:
-                'https://clevertap.com/wp-content/themes/clevertap2023/assets/images/ct-logo-2.svg',
+                'https://icons.iconarchive.com/icons/treetog/junior/64/camera-icon.png',
               altText: 'Clevertap Logo',
               btnBorderRadius: '2',
             });
