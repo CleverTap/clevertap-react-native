@@ -1718,7 +1718,7 @@ public class CleverTapModuleImpl {
         CTLocalInApp.InAppType inAppType = null;
         String titleText = null, messageText = null, positiveBtnText = null, negativeBtnText = null,
                 backgroundColor = null, btnBorderColor = null, titleTextColor = null, messageTextColor = null,
-                btnTextColor = null, imageUrl = null, btnBackgroundColor = null, btnBorderRadius = null;
+                btnTextColor = null, imageUrl = null, btnBackgroundColor = null, btnBorderRadius = null, altText = null;
         boolean fallbackToSettings = false, followDeviceOrientation = false;
 
         ReadableMapKeySetIterator iterator = readableMap.keySetIterator();
@@ -1765,6 +1765,9 @@ public class CleverTapModuleImpl {
                 if ("imageUrl".equals(configKey) && readableType == ReadableType.String) {
                     imageUrl = readableMap.getString(configKey);
                 }
+                if ("altText".equals(configKey) && readableType == ReadableType.String) {
+                    altText = readableMap.getString(configKey);
+                }
                 if ("btnBackgroundColor".equals(configKey) && readableType == ReadableType.String) {
                     btnBackgroundColor = readableMap.getString(configKey);
                 }
@@ -1799,7 +1802,7 @@ public class CleverTapModuleImpl {
             builderWithRequiredParams.setBtnTextColor(btnTextColor);
         }
         if (imageUrl != null) {
-            builderWithRequiredParams.setImageUrl(imageUrl);
+            builderWithRequiredParams.setImageUrl(imageUrl, altText);
         }
         if (btnBackgroundColor != null) {
             builderWithRequiredParams.setBtnBackgroundColor(btnBackgroundColor);
