@@ -1,6 +1,27 @@
 Change Log
 ==========
 
+Version 3.4.1 *(27 June 2025)*
+-------------------------------------------
+
+**What's new**
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v7.4.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-741-june-27-2025).
+  * Adds [accessibility support](https://support.google.com/accessibility/android/answer/6006564?hl=en) for the `Push Notifications`, `App-Inbox` and `In-app messages` channels.
+  * `setImageUrl(imageUrl: String, contentDescription: String?)`: Sets the content description for the image to improve accessibility.
+
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.2.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-721-june-27-2025).
+  * Adds Accessibility support for the `App-Inbox` and `In-app messages` channels.
+  * `- (void)setImageUrl:(NSString *)imageUrl contentDescription:(NSString * _Nullable)contentDescription`: Sets the content description for the image to improve accessibility.
+    
+* **[Android and iOS Platform]**
+  * Adds an overloaded API to support setting a contentDescription for the image in a PushPrimer to improve accessibility.
+  
+**Bug Fixes**
+* **[Android Platform]**
+ * Fixes the `PushPrimer` flow with `fallbackToSettings` enabled.
+ 
 Version 3.4.0 *(28 March 2025)*
 -------------------------------------------
 > ⚠️ **NOTE**  
