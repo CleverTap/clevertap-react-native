@@ -1022,13 +1022,13 @@ RCT_EXPORT_METHOD(clearInAppResources:(BOOL)expiredOnly) {
         [inAppBuilder setBtnTextColor:btnTextColor];
     }
     
-    if (json[@"imageUrl"] && json[@"altText"]) {
-        imageUrl = [json valueForKey:@"imageUrl"];
+    if (json[@"altText"]) {
         altText = [json valueForKey:@"altText"];
-        [inAppBuilder setImageUrl:imageUrl contentDescription:altText];
-    } else if (json[@"imageUrl"]) {
+    }
+    
+    if (json[@"imageUrl"]) {
         imageUrl = [json valueForKey:@"imageUrl"];
-        [inAppBuilder setImageUrl:imageUrl];
+        [inAppBuilder setImageUrl:imageUrl contentDescription:altText];
     }
 
     if (json[@"btnBackgroundColor"]) {
