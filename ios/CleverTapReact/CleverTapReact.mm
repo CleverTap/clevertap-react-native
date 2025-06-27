@@ -963,7 +963,7 @@ RCT_EXPORT_METHOD(clearInAppResources:(BOOL)expiredOnly) {
     //Required parameters
     NSString *titleText = nil, *messageText = nil, *followDeviceOrientation = nil, *positiveBtnText = nil, *negativeBtnText = nil;
     //Additional parameters
-    NSString *fallbackToSettings = nil, *backgroundColor = nil, *btnBorderColor = nil, *titleTextColor = nil, *messageTextColor = nil, *btnTextColor = nil, *imageUrl = nil, *btnBackgroundColor = nil, *btnBorderRadius = nil;
+    NSString *fallbackToSettings = nil, *backgroundColor = nil, *btnBorderColor = nil, *titleTextColor = nil, *messageTextColor = nil, *btnTextColor = nil, *imageUrl = nil, *btnBackgroundColor = nil, *btnBorderRadius = nil, *altText = nil;
     
     if ([json[@"inAppType"]  isEqual: @"half-interstitial"]){
         inAppType = HALF_INTERSTITIAL;
@@ -1021,10 +1021,16 @@ RCT_EXPORT_METHOD(clearInAppResources:(BOOL)expiredOnly) {
         btnTextColor = [json valueForKey:@"btnTextColor"];
         [inAppBuilder setBtnTextColor:btnTextColor];
     }
-    if (json[@"imageUrl"]) {
+    
+    if (json[@"imageUrl"] && json[@"altText"]) {
+        imageUrl = [json valueForKey:@"imageUrl"];
+        altText = [json valueForKey:@"altText"];
+        [inAppBuilder setImageUrl:imageUrl contentDescription:altText];
+    } else if (json[@"imageUrl"]) {
         imageUrl = [json valueForKey:@"imageUrl"];
         [inAppBuilder setImageUrl:imageUrl];
     }
+
     if (json[@"btnBackgroundColor"]) {
         btnBackgroundColor = [json valueForKey:@"btnBackgroundColor"];
         [inAppBuilder setBtnBackgroundColor:btnBackgroundColor];
