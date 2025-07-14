@@ -78,6 +78,10 @@
         <!--<meta-data
             android:name="CLEVERTAP_HANDSHAKE_DOMAIN"
             android:value="YOUR HANDSHAKE DOMAIN"/>-->
+
+        <meta-data
+            android:name="CLEVERTAP_ENCRYPTION_IN_TRANSIT"
+            android:value="0" />
     </application>
 
 </manifest>
