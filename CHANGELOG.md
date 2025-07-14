@@ -1,6 +1,15 @@
 Change Log
 ==========
 
+Version 3.6.0 *(July xx 2025)*
+-------------------------------------------
+**What's new**
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v7.5.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-750-july-11-2025).
+
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.3.0](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-730-july-11-2025).
+
 Version 3.5.0 *(June 27 2025)*
 -------------------------------------------
 **What's new**
@@ -235,7 +244,7 @@ Version 1.2.1 *(25 October 2023)*
 **What's new**
 * **[Android Platform]**
   * Supports [CleverTap Android SDK v5.2.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-521-october-12-2023).
-  * Adds Custom Proxy Domain functionality for Push Impressions and Events raised from CleverTap Android SDK. Please refer to [Usage.md](docs/Usage.md#integrate-custom-proxy-domain) file to read more on how to configure custom proxy domains in Android.
+  * Adds Custom Proxy Domain functionality for Push Impressions and Events raised from CleverTap Android SDK. Please refer to [Usage.md](docs/usage.md#integrate-custom-proxy-domain) file to read more on how to configure custom proxy domains in Android.
 
 * **[iOS Platform]**
   * Supports [CleverTap iOS SDK v5.2.1](https://github.com/CleverTap/clevertap-ios-sdk/releases/tag/5.2.1).

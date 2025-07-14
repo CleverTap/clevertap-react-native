@@ -389,7 +389,9 @@ export default class App extends Component {
     {
       categoryName: 'GDPR',
       subCategory: [
+        { action: Actions.OPT_IN, name: 'setOptIn' },
         { action: Actions.OPT_OUT, name: 'setOptOut' },
+        { action: Actions.OPT_OUT_YES_SYSTEM_EVENTS, name: 'setOptOutAllowSystemEvents' },
         { action: Actions.ENABLE_NETWORK_INFO, name: 'enableDeviceNetworkInfoReporting' },
       ],
     },
@@ -613,8 +615,14 @@ export default class App extends Component {
       case Actions.ATTRIBUTION_IDENTIFIER:
         AppUtils.GetCleverTapAttributionIdentifier();
         break;
-      case Actions.OPT_OUT:
+      case Actions.OPT_IN:
         CleverTap.setOptOut(false);
+        break;
+      case Actions.OPT_OUT:
+        CleverTap.setOptOut(true);
+        break;
+      case Actions.OPT_OUT_YES_SYSTEM_EVENTS:
+        CleverTap.setOptOut(true, true);
         break;
       case Actions.ENABLE_NETWORK_INFO:
         CleverTap.enableDeviceNetworkInfoReporting(true);

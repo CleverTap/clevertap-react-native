@@ -42,7 +42,7 @@ export interface Spec extends TurboModule {
   enablePersonalization(): void;
   disablePersonalization(): void;
   setOffline(enabled: boolean): void;
-  setOptOut(enabled: boolean): void;
+  setOptOut(userOptOut: boolean, allowSystemEvents?: boolean): void;
   enableDeviceNetworkInfoReporting(enabled: boolean): void;
   recordScreenView(screenName: string): void;
   recordEvent(

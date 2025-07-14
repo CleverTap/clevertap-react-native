@@ -47,11 +47,37 @@
    */
   export function enablePersonalization(): void;
 
-  /**
-   * Enables tracking opt out for the currently active user.
-   * @param optOut {boolean}
-   */
-  export function setOptOut(optOut: boolean): void;
+    /**
+     * Sets the user's consent for event and profile tracking.
+     * You must call this method separately for each active user profile (e.g., when switching user profiles using
+     * onUserLogin).
+     *
+     * This method supports the following consent management scenarios:
+     *
+     * <ol>
+     *   <li><b>Complete Opt-Out (userOptOut = true, allowSystemEvents = false):</b>
+     *       No events (neither custom nor system) will be saved remotely or locally for the current user.
+     *       This provides the highest level of privacy.</li>
+     *   <li><b>Full Opt-In (userOptOut = false, allowSystemEvents = true):</b>
+     *       All events (custom and system) will be tracked and saved. This is the default behavior
+     *       if no opt-out preferences are set.</li>
+     *   <li><b>Partial Opt-In (userOptOut = true, allowSystemEvents = true):</b>
+     *       Only system-level CleverTap events (e.g., app launch, notification viewed) will be tracked.
+     *       Custom events raised by the client application will be filtered out.</li>
+     * </ol>
+     *
+     * Note: The case where `userOptOut = false` and `allowSystemEvents = false` is invalid.
+     * If this combination is provided, the SDK will default to the "Full Opt-In" behavior
+     * (userOptOut = false, allowSystemEvents = true).
+     *
+     * To re-enable full tracking after any form of opt-out, call this method with `userOptOut = false` and `allowSystemEvents = true`.
+     *
+     * @param userOptOut        boolean: Set to `true` to opt the user out of custom event tracking.
+     *                          Set to `false` to opt the user into custom event tracking.
+     * @param allowSystemEvents boolean: Set to `true` to allow system-level CleverTap events.
+     *                          Set to `false` to disallow system-level CleverTap events (only if `userOptOut` is also `true`).
+     */
+    export function setOptOut(userOptOut: boolean, allowSystemEvents?: boolean): void;
 
   /**
    * Enables the reporting of device network related information, including IP address.  This reporting is disabled by default.

@@ -400,8 +400,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.setOffline(value)
     }
 
-    override fun setOptOut(value: Boolean) {
-        cleverTapModuleImpl.setOptOut(value)
+    override fun setOptOut(userOptOut: Boolean, allowSystemEvents: Boolean?) {
+        cleverTapModuleImpl.setOptOut(userOptOut, allowSystemEvents)
     }
 
     override fun pushRegistrationToken(token: String?, pushType: ReadableMap?) {
