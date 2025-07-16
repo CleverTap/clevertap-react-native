@@ -206,9 +206,13 @@ RCT_EXPORT_METHOD(setOffline:(BOOL)enabled) {
 
 #pragma mark - OptOut API
 
-RCT_EXPORT_METHOD(setOptOut:(BOOL)enabled) {
-    RCTLogInfo(@"[CleverTap setOptOut:  %i]", enabled);
-    [[self cleverTapInstance] setOptOut:enabled];
+RCT_EXPORT_METHOD(setOptOut:(BOOL)userOptOut allowSystemEvents:(NSNumber *)allowSystemEvents) {
+    RCTLogInfo(@"[CleverTap setOptOut and allowSystemEvents:  %i, %@]", userOptOut, allowSystemEvents);
+    if (allowSystemEvents != nil) {
+        [[self cleverTapInstance] setOptOut:userOptOut allowSystemEvents:[allowSystemEvents boolValue]];
+    } else {
+        [[self cleverTapInstance] setOptOut:userOptOut];
+    }
 }
 
 RCT_EXPORT_METHOD(enableDeviceNetworkInfoReporting:(BOOL)enabled) {
