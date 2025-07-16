@@ -1,14 +1,14 @@
 Change Log
 ==========
 
-Version 3.6.0 *(July xx 2025)*
+Version 3.6.0 *(July 16 2025)*
 -------------------------------------------
 **What's new**
 * **[Android Platform]**
   * Supports [CleverTap Android SDK v7.5.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-750-july-11-2025).
 
 * **[iOS Platform]**
-  * Supports [CleverTap iOS SDK v7.3.0](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-730-july-11-2025).
+  * Supports [CleverTap iOS SDK v7.3.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-731-july-15-2025).
 
 **API changes**
 * **[Android and iOS Platform]**
