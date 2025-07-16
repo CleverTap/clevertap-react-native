@@ -273,34 +273,34 @@ var CleverTap = {
 
     /**
      * Sets the user's consent for event and profile tracking.
-     * You must call this method separately for each active user profile (e.g., when switching user profiles using
-     * onUserLogin).
      *
-     * This method supports the following consent management scenarios:
+     * You must call this method separately for each active user profile,
+     * for example, when switching user profiles using `onUserLogin`.
      *
-     * <ol>
-     *   <li><b>Complete Opt-Out (userOptOut = true, allowSystemEvents = false):</b>
-     *       No events (neither custom nor system) will be saved remotely or locally for the current user.
-     *       This provides the highest level of privacy.</li>
-     *   <li><b>Full Opt-In (userOptOut = false, allowSystemEvents = true):</b>
-     *       All events (custom and system) will be tracked and saved. This is the default behavior
-     *       if no opt-out preferences are set.</li>
-     *   <li><b>Partial Opt-In (userOptOut = true, allowSystemEvents = true):</b>
-     *       Only system-level CleverTap events (e.g., app launch, notification viewed) will be tracked.
-     *       Custom events raised by the client application will be filtered out.</li>
-     * </ol>
+     * Consent Scenarios:
      *
-     * Note: The case where `userOptOut = false` and `allowSystemEvents = false` is invalid.
-     * If this combination is provided, the SDK will default to the "Full Opt-In" behavior
-     * (userOptOut = false, allowSystemEvents = true).
+     * 1. **Complete Opt-Out**  
+     *    `userOptOut = true`, `allowSystemEvents = false`  
+     *    → No events (custom or system) are saved locally or remotely. Maximum privacy.
      *
-     * To re-enable full tracking after any form of opt-out, call this method with `userOptOut = false` and `allowSystemEvents = true`.
+     * 2. **Full Opt-In**  
+     *    `userOptOut = false`, `allowSystemEvents = true`  
+     *    → All events (custom and system) are tracked. Default behavior.
      *
-     * @param userOptOut        boolean: Set to `true` to opt the user out of custom event tracking.
-     *                          Set to `false` to opt the user into custom event tracking.
-     * @param allowSystemEvents boolean: Set to `true` to allow system-level CleverTap events.
-     *                          Set to `false` to disallow system-level CleverTap events (only if `userOptOut` is also `true`).
-     */
+     * 3. **Partial Opt-In**  
+     *    `userOptOut = true`, `allowSystemEvents = true`  
+     *    → Only system events (e.g., app launch, notification viewed) are tracked. Custom events are ignored.
+     *
+     * ⚠️ The combination `userOptOut = false` and `allowSystemEvents = false` is invalid.  
+     * In such cases, the SDK defaults to **Full Opt-In**.
+     *
+     * To re-enable full tracking after opting out, call with:  
+     * `userOptOut = false`, `allowSystemEvents = true`.
+     *
+     * @param {boolean} userOptOut - Set to `true` to disable custom event tracking.
+     * @param {boolean} allowSystemEvents - Set to `true` to allow system-level event tracking.
+     * @returns {void}
+ */
     setOptOut: function(userOptOut, allowSystemEvents) {
         CleverTapReact.setOptOut(userOptOut, allowSystemEvents);
     },
