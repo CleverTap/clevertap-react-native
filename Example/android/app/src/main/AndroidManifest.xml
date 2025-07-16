@@ -66,13 +66,14 @@
 
         <meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"
-            android:value="449-RW6-794Z" />
+            android:value="YOUR ACCT ID" />
         <meta-data
             android:name="CLEVERTAP_TOKEN"
-            android:value="602-c44" />
+            android:value="YOUR ACCT TOKEN" />
         <meta-data
             android:name="CLEVERTAP_REGION"
-            android:value="eu1" />
+            android:value="YOUR ACCT REGION"/>
+
         <meta-data android:name="CLEVERTAP_USE_GOOGLE_AD_ID" android:value="1"/>
         <!--  Add your custom handshake domain if any  -->
         <!--<meta-data
