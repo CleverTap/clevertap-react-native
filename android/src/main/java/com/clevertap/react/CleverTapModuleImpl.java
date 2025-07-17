@@ -1073,12 +1073,17 @@ public class CleverTapModuleImpl {
         clevertap.setOffline(value);
     }
 
-    public void setOptOut(boolean value) {
+    public void setOptOut(boolean userOptOut, Boolean allowSystemEvents) {
         CleverTapAPI clevertap = getCleverTapAPI();
         if (clevertap == null) {
             return;
         }
-        clevertap.setOptOut(value);
+
+        if (allowSystemEvents != null) {
+            clevertap.setOptOut(userOptOut, allowSystemEvents);
+        } else {
+            clevertap.setOptOut(userOptOut);
+        }
     }
 
     public void pushRegistrationToken(String token, ReadableMap type) {
