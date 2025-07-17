@@ -1,6 +1,25 @@
 Change Log
 ==========
 
+Version 3.6.0 *(July 16 2025)*
+-------------------------------------------
+**What's new**
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v7.5.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-750-july-11-2025).
+
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.3.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-731-july-15-2025).
+
+**API changes**
+* **[Android and iOS Platform]**
+  * Updates the `setOptOut(userOptOut)` API. This upgraded API improves GDPR opt-out functionality by allowing you to control whether critical system events (such as app installs, uninstalls, and push notification registration) are still sent to CleverTap, even when a user has opted out of tracking. This helps you respect user privacy choices while still maintaining essential app functionality and compliance with regulations. This is non-breaking change.
+    * `setOptOut(userOptOut, allowSystemEvents)`
+    
+**Bug Fixes**
+* **[iOS Platform]**
+   * Fixes a `No new templates are synced` error while syncing new custom templates.
+   * Fixes a Local Push Primer crash when asking for push permission using promptForPushPermission.
+
 Version 3.5.0 *(June 27 2025)*
 -------------------------------------------
 **What's new**
@@ -235,7 +254,7 @@ Version 1.2.1 *(25 October 2023)*
 **What's new**
 * **[Android Platform]**
   * Supports [CleverTap Android SDK v5.2.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-521-october-12-2023).
-  * Adds Custom Proxy Domain functionality for Push Impressions and Events raised from CleverTap Android SDK. Please refer to [Usage.md](docs/Usage.md#integrate-custom-proxy-domain) file to read more on how to configure custom proxy domains in Android.
+  * Adds Custom Proxy Domain functionality for Push Impressions and Events raised from CleverTap Android SDK. Please refer to [Usage.md](docs/usage.md#integrate-custom-proxy-domain) file to read more on how to configure custom proxy domains in Android.
 
 * **[iOS Platform]**
   * Supports [CleverTap iOS SDK v5.2.1](https://github.com/CleverTap/clevertap-ios-sdk/releases/tag/5.2.1).

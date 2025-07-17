@@ -472,8 +472,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
-    fun setOptOut(value: Boolean) {
-        cleverTapModuleImpl.setOptOut(value)
+    fun setOptOut(userOptOut: Boolean, allowSystemEvents: Boolean?) {
+        cleverTapModuleImpl.setOptOut(userOptOut, allowSystemEvents)
     }
 
     @ReactMethod

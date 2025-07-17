@@ -63,13 +63,26 @@
                 <action android:name="com.clevertap.PUSH_EVENT" />
             </intent-filter>
         </service>
-        <meta-data android:name="CLEVERTAP_ACCOUNT_ID" android:value="CLEVERTAP_ACCOUNT_ID" />
-        <meta-data android:name="CLEVERTAP_TOKEN" android:value="CLEVERTAP_ACCOUNT_TOKEN" />
+
+        <meta-data
+            android:name="CLEVERTAP_ACCOUNT_ID"
+            android:value="YOUR ACCT ID" />
+        <meta-data
+            android:name="CLEVERTAP_TOKEN"
+            android:value="YOUR ACCT TOKEN" />
+        <meta-data
+            android:name="CLEVERTAP_REGION"
+            android:value="YOUR ACCT REGION"/>
+
         <meta-data android:name="CLEVERTAP_USE_GOOGLE_AD_ID" android:value="1"/>
         <!--  Add your custom handshake domain if any  -->
         <!--<meta-data
             android:name="CLEVERTAP_HANDSHAKE_DOMAIN"
             android:value="YOUR HANDSHAKE DOMAIN"/>-->
+
+        <meta-data
+            android:name="CLEVERTAP_ENCRYPTION_IN_TRANSIT"
+            android:value="0" />
     </application>
 
 </manifest>

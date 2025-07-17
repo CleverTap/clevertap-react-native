@@ -48,10 +48,36 @@
   export function enablePersonalization(): void;
 
   /**
-   * Enables tracking opt out for the currently active user.
-   * @param optOut {boolean}
+   * Sets the user's consent for event and profile tracking.
+   *
+   * You must call this method separately for each active user profile,
+   * for example, when switching user profiles using `onUserLogin`.
+   *
+   * Consent Scenarios:
+   *
+   * 1. **Complete Opt-Out**  
+   *    `userOptOut = true`, `allowSystemEvents = false`  
+   *    → No events (custom or system) are saved locally or remotely. Maximum privacy.
+   *
+   * 2. **Full Opt-In**  
+   *    `userOptOut = false`, `allowSystemEvents = true`  
+   *    → All events (custom and system) are tracked. Default behavior.
+   *
+   * 3. **Partial Opt-In**  
+   *    `userOptOut = true`, `allowSystemEvents = true`  
+   *    → Only system events (e.g., app launch, notification viewed) are tracked. Custom events are ignored.
+   *
+   * ⚠️ The combination `userOptOut = false` and `allowSystemEvents = false` is invalid.  
+   * In such cases, the SDK defaults to **Full Opt-In**.
+   *
+   * To re-enable full tracking after opting out, call with:  
+   * `userOptOut = false`, `allowSystemEvents = true`.
+   *
+   * @param {boolean} userOptOut - Set to `true` to disable custom event tracking.
+   * @param {boolean} allowSystemEvents - Set to `true` to allow system-level event tracking.
+   * @returns {void}
    */
-  export function setOptOut(optOut: boolean): void;
+    export function setOptOut(userOptOut: boolean, allowSystemEvents?: boolean): void;
 
   /**
    * Enables the reporting of device network related information, including IP address.  This reporting is disabled by default.
