@@ -4,6 +4,8 @@ import {
     Linking
 } from 'react-native';
 
+import {Leanplum} from '@leanplum/react-native-sdk';
+
 const CleverTap = require('clevertap-react-native');
 
 const toastsQueue = [];
@@ -38,14 +40,8 @@ export const showToast = (text1, text2) => {
 
 export const set_userProfile = () => {
     showToast('User Profile Updated');
+    Leanplum.track("eventAnushX");
 
-    CleverTap.profileSet({
-        Name: 'testUserA1',
-        Identity: '123456',
-        Email: 'test@test.com',
-        custom1: 123,
-        birthdate: new Date('2020-03-03T06:35:31'),
-    });
 };
 
 // Identity_Management

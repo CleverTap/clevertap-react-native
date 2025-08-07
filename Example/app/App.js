@@ -15,11 +15,15 @@ import DynamicForm from './DynamicForm';
 import { ExpandableListView } from './ExpandableListView';
 import { Actions } from './constants';
 import * as AppUtils from './app-utils';
+import {Leanplum} from '@leanplum/react-native-sdk';
 
 const CleverTap = require('clevertap-react-native');
 
 export default class App extends Component {
   constructor() {
+
+    Leanplum.setAppIdForProductionMode("app_4dbaEhJvNiXPT6XQAGlr4Qf0rGjAG0kFk6g4xnj5DYE", "prod_xUlpzQJvlIQSrMzazyhUMWDUZZl0EqXDJdUia1aaZA4");
+    Leanplum.start();
     super();
     if (Platform.OS === 'android') {
       UIManager.setLayoutAnimationEnabledExperimental(true);

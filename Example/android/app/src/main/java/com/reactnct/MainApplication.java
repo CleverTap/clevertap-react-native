@@ -23,6 +23,8 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactHost;
 import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
+import com.leanplum.Leanplum;
+import com.leanplum.LeanplumActivityHelper;
 
 import java.util.List;
 
@@ -83,6 +85,12 @@ public class MainApplication extends CleverTapApplication implements ActivityLif
             // If you opted-in for the New Architecture, we load the native entry point for this app.
             DefaultNewArchitectureEntryPoint.load();
         }
+
+        Leanplum.setApplicationContext(this);
+//        Parser.parseVariables(this);
+        //  For session lifecyle tracking.
+        LeanplumActivityHelper.enableLifecycleCallbacks(this);
+
     }
 
     @Override
