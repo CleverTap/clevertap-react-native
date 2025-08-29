@@ -1667,7 +1667,7 @@ public class CleverTapModuleImpl {
                 String key = iterator.nextKey();
                 ReadableType readableType = profileMap.getType(key);
 
-                if ("DOB".equals(key) && (readableType == ReadableType.String)) {
+                if ("DOB".equals(key) && (readableType == ReadableType.String) && !profileMap.getString(key).startsWith("$D_")) {
                     String dob = profileMap.getString(key);
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
                     try {
