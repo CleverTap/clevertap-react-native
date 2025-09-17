@@ -12,7 +12,7 @@ Version 3.7.0 *(September xx 2025)*
 
 **Bug Fixes**
 * **[Android and iOS Platform]**
-  * Fix [#480](https://github.com/CleverTap/clevertap-react-native/issues/480) – resolves an issue where dates were incorrectly parsed for the case-sensitive `DOB` key.
+  * Fixes [#480](https://github.com/CleverTap/clevertap-react-native/issues/480) – an issue where dates were incorrectly parsed for the case-sensitive `DOB` key.
 
 Version 3.6.0 *(July 17 2025)*
 -------------------------------------------
