@@ -1,6 +1,19 @@
 Change Log
 ==========
 
+Version 3.7.0 *(Oct 3 2025)*
+-------------------------------------------
+**What's new**
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v7.5.2](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-752-september-11-2025).
+
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.3.3](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-733-september-11-2025).
+
+**API changes**
+* **[Android and iOS Platform]**
+  * Adds support for the DOB key to accept either a Date object or a string in the format 'yyyy-mm-dd', ensuring backward compatibility.
+
 Version 3.6.0 *(July 17 2025)*
 -------------------------------------------
 **What's new**
