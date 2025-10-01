@@ -569,8 +569,8 @@ RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
             
             NSDate *dob = nil;
             
-            if([value isKindOfClass:[NSString class]]) {
-                
+            if([value isKindOfClass:[NSString class]] && ![value hasPrefix:@"$D_"]) {
+
                 if(!dateFormatter) {
                     dateFormatter = [[NSDateFormatter alloc] init];
                     [dateFormatter setDateFormat:@"yyyy-MM-dd"];
