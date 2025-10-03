@@ -44,7 +44,9 @@ export const set_userProfile = () => {
         Identity: '123456',
         Email: 'test@test.com',
         custom1: 123,
-        birthdate: new Date('2020-03-03T06:35:31'),
+        // 'DOB' This case sensitive key can have the value as either a Date object or a string in the format 'yyyy-mm-dd'
+        DOB: new Date('2025-03-03T06:35:31'),
+//        DOB: '1995-03-03'
     });
 };
 

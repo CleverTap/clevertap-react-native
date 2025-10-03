@@ -12,6 +12,7 @@ const CleverTap = require('clevertap-react-native');
 
 ```javascript 
 CleverTap.profileSet({"Identity":11102008, "Name":"React-Test Profile","Email":"r@gmail.com","Gender":"Male","DOB":"1995-10-14", "custom":1.73});
+// The 'DOB' case-sensitive key can have the value either as a Date object or a string in the format 'yyyy-mm-dd'
 ```
 
 #### Set Multi Values For Key 
