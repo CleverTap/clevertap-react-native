@@ -504,8 +504,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
-    fun discardInAppNotifications() {
-        cleverTapModuleImpl.discardInAppNotifications()
+    fun discardInAppNotifications(dismissInAppIfVisible: Boolean?) {
+        cleverTapModuleImpl.discardInAppNotifications(dismissInAppIfVisible)
     }
 
     @ReactMethod

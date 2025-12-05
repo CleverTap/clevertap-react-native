@@ -748,8 +748,9 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    * Suspends the display of InApp Notifications and discards any new InApp Notifications to be shown
    * after this method is called.
    * The InApp Notifications will be displayed only once resumeInAppNotifications() is called.
+   * @param {boolean} dismissInAppIfVisible - Optional. If true, dismisses the currently visible InApp notification.
    */
-  export function discardInAppNotifications(): void;
+  export function discardInAppNotifications(dismissInAppIfVisible?: boolean): void;
 
   /**
    * Resumes display of InApp Notifications.

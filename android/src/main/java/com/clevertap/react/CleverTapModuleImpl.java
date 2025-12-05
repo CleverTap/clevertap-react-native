@@ -1138,6 +1138,17 @@ public class CleverTapModuleImpl {
         }
     }
 
+    public void discardInAppNotifications(Boolean dismissInAppIfVisible) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            if (dismissInAppIfVisible != null) {
+                cleverTap.discardInAppNotifications(dismissInAppIfVisible);
+            } else {
+                cleverTap.discardInAppNotifications();
+            }
+        }
+    }
+
     public void resumeInAppNotifications() {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {

@@ -428,8 +428,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.suspendInAppNotifications()
     }
 
-    override fun discardInAppNotifications() {
-        cleverTapModuleImpl.discardInAppNotifications()
+    override fun discardInAppNotifications(dismissInAppIfVisible: Boolean?) {
+        cleverTapModuleImpl.discardInAppNotifications(dismissInAppIfVisible)
     }
 
     override fun resumeInAppNotifications() {
