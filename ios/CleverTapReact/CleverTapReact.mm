@@ -1098,6 +1098,13 @@ RCT_EXPORT_METHOD(getVariables:(RCTResponseSenderBlock)callback) {
     [self returnResult:varValues withCallback:callback andError:nil];
 }
 
+RCT_EXPORT_METHOD(variants:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap variants]");
+
+    NSArray<NSDictionary<NSString*,id>*> *variants = [[self cleverTapInstance]variants];
+    [self returnResult:variants withCallback:callback andError:nil];
+}
+
 RCT_EXPORT_METHOD(fetchVariables:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap fetchVariables]");
     [[self cleverTapInstance]fetchVariables:^(BOOL success) {
