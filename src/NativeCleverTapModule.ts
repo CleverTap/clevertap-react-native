@@ -240,6 +240,7 @@ export interface Spec extends TurboModule {
   onVariablesChangedAndNoDownloadsPending(): void;
   onceVariablesChangedAndNoDownloadsPending(): void;
   onFileValueChanged(name: string): void;
+  variants(callback: ((error: Object, result: boolean) => void) | null): void;
 
   onEventListenerAdded(eventType: string): void;
   // NativeEventEmitter methods for the New Architecture.

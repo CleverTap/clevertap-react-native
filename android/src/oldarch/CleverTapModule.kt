@@ -611,6 +611,11 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
+    fun variants(callback: Callback?) {
+        cleverTapModuleImpl.variants(callback)
+    }
+
+    @ReactMethod
     fun syncVariables() {
         cleverTapModuleImpl.syncVariables()
     }

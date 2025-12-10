@@ -1131,6 +1131,16 @@ var CleverTap = {
     },
 
     /**
+     * Returns information about the active variants for the current user. Each variant will contain
+     * an "id" key mapping to the numeric ID of the variant.
+     * 
+     * @param {function(err, res)} callback that returns a list of variant objects
+     */
+    variants: function (callback) {
+        callWithCallback('variants', null, callback);
+    },
+
+    /**
      * Notify the SDK that an active custom template is dismissed. The active custom template is considered to be
      * visible to the user until this method is called. Since the SDK can show only one InApp message at a time, all
      * other messages will be queued until the current one is dismissed.

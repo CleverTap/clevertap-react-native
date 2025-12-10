@@ -55,6 +55,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1245,6 +1246,19 @@ public class CleverTapModuleImpl {
         }
     }
 
+    public void variants(final Callback callback) {
+        WritableArray result = null;
+        String error = null;
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            List<Map<String, Object>> variantsList = cleverTap.variants();
+            result = variantsToWritableArray(variantsList);
+        } else {
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
+        }
+        callbackWithErrorAndResult(callback, error, result);
+    }
+
     private void resolveWithTemplateContext(String templateName, Promise promise, TemplateContextAction action) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1970,6 +1984,30 @@ public class CleverTapModuleImpl {
             }
         }
         return array;
+    }
+
+    public static WritableArray variantsToWritableArray(List<Map<String, Object>> variantsList) {
+        WritableArray result = Arguments.createArray();
+        if (variantsList != null) {
+            for (Map<String, Object> variant : variantsList) {
+                WritableMap variantMap = Arguments.createMap();
+                for (Map.Entry<String, Object> entry : variant.entrySet()) {
+                    String key = entry.getKey();
+                    Object value = entry.getValue();
+                    if (value instanceof Integer) {
+                        variantMap.putInt(key, (Integer) value);
+                    } else if (value instanceof Double) {
+                        variantMap.putDouble(key, (Double) value);
+                    } else if (value instanceof String) {
+                        variantMap.putString(key, (String) value);
+                    } else if (value instanceof Boolean) {
+                        variantMap.putBoolean(key, (Boolean) value);
+                    }
+                }
+                result.pushMap(variantMap);
+            }
+        }
+        return result;
     }
 
     private static WritableMap eventLogToWritableMap(UserEventLog eventLog) {

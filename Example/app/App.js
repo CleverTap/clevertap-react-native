@@ -174,6 +174,10 @@ export default class App extends Component {
           name: 'Sync Variables'
         },
         {
+          action: Actions.GET_VARIANTS,
+          name: 'Get Variants'
+        },
+        {
           action: Actions.GET_VARIABLES,
           name: 'Get Variables'
         },
@@ -802,6 +806,16 @@ export default class App extends Component {
         break;
       case Actions.SYNC_VARIABLES:
         CleverTap.syncVariables()
+        break;
+      case Actions.GET_VARIANTS:
+        CleverTap.variants((err, variants) => {
+          console.log('variants: ', variants);
+          if (variants && variants.length > 0) {
+            AppUtils.showToast('Variants', `Found ${variants.length} active variants`);
+          } else {
+            AppUtils.showToast('Variants', 'No active variants found');
+          }
+        });
         break;
       case Actions.GET_VARIABLES:
         CleverTap.getVariables((err, variables) => {

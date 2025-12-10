@@ -903,6 +903,14 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function syncCustomTemplatesInProd(isProduction: boolean): void;
 
   /**
+   * Returns information about the active variants for the current user. Each variant will contain
+   * an "id" key mapping to the numeric ID of the variant.
+   * 
+   * @param callback callback that returns a list of variant objects
+   */
+  export function variants(callback: Callback): void;
+
+  /**
    * Notify the SDK that an active custom template is dismissed. The active custom template is considered to be
    * visible to the user until this method is called. Since the SDK can show only one InApp message at a time, all
    * other messages will be queued until the current one is dismissed.

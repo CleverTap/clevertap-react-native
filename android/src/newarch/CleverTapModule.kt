@@ -519,6 +519,10 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.syncCustomTemplates()
     }
 
+    override fun variants(callback: Callback?) {
+        cleverTapModuleImpl.variants(callback)
+    }
+
     override fun syncVariables() {
         cleverTapModuleImpl.syncVariables()
     }
