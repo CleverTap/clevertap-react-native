@@ -1989,23 +1989,7 @@ public class CleverTapModuleImpl {
     public static WritableArray variantsToWritableArray(List<Map<String, Object>> variantsList) {
         WritableArray result = Arguments.createArray();
         if (variantsList != null) {
-            for (Map<String, Object> variant : variantsList) {
-                WritableMap variantMap = Arguments.createMap();
-                for (Map.Entry<String, Object> entry : variant.entrySet()) {
-                    String key = entry.getKey();
-                    Object value = entry.getValue();
-                    if (value instanceof Integer) {
-                        variantMap.putInt(key, (Integer) value);
-                    } else if (value instanceof Double) {
-                        variantMap.putDouble(key, (Double) value);
-                    } else if (value instanceof String) {
-                        variantMap.putString(key, (String) value);
-                    } else if (value instanceof Boolean) {
-                        variantMap.putBoolean(key, (Boolean) value);
-                    }
-                }
-                result.pushMap(variantMap);
-            }
+            result = CleverTapUtils.MapUtil.ArrayUtil.toWritableArray(new ArrayList<>(variantsList));
         }
         return result;
     }
