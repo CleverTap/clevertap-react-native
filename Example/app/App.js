@@ -174,6 +174,10 @@ export default class App extends Component {
           name: 'Sync Variables'
         },
         {
+          action: Actions.GET_VARIANTS,
+          name: 'Get Variants'
+        },
+        {
           action: Actions.GET_VARIABLES,
           name: 'Get Variables'
         },
@@ -325,6 +329,7 @@ export default class App extends Component {
       subCategory: [
         { action: Actions.IN_APPS_SUSPEND, name: 'suspendInAppNotifications' },
         { action: Actions.IN_APPS_DISCARD, name: 'discardInAppNotifications' },
+        { action: Actions.IN_APPS_DISCARD_WITH_DISMISS, name: 'discardInAppNotifications(true)' },
         { action: Actions.IN_APPS_RESUME, name: 'resumeInAppNotifications' },
       ],
     },
@@ -606,6 +611,9 @@ export default class App extends Component {
       case Actions.IN_APPS_DISCARD:
         CleverTap.discardInAppNotifications();
         break;
+      case Actions.IN_APPS_DISCARD_WITH_DISMISS:
+        CleverTap.discardInAppNotifications(true);
+        break;
       case Actions.IN_APPS_RESUME:
         CleverTap.resumeInAppNotifications();
         break;
@@ -798,6 +806,16 @@ export default class App extends Component {
         break;
       case Actions.SYNC_VARIABLES:
         CleverTap.syncVariables()
+        break;
+      case Actions.GET_VARIANTS:
+        CleverTap.variants((err, variants) => {
+          console.log('variants: ', variants);
+          if (variants && variants.length > 0) {
+            AppUtils.showToast('Variants', `Found ${variants.length} active variants`);
+          } else {
+            AppUtils.showToast('Variants', 'No active variants found');
+          }
+        });
         break;
       case Actions.GET_VARIABLES:
         CleverTap.getVariables((err, variables) => {

@@ -934,9 +934,13 @@ RCT_EXPORT_METHOD(suspendInAppNotifications) {
     [[self cleverTapInstance] suspendInAppNotifications];
 }
 
-RCT_EXPORT_METHOD(discardInAppNotifications) {
-    RCTLogInfo(@"[CleverTap discardInAppNotifications");
-    [[self cleverTapInstance] discardInAppNotifications];
+RCT_EXPORT_METHOD(discardInAppNotifications:(nonnull NSNumber *)dismissInAppIfVisible) {
+    RCTLogInfo(@"[CleverTap discardInAppNotifications: %@]", dismissInAppIfVisible);
+    if (dismissInAppIfVisible != nil) {
+        [[self cleverTapInstance] discardInAppNotifications:[dismissInAppIfVisible boolValue]];
+    } else {
+        [[self cleverTapInstance] discardInAppNotifications];
+    }
 }
 
 RCT_EXPORT_METHOD(resumeInAppNotifications) {
@@ -1092,6 +1096,13 @@ RCT_EXPORT_METHOD(getVariables:(RCTResponseSenderBlock)callback) {
 
     NSMutableDictionary *varValues = [self getVariableValues];
     [self returnResult:varValues withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(variants:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap variants]");
+
+    NSArray<NSDictionary<NSString*,id>*> *variants = [[self cleverTapInstance]variants];
+    [self returnResult:variants withCallback:callback andError:nil];
 }
 
 RCT_EXPORT_METHOD(fetchVariables:(RCTResponseSenderBlock)callback) {
