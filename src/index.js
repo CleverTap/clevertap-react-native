@@ -301,7 +301,7 @@ var CleverTap = {
      * @param {boolean} allowSystemEvents - Set to `true` to allow system-level event tracking.
      * @returns {void}
  */
-    setOptOut: function(userOptOut, allowSystemEvents) {
+    setOptOut: function(userOptOut, allowSystemEvents = false) {
         CleverTapReact.setOptOut(userOptOut, allowSystemEvents);
     },
 
@@ -939,7 +939,7 @@ var CleverTap = {
      * The InApp Notifications will be displayed only once resumeInAppNotifications() is called.
      * @param {boolean} dismissInAppIfVisible - Optional. If true, dismisses the currently visible InApp notification.
      */
-    discardInAppNotifications: function (dismissInAppIfVisible) {
+    discardInAppNotifications: function (dismissInAppIfVisible = false) {
         CleverTapReact.discardInAppNotifications(dismissInAppIfVisible);
     },
 

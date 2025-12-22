@@ -206,10 +206,10 @@ RCT_EXPORT_METHOD(setOffline:(BOOL)enabled) {
 
 #pragma mark - OptOut API
 
-RCT_EXPORT_METHOD(setOptOut:(BOOL)userOptOut allowSystemEvents:(NSNumber *)allowSystemEvents) {
-    RCTLogInfo(@"[CleverTap setOptOut and allowSystemEvents:  %i, %@]", userOptOut, allowSystemEvents);
-    if (allowSystemEvents != nil) {
-        [[self cleverTapInstance] setOptOut:userOptOut allowSystemEvents:[allowSystemEvents boolValue]];
+RCT_EXPORT_METHOD(setOptOut:(BOOL)userOptOut allowSystemEvents:(BOOL)allowSystemEvents) {
+    RCTLogInfo(@"[CleverTap setOptOut and allowSystemEvents: %d, %d]", userOptOut, allowSystemEvents);
+    if (allowSystemEvents) {
+        [[self cleverTapInstance] setOptOut:userOptOut allowSystemEvents:allowSystemEvents];
     } else {
         [[self cleverTapInstance] setOptOut:userOptOut];
     }
@@ -934,13 +934,9 @@ RCT_EXPORT_METHOD(suspendInAppNotifications) {
     [[self cleverTapInstance] suspendInAppNotifications];
 }
 
-RCT_EXPORT_METHOD(discardInAppNotifications:(nonnull NSNumber *)dismissInAppIfVisible) {
-    RCTLogInfo(@"[CleverTap discardInAppNotifications: %@]", dismissInAppIfVisible);
-    if (dismissInAppIfVisible != nil) {
-        [[self cleverTapInstance] discardInAppNotifications:[dismissInAppIfVisible boolValue]];
-    } else {
-        [[self cleverTapInstance] discardInAppNotifications];
-    }
+RCT_EXPORT_METHOD(discardInAppNotifications:(BOOL)dismissInAppIfVisible) {
+    RCTLogInfo(@"[CleverTap discardInAppNotifications: %d]", dismissInAppIfVisible);
+    [[self cleverTapInstance] discardInAppNotifications:dismissInAppIfVisible];
 }
 
 RCT_EXPORT_METHOD(resumeInAppNotifications) {
