@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 3.8.0 *(December 5 2025)*
+Version 3.8.0 *(December 22 2025)*
 -------------------------------------------
 **What's new**
 * **[Android Platform]**
