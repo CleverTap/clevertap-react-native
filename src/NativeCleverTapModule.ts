@@ -204,7 +204,7 @@ export interface Spec extends TurboModule {
   ): void;
   reset(): void;
   suspendInAppNotifications(): void;
-  discardInAppNotifications(): void;
+  discardInAppNotifications(dismissInAppIfVisible?: boolean): void;
   resumeInAppNotifications(): void;
   fetchInApps(callback: ((error: Object, result: boolean) => void) | null): void;
   clearInAppResources(expiredOnly: boolean): void;
@@ -240,6 +240,7 @@ export interface Spec extends TurboModule {
   onVariablesChangedAndNoDownloadsPending(): void;
   onceVariablesChangedAndNoDownloadsPending(): void;
   onFileValueChanged(name: string): void;
+  variants(callback: ((error: Object, result: boolean) => void) | null): void;
 
   onEventListenerAdded(eventType: string): void;
   // NativeEventEmitter methods for the New Architecture.

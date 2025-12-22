@@ -504,8 +504,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
-    fun discardInAppNotifications() {
-        cleverTapModuleImpl.discardInAppNotifications()
+    fun discardInAppNotifications(dismissInAppIfVisible: Boolean?) {
+        cleverTapModuleImpl.discardInAppNotifications(dismissInAppIfVisible)
     }
 
     @ReactMethod
@@ -608,6 +608,11 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     @ReactMethod
     fun syncCustomTemplatesInProd(isProduction: Boolean) {
         cleverTapModuleImpl.syncCustomTemplates()
+    }
+
+    @ReactMethod
+    fun variants(callback: Callback?) {
+        cleverTapModuleImpl.variants(callback)
     }
 
     @ReactMethod

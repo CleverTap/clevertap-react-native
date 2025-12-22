@@ -12,7 +12,7 @@ const EventEmitter = Platform.select({
 * @param {int} libVersion - The updated library version. If current version is 1.1.0 then pass as 10100  
 */
 const libName = 'React-Native';
-const libVersion = 30700;
+const libVersion = 30800;
 CleverTapReact.setLibrary(libName,libVersion);
 
 function defaultCallback(method, err, res) {
@@ -301,7 +301,7 @@ var CleverTap = {
      * @param {boolean} allowSystemEvents - Set to `true` to allow system-level event tracking.
      * @returns {void}
  */
-    setOptOut: function(userOptOut, allowSystemEvents) {
+    setOptOut: function(userOptOut, allowSystemEvents = false) {
         CleverTapReact.setOptOut(userOptOut, allowSystemEvents);
     },
 
@@ -937,9 +937,10 @@ var CleverTap = {
      * Suspends the display of InApp Notifications and discards any new InApp Notifications to be shown
      * after this method is called.
      * The InApp Notifications will be displayed only once resumeInAppNotifications() is called.
+     * @param {boolean} dismissInAppIfVisible - Optional. If true, dismisses the currently visible InApp notification.
      */
-    discardInAppNotifications: function () {
-        CleverTapReact.discardInAppNotifications();
+    discardInAppNotifications: function (dismissInAppIfVisible = false) {
+        CleverTapReact.discardInAppNotifications(dismissInAppIfVisible);
     },
 
     /**
@@ -1127,6 +1128,16 @@ var CleverTap = {
      */
     syncCustomTemplatesInProd: function (isProduction) {
         CleverTapReact.syncCustomTemplatesInProd(isProduction)
+    },
+
+    /**
+     * Returns information about the active variants for the current user. Each variant will contain
+     * an "id" key mapping to the numeric ID of the variant.
+     * 
+     * @param {function(err, res)} callback that returns a list of variant objects
+     */
+    variants: function (callback) {
+        callWithCallback('variants', null, callback);
     },
 
     /**

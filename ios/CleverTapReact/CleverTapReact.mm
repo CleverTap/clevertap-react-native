@@ -206,10 +206,10 @@ RCT_EXPORT_METHOD(setOffline:(BOOL)enabled) {
 
 #pragma mark - OptOut API
 
-RCT_EXPORT_METHOD(setOptOut:(BOOL)userOptOut allowSystemEvents:(NSNumber *)allowSystemEvents) {
-    RCTLogInfo(@"[CleverTap setOptOut and allowSystemEvents:  %i, %@]", userOptOut, allowSystemEvents);
-    if (allowSystemEvents != nil) {
-        [[self cleverTapInstance] setOptOut:userOptOut allowSystemEvents:[allowSystemEvents boolValue]];
+RCT_EXPORT_METHOD(setOptOut:(BOOL)userOptOut allowSystemEvents:(BOOL)allowSystemEvents) {
+    RCTLogInfo(@"[CleverTap setOptOut and allowSystemEvents: %d, %d]", userOptOut, allowSystemEvents);
+    if (allowSystemEvents) {
+        [[self cleverTapInstance] setOptOut:userOptOut allowSystemEvents:allowSystemEvents];
     } else {
         [[self cleverTapInstance] setOptOut:userOptOut];
     }
@@ -934,9 +934,9 @@ RCT_EXPORT_METHOD(suspendInAppNotifications) {
     [[self cleverTapInstance] suspendInAppNotifications];
 }
 
-RCT_EXPORT_METHOD(discardInAppNotifications) {
-    RCTLogInfo(@"[CleverTap discardInAppNotifications");
-    [[self cleverTapInstance] discardInAppNotifications];
+RCT_EXPORT_METHOD(discardInAppNotifications:(BOOL)dismissInAppIfVisible) {
+    RCTLogInfo(@"[CleverTap discardInAppNotifications: %d]", dismissInAppIfVisible);
+    [[self cleverTapInstance] discardInAppNotifications:dismissInAppIfVisible];
 }
 
 RCT_EXPORT_METHOD(resumeInAppNotifications) {
@@ -1092,6 +1092,13 @@ RCT_EXPORT_METHOD(getVariables:(RCTResponseSenderBlock)callback) {
 
     NSMutableDictionary *varValues = [self getVariableValues];
     [self returnResult:varValues withCallback:callback andError:nil];
+}
+
+RCT_EXPORT_METHOD(variants:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap variants]");
+
+    NSArray<NSDictionary<NSString*,id>*> *variants = [[self cleverTapInstance]variants];
+    [self returnResult:variants withCallback:callback andError:nil];
 }
 
 RCT_EXPORT_METHOD(fetchVariables:(RCTResponseSenderBlock)callback) {

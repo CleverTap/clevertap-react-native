@@ -748,8 +748,9 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    * Suspends the display of InApp Notifications and discards any new InApp Notifications to be shown
    * after this method is called.
    * The InApp Notifications will be displayed only once resumeInAppNotifications() is called.
+   * @param {boolean} dismissInAppIfVisible - Optional. If true, dismisses the currently visible InApp notification.
    */
-  export function discardInAppNotifications(): void;
+  export function discardInAppNotifications(dismissInAppIfVisible?: boolean): void;
 
   /**
    * Resumes display of InApp Notifications.
@@ -900,6 +901,14 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    * @param isProduction Provide `true` if templates must be sync in Productuon build/configuration.
    */
   export function syncCustomTemplatesInProd(isProduction: boolean): void;
+
+  /**
+   * Returns information about the active variants for the current user. Each variant will contain
+   * an "id" key mapping to the numeric ID of the variant.
+   * 
+   * @param callback callback that returns a list of variant objects
+   */
+  export function variants(callback: Callback): void;
 
   /**
    * Notify the SDK that an active custom template is dismissed. The active custom template is considered to be

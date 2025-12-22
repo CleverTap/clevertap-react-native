@@ -55,6 +55,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1138,6 +1139,17 @@ public class CleverTapModuleImpl {
         }
     }
 
+    public void discardInAppNotifications(Boolean dismissInAppIfVisible) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            if (dismissInAppIfVisible != null) {
+                cleverTap.discardInAppNotifications(dismissInAppIfVisible);
+            } else {
+                cleverTap.discardInAppNotifications();
+            }
+        }
+    }
+
     public void resumeInAppNotifications() {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
@@ -1232,6 +1244,19 @@ public class CleverTapModuleImpl {
         if (cleverTap != null) {
             cleverTap.syncRegisteredInAppTemplates();
         }
+    }
+
+    public void variants(final Callback callback) {
+        WritableArray result = null;
+        String error = null;
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            List<Map<String, Object>> variantsList = cleverTap.variants();
+            result = variantsToWritableArray(variantsList);
+        } else {
+            error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
+        }
+        callbackWithErrorAndResult(callback, error, result);
     }
 
     private void resolveWithTemplateContext(String templateName, Promise promise, TemplateContextAction action) {
@@ -1959,6 +1984,14 @@ public class CleverTapModuleImpl {
             }
         }
         return array;
+    }
+
+    public static WritableArray variantsToWritableArray(List<Map<String, Object>> variantsList) {
+        WritableArray result = Arguments.createArray();
+        if (variantsList != null) {
+            result = CleverTapUtils.MapUtil.ArrayUtil.toWritableArray(new ArrayList<>(variantsList));
+        }
+        return result;
     }
 
     private static WritableMap eventLogToWritableMap(UserEventLog eventLog) {
