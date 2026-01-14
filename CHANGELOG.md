@@ -1,6 +1,17 @@
 Change Log
 ==========
 
+Version 3.8.1 *(January 14 2026)*
+-------------------------------------------
+**What's new**
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.4.2](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-742-january-14-2026).
+
+**Bug Fixes**
+* **[iOS Platform]**
+  * Fixes a bug where DOB value is passed incorrectly when performing profile events.
+  * Optimizes app initialization sequence by loading variable and variant caches earlier in the startup process.
+
 Version 3.8.0 *(December 22 2025)*
 -------------------------------------------
 **What's new**
@@ -95,7 +106,7 @@ Version 3.2.0 *(5 February 2025)*
 **What's new**
 
 * **[Android Platform]**
-  * Supports [CleverTap Android SDK v7.1.2](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-712-january-29-2025).
+  * Supports [CleverTap Android SDK v7.1.2](https://github.com/CleverTap/clevertap-android-sdk/blob/develop/docs/CTCORECHANGELOG.md#version-712-january-29-2025).
   * Adds support to hide large icon in android notifications by sending `wzrk_hide_large_icon` key in notification payload.
   
 * **[iOS Platform]**

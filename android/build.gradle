@@ -35,8 +35,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 35
-        versionCode 380
-        versionName "3.8.0"
+        versionCode 381
+        versionName "3.8.1"
         buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString())
     }
 
