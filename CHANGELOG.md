@@ -1,6 +1,17 @@
 Change Log
 ==========
 
+Version 3.8.1 *(January 14 2026)*
+-------------------------------------------
+**What's new**
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.4.2](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-742-january-14-2026).
+
+**Bug Fixes**
+* **[iOS Platform]**
+  * Fixes a bug where DOB value is passed incorrectly when performing profile events.
+  * Optimizes app initialization sequence by loading variable and variant caches earlier in the startup process.
+
 Version 3.8.0 *(December 22 2025)*
 -------------------------------------------
 **What's new**

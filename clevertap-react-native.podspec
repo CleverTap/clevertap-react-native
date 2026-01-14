@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
     s.dependency 'React-Core'
   end
 
-  s.dependency 'CleverTap-iOS-SDK', '7.4.1'
+  s.dependency 'CleverTap-iOS-SDK', '7.4.2'
 
   if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then
     s.pod_target_xcconfig = {
