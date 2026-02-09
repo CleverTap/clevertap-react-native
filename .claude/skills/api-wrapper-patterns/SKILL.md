@@ -5,298 +5,359 @@ description: Standard patterns for wrapping native CleverTap Android/iOS SDK API
 
 # API Wrapper Patterns
 
-> **MANDATORY READING**: This skill document MUST be read in full BEFORE implementing any API wrapper. Do NOT infer patterns from existing code - follow THIS document exactly.
+> **MANDATORY READING**: This skill document MUST be read in full BEFORE implementing any API wrapper. The codebase has specific patterns that must be followed exactly.
 
-Standard patterns for wrapping native CleverTap Android/iOS SDK APIs in React Native with proper NativeModules, error handling, and type conversions.
+## Core Principle
 
-## Core Principle: Keep JS Simple
+The JavaScript layer is a **thin pass-through**. All data transformation, type conversion, and complex logic happen in native layers (Android/iOS), not JavaScript.
 
-The JavaScript layer should be a **thin pass-through**. All data transformation, type conversion, and complex logic should happen in the native layers (Android/iOS), not in JavaScript.
+## The 7 Files To Update
 
-**Why?**
-- Native layers have direct access to SDK types and utilities
-- Reduces code duplication between JS type handling
-- Keeps the public API surface clean and predictable
-- Avoids runtime type errors in JavaScript
+Every new API requires changes across up to 7 files. The first 5 are always required. The arch modules (6-7) are thin delegates to CleverTapModuleImpl.
 
-## Decision Tree
+| # | File | Role |
+|---|------|------|
+| 1 | `src/index.js` | Public JS API - method on `CleverTap` object |
+| 2 | `src/index.d.ts` | TypeScript definitions |
+| 3 | `src/NativeCleverTapModule.ts` | TurboModule spec (codegen) |
+| 4 | `android/.../CleverTapModuleImpl.java` | Android implementation (actual logic) |
+| 5 | `ios/CleverTapReact/CleverTapReact.mm` | iOS implementation |
+| 6 | `android/src/oldarch/CleverTapModule.kt` | Old Architecture delegate (`@ReactMethod`) |
+| 7 | `android/src/newarch/CleverTapModule.kt` | New Architecture delegate (`override fun`) |
+
+### Android Architecture Split
+
+The Android side uses 3 files in a delegation pattern:
 
 ```
-Is this a public API that apps call directly?
-|-- YES -> Does it already exist in React Native?
-|  |-- YES -> Does signature need updating?
-|  |  |-- YES -> UPDATE existing wrapper
-|  |  +-- NO -> NO ACTION
-|  +-- NO -> Is this commonly used functionality?
-|     |-- YES -> CREATE new wrapper
-|     +-- NO -> DISCUSS with user
-+-- NO (internal/config/payload) -> NO wrapper needed
+CleverTapModule.kt (oldarch OR newarch)
+    └── delegates to → CleverTapModuleImpl.java (shared implementation)
 ```
+
+- **`CleverTapModuleImpl.java`**: Contains ALL actual logic. Gets `CleverTapAPI` instance, calls native SDK, converts types.
+- **`oldarch/CleverTapModule.kt`**: Extends `ReactContextBaseJavaModule`. Methods use `@ReactMethod` annotation. Delegates every call to `cleverTapModuleImpl`.
+- **`newarch/CleverTapModule.kt`**: Extends `NativeCleverTapModuleSpec` (codegen). Methods use `override fun`. Delegates every call to `cleverTapModuleImpl`.
+
+**Key difference between arch modules**: In newarch, numeric params come as `Double` (from codegen) and need `.toInt()` conversion. In oldarch, they come as the actual type (`Int`, `Boolean`). Nullable booleans use `Boolean?` in both.
+
+## Pattern A: Void Method (No Return)
+
+Use for methods that trigger an action with no callback.
+
+### src/index.js
+
+```javascript
+suspendInAppNotifications: function () {
+    CleverTapReact.suspendInAppNotifications();
+},
+```
+
+### src/index.d.ts
+
+```typescript
+/**
+ * Suspends display of InApp Notifications.
+ */
+suspendInAppNotifications(): void;
+```
+
+### src/NativeCleverTapModule.ts
+
+```typescript
+suspendInAppNotifications(): void;
+```
+
+### CleverTapModuleImpl.java
+
+```java
+public void suspendInAppNotifications() {
+    CleverTapAPI cleverTap = getCleverTapAPI();
+    if (cleverTap != null) {
+        cleverTap.suspendInAppNotifications();
+    }
+}
+```
+
+### CleverTapReact.mm
+
+```objectivec
+RCT_EXPORT_METHOD(suspendInAppNotifications) {
+    RCTLogInfo(@"[CleverTap suspendInAppNotifications]");
+    [[self cleverTapInstance] suspendInAppNotifications];
+}
+```
+
+### oldarch/CleverTapModule.kt
+
+```kotlin
+@ReactMethod
+fun suspendInAppNotifications() {
+    cleverTapModuleImpl.suspendInAppNotifications()
+}
+```
+
+### newarch/CleverTapModule.kt
+
+```kotlin
+override fun suspendInAppNotifications() {
+    cleverTapModuleImpl.suspendInAppNotifications()
+}
+```
+
+## Pattern B: Callback Method (Returns Data)
+
+Use for methods that retrieve data asynchronously.
+
+### src/index.js
+
+Uses the `callWithCallback` helper which handles null callbacks and argument assembly:
+
+```javascript
+variants: function (callback) {
+    callWithCallback('variants', null, callback);
+},
+```
+
+With arguments:
+
+```javascript
+getUserEventLog: function (eventName, callback) {
+    callWithCallback('getUserEventLog', [eventName], callback);
+},
+```
+
+**How `callWithCallback` works**: It wraps the callback with a default logger if null, assembles args array + callback, then calls `CleverTapReact[method].apply(this, args)`.
+
+### src/index.d.ts
+
+```typescript
+/**
+ * Returns information about the active variants for the current user.
+ * @param callback - Callback receiving array of variant objects
+ */
+variants(callback: Callback): void;
+```
+
+### src/NativeCleverTapModule.ts
+
+```typescript
+variants(callback: ((error: Object, result: boolean) => void) | null): void;
+```
+
+Note: The TurboModule spec always uses `((error: Object, result: boolean) => void) | null` for callbacks regardless of actual return type.
+
+### CleverTapModuleImpl.java
+
+Uses `callbackWithErrorAndResult(callback, error, result)` helper:
+
+```java
+public void variants(final Callback callback) {
+    WritableArray result = null;
+    String error = null;
+    CleverTapAPI cleverTap = getCleverTapAPI();
+    if (cleverTap != null) {
+        List<Map<String, Object>> variantsList = cleverTap.variants();
+        result = variantsToWritableArray(variantsList);
+    } else {
+        error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
+    }
+    callbackWithErrorAndResult(callback, error, result);
+}
+```
+
+**Pattern**: Declare `error = null` and `result = null/default`, populate one based on success/failure, call `callbackWithErrorAndResult` at the end. This helper invokes `callback.invoke(error, result)`.
+
+### CleverTapReact.mm
+
+Uses `[self returnResult:result withCallback:callback andError:nil]` helper:
+
+```objectivec
+RCT_EXPORT_METHOD(variants:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap variants]");
+    NSArray<NSDictionary<NSString*,id>*> *variants = [[self cleverTapInstance] variants];
+    [self returnResult:variants withCallback:callback andError:nil];
+}
+```
+
+**Pattern**: Call native SDK, pass result to `returnResult:withCallback:andError:`. This helper calls `callback(@[error, result])` with NSNull for nils.
+
+For async iOS operations, wrap in dispatch_async:
+
+```objectivec
+RCT_EXPORT_METHOD(getUserEventLog:(NSString*)eventName callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getUserEventLog: %@]", eventName);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        CleverTapEventDetail *detail = [[self cleverTapInstance] getUserEventLog:eventName];
+        NSDictionary *result = [self _eventDetailToDict:detail];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self returnResult:result withCallback:callback andError:nil];
+        });
+    });
+}
+```
+
+### Arch Modules (both identical delegation)
+
+```kotlin
+// oldarch
+@ReactMethod
+fun variants(callback: Callback?) {
+    cleverTapModuleImpl.variants(callback)
+}
+
+// newarch
+override fun variants(callback: Callback?) {
+    cleverTapModuleImpl.variants(callback)
+}
+```
+
+## Pattern C: Optional Parameter (Extending Existing API)
+
+When a native SDK adds an optional parameter to an existing method, add it as a defaulted parameter in JS and nullable in native.
+
+### src/index.js
+
+```javascript
+discardInAppNotifications: function (dismissInAppIfVisible = false) {
+    CleverTapReact.discardInAppNotifications(dismissInAppIfVisible);
+},
+```
+
+### src/index.d.ts
+
+```typescript
+/**
+ * Discards InApp Notifications.
+ * @param dismissInAppIfVisible - Optional. If true, dismisses any currently visible InApp.
+ */
+discardInAppNotifications(dismissInAppIfVisible?: boolean): void;
+```
+
+### src/NativeCleverTapModule.ts
+
+```typescript
+discardInAppNotifications(dismissInAppIfVisible?: boolean): void;
+```
+
+### CleverTapModuleImpl.java
+
+Use method overloading or nullable Boolean:
+
+```java
+public void discardInAppNotifications(Boolean dismissInAppIfVisible) {
+    CleverTapAPI cleverTap = getCleverTapAPI();
+    if (cleverTap != null) {
+        if (dismissInAppIfVisible != null) {
+            cleverTap.discardInAppNotifications(dismissInAppIfVisible);
+        } else {
+            cleverTap.discardInAppNotifications();
+        }
+    }
+}
+```
+
+### CleverTapReact.mm
+
+```objectivec
+RCT_EXPORT_METHOD(discardInAppNotifications:(BOOL)dismissInAppIfVisible) {
+    RCTLogInfo(@"[CleverTap discardInAppNotifications: %d]", dismissInAppIfVisible);
+    [[self cleverTapInstance] discardInAppNotifications:dismissInAppIfVisible];
+}
+```
+
+### Arch Modules
+
+```kotlin
+// oldarch
+@ReactMethod
+fun discardInAppNotifications(dismissInAppIfVisible: Boolean?) {
+    cleverTapModuleImpl.discardInAppNotifications(dismissInAppIfVisible)
+}
+
+// newarch
+override fun discardInAppNotifications(dismissInAppIfVisible: Boolean?) {
+    cleverTapModuleImpl.discardInAppNotifications(dismissInAppIfVisible)
+}
+```
+
+## Pattern D: Listener Registration
+
+For events the JS layer subscribes to via native event emitter.
+
+### src/index.js
+
+```javascript
+onVariablesChanged: function (handler) {
+    CleverTapReact.onVariablesChanged();
+    this.addListener(CleverTapReact.getConstants().CleverTapOnVariablesChanged, handler);
+},
+```
+
+**Pattern**: Call native to register, then add JS listener for the event constant. Use `addOneTimeListener` for one-shot callbacks.
+
 
 ## Type Mapping
 
-| Kotlin                  | Objective-C | JavaScript       | TypeScript             |
-|-------------------------|-------------|------------------|------------------------|
-| `Map<String, Any>`      | `NSDictionary` | `Object`      | `Record<string, any>`  |
-| `List`                  | `NSArray` | `Array`            | `any[]`                |
-| `List<Map<String, Any>>` | `NSArray<NSDictionary *> *` | `Array` | `any[]`       |
-| `String`                | `NSString` | `string`          | `string`               |
-| `Int`, `Long`           | `NSNumber` | `number`          | `number`               |
-| `Double`                | `NSNumber` | `number`          | `number`               |
-| `Boolean`               | `BOOL` | `boolean`            | `boolean`              |
+| Kotlin | Objective-C | JavaScript | TurboModule Spec |
+|--------|-------------|------------|------------------|
+| `String` | `NSString*` | `string` | `string` |
+| `Int` | `int` / `NSInteger` | `number` | `number` (Double in newarch) |
+| `Boolean` | `BOOL` | `boolean` | `boolean` |
+| `Boolean?` | N/A | `boolean` (optional) | `boolean` (optional) |
+| `ReadableMap` | `NSDictionary*` | `Object` | `Object \| null` |
+| `ReadableArray` | `NSArray*` | `Array` | `string[]` |
+| `Callback` | `RCTResponseSenderBlock` | `function(err, res)` | `((error: Object, result: boolean) => void) \| null` |
+| `Promise` | `RCTPromiseResolveBlock` | `Promise` | `Promise<T>` |
+| `WritableMap` | `NSDictionary*` | (return) Object | - |
+| `WritableArray` | `NSArray*` | (return) Array | - |
 
-**Key Rule**: For complex return types like arrays of objects, always use simple types in JavaScript. Don't attempt to cast or transform the data in the JS layer.
+**Newarch numeric conversion**: TurboModule codegen passes all numbers as `Double`. Convert in newarch module: `importance.toInt()`. Oldarch receives native types directly.
 
-## Code Style Guidelines
+## Helper Methods
 
-### JavaScript Layer (IMPORTANT: Keep It Simple)
-- Methods on the default `CleverTap` export object in `src/index.js`
-- **AVOID transformations** - pass data directly to/from native without mapping
-- **Use simple types** - prefer `Array` over typed arrays for complex returns
-- Let native layers handle all data conversion and formatting
-- Use `callWithCallback()` helper for async operations
+### JavaScript: `callWithCallback(method, args, callback)`
 
-**DO:**
-```javascript
-getAllInboxMessages: function(callback) {
-  callWithCallback('getAllInboxMessages', null, callback);
-},
-```
+- Wraps null callbacks with a default logger
+- Assembles args array and appends callback
+- Calls `CleverTapReact[method].apply(this, args)`
+- Use `null` for args when method takes no params besides callback
 
-**DON'T:**
-```javascript
-getAllInboxMessages: async function() {
-  const result = await CleverTapModule.getAllInboxMessages();
-  if (!result) return [];
-  return result.map(msg => ({ ...msg, date: new Date(msg.date) }));  // Avoid this!
-},
-```
+### JavaScript: `convertDateToEpochInProperties(map)`
 
-### TypeScript Definitions (src/index.d.ts)
-- Every public method must have a TypeScript definition
-- Use `Callback` type for callback parameters
-- Document parameters with JSDoc comments
+- Converts Date objects to `"$D_" + epochSeconds` format
+- Call before passing profile/event properties to native
 
-### TurboModule Spec (src/NativeCleverTapModule.ts)
-- Update when adding new native methods
-- Follow existing patterns for method signatures
-- Use proper TurboModule types
+### Android: `callbackWithErrorAndResult(callback, error, result)`
 
-### Naming
-- **JavaScript**: camelCase (`recordEvent`, `getCleverTapID`)
-- **Android**: camelCase for methods, UPPER_SNAKE_CASE for constants
-- **iOS**: camelCase for methods
+- Null-safe callback invocation
+- Calls `callback.invoke(error, result)`
+- Always use this instead of raw `callback.invoke()`
 
-### Error Handling
+### Android: `getCleverTapAPI()`
 
-Always include:
-1. Null checks for required parameters
-2. CleverTap API instance null check
-3. Descriptive error messages
+- Returns cached `CleverTapAPI` instance or gets default
+- Always null-check the return value
 
-### Documentation
+### iOS: `returnResult:withCallback:andError:`
 
-Every public JavaScript method should be documented in TypeScript definitions:
-```typescript
-/**
- * Brief description
- * @param param1 - Description
- * @param param2 - Description (optional)
- * @param callback - Callback function receiving the result
- */
-```
+- Null-safe callback invocation
+- Converts nils to `[NSNull null]`
+- Calls `callback(@[error, result])`
 
----
+### iOS: `[self cleverTapInstance]`
 
-## Implementation Rules
+- Returns the CleverTap shared instance
+- Used in every method implementation
 
-> **CRITICAL**: Read and follow these rules BEFORE writing any code.
+## Implementation Checklist
 
-### Rule 1: Optional Parameters - Extend Existing APIs
-
-**When a native SDK adds an optional parameter to an existing API, add the same optional parameter to the existing JS method instead of creating a new method.**
-
-### Rule 2: Platform-Specific APIs
-
-**When an API exists only on one platform:**
-- Still implement the JS method
-- Add platform check in JS OR have native side return gracefully
-- Document the platform limitation in the TypeScript definition
-
-### Rule 3: Update All 5 Layers
-
-For every new API, update:
-1. `src/index.js` - JS implementation
-2. `src/index.d.ts` - TypeScript definition
-3. `src/NativeCleverTapModule.ts` - TurboModule spec
-4. `android/.../CleverTapModuleImpl.java` - Android implementation
-5. `ios/CleverTapReact/CleverTapReact.mm` - iOS implementation
-
-## Pattern 1: Simple Method (No Return Value)
-
-**Use case**: Method that triggers an action but doesn't return data.
-
-**Example**: `recordEvent(eventName, properties)`
-
-### JavaScript Layer (`src/index.js`)
-
-```javascript
-recordEvent: function(eventName, properties) {
-  CleverTapModule.recordEvent(eventName, properties);
-},
-```
-
-### TypeScript Definition (`src/index.d.ts`)
-
-```typescript
-/**
- * Records an event with the given name
- * @param eventName - The name of the event to record
- * @param properties - Optional properties for the event
- */
-recordEvent(eventName: string, properties?: Record<string, any>): void;
-```
-
-### Android Layer (`CleverTapModuleImpl.java`)
-
-```java
-@ReactMethod
-public void recordEvent(String eventName, ReadableMap properties) {
-    CleverTapAPI clevertap = getCleverTapAPI();
-    if (clevertap == null) return;
-
-    Map<String, Object> props = CleverTapUtils.readableMapToMap(properties);
-    clevertap.pushEvent(eventName, props);
-}
-```
-
-### iOS Layer (`CleverTapReact.mm`)
-
-```objectivec
-RCT_EXPORT_METHOD(recordEvent:(NSString *)eventName properties:(NSDictionary *)properties) {
-    [[CleverTap sharedInstance] recordEvent:eventName withProps:properties];
-}
-```
-
-## Pattern 2: Method with Callback Return Value
-
-**Use case**: Method that retrieves data from native SDK asynchronously.
-
-**Example**: `profileGetProperty(propertyName, callback)`
-
-### JavaScript Layer
-
-```javascript
-profileGetProperty: function(propertyName, callback) {
-  callWithCallback('profileGetProperty', [propertyName], callback);
-},
-```
-
-### TypeScript Definition
-
-```typescript
-/**
- * Gets the value of a user profile property
- * @param propertyName - The name of the property to retrieve
- * @param callback - Callback receiving the property value or null
- */
-profileGetProperty(propertyName: string, callback: Callback): void;
-```
-
-### Android Layer
-
-```java
-@ReactMethod
-public void profileGetProperty(String propertyName, Callback callback) {
-    CleverTapAPI clevertap = getCleverTapAPI();
-    if (clevertap == null) {
-        callback.invoke(null);
-        return;
-    }
-
-    Object value = clevertap.getProperty(propertyName);
-    callback.invoke(value);
-}
-```
-
-### iOS Layer
-
-```objectivec
-RCT_EXPORT_METHOD(profileGetProperty:(NSString *)propertyName callback:(RCTResponseSenderBlock)callback) {
-    id value = [[CleverTap sharedInstance] profileGet:propertyName];
-    callback(@[value ?: [NSNull null]]);
-}
-```
-
-## Pattern 3: Method Returning Complex Data
-
-**Use case**: Method that returns objects/collections from native SDKs.
-
-**Example**: `getAllInboxMessages(callback)` returns array of inbox messages
-
-### JavaScript Layer
-
-```javascript
-getAllInboxMessages: function(callback) {
-  callWithCallback('getAllInboxMessages', null, callback);
-},
-```
-
-### TypeScript Definition
-
-```typescript
-/**
- * Retrieves all inbox messages
- * @param callback - Callback receiving array of inbox message objects
- */
-getAllInboxMessages(callback: Callback): void;
-```
-
-### Android Layer
-
-```java
-@ReactMethod
-public void getAllInboxMessages(Callback callback) {
-    CleverTapAPI clevertap = getCleverTapAPI();
-    if (clevertap == null) {
-        callback.invoke(null);
-        return;
-    }
-
-    ArrayList<CTInboxMessage> messages = clevertap.getAllInboxMessages();
-    WritableArray result = CleverTapUtils.inboxMessagesToWritableArray(messages);
-    callback.invoke(result);
-}
-```
-
-### iOS Layer
-
-```objectivec
-RCT_EXPORT_METHOD(getAllInboxMessages:(RCTResponseSenderBlock)callback) {
-    NSArray *messages = [[CleverTap sharedInstance] getAllInboxMessages];
-    NSArray *results = [self _cleverTapInboxMessagesToArray:messages];
-    callback(@[results ?: @[]]);
-}
-```
-
-## Common Issues
-
-### Issue 1: Method Not Found
-**Symptom**: `TypeError: CleverTapModule.methodName is not a function`
-**Cause**: Method name mismatch or missing native registration
-**Solution**: Verify exact string match across all files, ensure `@ReactMethod` / `RCT_EXPORT_METHOD`
-
-### Issue 2: Type Conversion Error
-**Symptom**: Bridge conversion error
-**Cause**: JS type doesn't map to native type properly
-**Solution**: Check type mapping table above, use `ReadableMap`/`WritableMap` for Android
-
-### Issue 3: Callback Issues
-**Symptom**: Callback never fires or fires with wrong data
-**Cause**: Missing callback invocation in native code
-**Solution**: Always invoke callback, even with null for error cases
-
-### Issue 4: Architecture Compatibility
-**Symptom**: Method works on Old Arch but not New Arch (or vice versa)
-**Cause**: Missing TurboModule spec update
-**Solution**: Update `src/NativeCleverTapModule.ts` alongside native implementations
+When adding a new API wrapper:
+- [ ] Method added to `CleverTap` object in `src/index.js`
+- [ ] TypeScript definition added to `src/index.d.ts`
+- [ ] Method added to TurboModule spec in `src/NativeCleverTapModule.ts`
+- [ ] Implementation added to `CleverTapModuleImpl.java`
+- [ ] Delegate added to `oldarch/CleverTapModule.kt` with `@ReactMethod`
+- [ ] Delegate added to `newarch/CleverTapModule.kt` with `override fun`
+- [ ] Implementation added to `CleverTapReact.mm` with `RCT_EXPORT_METHOD`
+- [ ] Method name is identical across all layers (case-sensitive)
+- [ ] Callback methods use `callWithCallback` in JS, `callbackWithErrorAndResult` in Android, `returnResult:withCallback:andError:` in iOS
