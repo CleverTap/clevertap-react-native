@@ -117,8 +117,9 @@ The `CHANGELOG.md` has a **strict format** that must be preserved. It's parsed b
 ### Critical Rules
 
 1. **Always add new entries at the TOP** (before all existing entries)
-2. **Date format**: `(DD Month YYYY)` - e.g., `(23 January 2026)`
-   - NOT: `(2026-01-23)` or `(Jan 23, 2026)`
+2. **Date format**: `(Month DD YYYY)` - e.g., `(January 23 2026)`
+   - Month first, then day, then year. No comma. No leading zero on day.
+   - NOT: `(23 January 2026)`, `(2026-01-23)`, or `(Jan 23, 2026)`
 3. **Platform tags**: Use exactly these:
    - `[Android Platform]`
    - `[iOS Platform]`
@@ -130,7 +131,7 @@ The `CHANGELOG.md` has a **strict format** that must be preserved. It's parsed b
 ### Format Template
 
 ```markdown
-Version X.X.X *(DD Month YYYY)*
+Version X.X.X *(Month DD YYYY)*
 -------------------------------------------
 **What's new**
 * **[Platform Name]**
