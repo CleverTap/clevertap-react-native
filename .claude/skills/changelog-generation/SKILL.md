@@ -11,52 +11,58 @@ Generate properly formatted changelog entries for CleverTap React Native SDK rel
 
 ## Critical Rules
 
-1. **Add at TOP** - New entries MUST be added before all existing entries
-2. **Date format** - `(DD Month YYYY)` e.g., `(23 January 2026)`
+1. **Add at TOP** - New entries MUST be added before all existing entries (after the `Change Log` / `==========` header)
+2. **Date format** - `(Month DD YYYY)` e.g., `*(October 3 2025)*`
+   - Month first, then day, then year
+   - No comma between day and year
+   - No leading zero on day (`3` not `03`)
+   - Full month name (`January` not `Jan`)
+   - Wrapped in `*( )*` for italics
 3. **Platform tags** - Use exactly: `[Android Platform]`, `[iOS Platform]`, `[Android and iOS Platform]`
-4. **Link native changelogs** - Always include version anchor links
-5. **2-space indentation** - Use 2 spaces for nested bullets
+4. **Link native changelogs** - Always include version anchor links (see anchor format below)
+5. **2-space indentation** - Use 2 spaces for nested bullets under platform tags
 
 ## Entry Template
-//todo
+
 ```markdown
-### Version X.X.X *(DD Month YYYY)*
+Version X.X.X *(Month DD YYYY)*
 -------------------------------------------
 **What's new**
 * **[Platform Name]**
   * Supports [CleverTap Platform SDK vX.X.X](link-with-anchor).
   * Additional feature details...
 
-**API changes** (if applicable)
+**API changes**
 * **[Platform Name]**
-  * New API: `methodName(params)` - Description
-  * Deprecated: `oldMethod()` - Use `newMethod()` instead
+  * Adds a new API `methodName(params)` - Description
+    * `methodName(param1, param2)`
+  * Deprecates: `oldMethod()` - Use `newMethod()` instead
 
-**Breaking Changes** (if applicable)
+**Breaking Changes**
 * **[Platform Name]**
   * Removed: `deprecatedAPI()` - Migration guide
 
-**Bug Fixes** (if applicable)
+**Bug Fixes**
 * **[Platform Name]**
-  * Fixes description
+  * Fixes description of the bug fix.
+```
+## Changelog Link Format
+
+### Android SDK Base URL
+
+```
+https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md
 ```
 
-## Version Anchor Format
+### iOS SDK Base URL
 
-### Android SDK
+```
+https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md
+```
 
-Format: `#version-XYZ-month-day-year` (no dots, lowercase month)
+### Version Anchor Format
 
-**Generation**:
-1. Remove dots: `7.7.1` -> `771`
-2. Lowercase month: `December` -> `december`
-3. Combine: `#version-771-december-2-2025`
-
-**Examples**:
-- `7.7.1` (Dec 2, 2025) -> `#version-771-december-2-2025`
-- `7.6.0` (Oct 17, 2025) -> `#version-760-october-17-2025`
-
-### iOS SDK
+Both Android and iOS use the **same anchor generation rule**:
 
 Format: `#version-X-Y-Z-month-day-year` (dots as dashes, lowercase month)
 
@@ -71,105 +77,133 @@ Format: `#version-X-Y-Z-month-day-year` (dots as dashes, lowercase month)
 
 ## Complete Examples
 
-### Native SDK Update Only
+### Native SDK Update (Both Platforms)
 
 ```markdown
-Version 3.9.0 *(23 January 2026)*
+Version 3.7.0 *(October 3 2025)*
 -------------------------------------------
 **What's new**
-
 * **[Android Platform]**
-  * Supports [CleverTap Android SDK v7.7.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-771-december-2-2025).
-  * Adds support for XYZ
+  * Supports [CleverTap Android SDK v7.5.2](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-752-september-11-2025).
 
 * **[iOS Platform]**
-  * Supports [CleverTap iOS SDK v7.4.2](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-742-january-14-2026).
+  * Supports [CleverTap iOS SDK v7.3.3](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-733-september-11-2025).
 ```
 
-### With New API
+### With New APIs
 
 ```markdown
-Version 3.10.0 *(15 February 2026)*
+Version 3.8.0 *(December 22 2025)*
 -------------------------------------------
 **What's new**
-
 * **[Android Platform]**
-  * Supports [CleverTap Android SDK v7.8.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-780-january-30-2026).
+  * Supports [CleverTap Android SDK v7.7.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-771-december-02-2025).
 
 * **[iOS Platform]**
-  * Supports [CleverTap iOS SDK v7.5.0](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-750-february-1-2026).
+  * Supports [CleverTap iOS SDK v7.4.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-741-december-02-2025).
 
 **API changes**
 * **[Android and iOS Platform]**
-  * New API: `setCustomInAppListener(callback)` - Allows custom handling of in-app notifications
+  * Adds a new API `variants` to fetch A/B experiment variants for the user, enabling easier access to experiment data for custom implementations.
+    * `variants()`
+  * Adds a new overloaded API for `discardInAppNotifications()` method. Calling this with `true` immediately dismisses any currently visible In-App notification in addition to clearing the queue of pending messages.
+    * `discardInAppNotifications(dismissInAppIfVisible: Boolean)`
+```
+
+### With Bug Fixes
+
+```markdown
+Version 3.8.1 *(January 14 2026)*
+-------------------------------------------
+**What's new**
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.4.2](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-742-january-14-2026).
+
+**Bug Fixes**
+* **[iOS Platform]**
+  * Fixes a bug where DOB value is passed incorrectly when performing profile events.
+  * Optimizes app initialization sequence by loading variable and variant caches earlier in the startup process.
 ```
 
 ### With Breaking Changes
 
 ```markdown
-Version 4.0.0 *(1 March 2026)*
+Version 3.0.0 *(October 8 2024)*
 -------------------------------------------
 **What's new**
-
 * **[Android Platform]**
-  * Supports [CleverTap Android SDK v8.0.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-800-february-20-2026).
+  * Supports [CleverTap Android SDK v7.0.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-701-september-2-2024).
+
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.0.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-701-august-22-2024).
 
 **Breaking Changes**
+* **[Android Platform]**
+  * Ensure that your custom `Application` class extends `CleverTapApplication` or calls `CleverTapRnAPI.initReactNativeIntegration(this);`.
+
+**Bug Fixes**
+* **[Android Platform]**
+  * Fixes an ANR caused by extremely old InApp campaigns.
+```
+
+### API Change with Details
+
+When an existing API is updated (new optional parameter, behavior change), use this pattern:
+
+```markdown
+**API changes**
 * **[Android and iOS Platform]**
-  * Removes: `recordEvent(eventName, properties)` old callback signature deprecated in v3.5.0
-  * Migration: Use the updated `recordEvent(eventName, properties)` without callback
+  * Updates the `setOptOut(userOptOut)` API. This upgraded API improves GDPR opt-out functionality by allowing you to control whether critical system events are still sent to CleverTap. This is a non-breaking change.
+    * `setOptOut(userOptOut, allowSystemEvents)`
+```
+
+### Issue/Bug Fix References
+
+When a bug fix references a GitHub issue, use this format:
+```markdown
+* Fixes [#480](https://github.com/CleverTap/clevertap-react-native/issues/480) – description of the issue.
 ```
 
 ## Release Date Calculation
 
-**Default**: Calculate the date 3 days from the current date
+**Default**: Calculate the date 3 days from the current date.
 
-Format: DD Month YYYY
-- Day: No leading zero (5 not 05)
-- Month: Full name (January not Jan)
-- Year: 4 digits (2026 not 26)
+Format: `Month DD YYYY`
+- Month: Full name (`January` not `Jan`)
+- Day: No leading zero (`5` not `05`)
+- Year: 4 digits (`2026` not `26`)
+- No comma between day and year
 
-Example: If today is 2 February 2026, use 5 February 2026
+Example: If today is February 2, 2026, use `February 5 2026`.
 
 ## Content Guidelines
-**Important** : Use active voice: "Adds support for..." not "Support was added"
+
+**Important**: Use active voice: "Adds support for..." not "Support was added"
 
 ### "What's new"
-- Start with native SDK support line
+- Always start with native SDK support line(s)
+- Each platform gets its own bullet group
 
 ### "API changes"
-- List new public methods/classes
-- Include parameter descriptions for complex APIs
+- List new public methods with backtick-formatted signatures
+- For complex APIs, include brief parameter descriptions
+- For updated APIs, describe what changed and note if it's non-breaking
 
 ### "Breaking Changes"
 - Clearly explain what changed
-- Provide migration instructions
+- Provide migration instructions or link to migration guide
 
 ### "Bug Fixes"
-- Briefly describe the fix
-- Mention affected platforms
+- Start each fix with "Fixes" (active voice)
+- For GitHub issue references: `Fixes [#NNN](url) – description`
+- Briefly describe the fix and affected scenario
 
 ## Insertion Process
 
 1. Read entire `CHANGELOG.md`
-2. Find position after header (after first `#` line)
-3. Insert new entry with blank line before/after
-4. Write back to file
-
-**Example**:
-```markdown
-# Change Log
-
-Version 3.9.0 *(23 January 2026)*     # <-- NEW ENTRY HERE
--------------------------------------------
-
-Version 3.8.1 *(14 January 2026)*    # <-- EXISTING ENTRIES
--------------------------------------------
-```
-
-## Common Mistakes
-
-- Date with slashes: `(01/23/2026)` -> Correct: `(23 January 2026)`
-- Generic tag: `[Android]` -> Correct: `[Android Platform]`
-- Link without anchor: `...CHANGELOG.md` -> Correct: `...CHANGELOG.md#version-742-january-14-2026`
-- Entry at bottom of file -> Entry at TOP of file
+2. Find position after the file header:
+   ```
+   Change Log
+   ==========
+   ```
+3. Insert new entry with a blank line between the header and the new entry

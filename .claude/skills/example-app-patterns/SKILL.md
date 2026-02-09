@@ -5,314 +5,239 @@ description: Standard patterns for demonstrating new APIs in the React Native ex
 
 # Example App Update Patterns
 
-Standard patterns for demonstrating CleverTap React Native SDK APIs in the example app with proper UI organization, implementation methods, and user feedback.
+## Architecture
 
-## Overview
+The example app is a **Class Component** (`Example/app/App.js`) using an accordion-style UI. Every CleverTap SDK API must have a corresponding demo button.
 
-The example app (`Example/app/`) serves as a live demo and testing ground for all CleverTap React Native SDK APIs. Every new or updated API MUST be demonstrated.
+### File Responsibilities
 
-**Structure**:
-- UI sections organized by feature category (ExpandableListView)
-- Individual API buttons
-- Implementation methods calling SDK APIs
-- Helper methods for logging and user feedback (Toast, console.log)
+| File | Purpose |
+|------|---------|
+| `Example/app/App.js` | Root component. Owns `accordionData` (UI structure), `handleItemAction` (dispatch switch), and form configs |
+| `Example/app/constants.js` | `Actions` enum - string constants mapping action names |
+| `Example/app/app-utils.js` | Helper functions for complex API calls with toast/console feedback |
+| `Example/app/ExpandableListView.js` | Renders accordion categories. Do NOT modify unless changing UI framework |
+| `Example/app/DynamicForm.js` | Renders dynamic key-value forms. Do NOT modify unless changing form behavior |
 
-**Key Files**:
-- `Example/app/App.js` - Root component and navigation
-- `Example/app/constants.js` - App constants and API configurations
-- `Example/app/ExpandableListView.js` - Custom expandable list component
-- `Example/app/DynamicForm.js` - Dynamic form component
-- `Example/app/app-utils.js` - Utility functions
+### Data Flow
 
-## Adding New APIs
-
-### Step 1: Add API to Constants/Config
-
-Add the new API entry in the appropriate section of the constants or app configuration:
-
-```javascript
-{
-  title: 'User-Facing API Name',
-  description: 'Brief description of what this API does.',
-  action: 'implementationMethodName',
-}
+```
+accordionData[].subCategory[].action  -->  handleItemAction(item) switch
+                                              |
+                        +---------------------+---------------------+
+                        |                                           |
+                  Simple/inline                              Complex/reusable
+              CleverTap.method()                          AppUtils.helperName()
+              directly in switch                          (defined in app-utils.js)
 ```
 
-### Step 2: Add Implementation Method
+## Adding a New API Demo
 
-In the appropriate component or App.js, add the handler:
+### Step 1: Add Action Constant
 
-**Methods returning data (with callback)**:
+In `Example/app/constants.js`, add a new entry to the `Actions` object:
+
 ```javascript
-const methodName = () => {
-  CleverTap.apiMethod((error, result) => {
-    if (result === null || result === undefined) {
-      Toast.show('No result found');
-      console.log('API Name -> No result');
-    } else {
-      Toast.show('Result fetched, check console');
-      console.log('API Name -> Result:', result);
-    }
-  });
+export const Actions = {
+    // ... existing actions
+    NEW_ACTION_NAME: 'NEW_ACTION_NAME',
 };
 ```
 
-**Methods without return values**:
-```javascript
-const methodName = () => {
-  CleverTap.apiMethod();
-  Toast.show('Action triggered');
-  console.log('API Name -> Called successfully');
-};
-```
+**Naming convention**: `SCREAMING_SNAKE_CASE`, descriptive of the feature (e.g., `GET_VARIANTS`, `IN_APPS_DISCARD_WITH_DISMISS`, `FETCH_INAPPS`).
 
-**Methods with parameters**:
-```javascript
-const methodName = () => {
-  const params = {
-    key1: 'value1',
-    key2: 123,
-  };
+### Step 2: Add to accordionData
 
-  CleverTap.apiMethod(params, (error, result) => {
-    if (result === null || result === undefined) {
-      Toast.show('Operation failed');
-      console.log('API Name -> Failed');
-    } else {
-      Toast.show('Success, check console');
-      console.log('API Name -> Result:', result);
-    }
-  });
-};
-```
-
-### Step 3: Create New Section (If Needed)
-
-If API belongs to a new feature category, add a new expandable section:
+In `App.js`, add the entry to the appropriate category in the `accordionData` class property:
 
 ```javascript
-{
-  title: 'New Feature Category',
-  items: [
+accordionData = [
+    // ... existing categories
     {
-      title: 'API Name',
-      description: 'Description',
-      action: 'methodName',
+        categoryName: 'Existing Category',
+        subCategory: [
+            // ... existing items
+            { action: Actions.NEW_ACTION_NAME, name: 'displayName' },
+        ],
     },
-    {
-      title: 'Another API',
-      description: 'Description',
-      action: 'anotherMethod',
-    },
-  ],
-}
+];
 ```
 
-## Updating Existing APIs
+- `action`: References the `Actions` constant from Step 1
+- `name`: Display text shown as button label in the UI
 
-### When Signature Changes
+### Step 3: Add Handler in switch
 
-If API adds new optional parameters, create TWO entries to demonstrate both use cases:
+In `App.js` `handleItemAction(item)`, add a case to the switch statement.
 
-**Entry 1: Original behavior**
+**Choose inline or AppUtils based on complexity:**
+
+#### Option A: Inline (simple, no callback, one-off)
+
+Use when the call is a simple one-liner or few lines with no callback:
+
+```javascript
+case Actions.NEW_ACTION_NAME:
+    CleverTap.someMethod();
+    break;
+```
+
+Real examples from the codebase:
+```javascript
+case Actions.IN_APPS_SUSPEND:
+    CleverTap.suspendInAppNotifications();
+    break;
+case Actions.OPT_IN:
+    CleverTap.setOptOut(false);
+    break;
+case Actions.SET_DEBUG:
+    CleverTap.setDebugLevel(3);
+    break;
+case Actions.SYNC_VARIABLES:
+    CleverTap.syncVariables()
+    break;
+```
+
+#### Option B: Delegate to AppUtils
+
+Use for complex operations, multi-step logic, or reusable helpers. Add the handler in `app-utils.js`:
+
+```javascript
+// In app-utils.js
+export const newHelperFunction = () => {
+    CleverTap.someMethod((err, res) => {
+        console.log('Result: ', res, err);
+        showToast(`Result: ${res}`);
+    });
+};
+```
+
+```javascript
+// In App.js handleItemAction switch
+case Actions.NEW_ACTION_NAME:
+    AppUtils.newHelperFunction();
+    break;
+```
+
+### Step 4: Create New Category (if needed)
+
+If the API belongs to a new feature area, add a new category object to `accordionData`:
+
 ```javascript
 {
-  title: 'Original API Name',
-  description: 'Original description without new parameter.',
-  action: 'methodNameOriginal',
-}
+    categoryName: 'New Feature Area',
+    subCategory: [
+        { action: Actions.NEW_ACTION_NAME, name: 'displayName' },
+    ],
+},
 ```
 
-**Entry 2: New parameter**
+Place it in a logical position among existing categories.
+
+## Existing Categories Reference
+
+| Category | Feature Area |
+|----------|-------------|
+| User Properties | Profile set/get, multi-values, increment/decrement |
+| Identity Management | onUserLogin, getCleverTapID |
+| Location | setLocation, setLocale |
+| Events | recordEvent, recordChargedEvent |
+| Event History | getUserEventLog, getUserLastVisitTs, etc. |
+| Product Experiences: Vars | Variables, variants, define/fetch/sync |
+| Push Notifications | Channels, registration tokens, createNotification |
+| App Inbox | Initialize, show, messages CRUD |
+| Push Templates | Various push template types (all use RECORD_EVENT) |
+| Push Primer Local InApp | Half-interstitial, alert, hard permission |
+| InApp Controls | suspend/discard/resume InApp notifications |
+| Custom Templates | Sync custom templates |
+| Native Display | Display units |
+| Client Side InApps | Fetch/clear InApps |
+| Product Config | Fetch, activate, get values |
+| Feature Flag | getFeatureFlag |
+| App Personalisation | enablePersonalization |
+| GDPR | Opt in/out, network info |
+| Attributions | Attribution identifier (deprecated) |
+| Listeners | Add/remove CleverTap event listeners |
+| Enable Debugging | setDebugLevel |
+
+## AppUtils Patterns
+
+### Feedback Pattern
+
+Always provide dual feedback in AppUtils functions:
+
 ```javascript
-{
-  title: 'API Name (With New Feature)',
-  description: 'Description highlighting the new parameter behavior.',
-  action: 'methodNameWithNewParam',
-}
+export const helperName = () => {
+    CleverTap.method((err, res) => {
+        console.log('Description: ', res, err);
+        showToast(`Description: ${res}`);
+    });
+};
 ```
 
-**Implementation methods**:
+- `showToast(text1, text2)` - queued toast system (text2 is optional)
+- `console.log()` - for detailed debugging
+- Some older functions use `alert()` - prefer `showToast()` for new code
+
+### Void Method Pattern
+
 ```javascript
-// Original method - backward compatibility
-const methodNameOriginal = () => {
-  CleverTap.apiMethod((error, result) => {
-    if (result === null) {
-      Toast.show('No result found');
-      console.log('API Name (Original) -> No result');
-    } else {
-      Toast.show('Result fetched, check console');
-      console.log('API Name (Original) -> Result:', result);
+export const helperName = () => {
+    showToast('Action performed');
+    CleverTap.voidMethod(param1, param2);
+};
+```
+
+### Platform-Specific Pattern
+
+```javascript
+export const helperName = () => {
+    if (Platform.OS === 'android') {
+        CleverTap.androidOnlyMethod('token');
     }
-  });
-};
-
-// New method - demonstrates new parameter
-const methodNameWithNewParam = () => {
-  CleverTap.apiMethod({ newParam: true }, (error, result) => {
-    if (result === null) {
-      Toast.show('No result found');
-      console.log('API Name (With Param) -> No result');
-    } else {
-      Toast.show('Result with new parameter, check console');
-      console.log('API Name (With Param) -> Result:', result);
-    }
-  });
 };
 ```
 
-**Why two entries?**
-- Demonstrates backward compatibility
-- Shows new feature clearly
-- Allows testing both behaviors
-- Makes parameter impact obvious
+## Special Patterns
 
-## Code Style Guidelines
+### Updated API with New Overload
 
-### Method Naming
-- Descriptive camelCase names
-- Match SDK API name when possible
-- Example: `getCleverTapId`, `recordCustomEvent`
-
-### User Feedback
-Always provide dual feedback:
-1. **Visual**: `Toast.show()` for immediate user feedback
-2. **Console**: `console.log()` for detailed debugging
-
-### Error Handling
-Always check for null/undefined results:
-```javascript
-if (result === null || result === undefined) {
-  Toast.show('No result found');
-  console.log('API Name -> No result');
-} else {
-  Toast.show('Result fetched, check console');
-  console.log('API Name -> Result:', result);
-}
-```
-
-### Platform-Specific APIs
-Wrap platform-specific sections:
-```javascript
-import { Platform } from 'react-native';
-
-const methodName = () => {
-  if (Platform.OS === 'android') {
-    CleverTap.androidOnlyMethod();
-    Toast.show('Android-only API called');
-  } else {
-    Toast.show('Not available on this platform');
-  }
-};
-```
-
-## Common Patterns
-
-### Pattern 1: Simple Getter
+When an API adds a new optional parameter, add a separate action for the new variant:
 
 ```javascript
-const getCleverTapId = () => {
-  CleverTap.getCleverTapID((error, id) => {
-    if (id === null) {
-      Toast.show('CleverTap ID = NULL');
-      console.log('CleverTap ID -> NULL');
-    } else {
-      Toast.show('CleverTap ID = ' + id);
-      console.log('CleverTap ID ->', id);
-    }
-  });
-};
+// constants.js - two separate actions
+IN_APPS_DISCARD: 'IN_APPS_DISCARD',
+IN_APPS_DISCARD_WITH_DISMISS: 'IN_APPS_DISCARD_WITH_DISMISS',
+
+// accordionData - two entries in same category
+{ action: Actions.IN_APPS_DISCARD, name: 'discardInAppNotifications' },
+{ action: Actions.IN_APPS_DISCARD_WITH_DISMISS, name: 'discardInAppNotifications(true)' },
+
+// handleItemAction - two cases
+case Actions.IN_APPS_DISCARD:
+    CleverTap.discardInAppNotifications();
+    break;
+case Actions.IN_APPS_DISCARD_WITH_DISMISS:
+    CleverTap.discardInAppNotifications(true);
+    break;
 ```
 
-### Pattern 2: List Fetcher
+### Listener Registration Pattern
 
 ```javascript
-const getAllInboxMessages = () => {
-  CleverTap.getAllInboxMessages((error, messages) => {
-    if (!messages || messages.length === 0) {
-      Toast.show('No messages found');
-      console.log('Inbox Messages -> Empty');
-    } else {
-      Toast.show(messages.length + ' messages found, check console');
-      console.log('Inbox Messages -> Count:', messages.length);
-      console.log('Inbox Messages -> Data:', messages);
-    }
-  });
-};
+case Actions.VARIABLES_CHANGED:
+    CleverTap.onVariablesChanged((variables) => {
+        console.log('onVariablesChanged: ', variables);
+    });
+    break;
 ```
 
-### Pattern 3: Action Trigger
+## Checklist
 
-```javascript
-const recordCustomEvent = () => {
-  const eventData = {
-    'Product Name': 'Casio Chronograph Watch',
-    'Category': 'Mens Watch',
-    'Price': 59.99,
-    'Date': new Date(),
-  };
-  CleverTap.recordEvent('Product Viewed', eventData);
-  Toast.show('Event recorded');
-  console.log('Product Viewed -> Event Data:', eventData);
-};
-```
-
-### Pattern 4: Complex Operation
-
-```javascript
-const setMultiValueForKey = () => {
-  const values = ['Apple', 'Orange', 'Banana'];
-  const key = 'Favorite Fruits';
-
-  CleverTap.profileSetMultiValues(key, values);
-  Toast.show('Multi-values set for ' + key);
-  console.log('Profile -> Set', key, '=', values);
-};
-```
-
-### Pattern 5: Platform-Specific API
-
-```javascript
-const registerForPush = () => {
-  if (Platform.OS === 'ios') {
-    // iOS push registration is handled by the system
-    Toast.show('iOS push handled by system');
-    console.log('Push -> iOS system handled');
-  } else {
-    CleverTap.registerForPush();
-    Toast.show('Registered for push notifications');
-    console.log('Push -> Registered');
-  }
-};
-```
-
-## Testing Checklist
-
-- [ ] New API has corresponding entry in UI
-- [ ] Entry is in correct feature category
-- [ ] Description is clear and helpful
-- [ ] Implementation method exists and named correctly
-- [ ] Method handles null/error cases
-- [ ] Both `Toast.show` and `console.log` are used
-- [ ] Platform checks added if needed
-- [ ] Example data is realistic and helpful
-- [ ] Code follows existing patterns
-- [ ] App builds and runs without errors on both platforms
-
-## Common Issues
-
-### Issue 1: Button Not Visible
-**Cause**: Wrong section or missing configuration entry
-**Solution**: Check correct section, verify configuration entry
-
-### Issue 2: Method Not Found
-**Cause**: Method name mismatch between config and implementation
-**Solution**: Verify exact method name match, including case
-
-### Issue 3: No User Feedback
-**Cause**: Missing `Toast.show()` call
-**Solution**: Always add `Toast.show()` for user feedback
-
-### Issue 4: Crash on Button Press
-**Cause**: Missing null checks or type mismatch
-**Solution**: Add null checks, verify return type, wrap in try-catch if needed
+When adding a new API demo, verify:
+- [ ] Action constant added to `constants.js`
+- [ ] Entry added to correct category in `accordionData`
+- [ ] Case added to `handleItemAction` switch
+- [ ] If using AppUtils: function exported from `app-utils.js`
+- [ ] Feedback provided (console.log + showToast)
+- [ ] If API has overloads: separate actions for each variant
