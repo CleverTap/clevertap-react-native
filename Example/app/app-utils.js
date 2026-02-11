@@ -50,6 +50,40 @@ export const set_userProfile = () => {
     });
 };
 
+export const set_userProfileWithNestedProperties = () => {
+    const profile = {
+        Name: 'testUserNested',
+        Identity: '123456',
+        Email: 'nested@test.com',
+        JoiningDate : new Date('2025-03-03T06:35:31'),
+        Address: {
+            street: '123 Main St',
+            city: 'San Francisco',
+            state: 'CA',
+            zipCode: 94105,
+            coordinates: {
+                lat: 37.7749,
+                lng: -122.4194
+            }
+        },
+        Preferences: {
+            newsletter: true,
+            notifications: {
+                email: true,
+                push: false,
+                sms: true
+            },
+            subscriptionDate: new Date('2026-03-03T06:35:31'),
+            categories: ['sports', 'tech', 'news'],
+            dateProps: [new Date('2025-03-03T06:35:31'), new Date('2026-03-03T06:35:31'), new Date('2025-03-03T06:35:31')]
+        }
+    };
+
+    showToast('User Profile with Nested Properties', JSON.stringify(profile));
+    console.log('Profile Push with nested properties: ', JSON.stringify(profile));
+    CleverTap.profileSet(profile);
+};
+
 // Identity_Management
 export const onUser_Login = () => {
     showToast('User Profile Updated');
@@ -62,6 +96,35 @@ export const onUser_Login = () => {
         custom1: 123,
         birthdate: new Date('1992-12-22T06:35:31'),
     });
+};
+
+export const onUser_LoginWithNestedProperties = () => {
+    const profile = {
+        Name: 'testUserLogin',
+        Identity: new Date().getTime() + '',
+        Email: new Date().getTime() + 'logintest@test.com',
+        Company: {
+            name: 'TechCorp',
+            department: 'Engineering',
+            role: 'Senior Developer',
+            location: {
+                office: 'HQ',
+                floor: 5
+            }
+        },
+        Settings: {
+            theme: 'dark',
+            language: 'en',
+            privacy: {
+                shareData: false,
+                analytics: true
+            }
+        }
+    };
+
+    showToast('User Login with Nested Properties', JSON.stringify(profile));
+    console.log('OnUserLogin with nested properties: ', JSON.stringify(profile));
+    CleverTap.onUserLogin(profile);
 };
 
 export const getCleverTap_id = () => {
@@ -101,6 +164,40 @@ export const pushevent = () => {
     // CleverTap.recordEvent('Send Basic Push');
     // CleverTap.recordEvent('testEventWithProps', {start: new Date(), foo: 'bar'});
     CleverTap.recordEvent('pushEvent');
+};
+
+export const recordEventWithNestedProperties = () => {
+    const eventProps = {
+        'Product Name': 'Premium Subscription',
+        'Amount': 99.99,
+        'Currency': 'USD',
+        'Payment Details': {
+            method: 'credit_card',
+            provider: 'Stripe',
+            cardType: 'Visa',
+            lastFourDigits: '4242',
+            billingAddress: {
+                street: '456 Market St',
+                city: 'New York',
+                state: 'NY',
+                zipCode: 10001
+            }
+        },
+        'User Metadata': {
+            isPremium: true,
+            tier: 'gold',
+            features: ['feature1', 'feature2', 'feature3'],
+            limits: {
+                apiCalls: 10000,
+                storage: 100
+            }
+        },
+        'timestamp': new Date()
+    };
+
+    showToast('Event with Nested Properties', 'Product Purchased');
+    console.log('Recording event with nested properties: ', JSON.stringify(eventProps));
+    CleverTap.recordEvent('Product Purchased', eventProps);
 };
 
 export const pushChargedEvent = () => {
