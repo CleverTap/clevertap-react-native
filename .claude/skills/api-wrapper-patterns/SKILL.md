@@ -313,6 +313,49 @@ onVariablesChanged: function (handler) {
 
 **Newarch numeric conversion**: TurboModule codegen passes all numbers as `Double`. Convert in newarch module: `importance.toInt()`. Oldarch receives native types directly.
 
+## Type Compatibility Verification
+
+Before implementing or updating a wrapper, verify that the React Native bridge types correctly carry the data the native SDK expects. This is especially important when native SDK changelogs mention changes to data handling without adding new APIs.
+
+### Bridge Type Capabilities
+
+| Bridge Type | Supports Nesting | Supports Mixed Types | Notes |
+|-------------|-------------------|----------------------|-------|
+| `ReadableMap` / `NSDictionary` | Yes — nested maps via `getMap(key)` | Yes — string, number, boolean, map, array | JS objects pass through as-is including nested structures |
+| `ReadableArray` / `NSArray` | Yes — nested arrays and maps | Yes — mixed element types | JS arrays pass through as-is |
+| `String` / `NSString` | N/A | N/A | Primitives always safe |
+| `int`, `double`, `boolean` | N/A | N/A | Primitives always safe |
+
+### What Can Go Wrong
+
+1. **Manual flattening in the wrapper**: If the wrapper calls `toHashMap()` or iterates over keys and converts individually, nested structures may be lost or incorrectly converted. Check that the wrapper passes data through without unnecessary transformation.
+
+2. **Type narrowing**: If the wrapper declares a parameter as `String` but the native SDK now accepts `Map<String, Object>` (e.g., supporting both simple and structured values), the wrapper needs a signature update.
+
+3. **Unsupported types**: The bridge does not auto-convert `Date`, `byte[]`, custom objects, or enums. These need explicit conversion in the wrapper layer (e.g., `Date` → epoch seconds, enums → string/int constants).
+
+4. **Null handling differences**: Android `ReadableMap.getMap(key)` returns null for missing keys; iOS `NSDictionary[key]` returns nil. Both are safe, but if the wrapper has explicit null checks that reject valid null values, it may break.
+
+### Verification Checklist
+
+When a native SDK change affects data types flowing through an existing wrapper:
+
+- [ ] Read the current wrapper implementation across all layers (JS, Android, iOS)
+- [ ] Confirm the bridge types used can carry the new data shapes (use table above)
+- [ ] Check for any manual type conversion that might strip structure (e.g., `toHashMap()`, key-by-key iteration, `JSON.stringify()`)
+- [ ] Verify parameter types aren't too restrictive for the new native SDK expectations
+- [ ] Test with representative data: pass the new data shape from JS through to the native SDK and confirm it arrives intact
+
+### Common Scenarios
+
+| Changelog Says | Check This | Likely Outcome |
+|----------------|------------|----------------|
+| "Supports nested objects in events/properties" | `pushEvent` / `profilePush` — does `ReadableMap` pass nested maps? | Usually OK — `ReadableMap` supports nesting natively |
+| "Now accepts array values in properties" | Property-setting methods — does the wrapper handle arrays in map values? | Usually OK — `ReadableMap` supports array values |
+| "New property type support (e.g., Date)" | All property methods — does the wrapper convert the new type? | Likely UPDATE — bridge doesn't auto-convert dates |
+| "Changed parameter from String to Map" | Specific method — is the wrapper parameter type updated? | UPDATE — wrapper signature must change |
+| "Accepts null/optional for previously required param" | Specific method — is the wrapper param nullable? | VERIFY — may need `?` added to param type |
+
 ## Helper Methods
 
 ### JavaScript: `callWithCallback(method, args, callback)`
@@ -361,3 +404,5 @@ When adding a new API wrapper:
 - [ ] Implementation added to `CleverTapReact.mm` with `RCT_EXPORT_METHOD`
 - [ ] Method name is identical across all layers (case-sensitive)
 - [ ] Callback methods use `callWithCallback` in JS, `callbackWithErrorAndResult` in Android, `returnResult:withCallback:andError:` in iOS
+- [ ] Bridge types support the data shapes the native SDK expects (see Type Compatibility Verification)
+- [ ] No manual type conversion strips nested structure or narrows types beyond what the native SDK accepts

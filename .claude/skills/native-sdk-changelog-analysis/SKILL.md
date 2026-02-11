@@ -86,13 +86,45 @@ APIs mentioned in changelogs MUST still be implemented even if return type verif
 
 **DO NOT skip implementation** just because the exact signature couldn't be verified from source. The changelog is the authoritative source for what APIs exist.
 
+### Step 4b: Verify Type Compatibility Through the Bridge
+
+For each change (including BUG_FIX and INTERNAL that mention data handling), verify that the React Native bridge layer correctly supports the types involved. This catches cases where a native SDK change affects existing wrappers without adding a new API.
+
+**When to check:**
+- Changelog mentions new data shapes (e.g., "nested objects", "nested maps", "deep properties")
+- Changelog mentions expanded type support (e.g., "now accepts arrays", "supports null values")
+- Changelog mentions serialization/encoding changes
+- Changelog mentions changes to event, profile, or user property handling
+
+**How to check:**
+1. Identify which existing React Native wrapper method(s) are affected by the change
+2. Read the current wrapper implementation to see how data flows through the bridge
+3. Verify the bridge types can handle the new data shapes:
+   - `ReadableMap` supports nested maps (`ReadableMap.getMap(key)`) — nested objects pass through
+   - `ReadableArray` supports mixed types and nested arrays/maps — nested arrays pass through
+   - `NSDictionary`/`NSArray` in iOS handle nesting natively — nested objects pass through
+   - Primitives (`String`, `int`, `boolean`) are always safe across the bridge
+4. Check if any manual type conversion in the wrapper (e.g., `toHashMap()`, custom serialization) would strip or flatten the new data
+
+**What to flag:**
+- If the wrapper manually flattens or transforms data before passing to the native SDK, and the changelog change relies on that structure being preserved
+- If the wrapper uses a restrictive type (e.g., `String` parameter) but the native SDK now accepts a richer type (e.g., `Map`)
+- If new value types are supported that the bridge doesn't auto-convert (e.g., custom objects, dates, byte arrays)
+
+**Output:** Add a "Type Compatibility" column to the implementation plan table with one of:
+- `OK` — bridge types already support the change, no wrapper update needed
+- `VERIFY` — likely compatible but should be tested; note what to verify
+- `UPDATE` — wrapper needs changes to support the new types; describe what
+
 ### Step 5: Determine Wrapper Requirements
 
 ```
 API already in React Native wrapper?
 |-- YES -> Signature needs updating?
 |  |-- YES -> Decision: UPDATE
-|  +-- NO -> Decision: NO_ACTION
+|  +-- NO -> Type compatibility issue? (from Step 4b)
+|     |-- YES -> Decision: UPDATE
+|     +-- NO -> Decision: NO_ACTION
 +-- NO -> Commonly used functionality?
    |-- YES -> Decision: NEW_IMPLEMENTATION
    |-- MAYBE -> Decision: DISCUSS
@@ -113,9 +145,9 @@ Output a single unified table showing ALL changes:
 
 ### All Changes
 
-| # | Category | API Name | Android Type | iOS Type | Parameters | Platforms | Decision | Notes |
-|---|----------|----------|--------------|----------|------------|-----------|----------|-------|
-| 1 | NEW_API | `methodName()` | `ReturnType` | `ReturnType` | params | versions | Decision | notes |
+| # | Category | API Name | Android Type | iOS Type | Parameters | Platforms | Type Compat | Decision | Notes |
+|---|----------|----------|--------------|----------|------------|-----------|-------------|----------|-------|
+| 1 | NEW_API | `methodName()` | `ReturnType` | `ReturnType` | params | versions | OK/VERIFY/UPDATE | Decision | notes |
 
 **Legend**: NEW_API | BREAKING | DEPRECATED | BUG_FIX | INTERNAL
 
@@ -150,5 +182,6 @@ When implementing wrappers, update these files:
 - All changes between versions extracted and categorized
 - All NEW_API/BREAKING changes have return types determined (verified from source OR inferred)
 - APIs in changelog are NEVER skipped due to failed signature lookup - use inference instead
-- Single table output with separate Android/iOS type columns
+- Type compatibility verified for changes that affect data shapes or type handling (Step 4b)
+- Single table output with separate Android/iOS type columns and Type Compat column
 - User acknowledgment received before implementation

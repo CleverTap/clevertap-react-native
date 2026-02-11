@@ -21,6 +21,8 @@ Generate properly formatted changelog entries for CleverTap React Native SDK rel
 3. **Platform tags** - Use exactly: `[Android Platform]`, `[iOS Platform]`, `[Android and iOS Platform]`
 4. **Link native changelogs** - Always include version anchor links (see anchor format below)
 5. **2-space indentation** - Use 2 spaces for nested bullets under platform tags
+6. **Inline code** - Wrap code-related words in backticks: class names (`AbstractMethodError`), method names (`setTheme`), parameter names, types, etc.
+
 
 ## Entry Template
 
@@ -181,8 +183,7 @@ Example: If today is February 2, 2026, use `February 5 2026`.
 **Important**: Use active voice: "Adds support for..." not "Support was added"
 
 ### "What's new"
-- Always start with native SDK support line(s)
-- Each platform gets its own bullet group
+- Start with a native SDK support line for each platform whose version was updated. Omit platforms with no version change
 
 ### "API changes"
 - List new public methods with backtick-formatted signatures
