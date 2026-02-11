@@ -1254,13 +1254,14 @@ function convertDateToEpochInProperties(map) {
                 // Recursively convert dates in nested objects
                 convertDateToEpochInProperties(value);
             } else if (Array.isArray(value)) {
-                // Recursively convert dates in array elements
-                value.forEach(item => {
-                    if (item !== null && typeof item === 'object') {
-                        convertDateToEpochInProperties(item);
-                    }
-                });
-            }
+                  value.forEach((item, index) => {
+                      if (Object.prototype.toString.call(item) === '[object Date]') {
+                          value[index] = "$D_" + Math.floor(item.getTime() / 1000);
+                      } else if (item !== null && typeof item === 'object') {
+                          convertDateToEpochInProperties(item);
+                      }
+                  });
+              }
         }
     }
 

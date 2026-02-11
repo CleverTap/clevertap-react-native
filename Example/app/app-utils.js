@@ -74,7 +74,8 @@ export const set_userProfileWithNestedProperties = () => {
                 sms: true
             },
             subscriptionDate: new Date('2026-03-03T06:35:31'),
-            categories: ['sports', 'tech', 'news']
+            categories: ['sports', 'tech', 'news'],
+            dateProps: [new Date('2025-03-03T06:35:31'), new Date('2026-03-03T06:35:31'), new Date('2025-03-03T06:35:31')]
         }
     };
 
