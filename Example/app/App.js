@@ -125,6 +125,7 @@ export default class App extends Component {
       categoryName: 'User Properties',
       subCategory: [
         { action: Actions.SET_USER_PROFILE, name: 'pushProfile' },
+        { action: Actions.PROFILE_PUSH_WITH_NESTED_PROPERTIES, name: 'pushProfile with nested properties' },
         { action: Actions.SET_MULTI_VALUES, name: 'set Multi Values For Key' },
         {
           action: Actions.REMOVE_MULTI_VALUE,
@@ -139,6 +140,7 @@ export default class App extends Component {
       categoryName: 'Identity Management',
       subCategory: [
         { action: Actions.USER_LOGIN, name: 'onUserLogin' },
+        { action: Actions.USER_LOGIN_WITH_NESTED_PROPERTIES, name: 'onUserLogin with nested properties' },
         { action: Actions.CLEVERTAP_ID, name: 'getCleverTapID' },
       ],
     },
@@ -153,6 +155,7 @@ export default class App extends Component {
       categoryName: 'Events',
       subCategory: [
         { action: Actions.PUSH_EVENT, name: 'pushEvent' },
+        { action: Actions.RECORD_EVENT_WITH_NESTED_PROPERTIES, name: 'recordEvent with nested properties' },
         { action: Actions.PUSH_CHARGED_EVENT, name: 'pushChargedEvent' },
       ],
     },
@@ -430,6 +433,9 @@ export default class App extends Component {
       case Actions.SET_USER_PROFILE:
         AppUtils.set_userProfile();
         break;
+      case Actions.PROFILE_PUSH_WITH_NESTED_PROPERTIES:
+        AppUtils.set_userProfileWithNestedProperties();
+        break;
       case Actions.SET_MULTI_VALUES:
         CleverTap.profileSetMultiValuesForKey(['a', 'b', 'c'], 'letters');
         break;
@@ -457,6 +463,9 @@ export default class App extends Component {
         break;
       case Actions.USER_LOGIN:
         AppUtils.onUser_Login();
+        break;
+      case Actions.USER_LOGIN_WITH_NESTED_PROPERTIES:
+        AppUtils.onUser_LoginWithNestedProperties();
         break;
       case Actions.CLEVERTAP_ID:
         AppUtils.getCleverTap_id();
@@ -505,6 +514,9 @@ export default class App extends Component {
         break;
       case Actions.PUSH_EVENT:
         AppUtils.pushevent();
+        break;
+      case Actions.RECORD_EVENT_WITH_NESTED_PROPERTIES:
+        AppUtils.recordEventWithNestedProperties();
         break;
       case Actions.PUSH_CHARGED_EVENT:
         AppUtils.pushChargedEvent();
