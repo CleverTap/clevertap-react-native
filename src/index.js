@@ -12,7 +12,7 @@ const EventEmitter = Platform.select({
 * @param {int} libVersion - The updated library version. If current version is 1.1.0 then pass as 10100  
 */
 const libName = 'React-Native';
-const libVersion = 30801;
+const libVersion = 30900;
 CleverTapReact.setLibrary(libName,libVersion);
 
 function defaultCallback(method, err, res) {
@@ -1244,12 +1244,24 @@ var CleverTap = {
 function convertDateToEpochInProperties(map) {
     /**
      * Conversion of date object in suitable CleverTap format(Epoch)
+     * Recursively handles nested objects and arrays
      */
     if (map) {
         for (let [key, value] of Object.entries(map)) {
             if (Object.prototype.toString.call(value) === '[object Date]') {
                 map[key] = "$D_" + Math.floor(value.getTime() / 1000);
-            }
+            } else if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+                // Recursively convert dates in nested objects
+                convertDateToEpochInProperties(value);
+            } else if (Array.isArray(value)) {
+                  value.forEach((item, index) => {
+                      if (Object.prototype.toString.call(item) === '[object Date]') {
+                          value[index] = "$D_" + Math.floor(item.getTime() / 1000);
+                      } else if (item !== null && typeof item === 'object') {
+                          convertDateToEpochInProperties(item);
+                      }
+                  });
+              }
         }
     }
 

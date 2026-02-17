@@ -1606,6 +1606,24 @@ public class CleverTapModuleImpl {
                             Log.e(TAG, "Unhandled ReadableType.Number from ReadableMap");
                         }
                     }
+                } else if (readableType == ReadableType.Map) {
+                    try {
+                        ReadableMap nestedMap = propsMap.getMap(key);
+                        if (nestedMap != null) {
+                            props.put(key, tClass.cast(CleverTapUtils.MapUtil.toMap(nestedMap)));
+                        }
+                    } catch (Throwable t) {
+                        Log.e(TAG, "Unhandled ReadableType.Map from ReadableMap");
+                    }
+                } else if (readableType == ReadableType.Array) {
+                    try {
+                        ReadableArray nestedArray = propsMap.getArray(key);
+                        if (nestedArray != null) {
+                            props.put(key, tClass.cast(CleverTapUtils.MapUtil.ArrayUtil.toArray(nestedArray)));
+                        }
+                    } catch (Throwable t) {
+                        Log.e(TAG, "Unhandled ReadableType.Array from ReadableMap");
+                    }
                 } else {
                     Log.e(TAG, "Unhandled event property ReadableType");
                 }
@@ -1720,6 +1738,15 @@ public class CleverTapModuleImpl {
                         profile.put(key, arrayListStringFromReadableArray(profileMap.getArray(key)));
                     } catch (Throwable t) {
                         Log.e(TAG, "Unhandled ReadableType.Array from ReadableMap");
+                    }
+                } else if (readableType == ReadableType.Map) {
+                    try {
+                        ReadableMap nestedMap = profileMap.getMap(key);
+                        if (nestedMap != null) {
+                            profile.put(key, CleverTapUtils.MapUtil.toMap(nestedMap));
+                        }
+                    } catch (Throwable t) {
+                        Log.e(TAG, "Unhandled ReadableType.Map from ReadableMap");
                     }
                 } else {
                     Log.e(TAG, "Unhandled profile property ReadableType");
