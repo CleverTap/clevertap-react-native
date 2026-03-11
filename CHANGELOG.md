@@ -1,6 +1,16 @@
 Change Log
 ==========
 
+Version 3.9.X *(March XX 2026)*
+-------------------------------------------
+**What's new**
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.5.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-751-march-4-2026).
+
+**Bug Fixes**
+* **[iOS Platform]**
+  * Fixes a bug where `CleverTapInAppNotificationShowed` was not called.
+  
 Version 3.9.0 *(February 14 2026)*
 -------------------------------------------
 **What's new**
