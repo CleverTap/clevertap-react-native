@@ -85,8 +85,8 @@ Spawn **both** Task sub-agents so that they run concurrently:
 ## Success Criteria
 
 Task complete when:
-- All 6 version files updated consistently
-- Native SDK dependencies updated
+- All 7 version locations updated consistently (including Example/android/app/build.gradle)
+- Native SDK dependencies updated in both library and Example app
 - All new APIs analyzed and implementation plan approved
 - Necessary wrappers implemented (or user confirmed not needed)
 - Example app updated with new API demonstrations

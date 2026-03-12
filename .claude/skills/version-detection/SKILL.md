@@ -1,6 +1,6 @@
 ---
 name: version-detection
-description: Extract current version numbers from CleverTap React Native SDK files. Use when checking version consistency across files, preparing for SDK updates, or generating version reports. Handles all version locations including package.json, build.gradle, podspec, JS constants, and README.
+description: Extract current version numbers from CleverTap React Native SDK files. Use when checking version consistency across files, preparing for SDK updates, or generating version reports. Handles all version locations including package.json, build.gradle, podspec, JS constants, and Example app.
 ---
 
 # Version Detection
@@ -19,8 +19,11 @@ The CleverTap React Native SDK maintains version numbers in these locations that
 | 4 | `android/build.gradle` | Dependencies | `clevertap-android-sdk:X.Y.Z` |
 | 5 | `clevertap-react-native.podspec` | Dependencies | `CleverTap-iOS-SDK', 'X.Y.Z'` |
 | 6 | `src/index.js` | Constant | `const libVersion = XXXXX;` |
+| 7 | `Example/android/app/build.gradle` | Dependencies | `clevertap-android-sdk:X.Y.Z` |
 
 **Note**: The podspec reads the plugin version from `package.json` automatically, so it doesn't need a separate version update for the plugin version itself.
+
+**Note**: Locations 4 and 7 must always match — they are the same Android SDK version in the library module and the Example app respectively.
 
 ## Extraction Process
 
@@ -30,10 +33,11 @@ The CleverTap React Native SDK maintains version numbers in these locations that
 
 Read file, find version pattern, extract `X.Y.Z` format.
 
-### Native SDK Versions (4, 5)
+### Native SDK Versions (4, 5, 7, 8)
 
-**Android**: `android/build.gradle` -> `implementation 'com.clevertap.android:clevertap-android-sdk:X.Y.Z'`
+**Android (library)**: `android/build.gradle` -> `implementation 'com.clevertap.android:clevertap-android-sdk:X.Y.Z'`
 **iOS**: `clevertap-react-native.podspec` -> `s.dependency 'CleverTap-iOS-SDK', 'X.Y.Z'`
+**Android (Example app)**: `Example/android/app/build.gradle` -> `implementation 'com.clevertap.android:clevertap-android-sdk:X.Y.Z'`
 
 ### JS Version Constant (6)
 
@@ -62,7 +66,8 @@ Read file, find version pattern, extract `X.Y.Z` format.
 
 **React Native Plugin versions** (1, 2, 6) should all match.
 **Version code** (3) should correspond to the version.
-**Native SDK versions** (4, 5) are independent.
+**Native SDK versions** (4, 5, 7) are independent of the plugin version.
+**Locations 4 and 7 must match** — both specify the Android SDK version.
 
 **Validation**:
 1. Extract all React Native Plugin versions

@@ -1,6 +1,6 @@
 ---
 name: version-update
-description: "Update all 6 version file locations in the CleverTap React Native SDK with confirmed version numbers. Use after version-gather has determined target versions."
+description: "Update all version file locations in the CleverTap React Native SDK with confirmed version numbers. Use after version-gather has determined target versions."
 tools: Glob, Grep, Read, Edit
 model: sonnet
 color: yellow
@@ -9,7 +9,7 @@ skills: version-detection
 
 # Agent: Version Update
 
-**Purpose**: Update all 6 version file locations with confirmed version numbers.
+**Purpose**: Update all version file locations with confirmed version numbers.
 
 ## Input
 | Variable | Required | Description | Example |
@@ -22,7 +22,7 @@ skills: version-detection
 
 > The **version-detection** skill is auto-loaded into this agent's context. It contains the authoritative version locations table with all 6 file paths and their patterns.
 
-### Step 1: Update All 6 Locations
+### Step 1: Update All Locations
 
 For each row in the skill's **Version Locations** table, replace the current pattern with the appropriate new version:
 - React Native plugin locations (1, 2, 6) → `NEW_RN_VERSION`
@@ -30,6 +30,7 @@ For each row in the skill's **Version Locations** table, replace the current pat
 - Android SDK dependency (4) → `NEW_ANDROID_VERSION`
 - iOS SDK dependency (5) → `NEW_IOS_VERSION`
 - JS constant (6) → convert using the skill's zero-padded 5-digit formula (3.9.0 → 30900)
+- Example app Android SDK dependency (7) → `NEW_ANDROID_VERSION` (must match location 4)
 
 ### Step 2: Verify All Changes
 
@@ -42,8 +43,8 @@ Read back each modified file and confirm:
 
 ```
 UPDATE_RESULT=success/failure
-FILES_UPDATED=package.json, android/build.gradle, clevertap-react-native.podspec, src/index.js
-SUMMARY=Updated 6 version locations: RN v{NEW_RN_VERSION}, Android v{NEW_ANDROID_VERSION}, iOS v{NEW_IOS_VERSION}
+FILES_UPDATED=package.json, android/build.gradle, clevertap-react-native.podspec, src/index.js, Example/android/app/build.gradle
+SUMMARY=Updated 7 version locations: RN v{NEW_RN_VERSION}, Android v{NEW_ANDROID_VERSION}, iOS v{NEW_IOS_VERSION}
 ```
 
 If any file failed:
@@ -54,10 +55,11 @@ ERROR=Description of what went wrong
 ```
 
 ## Success Criteria
-- [ ] All 6 version locations (per the auto-loaded skill) updated
+- [ ] All 7 version locations (per the auto-loaded skill) updated
 - [ ] Each file read back and verified
 - [ ] No formatting broken in any file
 - [ ] Version integer correctly calculated for JS constant and Android versionCode
+- [ ] Locations 4 and 7 (Android SDK) match exactly
 
 ## Error Handling
 - If a file cannot be read, report the exact path and error

@@ -31,6 +31,7 @@ Check if `CLAUDE_AUTO_CONFIRM` environment variable is set:
 Using the skill's **Version Locations** table:
 - Extract `OLD_RN_VERSION` (location 1), `OLD_ANDROID_VERSION` (location 4), `OLD_IOS_VERSION` (location 5)
 - Verify consistency across all React Native plugin locations using the skill's **Version Consistency Check**
+- Verify locations 4 and 7 match (both should be `OLD_ANDROID_VERSION`)
 
 ### Step 3: Fetch Latest Native SDK Versions
 
@@ -70,7 +71,8 @@ SUMMARY=Current: RN vX.Y.Z, Android vX.Y.Z, iOS vX.Y.Z → New: RN vX.Y.Z, Andro
 **IMPORTANT**: Do NOT prompt the user for version confirmation. Return the data — the orchestrator handles user interaction.
 
 ## Success Criteria
-- [ ] All 3 current versions extracted using the auto-loaded skill's patterns
+- [ ] All 3 current versions extracted using the auto-loaded skill's patterns (RN, Android, iOS)
+- [ ] Locations 4 and 7 verified to match
 - [ ] Both latest native SDK versions fetched from GitHub
 - [ ] New React Native version calculated with correct semver bump
 - [ ] All values returned in the specified format
