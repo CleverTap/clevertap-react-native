@@ -31,7 +31,7 @@ Check if `CLAUDE_AUTO_CONFIRM` environment variable is set:
 Using the skill's **Version Locations** table:
 - Extract `OLD_RN_VERSION` (location 1), `OLD_ANDROID_VERSION` (location 4), `OLD_IOS_VERSION` (location 5)
 - Verify consistency across all React Native plugin locations using the skill's **Version Consistency Check**
-- Verify locations 4 and 7 match (both should be `OLD_ANDROID_VERSION`)
+- Verify locations 4, 7, and 8 match (all should be `OLD_ANDROID_VERSION`)
 
 ### Step 3: Fetch Latest Native SDK Versions
 

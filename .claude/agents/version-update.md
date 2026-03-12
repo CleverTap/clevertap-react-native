@@ -31,6 +31,7 @@ For each row in the skill's **Version Locations** table, replace the current pat
 - iOS SDK dependency (5) → `NEW_IOS_VERSION`
 - JS constant (6) → convert using the skill's zero-padded 5-digit formula (3.9.0 → 30900)
 - Example app Android SDK dependency (7) → `NEW_ANDROID_VERSION` (must match location 4)
+- Install docs Android SDK version (8) → `NEW_ANDROID_VERSION` (must match locations 4 and 7)
 
 ### Step 2: Verify All Changes
 
@@ -43,8 +44,8 @@ Read back each modified file and confirm:
 
 ```
 UPDATE_RESULT=success/failure
-FILES_UPDATED=package.json, android/build.gradle, clevertap-react-native.podspec, src/index.js, Example/android/app/build.gradle
-SUMMARY=Updated 7 version locations: RN v{NEW_RN_VERSION}, Android v{NEW_ANDROID_VERSION}, iOS v{NEW_IOS_VERSION}
+FILES_UPDATED=package.json, android/build.gradle, clevertap-react-native.podspec, src/index.js, Example/android/app/build.gradle, docs/install.md
+SUMMARY=Updated 8 version locations: RN v{NEW_RN_VERSION}, Android v{NEW_ANDROID_VERSION}, iOS v{NEW_IOS_VERSION}
 ```
 
 If any file failed:
@@ -55,11 +56,11 @@ ERROR=Description of what went wrong
 ```
 
 ## Success Criteria
-- [ ] All 7 version locations (per the auto-loaded skill) updated
+- [ ] All 8 version locations (per the auto-loaded skill) updated
 - [ ] Each file read back and verified
 - [ ] No formatting broken in any file
 - [ ] Version integer correctly calculated for JS constant and Android versionCode
-- [ ] Locations 4 and 7 (Android SDK) match exactly
+- [ ] Locations 4, 7, and 8 (Android SDK) match exactly
 
 ## Error Handling
 - If a file cannot be read, report the exact path and error
