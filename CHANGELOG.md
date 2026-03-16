@@ -14,7 +14,7 @@ Version 4.0.0 *(March 17 2026)*
 * **[iOS Platform]**
   * Fixes a bug where `CleverTapInAppNotificationShowed` was not called.
   
-Version 3.9.0 *(February 14 2026)*
+Version 3.9.0 *(February 17 2026)*
 -------------------------------------------
 **What's new**
 * **[Android Platform]**
