@@ -118,6 +118,14 @@
     [self postNotificationWithName:kCleverTapInAppNotificationButtonTapped andBody:body];
 }
 
+- (void)inAppNotificationDidShow:(NSDictionary *)notification {
+    NSMutableDictionary *body = [NSMutableDictionary new];
+    if (notification != nil) {
+        body = [NSMutableDictionary dictionaryWithDictionary:notification];
+    }
+    [self postNotificationWithName:kCleverTapInAppNotificationShowed andBody:body];
+}
+
 - (void)displayUnitsUpdated:(NSArray<CleverTapDisplayUnit *> *)displayUnits {
     NSMutableDictionary *body = [NSMutableDictionary new];
     if (displayUnits != nil) {
