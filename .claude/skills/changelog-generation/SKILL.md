@@ -66,10 +66,10 @@ https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md
 
 Both Android and iOS use the **same anchor generation rule**:
 
-Format: `#version-X-Y-Z-month-day-year` (dots as dashes, lowercase month)
+Format: `#version-XYZ-month-day-year` (dots removed, lowercase month)
 
 **Generation**:
-1. Replace dots with dashes: `7.4.2` -> `7-4-2`
+1. Remove dots: `7.4.2` -> `742`
 2. Lowercase month: `January` -> `january`
 3. Combine: `#version-742-january-14-2026`
 

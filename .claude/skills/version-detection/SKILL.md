@@ -46,9 +46,9 @@ Read file, find version pattern, extract `X.Y.Z` format.
 **File**: `src/index.js`
 **Pattern**: `const libVersion = XXXXX;`
 
-**Format**: Zero-padded integer (5 digits)
+**Format**: Zero-padded integer
 - `3.8.1` -> `30801`
-- `3.10.2` -> `31002`
+- `3.10.2` -> `301002`
 
 **Convert integer to version**:
 1. Pad to 6 digits: `30801` -> `030801`

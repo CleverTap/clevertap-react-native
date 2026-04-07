@@ -40,7 +40,7 @@ If an API was updated with new optional parameters, create TWO actions following
 
 ## Output Format
 
-```
+```text
 EXAMPLE_RESULT=success/failure
 EXAMPLES_ADDED=methodName1, methodName2, ...
 SECTIONS_MODIFIED=sectionName1, sectionName2

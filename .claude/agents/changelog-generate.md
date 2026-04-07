@@ -12,6 +12,7 @@ skills: changelog-generation
 **Purpose**: Generate a properly formatted changelog entry for the React Native SDK release.
 
 ## Input
+
 | Variable | Required | Description | Example |
 |----------|----------|-------------|---------|
 | `NEW_RN_VERSION` | Yes | New React Native plugin version | `3.9.0` |
@@ -19,6 +20,7 @@ skills: changelog-generation
 | `NEW_IOS_VERSION` | Yes | New iOS SDK version | `7.5.0` |
 | `IMPLEMENTATION_PLAN` | Yes | The implementation plan table with all changes | Markdown table |
 | `APIS_IMPLEMENTED` | Yes | List of APIs that were newly implemented or updated | `methodName1, methodName2` |
+
 
 ## Process
 
@@ -34,7 +36,7 @@ Follow the skill's entry template, anchor format rules, and insertion process.
 
 ## Output Format
 
-```
+```text
 CHANGELOG_RESULT=success/failure
 ENTRY_PREVIEW=[full changelog entry text]
 SUMMARY=Added changelog entry for version {NEW_RN_VERSION} with N new APIs, M updates

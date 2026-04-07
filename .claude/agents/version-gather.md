@@ -72,7 +72,7 @@ SUMMARY=Current: RN vX.Y.Z, Android vX.Y.Z, iOS vX.Y.Z → New: RN vX.Y.Z, Andro
 
 ## Success Criteria
 - [ ] All 3 current versions extracted using the auto-loaded skill's patterns (RN, Android, iOS)
-- [ ] Locations 4 and 7 verified to match
+- [ ] Locations 4, 7, and 8 verified to match
 - [ ] Both latest native SDK versions fetched from GitHub
 - [ ] New React Native version calculated with correct semver bump
 - [ ] All values returned in the specified format

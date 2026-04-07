@@ -40,7 +40,7 @@ Step 6: Generate Implementation Plan -> Wait for user acknowledgment
 
 ### Step 1: Fetch Changelog Content
 
-Use `web_fetch` to retrieve changelog from GitHub. Extract all entries between `old_version` and `new_version` (inclusive). Retry up to 3 times on failure.
+Use `WebFetch` to retrieve changelog from GitHub. Extract all entries between `old_version` and `new_version` (inclusive). Retry up to 3 times on failure.
 
 ### Step 2: Categorize Changes
 
@@ -71,7 +71,7 @@ For ALL `NEW_API` and `BREAKING` changes items, attempt to fetch and verify retu
 | iOS | `https://raw.githubusercontent.com/CleverTap/clevertap-ios-sdk/master/CleverTapSDK/CleverTap.h` |
 
 **Process:**
-1. Fetch the appropriate file using `web_fetch`
+1. Fetch the appropriate file using `WebFetch`
 2. Search for method name (case-insensitive)
 3. Extract complete signature with return type and generics
 

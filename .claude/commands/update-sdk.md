@@ -71,7 +71,7 @@ Spawn **both** Task sub-agents so that they run concurrently:
 
 **Agent A** — `changelog-generate`:
 - Input: `NEW_RN_VERSION`, `NEW_ANDROID_VERSION`, `NEW_IOS_VERSION`, `IMPLEMENTATION_PLAN`, `APIS_IMPLEMENTED`
-- Return: `CHANGELOG_ENTRY` as formatted markdown text
+- Return: `CHANGELOG_RESULT`, `ENTRY_PREVIEW` (formatted markdown text), `SUMMARY`
 
 **Agent B** — `build-validate`:
 - Input: (none — operates on working directory)

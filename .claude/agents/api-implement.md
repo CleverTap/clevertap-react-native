@@ -42,7 +42,7 @@ For each implemented API:
 
 ## Output Format
 
-```
+```text
 IMPLEMENTATION_RESULT=success/failure
 APIS_IMPLEMENTED=methodName1, methodName2, ...
 FILES_MODIFIED=src/index.js, src/index.d.ts, src/NativeCleverTapModule.ts, CleverTapModuleImpl.java, oldarch/CleverTapModule.kt, newarch/CleverTapModule.kt, CleverTapReact.mm
@@ -50,7 +50,7 @@ SUMMARY=Implemented N new APIs and updated M existing APIs across JS/TypeScript/
 ```
 
 If any API failed:
-```
+```text
 IMPLEMENTATION_RESULT=partial
 APIS_IMPLEMENTED=methodName1, methodName2
 APIS_FAILED=methodName3
