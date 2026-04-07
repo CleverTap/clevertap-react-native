@@ -36,7 +36,7 @@ Read file, find version pattern, extract `X.Y.Z` format.
 
 ### Native SDK Versions (4, 5, 7, 8)
 
-**Android (library)**: `android/build.gradle` -> `implementation 'com.clevertap.android:clevertap-android-sdk:X.Y.Z'`
+**Android (library)**: `android/build.gradle` -> `api 'com.clevertap.android:clevertap-android-sdk:X.Y.Z'`
 **iOS**: `clevertap-react-native.podspec` -> `s.dependency 'CleverTap-iOS-SDK', 'X.Y.Z'`
 **Android (Example app)**: `Example/android/app/build.gradle` -> `implementation 'com.clevertap.android:clevertap-android-sdk:X.Y.Z'`
 **Android (install docs)**: `docs/install.md` -> `implementation 'com.clevertap.android:clevertap-android-sdk:X.Y.Z'`
