@@ -401,6 +401,7 @@ export default class App extends Component {
         { action: Actions.OPT_OUT, name: 'setOptOut' },
         { action: Actions.OPT_OUT_YES_SYSTEM_EVENTS, name: 'setOptOutAllowSystemEvents' },
         { action: Actions.ENABLE_NETWORK_INFO, name: 'enableDeviceNetworkInfoReporting' },
+        { action: Actions.UNMUTE, name: 'unmute' },
       ],
     },
     {
@@ -646,6 +647,9 @@ export default class App extends Component {
         break;
       case Actions.ENABLE_NETWORK_INFO:
         CleverTap.enableDeviceNetworkInfoReporting(true);
+        break;
+      case Actions.UNMUTE:
+        CleverTap.unmute();
         break;
       case Actions.ADD_CLEVERTAP_LISTENERS:
         AppUtils.addCleverTapAPIListeners(true);

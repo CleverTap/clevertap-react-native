@@ -44,6 +44,7 @@ export interface Spec extends TurboModule {
   setOffline(enabled: boolean): void;
   setOptOut(userOptOut: boolean, allowSystemEvents?: boolean): void;
   enableDeviceNetworkInfoReporting(enabled: boolean): void;
+  unmute(): void;
   recordScreenView(screenName: string): void;
   recordEvent(
     eventName: string,

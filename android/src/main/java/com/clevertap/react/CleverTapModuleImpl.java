@@ -1157,6 +1157,13 @@ public class CleverTapModuleImpl {
         }
     }
 
+    public void unmute() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.unmute();
+        }
+    }
+
     public void customTemplateSetDismissed(String templateName, Promise promise) {
         resolveWithTemplateContext(templateName, promise, templateContext -> {
             templateContext.setDismissed();
