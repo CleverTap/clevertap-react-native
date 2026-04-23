@@ -36,6 +36,7 @@ Version 4.0.0 *(March 17 2026)*
 **Bug Fixes**
 * **[iOS Platform]**
   * Fixes a bug where `CleverTapInAppNotificationShowed` was not called.
+  * Fixes a bug where onUserLogin was creating additional guids only for encryption level high.
   
 Version 3.9.0 *(February 17 2026)*
 -------------------------------------------
