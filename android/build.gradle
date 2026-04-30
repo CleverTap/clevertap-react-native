@@ -30,11 +30,11 @@ buildscript {
 }
 
 android {
-    compileSdk 35
+    compileSdk 36
     buildToolsVersion '35.0.0'
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 35
+        minSdkVersion 23
+        targetSdkVersion 36
         versionCode 410
         versionName "4.1.0"
         buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString())
