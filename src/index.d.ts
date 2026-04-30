@@ -85,6 +85,11 @@
    */
   export function enableDeviceNetworkInfoReporting(enable: boolean): void;
 
+  /**
+   * Clears a backend-imposed mute state on the CleverTap SDK, resuming network operations immediately.
+   */
+  export function unmute(): void;
+
   /*******************
    * Push
    ******************/

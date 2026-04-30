@@ -1,6 +1,29 @@
 Change Log
 ==========
 
+Version 4.1.0 *(April 30 2026)*
+-------------------------------------------
+**What's new**
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v8.1.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-810-april-17-2026).
+  * Adds Picture-in-Picture In-App Notifications support.
+  * Adds GIF and video media support in InApp templates.
+
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.6.0](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-760-april-17-2026).
+  * Adds Picture-in-Picture In-App Notifications support.
+  * Adds GIF and video media support in InApp templates.
+
+**API changes**
+* **[Android and iOS Platform]**
+  * Adds a new API `unmute()` to clear a backend-imposed mute state, resuming network operations immediately.
+    * `unmute()`
+
+**Breaking Changes**
+* **[Android Platform]**
+  * Raises the minimum supported Android API level to 23.
+  * Deprecates ExoPlayer integration. Migrate to Media3 before upgrading to v5.0.0.
+
 Version 4.0.0 *(March 17 2026)*
 -------------------------------------------
 **What's new**
@@ -13,6 +36,7 @@ Version 4.0.0 *(March 17 2026)*
 **Bug Fixes**
 * **[iOS Platform]**
   * Fixes a bug where `CleverTapInAppNotificationShowed` was not called.
+  * Fixes a bug where onUserLogin was creating additional guids only for encryption level high.
   
 Version 3.9.0 *(February 17 2026)*
 -------------------------------------------

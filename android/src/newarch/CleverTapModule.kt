@@ -436,6 +436,10 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.resumeInAppNotifications()
     }
 
+    override fun unmute() {
+        cleverTapModuleImpl.unmute()
+    }
+
     override fun setInstanceWithAccountId(accountId: String?) {
         cleverTapModuleImpl.setInstanceWithAccountId(accountId)
     }

@@ -514,6 +514,11 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
+    fun unmute() {
+        cleverTapModuleImpl.unmute()
+    }
+
+    @ReactMethod
     fun setInstanceWithAccountId(accountId: String?) {
         cleverTapModuleImpl.setInstanceWithAccountId(accountId)
     }
