@@ -12,7 +12,7 @@ const EventEmitter = Platform.select({
 * @param {int} libVersion - The updated library version. If current version is 1.1.0 then pass as 10100  
 */
 const libName = 'React-Native';
-const libVersion = 40000;
+const libVersion = 40100;
 CleverTapReact.setLibrary(libName,libVersion);
 
 function defaultCallback(method, err, res) {
@@ -311,6 +311,13 @@ var CleverTap = {
     */
     setOffline: function (value) {
         CleverTapReact.setOffline(value);
+    },
+
+    /**
+    * Clears a backend-imposed mute state on the CleverTap SDK, resuming network operations immediately.
+    */
+    unmute: function () {
+        CleverTapReact.unmute();
     },
 
     /**

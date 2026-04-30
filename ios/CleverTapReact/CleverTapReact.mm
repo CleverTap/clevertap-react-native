@@ -944,6 +944,11 @@ RCT_EXPORT_METHOD(resumeInAppNotifications) {
     [[self cleverTapInstance] resumeInAppNotifications];
 }
 
+RCT_EXPORT_METHOD(unmute) {
+    RCTLogInfo(@"[CleverTap unmute]");
+    [[self cleverTapInstance] unmute];
+}
+
 #pragma mark - InApp Controls
 
 RCT_EXPORT_METHOD(fetchInApps:(RCTResponseSenderBlock)callback) {
