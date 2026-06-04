@@ -167,6 +167,7 @@ export interface Spec extends TurboModule {
   deleteInboxMessagesForIDs(messageIds: string[]): void;
   dismissInbox(): void;
   initializeInbox(): void;
+  fetchInbox(callback: ((error: Object, result: boolean) => void) | null): void;
   showInbox(
     styleConfig: Object | null
   ): void;
@@ -177,6 +178,7 @@ export interface Spec extends TurboModule {
   ): void;
   pushDisplayUnitViewedEventForID(unitId: string): void;
   pushDisplayUnitClickedEventForID(unitId: string): void;
+  pushDisplayUnitElementClickedEventForID(unitId: string, additionalProperties: Object | null): void;
   getFeatureFlag(
     flag: string,
     withdefaultValue: boolean,

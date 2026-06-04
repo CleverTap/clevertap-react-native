@@ -523,6 +523,12 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function initializeInbox(): void;
 
   /**
+   * Triggers an on-demand App Inbox refresh from the server.
+   * @param callback optional callback invoked with a boolean success flag when the fetch completes
+   */
+  export function fetchInbox(callback?: Callback): void;
+
+  /**
    * Call this method to get the count of unread Inbox messages
    */
   export function getInboxMessageUnreadCount(callback: Callback): void;
@@ -612,9 +618,16 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    */
   export function pushDisplayUnitClickedEventForID(unitID: string): void;
 
+  /**
+   * Records an element-level Notification Clicked event for a specific element within a Display Unit.
+   * @param unitID - unique id of the display unit
+   * @param additionalProperties - optional per-click context (e.g. element id, action url, custom KVs)
+   */
+  export function pushDisplayUnitElementClickedEventForID(unitID: string, additionalProperties?: Record<string, unknown>): void;
+
   /*******************
    * Product Configs
-   ******************/ 
+   ******************/
   /**
    * @deprecated
    * Since version 1.1.0 and will be removed in the future versions of this SDK.

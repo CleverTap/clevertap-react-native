@@ -665,6 +665,14 @@ var CleverTap = {
     },
 
     /**
+     * Triggers an on-demand App Inbox refresh from the server.
+     * @param {function(err, res)} callback optional callback with a boolean flag indicating whether the fetch was successful
+     */
+    fetchInbox: function (callback) {
+        callWithCallback('fetchInbox', null, callback);
+    },
+
+    /**
     * Method to show the App Inbox
     * @param {object} styleConfig - key-value profile properties.  keys and values are strings
     */
@@ -798,6 +806,15 @@ var CleverTap = {
      */
     pushDisplayUnitClickedEventForID: function (unitID) {
         CleverTapReact.pushDisplayUnitClickedEventForID(unitID);
+    },
+
+    /**
+     * Records an element-level Notification Clicked event for a specific element within a Display Unit
+     * @param {string} unitID - unique id of the display unit
+     * @param {object} additionalProperties - optional per-click context (e.g. element id, action url, custom KVs)
+     */
+    pushDisplayUnitElementClickedEventForID: function (unitID, additionalProperties) {
+        CleverTapReact.pushDisplayUnitElementClickedEventForID(unitID, additionalProperties);
     },
 
 
