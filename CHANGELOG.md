@@ -1,9 +1,24 @@
 Change Log
 ==========
 
-## [Unreleased]
-- [Android] Bump clevertap-android-sdk to 8.3.0 — adds on-demand inbox refresh (`fetchInbox`) with optional success callback (Cross-Device Sync), and `pushDisplayUnitElementClickedEventForID` for element-level Display Unit click attribution
-- [iOS] Bump CleverTap-iOS-SDK to 7.7.1 — adds `fetchInbox` with optional success callback for on-demand inbox refresh (Cross-Device Sync), and `pushDisplayUnitElementClickedEventForID` for element-level Display Unit click attribution
+Version 4.2.0 *(June 5 2026)*
+-------------------------------------------
+**What's new**
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v8.3.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-830-june-2026).
+  * App Inbox Cross-Device Sync — inbox state (read, deleted) syncs across a user's devices automatically. Includes a pull-to-refresh gesture in the built-in `showAppInbox()` view, throttled to once every 5 minutes.
+
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.7.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-771-june-04-2026).
+  * App Inbox Cross-Device Sync — inbox state (read, deleted) syncs across a user's devices automatically. Includes a pull-to-refresh gesture in the built-in App Inbox view, throttled to once every 5 minutes.
+  * Silent-in-foreground push notifications via the `wzrk_sif:true` payload key — server-controlled, no app-side wiring needed when using `autoIntegrate`.
+
+**API changes**
+* **[Android and iOS Platform]**
+  * Adds a new API `fetchInbox(callback?)` to trigger an on-demand inbox refresh. The callback is optional and receives `(error, success)` once the fetch completes. Throttled to once every 5 minutes between consecutive calls.
+    * `fetchInbox()` — fire-and-forget
+    * `fetchInbox((err, success) => { ... })` — with completion callback
+  * Adds a new API `pushDisplayUnitElementClickedEventForID(unitID, additionalProperties)` to record a `Notification Clicked` event for a specific element within a Native Display Unit. `additionalProperties` is merged with cached `wzrk_*` attribution fields for finer-grained click analytics.
 
 Version 4.1.0 *(April 30 2026)*
 -------------------------------------------
