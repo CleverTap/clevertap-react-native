@@ -253,6 +253,10 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.pushInboxNotificationViewedEventForId(messageId)
     }
 
+    override fun fetchInbox(callback: Callback?) {
+        cleverTapModuleImpl.fetchInbox(callback)
+    }
+
     override fun showInbox(styleConfig: ReadableMap?) {
         cleverTapModuleImpl.showInbox(styleConfig)
     }
@@ -327,6 +331,10 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
 
     override fun pushDisplayUnitViewedEventForID(unitID: String?) {
         cleverTapModuleImpl.pushDisplayUnitViewedEventForID(unitID)
+    }
+
+    override fun pushDisplayUnitElementClickedEventForID(unitID: String?, additionalProperties: ReadableMap?) {
+        cleverTapModuleImpl.pushDisplayUnitElementClickedEventForID(unitID, additionalProperties)
     }
 
     override fun pushInstallReferrer(source: String?, medium: String?, campaign: String?) {

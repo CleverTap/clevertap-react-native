@@ -180,6 +180,24 @@ CleverTap.addListener(CleverTap.CleverTapInboxMessageButtonTapped, (event) => {/
 CleverTap.dismissInbox();
 ```
 
+#### Fetch Inbox
+
+*Available from CleverTap React Native SDK v4.2.0.*
+
+Triggers an on-demand refresh of the App Inbox from the server. Throttled to once every 5 minutes between consecutive calls — this throttle is shared with the built-in pull-to-refresh gesture in `showInbox()`.
+
+The optional callback is invoked once the fetch finishes. The `success` argument is `true` when the server returned new inbox messages successfully, and `false` when the fetch failed (network error, server-side issue, or the call was suppressed by the 5-minute throttle).
+
+```javascript
+// Fire-and-forget
+CleverTap.fetchInbox();
+
+// With completion callback
+CleverTap.fetchInbox((err, success) => {
+    console.log('fetchInbox result:', success, err);
+});
+```
+
 ### Mark read all inbox messages by array of messageIds
 ```javascript
 CleverTap.markReadInboxMessagesForIDs(['1', '2', '3']);	
@@ -340,6 +358,24 @@ CleverTap.getDisplayUnitForId('Unit Id', (err, res) => {
 ```javascript 
 CleverTap.getAllDisplayUnits((err, res) => {
         console.log('All Display Units: ', res, err);
+});
+```
+
+#### Push Display Unit Element Clicked Event
+
+*Available from CleverTap React Native SDK v4.2.0.*
+
+Records a `Notification Clicked` event for a specific element (e.g., a button, an image) within a Native Display Unit. `additionalProperties` is merged with cached `wzrk_*` attribution fields by the native SDK for finer-grained click analytics.
+
+```javascript
+CleverTap.pushDisplayUnitElementClickedEventForID('unit-12345', {
+    wzrk_element_id: 'shop-now-button',
+    element_type: 'button',
+    position: 'top-right',
+    screen: 'home',
+    product_id: 'sku-789',
+    price: 499.00,
+    is_discounted: true
 });
 ```
 
