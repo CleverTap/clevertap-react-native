@@ -184,7 +184,7 @@ CleverTap.dismissInbox();
 
 *Available from CleverTap React Native SDK v4.2.0.*
 
-Triggers an on-demand refresh of the App Inbox from the server. Throttled to once every 5 minutes between consecutive calls — this throttle is shared with the built-in pull-to-refresh gesture in `showAppInbox()`.
+Triggers an on-demand refresh of the App Inbox from the server. Throttled to once every 5 minutes between consecutive calls — this throttle is shared with the built-in pull-to-refresh gesture in `showInbox()`.
 
 The optional callback is invoked once the fetch finishes. The `success` argument is `true` when the server returned new inbox messages successfully, and `false` when the fetch failed (network error, server-side issue, or the call was suppressed by the 5-minute throttle).
 
