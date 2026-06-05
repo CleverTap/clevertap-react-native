@@ -6,7 +6,7 @@ Version 4.2.0 *(June 5 2026)*
 **What's new**
 * **[Android Platform]**
   * Supports [CleverTap Android SDK v8.3.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-830-june-2026).
-  * App Inbox Cross-Device Sync — inbox state (read, deleted) syncs across a user's devices automatically. Includes a pull-to-refresh gesture in the built-in `showAppInbox()` view, throttled to once every 5 minutes.
+  * App Inbox Cross-Device Sync — inbox state (read, deleted) syncs across a user's devices automatically. Includes a pull-to-refresh gesture in the built-in `showInbox()` view, throttled to once every 5 minutes.
 
 * **[iOS Platform]**
   * Supports [CleverTap iOS SDK v7.7.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-771-june-04-2026).
