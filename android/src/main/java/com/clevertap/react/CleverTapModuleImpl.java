@@ -665,7 +665,11 @@ public class CleverTapModuleImpl {
     public void fetchInbox(final Callback callback) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap == null) {
-            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
+            String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
+            Log.e(TAG, error);
+            if (callback != null) {
+                callbackWithErrorAndResult(callback, error, null);
+            }
             return;
         }
         if (callback == null) {
