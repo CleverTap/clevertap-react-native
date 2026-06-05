@@ -10,9 +10,9 @@ import {
 var styles = require('../styles');
 
 const DynamicForm = ({ config }) => {
-  const { texts, placeholders, onSubmit } = config;
-  const [name, setName] = useState('');
-  const [keyValues, setKeyValues] = useState([]);
+  const { texts, placeholders, onSubmit, initialValues } = config;
+  const [name, setName] = useState(initialValues?.name || '');
+  const [keyValues, setKeyValues] = useState(initialValues?.keyValues || []);
 
   const addKeyValue = () => {
     setKeyValues([...keyValues, { key: '', value: '' }]);

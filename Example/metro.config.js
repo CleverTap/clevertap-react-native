@@ -4,7 +4,10 @@
 * @format
 */
 
+const path = require('path');
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
+
+const wrapperRoot = path.resolve(__dirname, '..');
 
 const defaultConfig = getDefaultConfig(__dirname);
 
@@ -13,6 +16,7 @@ const {
 } = getDefaultConfig(__dirname);
 
 const config = {
+ watchFolders: [wrapperRoot],
  transformer: {
    getTransformOptions: async () => ({
      transform: {
@@ -25,6 +29,7 @@ const config = {
  resolver: {
    assetExts: assetExts.filter(ext => ext !== 'svg'),
    sourceExts: [...sourceExts, 'svg'],
+   nodeModulesPaths: [path.resolve(__dirname, 'node_modules')],
  },
 };
 
