@@ -30,6 +30,7 @@
 		685D0A42F74FC38D84284799 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9A4C3DD3EBC1242A62F0E22B /* PrivacyInfo.xcprivacy */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		C28EE22363709BEF624F9F1E /* libPods-NotificationContentSwift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C33252DD165317E32A556B4 /* libPods-NotificationContentSwift.a */; };
+		CD791C3D25CA4AFFABF1BDAB /* templates.json in Resources */ = {isa = PBXBuildFile; fileRef = 0AA07CC388FC412995E19062 /* templates.json */; };
 		FFDFBBA910887882FBEAC7E1 /* libPods-NotificationContent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DEC195091200DD33134801AA /* libPods-NotificationContent.a */; };
 /* End PBXBuildFile section */
 
@@ -82,6 +83,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0AA07CC388FC412995E19062 /* templates.json */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = templates.json; path = ../assets/templates.json; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Example/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = Example/AppDelegate.mm; sourceTree = "<group>"; };
@@ -190,6 +192,15 @@
 			name = Example;
 			sourceTree = "<group>";
 		};
+		29357A84F8C84F86B03C9E7D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0AA07CC388FC412995E19062 /* templates.json */,
+			);
+			name = Resources;
+			path = "";
+			sourceTree = "<group>";
+		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -281,6 +292,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				7168044AA71FBFBA4A3B8E24 /* Pods */,
+				29357A84F8C84F86B03C9E7D /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -461,6 +473,7 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				685D0A42F74FC38D84284799 /* PrivacyInfo.xcprivacy in Resources */,
+				CD791C3D25CA4AFFABF1BDAB /* templates.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1295,7 +1308,10 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -1363,7 +1379,10 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

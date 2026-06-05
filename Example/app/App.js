@@ -56,7 +56,8 @@ export default class App extends Component {
     this.state = {
       AccordionData: [...this.accordionData],
       EventFormConfig: this.eventFormConfig,
-      ProfileFormConfig: this.profileFormConfig
+      ProfileFormConfig: this.profileFormConfig,
+      DisplayUnitElementClickFormConfig: this.displayUnitElementClickFormConfig
     };
   }
 
@@ -117,6 +118,39 @@ export default class App extends Component {
           CleverTap.profileSet(props);
         }
       }
+    }
+  };
+
+  displayUnitElementClickFormConfig = {
+    texts: {
+      add: 'Add property',
+      submit: 'Push DisplayUnit Element Click'
+    },
+    placeholders: {
+      namePlaceholder: 'Display Unit ID',
+      keyPlaceholder: 'Prop key',
+      valuePlaceholder: 'Value (number / true / false / null / {...} / [...] auto-parsed)'
+    },
+    initialValues: {
+      name: 'unit-1',
+      keyValues: [
+        { key: 'wzrk_element_id', value: 'btn-1' },
+        { key: 'click_count', value: '5' },
+        { key: 'is_premium', value: 'true' },
+        { key: 'metadata', value: '{"campaign":"summer","tier":3}' },
+        { key: 'tags', value: '["promo","cta","new"]' },
+        { key: 'last_seen', value: 'null' }
+      ]
+    },
+    onSubmit: (data) => {
+      const props = Object.fromEntries(
+        data.keyValues
+          .filter(kv => kv.key !== '')
+          .map(kv => [kv.key, AppUtils.parseFormValue(kv.value)])
+      );
+      console.log(`pushDisplayUnitElementClickedEventForID(${data.name}, ${JSON.stringify(props)})`);
+      AppUtils.showToast(`Display Unit Element Click: ${data.name}`, JSON.stringify(props));
+      CleverTap.pushDisplayUnitElementClickedEventForID(data.name, props);
     }
   };
 
@@ -273,6 +307,8 @@ export default class App extends Component {
           action: Actions.INBOX_NOTIFICATION_CLICKED,
           name: 'pushInboxNotificationClickedEvent',
         },
+        { action: Actions.FETCH_INBOX, name: 'fetchInbox' },
+        { action: Actions.FETCH_INBOX_WITH_CALLBACK, name: 'fetchInbox (with callback)' },
       ],
     },
     {
@@ -348,6 +384,7 @@ export default class App extends Component {
       subCategory: [
         { action: Actions.DISPLAY_UNIT_ID, name: 'getUnitID' },
         { action: Actions.ALL_DISPLAY_UNITS, name: 'getAllDisplayUnits' },
+        { action: Actions.PUSH_DISPLAY_UNIT_ELEMENT_CLICKED, name: 'pushDisplayUnitElementClickedEventForID' },
       ],
     },
     {
@@ -513,6 +550,12 @@ export default class App extends Component {
       case Actions.INBOX_NOTIFICATION_CLICKED:
         AppUtils.pushInboxNotificationClicked();
         break;
+      case Actions.FETCH_INBOX:
+        AppUtils.fetchInbox();
+        break;
+      case Actions.FETCH_INBOX_WITH_CALLBACK:
+        AppUtils.fetchInboxWithCallback();
+        break;
       case Actions.PUSH_EVENT:
         AppUtils.pushevent();
         break;
@@ -578,6 +621,9 @@ export default class App extends Component {
         break;
       case Actions.ALL_DISPLAY_UNITS:
         AppUtils.getAllDisplayUnits();
+        break;
+      case Actions.PUSH_DISPLAY_UNIT_ELEMENT_CLICKED:
+        AppUtils.pushDisplayUnitElementClickedEvent();
         break;
       case Actions.PRODUCT_CONFIG_FETCH:
         AppUtils.fetch();
@@ -937,6 +983,9 @@ export default class App extends Component {
           </ExpandableListView>
           <ExpandableListView item={{categoryName: 'Update User'}}>
             <DynamicForm config={this.state.ProfileFormConfig}></DynamicForm>
+          </ExpandableListView>
+          <ExpandableListView item={{categoryName: 'Push DisplayUnit Element Click'}}>
+            <DynamicForm config={this.state.DisplayUnitElementClickFormConfig}></DynamicForm>
           </ExpandableListView>
           {this.state.AccordionData.map((item, key) => (
             <ExpandableListView

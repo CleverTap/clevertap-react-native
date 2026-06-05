@@ -25,6 +25,7 @@ import com.clevertap.android.sdk.displayunits.model.CleverTapDisplayUnit;
 import com.clevertap.android.sdk.events.EventDetail;
 import com.clevertap.android.sdk.featureFlags.CTFeatureFlagsController;
 import com.clevertap.android.sdk.inapp.CTLocalInApp;
+import com.clevertap.android.sdk.FetchInboxCallback;
 import com.clevertap.android.sdk.inapp.callbacks.FetchInAppsCallback;
 import com.clevertap.android.sdk.inapp.customtemplates.CustomTemplateContext;
 import com.clevertap.android.sdk.inbox.CTInboxMessage;
@@ -661,6 +662,24 @@ public class CleverTapModuleImpl {
         }
     }
 
+    public void fetchInbox(final Callback callback) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap == null) {
+            String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
+            Log.e(TAG, error);
+            if (callback != null) {
+                callbackWithErrorAndResult(callback, error, null);
+            }
+            return;
+        }
+        if (callback == null) {
+            cleverTap.fetchInbox();
+        } else {
+            cleverTap.fetchInbox((FetchInboxCallback) success ->
+                callbackWithErrorAndResult(callback, null, success));
+        }
+    }
+
     public void showInbox(ReadableMap styleConfig) {
         CTInboxStyleConfig inboxStyleConfig = styleConfigFromReadableMap(styleConfig);
         CleverTapAPI cleverTap = getCleverTapAPI();
@@ -883,6 +902,18 @@ public class CleverTapModuleImpl {
         } else {
             Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
         }
+    }
+
+    public void pushDisplayUnitElementClickedEventForID(String unitID, ReadableMap additionalProperties) {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap == null) {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
+            return;
+        }
+        HashMap<String, Object> props = additionalProperties != null
+            ? eventPropsFromReadableMap(additionalProperties, Object.class)
+            : new HashMap<>();
+        cleverTap.pushDisplayUnitElementClickedEventForID(unitID, props);
     }
 
     public void pushInstallReferrer(String source, String medium, String campaign) {

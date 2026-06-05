@@ -6,6 +6,39 @@ import {
 
 const CleverTap = require('clevertap-react-native');
 
+// Turn a TextInput string into the most natural JS type for testing the
+// bridge. "true"/"false" → bool, "42"/"3.14" → number, "null" → null,
+// "{...}"/"[...]" → parsed JSON. Anything else stays a string.
+export const parseFormValue = (val) => {
+    if (typeof val !== 'string') {
+        return val;
+    }
+    const trimmed = val.trim();
+    if (trimmed === '') {
+        return '';
+    }
+    if (trimmed === 'true') {
+        return true;
+    }
+    if (trimmed === 'false') {
+        return false;
+    }
+    if (trimmed === 'null') {
+        return null;
+    }
+    if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
+        return Number(trimmed);
+    }
+    if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+        try {
+            return JSON.parse(trimmed);
+        } catch (e) {
+            // fall through — treat as plain string
+        }
+    }
+    return val;
+};
+
 const toastsQueue = [];
 var toastIsShowing = false;
 
@@ -358,6 +391,18 @@ export const pushInboxNotificationClicked = () => {
     CleverTap.pushInboxNotificationClickedEventForId('Message Id');
 };
 
+export const fetchInbox = () => {
+    CleverTap.fetchInbox();
+    showToast('fetchInbox called (fire-and-forget)');
+};
+
+export const fetchInboxWithCallback = () => {
+    CleverTap.fetchInbox((err, success) => {
+        console.log('fetchInbox result:', success, err);
+        showToast(`fetchInbox: ${success}`);
+    });
+};
+
 export const printInboxMessagesArray = (data) => {
     if (data != null) {
         console.log('Total Inbox Message count = ' + data.length);
@@ -570,6 +615,13 @@ export const getAllDisplayUnits = () => {
         // Uncomment to access payload.
         // printDisplayUnitsPayload(res);
     });
+};
+
+export const pushDisplayUnitElementClickedEvent = () => {
+    CleverTap.pushDisplayUnitElementClickedEventForID('Unit Id', {
+        wzrk_element_id: 'btn-1',
+    });
+    showToast('pushDisplayUnitElementClickedEventForID called');
 };
 
 // Product Config

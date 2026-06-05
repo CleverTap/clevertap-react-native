@@ -45,23 +45,28 @@ target 'Example' do
          aggregate_target.user_project.save
         end
   end
+  pod "SDWebImage", :modular_headers => true
 end
 
 target 'NotificationService' do
   pod_clevertap_ios_sdk
   pod "CTNotificationService", :modular_headers => true
+  pod "SDWebImage", :modular_headers => true
 end
 
 target 'NotificationContent' do
   pod "CTNotificationContent"
+  pod "SDWebImage", :modular_headers => true
 end
 
 # Added these target for sample code only in Swift
 target 'NotificationServiceSwift' do
   pod_clevertap_ios_sdk
   pod "CTNotificationService", :modular_headers => true
+  pod "SDWebImage", :modular_headers => true
 end
 
 target 'NotificationContentSwift' do
   pod "CTNotificationContent"
+  pod "SDWebImage", :modular_headers => true
 end
