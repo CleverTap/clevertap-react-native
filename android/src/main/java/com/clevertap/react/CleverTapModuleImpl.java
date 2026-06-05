@@ -901,8 +901,15 @@ public class CleverTapModuleImpl {
     }
 
     public void pushDisplayUnitElementClickedEventForID(String unitID, ReadableMap additionalProperties) {
-        // No-op: Android SDK parity not yet available for element-level click attribution.
-        Log.d(TAG, "pushDisplayUnitElementClickedEventForID: no Android SDK parity in this release");
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap == null) {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
+            return;
+        }
+        HashMap<String, Object> props = additionalProperties != null
+            ? eventPropsFromReadableMap(additionalProperties, Object.class)
+            : new HashMap<>();
+        cleverTap.pushDisplayUnitElementClickedEventForID(unitID, props);
     }
 
     public void pushInstallReferrer(String source, String medium, String campaign) {

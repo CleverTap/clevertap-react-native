@@ -2,7 +2,7 @@ Change Log
 ==========
 
 ## [Unreleased]
-- [Android] Bump clevertap-android-sdk to 8.3.0 — adds on-demand inbox refresh (`fetchInbox`) with optional success callback, supporting App Inbox Cross-Device Sync
+- [Android] Bump clevertap-android-sdk to 8.3.0 — adds on-demand inbox refresh (`fetchInbox`) with optional success callback (Cross-Device Sync), and `pushDisplayUnitElementClickedEventForID` for element-level Display Unit click attribution
 - [iOS] Bump CleverTap-iOS-SDK to 7.7.1 — adds `fetchInbox` with optional success callback for on-demand inbox refresh (Cross-Device Sync), and `pushDisplayUnitElementClickedEventForID` for element-level Display Unit click attribution
 
 Version 4.1.0 *(April 30 2026)*
