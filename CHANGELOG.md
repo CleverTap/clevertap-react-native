@@ -19,6 +19,11 @@ Version 4.2.0 *(June 5 2026)*
     * `fetchInbox()` — fire-and-forget
     * `fetchInbox((err, success) => { ... })` — with completion callback
   * Adds a new API `pushDisplayUnitElementClickedEventForID(unitID, additionalProperties)` to record a `Notification Clicked` event for a specific element within a Native Display Unit. `additionalProperties` is merged with cached `wzrk_*` attribution fields for finer-grained click analytics.
+  
+**Bug Fixes**
+* **[iOS Platform]**
+  * Fixes a bug where server-side InApps evaluation IDs were being duplicated in UserDefaults.
+  * Fixes a bug where apps were freezing when InApps were being shown in low network conditions.
 
 Version 4.1.0 *(April 30 2026)*
 -------------------------------------------
