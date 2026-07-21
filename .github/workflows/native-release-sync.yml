@@ -1,0 +1,69 @@
+name: native-release-sync
+
+# Manually triggered after the native iOS and/or Android SDKs have released.
+# Delegates the actual work to the reusable workflow in clevertap-wrapper-tooling.
+#
+# Trigger: GitHub UI → Actions tab → native-release-sync → Run workflow.
+# Fill in the versions for whichever platform(s) just released; leave the
+# other empty to skip.
+#
+# Outcome: a single PR opened against `develop` containing all changes.
+# Authored by clevertap-wrapper-sync[bot]. CI must pass before merge.
+
+on:
+  workflow_dispatch:
+    inputs:
+      android_module:
+        description: 'Android module being bumped'
+        type: choice
+        options: [none, core, pushtemplates, hms]
+        default: core
+      android_version:
+        description: 'New Android version (e.g. 8.2.0). Leave empty to skip Android.'
+        type: string
+        default: ''
+      ios_module:
+        description: 'iOS module being bumped'
+        type: choice
+        options: [none, core, pushtemplates]
+        default: core
+      ios_version:
+        description: 'New iOS version (e.g. 7.7.0). Leave empty to skip iOS.'
+        type: string
+        default: ''
+      release_name:
+        description: 'Optional branch suffix (defaults to today YYYY-MM-DD)'
+        type: string
+        default: ''
+      base_ref:
+        description: 'Wrapper branch to sync from / open PR against (default develop; use a test branch for testing)'
+        type: string
+        default: 'develop'
+      model:
+        description: 'Claude model (alias)'
+        type: choice
+        options: [sonnet, opus, haiku]
+        default: sonnet
+      skip_sync:
+        description: 'Skip Claude Sync + post-sync builds (pre-sync builds still run). Use for debugging the build pipeline without Claude cost.'
+        type: boolean
+        default: false
+
+jobs:
+  sync:
+    uses: CleverTap/clevertap-wrapper-tooling/.github/workflows/sync.yml@v1
+    with:
+      wrapper:         react-native
+      android_module:  ${{ inputs.android_module != 'none' && inputs.android_module || '' }}
+      android_version: ${{ inputs.android_version }}
+      ios_module:      ${{ inputs.ios_module != 'none' && inputs.ios_module || '' }}
+      ios_version:     ${{ inputs.ios_version }}
+      release_name:    ${{ inputs.release_name }}
+      base_ref:        ${{ inputs.base_ref }}
+      model:           ${{ inputs.model }}
+      skip_sync:       ${{ inputs.skip_sync }}
+    secrets:
+      app_id:            ${{ secrets.CLEVERTAP_WRAPPER_SYNC_APP_ID }}
+      app_private_key:   ${{ secrets.CLEVERTAP_WRAPPER_SYNC_PRIVATE_KEY }}
+      anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+      slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
