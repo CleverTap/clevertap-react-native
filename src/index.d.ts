@@ -783,6 +783,18 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   export function resumeInAppNotifications(): void;
 
   /**
+   * Dismisses the currently visible Picture-in-Picture (PIP) InApp Notification, if any.
+   *
+   * This is a no-op when no PIP InApp Notification is visible, and other InApp Notification
+   * types are never affected.
+   *
+   * Note: dismissing frees the InApp display slot, so the next queued InApp Notification (if
+   * any) may show immediately. To keep a screen free of all InApp Notifications, pair this with
+   * suspendInAppNotifications() on screen entry and resumeInAppNotifications() on exit.
+   */
+  export function dismissPipInApp(): void;
+
+  /**
    * Fetches In Apps from server.
    *
    * @param {function(err, res)} callback a callback with a boolean flag whether the fetching was successful

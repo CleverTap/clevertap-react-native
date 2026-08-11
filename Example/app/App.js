@@ -370,6 +370,7 @@ export default class App extends Component {
         { action: Actions.IN_APPS_DISCARD, name: 'discardInAppNotifications' },
         { action: Actions.IN_APPS_DISCARD_WITH_DISMISS, name: 'discardInAppNotifications(true)' },
         { action: Actions.IN_APPS_RESUME, name: 'resumeInAppNotifications' },
+        { action: Actions.IN_APPS_DISMISS_PIP, name: 'dismissPipInApp' },
       ],
     },
     {
@@ -675,6 +676,9 @@ export default class App extends Component {
         break;
       case Actions.IN_APPS_RESUME:
         CleverTap.resumeInAppNotifications();
+        break;
+      case Actions.IN_APPS_DISMISS_PIP:
+        AppUtils.dismissPipInApp();
         break;
       case Actions.ENABLE_PERSONALIZATION:
         AppUtils.enablePersonalization();

@@ -12,7 +12,7 @@ const EventEmitter = Platform.select({
 * @param {int} libVersion - The updated library version. If current version is 1.1.0 then pass as 10100  
 */
 const libName = 'React-Native';
-const libVersion = 40200;
+const libVersion = 40300;
 CleverTapReact.setLibrary(libName,libVersion);
 
 function defaultCallback(method, err, res) {
@@ -979,6 +979,20 @@ var CleverTap = {
      */
     resumeInAppNotifications: function () {
         CleverTapReact.resumeInAppNotifications();
+    },
+
+    /**
+     * Dismisses the currently visible Picture-in-Picture (PIP) InApp Notification, if any.
+     *
+     * This is a no-op when no PIP InApp Notification is visible, and other InApp Notification
+     * types are never affected.
+     *
+     * Note: dismissing frees the InApp display slot, so the next queued InApp Notification (if
+     * any) may show immediately. To keep a screen free of all InApp Notifications, pair this with
+     * suspendInAppNotifications() on screen entry and resumeInAppNotifications() on exit.
+     */
+    dismissPipInApp: function () {
+        CleverTapReact.dismissPipInApp();
     },
 
     /**

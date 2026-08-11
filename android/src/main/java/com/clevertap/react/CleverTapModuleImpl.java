@@ -1188,6 +1188,13 @@ public class CleverTapModuleImpl {
         }
     }
 
+    public void dismissPipInApp() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.dismissPipInApp();
+        }
+    }
+
     public void unmute() {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {

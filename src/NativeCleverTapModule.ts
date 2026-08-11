@@ -209,6 +209,7 @@ export interface Spec extends TurboModule {
   suspendInAppNotifications(): void;
   discardInAppNotifications(dismissInAppIfVisible?: boolean): void;
   resumeInAppNotifications(): void;
+  dismissPipInApp(): void;
   fetchInApps(callback: ((error: Object, result: boolean) => void) | null): void;
   clearInAppResources(expiredOnly: boolean): void;
   customTemplateSetDismissed(templateName: string): Promise<void>;
