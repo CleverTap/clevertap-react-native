@@ -156,6 +156,103 @@ RCT_EXPORT_METHOD(setInstanceWithAccountId:(NSString*)accountId) {
     [self resolveInstance:accountId]; // ensure delegates are wired exactly once
 }
 
+// 'off' -> Off(-1), 'info' -> Info(0), 'debug'/'verbose' -> Debug(1).
+// iOS has no verbose level; Android maps 'verbose' to its real verbose level.
+static CleverTapLogLevel ctLogLevelFromString(NSString *level) {
+    if ([level isEqualToString:@"off"]) return CleverTapLogOff;
+    if ([level isEqualToString:@"debug"] || [level isEqualToString:@"verbose"]) return CleverTapLogDebug;
+    return CleverTapLogInfo;
+}
+
+static CleverTapEncryptionLevel ctEncryptionLevelFromString(NSString *level) {
+    return [level isEqualToString:@"medium"] ? CleverTapEncryptionMedium : CleverTapEncryptionNone;
+}
+
+RCT_EXPORT_METHOD(createInstance:(NSDictionary *)config
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+    RCTLogInfo(@"[CleverTap createInstance]");
+
+    NSString *accountId = config[@"accountId"];
+    NSString *token = config[@"accountToken"];
+    // .length == 0 covers BOTH missing and empty — an empty string would create a
+    // "zombie" instance whose events go nowhere while every call looks successful.
+    if (accountId.length == 0 || token.length == 0) {
+        reject(@"EINVALID", @"createInstance requires non-empty accountId and accountToken", nil);
+        return;
+    }
+
+    // Idempotent: an existing account is returned as-is and the config is ignored.
+    if ([CleverTap getGlobalInstance:accountId] != nil) {
+        RCTLogWarn(@"createInstance: instance for %@ already exists; config ignored", accountId);
+        [self resolveInstance:accountId];
+        resolve(@{@"accountId": accountId});
+        return;
+    }
+
+    NSString *region = config[@"region"];
+    NSString *proxy = config[@"proxyDomain"];
+    NSString *spiky = config[@"spikyProxyDomain"];
+
+    // region/proxyDomain/spikyProxyDomain are READONLY on the iOS config — they can
+    // only be set through one of the four initializers, and none of them accepts
+    // region AND proxy together. Agreed rule: region wins, proxy settings are
+    // ignored with a warning (Android applies both).
+    CleverTapInstanceConfig *ctConfig;
+    if (region.length > 0) {
+        if (proxy.length > 0 || spiky.length > 0) {
+            RCTLogWarn(@"createInstance: iOS cannot combine region with proxyDomain/spikyProxyDomain; region applied, proxy settings ignored (Android applies both)");
+        }
+        ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:token accountRegion:region];
+    } else if (proxy.length > 0 && spiky.length > 0) {
+        ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:token proxyDomain:proxy spikyProxyDomain:spiky];
+    } else if (proxy.length > 0) {
+        ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:token proxyDomain:proxy];
+    } else {
+        if (spiky.length > 0) {
+            RCTLogWarn(@"createInstance: spikyProxyDomain requires proxyDomain; ignored");
+        }
+        ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:token];
+    }
+
+    // These ARE writable properties on the iOS config:
+    if (config[@"identityKeys"]) {
+        ctConfig.identityKeys = config[@"identityKeys"];
+    }
+    if (config[@"logLevel"]) {
+        ctConfig.logLevel = ctLogLevelFromString(config[@"logLevel"]);
+    }
+    if (config[@"encryptionLevel"]) {
+        ctConfig.encryptionLevel = ctEncryptionLevelFromString(config[@"encryptionLevel"]);
+    }
+    if (config[@"encryptionInTransit"]) {
+        ctConfig.encryptionInTransitEnabled = [config[@"encryptionInTransit"] boolValue];
+    }
+    if (config[@"useCustomCleverTapId"]) {
+        ctConfig.useCustomCleverTapId = [config[@"useCustomCleverTapId"] boolValue];
+    }
+
+    CleverTap *instance = [CleverTap instanceWithConfig:ctConfig];
+    if (instance == nil) {
+        reject(@"ECREATE", [NSString stringWithFormat:@"createInstance failed for accountId %@", accountId], nil);
+        return;
+    }
+    [instance setLibrary:@"React-Native"];
+    [self resolveInstance:accountId]; // wires delegates exactly once
+    resolve(@{@"accountId": accountId});
+}
+
+// Resolves the account id the default slot currently points to (or null when no
+// default account exists). JS uses this once to route the top-level CleverTap
+// object's events; see the multi-instance design docs (point 5).
+RCT_EXPORT_METHOD(getDefaultAccountId:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+    RCTLogInfo(@"[CleverTap getDefaultAccountId]");
+    CleverTap *instance = [self resolveInstance:nil];
+    NSString *accountId = instance.config.accountId;
+    resolve(accountId ?: (id)[NSNull null]);
+}
+
 RCT_EXPORT_METHOD(getInitialUrl:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getInitialUrl]");
     NSString *launchDeepLink = [CleverTapReactManager sharedInstance].launchDeepLink;

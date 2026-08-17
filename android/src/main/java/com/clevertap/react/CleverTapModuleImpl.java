@@ -19,6 +19,8 @@ import androidx.annotation.RequiresApi;
 
 import com.clevertap.android.sdk.CTInboxStyleConfig;
 import com.clevertap.android.sdk.CleverTapAPI;
+import com.clevertap.android.sdk.CleverTapInstanceConfig;
+import com.clevertap.android.sdk.cryption.EncryptionLevel;
 import com.clevertap.android.sdk.Logger;
 import com.clevertap.android.sdk.UTMDetail;
 import com.clevertap.android.sdk.displayunits.model.CleverTapDisplayUnit;
@@ -1771,6 +1773,120 @@ public class CleverTapModuleImpl {
                 Log.i(TAG, "CleverTap instance changed for accountId " + accountId);
             }
         }
+    }
+
+    /**
+     * Creates an additional CleverTap account from JavaScript.
+     *
+     * Idempotent: calling it again for an existing accountId resolves with that
+     * account and ignores the new config (a warning is logged).
+     *
+     * Example: createInstance({accountId: 'ACCT_B', accountToken: 'TOK_B', region: 'eu1'})
+     * resolves with {accountId: 'ACCT_B'} and resolveInstance("ACCT_B") starts working.
+     */
+    public void createInstance(ReadableMap config, Promise promise) {
+        String accountId = config != null ? config.getString("accountId") : null;
+        String accountToken = config != null ? config.getString("accountToken") : null;
+        // Reject EMPTY as well as missing: the native SDK only null-checks, so an
+        // empty string would create a "zombie" instance whose events go nowhere
+        // while every call looks successful.
+        if (accountId == null || accountId.trim().isEmpty()
+                || accountToken == null || accountToken.trim().isEmpty()) {
+            promise.reject("EINVALID", "createInstance requires non-empty accountId and accountToken");
+            return;
+        }
+
+        CleverTapAPI existing = CleverTapAPI.getGlobalInstance(this.context, accountId);
+        if (existing != null) {
+            Log.w(TAG, "createInstance: instance for " + accountId + " already exists; config ignored");
+            resolveInstance(accountId); // ensure listeners are wired
+            promise.resolve(accountIdResult(accountId));
+            return;
+        }
+
+        String region = config.hasKey("region") ? config.getString("region") : null;
+        CleverTapInstanceConfig ctConfig = (region != null && !region.trim().isEmpty())
+                ? CleverTapInstanceConfig.createInstance(this.context, accountId, accountToken, region)
+                : CleverTapInstanceConfig.createInstance(this.context, accountId, accountToken);
+        if (ctConfig == null) {
+            promise.reject("ECREATE", "createInstance could not build a config for accountId " + accountId);
+            return;
+        }
+        applyOptionalConfig(ctConfig, config);
+
+        CleverTapAPI instance = CleverTapAPI.instanceWithConfig(this.context, ctConfig);
+        if (instance == null) {
+            promise.reject("ECREATE", "createInstance failed for accountId " + accountId);
+            return;
+        }
+        resolveInstance(accountId); // wires listeners + setLibrary via initCtInstance
+        promise.resolve(accountIdResult(accountId));
+    }
+
+    /**
+     * Resolves the account id the default slot currently points to (or null when
+     * no default account exists). JS uses this once to route the top-level
+     * CleverTap object's events; see the multi-instance design docs (point 5).
+     */
+    public void getDefaultAccountId(Promise promise) {
+        CleverTapAPI defaultInstance = resolveInstance(null);
+        promise.resolve(defaultInstance != null ? defaultInstance.getAccountId() : null);
+    }
+
+    private WritableMap accountIdResult(String accountId) {
+        WritableMap result = Arguments.createMap();
+        result.putString("accountId", accountId);
+        return result;
+    }
+
+    // Android applies BOTH region and proxy settings when given together; iOS can
+    // only honor region and warns that proxy was ignored (documented platform
+    // difference — the iOS config's region/proxy fields are constructor-only).
+    private void applyOptionalConfig(CleverTapInstanceConfig ctConfig, ReadableMap config) {
+        if (config.hasKey("proxyDomain")) {
+            ctConfig.setProxyDomain(config.getString("proxyDomain"));
+        }
+        if (config.hasKey("spikyProxyDomain")) {
+            ctConfig.setSpikyProxyDomain(config.getString("spikyProxyDomain"));
+        }
+        if (config.hasKey("identityKeys")) {
+            ReadableArray keys = config.getArray("identityKeys");
+            if (keys != null && keys.size() > 0) {
+                String[] identityKeys = new String[keys.size()];
+                for (int i = 0; i < keys.size(); i++) {
+                    identityKeys[i] = keys.getString(i);
+                }
+                ctConfig.setIdentityKeys(identityKeys);
+            }
+        }
+        if (config.hasKey("logLevel")) {
+            ctConfig.setDebugLevel(toLogLevel(config.getString("logLevel")));
+        }
+        if (config.hasKey("encryptionLevel")) {
+            ctConfig.setEncryptionLevel("medium".equals(config.getString("encryptionLevel"))
+                    ? EncryptionLevel.MEDIUM : EncryptionLevel.NONE);
+        }
+        if (config.hasKey("encryptionInTransit")) {
+            ctConfig.setEncryptionInTransit(config.getBoolean("encryptionInTransit"));
+        }
+        if (config.hasKey("useCustomCleverTapId")) {
+            ctConfig.setEnableCustomCleverTapId(config.getBoolean("useCustomCleverTapId"));
+        }
+    }
+
+    // 'off' -> OFF(-1), 'info' -> INFO(0), 'debug' -> DEBUG(2), 'verbose' -> VERBOSE(3).
+    // (iOS has no verbose level and maps 'verbose' to its debug level.)
+    private CleverTapAPI.LogLevel toLogLevel(String level) {
+        if ("off".equals(level)) {
+            return CleverTapAPI.LogLevel.OFF;
+        }
+        if ("debug".equals(level)) {
+            return CleverTapAPI.LogLevel.DEBUG;
+        }
+        if ("verbose".equals(level)) {
+            return CleverTapAPI.LogLevel.VERBOSE;
+        }
+        return CleverTapAPI.LogLevel.INFO;
     }
 
     private CTProductConfigController getCtProductConfigController() {

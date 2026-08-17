@@ -539,6 +539,16 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
+    fun createInstance(config: ReadableMap?, promise: Promise?) {
+        cleverTapModuleImpl.createInstance(config, promise)
+    }
+
+    @ReactMethod
+    fun getDefaultAccountId(promise: Promise?) {
+        cleverTapModuleImpl.getDefaultAccountId(promise)
+    }
+
+    @ReactMethod
     fun fetchInApps(callback: Callback?) {
         cleverTapModuleImpl.fetchInApps(callback)
     }

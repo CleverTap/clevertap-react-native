@@ -456,6 +456,14 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.setInstanceWithAccountId(accountId)
     }
 
+    override fun createInstance(config: ReadableMap?, promise: Promise?) {
+        cleverTapModuleImpl.createInstance(config, promise)
+    }
+
+    override fun getDefaultAccountId(promise: Promise?) {
+        cleverTapModuleImpl.getDefaultAccountId(promise)
+    }
+
     override fun fetchInApps(callback: Callback?) {
         cleverTapModuleImpl.fetchInApps(callback)
     }

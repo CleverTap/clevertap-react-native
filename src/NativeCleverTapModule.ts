@@ -32,6 +32,8 @@ export interface Spec extends TurboModule {
   };
   
   setInstanceWithAccountId(accountId: string): void;
+  createInstance(config: Object): Promise<Object>;
+  getDefaultAccountId(): Promise<string | null>;
   getInitialUrl(callback: (callback: string) => void): void;
   setLibrary(name: string, andVersion: number): void;
   setLocale(locale: string): void;
