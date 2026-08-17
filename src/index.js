@@ -54,6 +54,146 @@ function callWithCallback(method, args, callback, accountId) {
     CleverTapReact[method].apply(this, args);
 }
 
+/* ---------------------------------------------------------------------------
+ * Multi-instance support (see MULTI_INSTANCE_OVERVIEW.md).
+ *
+ * Every native event payload carries the REAL account id of the instance that
+ * fired it, under CT_ACCOUNT_ID_KEY. A central "sorting office" (demux) below
+ * keeps ONE native subscription per event name, reads the tag, and re-delivers
+ * the event under a per-account key like 'ACCT_B::CleverTapProfileSync'. Each
+ * account handle subscribes to exactly its own key, so no handle is ever woken
+ * for another account's events.
+ * ------------------------------------------------------------------------- */
+
+// Defined once — no magic strings. Must match Constants.CT_ACCOUNT_ID_KEY (Android)
+// and kCleverTapAccountIdKey (iOS).
+const CT_ACCOUNT_ID_KEY = '__ctAccountId';
+// Internal routing key for the top-level CleverTap object (the "default slot").
+const DEFAULT_SLOT_KEY = '__default__';
+
+const routedKey = (accountKey, eventName) => accountKey + '::' + eventName;
+
+// Keeps the trailing native arg explicit: null = the default account. It must always
+// be passed — the old-architecture Android bridge throws on a missing trailing arg.
+const toAccountArg = (accountId) => (accountId === undefined ? null : accountId);
+
+// Which account do the top-level CleverTap listeners follow? Asked from native once;
+// setInstanceWithAccountId updates it synchronously (legacy "slot swap").
+let currentDefaultAccountId = null;
+let slotSwapped = false;
+const defaultAccountIdReady = CleverTapReact.getDefaultAccountId().then((id) => {
+    if (!slotSwapped) {
+        currentDefaultAccountId = id;
+    }
+    return currentDefaultAccountId;
+}).catch(() => currentDefaultAccountId);
+
+const routedHandlers = new Map(); // routedKey -> Set<handler>
+const nativeSubscriptions = new Map(); // eventName -> emitter subscription
+
+function deliverRouted(key, payload) {
+    const handlers = routedHandlers.get(key);
+    if (handlers) {
+        handlers.forEach((handler) => handler(payload));
+    }
+}
+
+function routeEvent(eventName, event) {
+    const tag = event ? event[CT_ACCOUNT_ID_KEY] : null;
+    // Immutability: never mutate the shared payload. Every handler receives the same
+    // sanitized copy, without the internal tag.
+    let payload = event;
+    if (event && CT_ACCOUNT_ID_KEY in event) {
+        payload = Object.assign({}, event);
+        delete payload[CT_ACCOUNT_ID_KEY];
+    }
+    if (tag == null) {
+        // Untagged events (e.g. custom templates, which are global by native design)
+        // go to the top-level CleverTap listeners — same audience as before.
+        deliverRouted(routedKey(DEFAULT_SLOT_KEY, eventName), payload);
+        return;
+    }
+    deliverRouted(routedKey(tag, eventName), payload);
+    if (tag === currentDefaultAccountId) {
+        deliverRouted(routedKey(DEFAULT_SLOT_KEY, eventName), payload);
+    }
+}
+
+function ensureNativeSubscription(eventName) {
+    if (!EventEmitter || nativeSubscriptions.has(eventName)) {
+        return;
+    }
+    nativeSubscriptions.set(eventName,
+        EventEmitter.addListener(eventName, (event) => routeEvent(eventName, event)));
+}
+
+function addListenerForHandle(accountId, eventName, handler) {
+    const accountKey = accountId === undefined ? DEFAULT_SLOT_KEY : accountId;
+    ensureNativeSubscription(eventName);
+    const key = routedKey(accountKey, eventName);
+    if (!routedHandlers.has(key)) {
+        routedHandlers.set(key, new Set());
+    }
+    routedHandlers.get(key).add(handler);
+    // Arm the native buffered-event flush for this account. For the top-level object,
+    // wait until the default account id is known — otherwise a flushed event could
+    // arrive before routeEvent can recognize it as the default account's.
+    if (accountId === undefined) {
+        defaultAccountIdReady.then(() => CleverTapReact.onEventListenerAdded(eventName, null));
+    } else {
+        CleverTapReact.onEventListenerAdded(eventName, accountId);
+    }
+    return {
+        remove: () => {
+            const handlers = routedHandlers.get(key);
+            if (handlers) {
+                handlers.delete(handler);
+            }
+        }
+    };
+}
+
+function removeListenersForHandle(accountId, eventName) {
+    const accountKey = accountId === undefined ? DEFAULT_SLOT_KEY : accountId;
+    // Deletes ONLY this handle's handlers — other handles' listeners for the same
+    // event keep working (this fixes the "removeListener kills everyone" bug class).
+    routedHandlers.delete(routedKey(accountKey, eventName));
+}
+
+/**
+ * Builds a handle for one CleverTap account. Every method forwards the handle's
+ * accountId as the trailing native argument; listeners receive only this account's
+ * events. The handle is frozen so its shape cannot be mutated by callers.
+ *
+ * v1 exposes the core method subset; the remaining methods are added as their native
+ * routing lands (see point7_full_method_surface.md).
+ */
+function createHandle(accountId) {
+    const handle = {
+        accountId: accountId,
+
+        recordEvent: (eventName, props) => {
+            convertDateToEpochInProperties(props);
+            CleverTapReact.recordEvent(eventName, props, toAccountArg(accountId));
+        },
+        getCleverTapID: (callback) =>
+            callWithCallback('getCleverTapID', null, callback, toAccountArg(accountId)),
+
+        addListener: (eventName, handler) => addListenerForHandle(accountId, eventName, handler),
+        removeListener: (eventName) => removeListenersForHandle(accountId, eventName)
+    };
+    return Object.freeze(handle);
+}
+
+// Handles are memoized: getInstance('B') twice returns the same frozen object.
+const handleCache = new Map();
+function getOrMakeHandle(accountId) {
+    if (!handleCache.has(accountId)) {
+        handleCache.set(accountId, createHandle(accountId));
+    }
+    return handleCache.get(accountId);
+}
+
 var CleverTap = {
     CleverTapProfileDidInitialize: CleverTapReact.getConstants().CleverTapProfileDidInitialize,
     CleverTapProfileSync: CleverTapReact.getConstants().CleverTapProfileSync,
@@ -90,33 +230,27 @@ var CleverTap = {
     * @param {function(event)} your event handler
     */
     addListener: function (eventName, handler) {
-        if (EventEmitter) {
-            EventEmitter.addListener(eventName, handler);
-            // null = arm the buffered-event flush for the default account (resolved natively).
-            // Must be passed explicitly — old-architecture Android throws on a missing arg.
-            CleverTapReact.onEventListenerAdded(eventName, null);
-        }
+        // Routed through the demux: fires for the default account's events (and untagged
+        // global events). Returns a subscription: const sub = addListener(...); sub.remove().
+        return addListenerForHandle(undefined, eventName, handler);
     },
     addOneTimeListener: function (eventName, handler) {
-        if (EventEmitter) {
-            const subscription = EventEmitter.addListener(eventName, (args) =>
-             {
-              handler(args);
-              subscription.remove();
-              });
-            CleverTapReact.onEventListenerAdded(eventName);
-        }
+        const subscription = addListenerForHandle(undefined, eventName, (event) => {
+            handler(event);
+            subscription.remove();
+        });
+        return subscription;
     },
 
     /**
-    * Removes all of the registered listeners for given eventName.
+    * Removes the listeners registered through CleverTap.addListener for given eventName.
+    * Listeners added on other account handles (or directly on the raw event emitter)
+    * are NOT touched — see the CHANGELOG behavior note.
     *
     * @param {string} eventName -  name of the event whose registered listeners to remove
     */
     removeListener: function (eventName) {
-        if (EventEmitter) {
-            EventEmitter.removeAllListeners(eventName);
-        }
+        removeListenersForHandle(undefined, eventName);
     },
 
     /**
@@ -124,6 +258,11 @@ var CleverTap = {
     *  Remove all event listeners
     */
     removeListeners: function () {
+        // Tear down the demux state too, so a later addListener starts clean
+        // (native subscriptions are re-created on demand).
+        nativeSubscriptions.forEach((subscription) => subscription.remove());
+        nativeSubscriptions.clear();
+        routedHandlers.clear();
         if (DeviceEventEmitter) {
             DeviceEventEmitter.removeAllListeners();
         }
@@ -1023,7 +1162,48 @@ var CleverTap = {
      * @param accountId The ID of the account to use when switching instance.
      */
     setInstanceWithAccountId: function (accountId) {
+        // Legacy "slot swap": top-level calls AND listeners follow this account from now on.
+        slotSwapped = true;
+        currentDefaultAccountId = accountId;
         CleverTapReact.setInstanceWithAccountId(accountId);
+    },
+
+    /**
+    * Creates an additional CleverTap account from JavaScript and resolves with its handle.
+    * Idempotent: for an already-existing account it resolves with that account's handle
+    * and the new config is ignored (a native warning is logged).
+    *
+    * @example
+    * const accountB = await CleverTap.createInstance({
+    *     accountId: 'ACCT_B', accountToken: 'TOK_B', region: 'eu1'
+    * });
+    * accountB.recordEvent('Purchase', { amount: 9 });
+    *
+    * @param {object} config - { accountId, accountToken, region?, proxyDomain?,
+    * spikyProxyDomain?, identityKeys?, logLevel?, encryptionLevel?, encryptionInTransit?,
+    * useCustomCleverTapId? }. Note: on iOS, region wins over proxyDomain (warned);
+    * Android applies both.
+    * @returns {Promise<object>} resolves with the account's handle
+    */
+    createInstance: function (config) {
+        return CleverTapReact.createInstance(config).then((result) => getOrMakeHandle(result.accountId));
+    },
+
+    /**
+    * Returns the handle for an account. ALWAYS returns a handle (never null): the native
+    * SDKs persist account configs, so an account may exist natively even when this app run
+    * never called createInstance. Calls on a handle whose account does not exist natively
+    * log one warning and do nothing.
+    *
+    * @example
+    * const accountB = CleverTap.getInstance('ACCT_B');
+    * accountB.addListener(CleverTap.CleverTapProfileDidInitialize, (e) => { });
+    *
+    * @param {string} accountId - The account id
+    * @returns {object} the account's handle
+    */
+    getInstance: function (accountId) {
+        return getOrMakeHandle(accountId);
     },
 
     /**

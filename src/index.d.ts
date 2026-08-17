@@ -3,14 +3,15 @@
    ******************/
 
    /**
-    * Add a CleverTap event listener
+    * Add a CleverTap event listener for the default account's events.
     * @param {string} eventName - the CleverTap event name
     * @param {function(event)} handler - Event handler
+    * @returns a subscription; call `remove()` to detach only this handler
     */
    export function addListener(
    eventName: string,
    handler: Function
-   ): void;
+   ): { remove: () => void };
 
    /**
     * Removes all of the registered listeners for given eventName.
@@ -813,12 +814,61 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    ******************/
 
   /**
-    * Change the native instance of CleverTapAPI by using the instance for
-    * specific account. Used by Leanplum RN SDK.
+    * @deprecated Since multi-instance support. Use `CleverTap.getInstance(accountId)` to
+    * address an existing account, or `CleverTap.createInstance({accountId, accountToken, ...})`
+    * to create one — without switching the default instance. Kept for backwards
+    * compatibility; will be removed in a future major version.
     *
     * @param accountId {string} - The ID of the account to use when switching instance.
     */
   export function setInstanceWithAccountId(accountId: string): void;
+
+  /**
+   * Configuration for creating an additional CleverTap account from JavaScript.
+   * Note: on iOS, `region` wins over `proxyDomain`/`spikyProxyDomain` (a warning is
+   * logged); Android applies both. `logLevel` 'verbose' maps to 'debug' on iOS.
+   */
+  type CleverTapInstanceConfig = {
+    accountId: string;
+    accountToken: string;
+    region?: string;
+    proxyDomain?: string;
+    spikyProxyDomain?: string;
+    identityKeys?: string[];
+    logLevel?: 'off' | 'info' | 'debug' | 'verbose';
+    encryptionLevel?: 'none' | 'medium';
+    encryptionInTransit?: boolean;
+    useCustomCleverTapId?: boolean;
+  };
+
+  /** Subscription returned by addListener; call remove() to detach the handler. */
+  type CleverTapEventSubscription = { remove: () => void };
+
+  /**
+   * A handle for ONE CleverTap account. Methods behave like their top-level CleverTap
+   * counterparts but act on this handle's account; listeners fire only for this
+   * account's events. v1 exposes the core subset; the surface grows as routing lands.
+   */
+  interface CleverTapInstance {
+    readonly accountId: string;
+    recordEvent(eventName: string, eventProps?: object): void;
+    getCleverTapID(callback: CallbackString): void;
+    addListener(eventName: string, handler: (event: any) => void): CleverTapEventSubscription;
+    removeListener(eventName: string): void;
+  }
+
+  /**
+   * Creates an additional CleverTap account from JavaScript and resolves with its handle.
+   * Idempotent: an already-existing account resolves with its handle; config is ignored.
+   * Rejects when accountId/accountToken are missing or empty.
+   */
+  export function createInstance(config: CleverTapInstanceConfig): Promise<CleverTapInstance>;
+
+  /**
+   * Returns the handle for an account. Always returns a handle (never null); calls on a
+   * handle whose account does not exist natively warn and do nothing.
+   */
+  export function getInstance(accountId: string): CleverTapInstance;
 
   /*******************
    * Product Experiences: Vars
