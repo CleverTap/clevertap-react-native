@@ -50,7 +50,8 @@ export interface Spec extends TurboModule {
   recordScreenView(screenName: string): void;
   recordEvent(
     eventName: string,
-    withProps: Object | null
+    withProps: Object | null,
+    accountId?: string | null
   ): void;
   recordChargedEvent(
     details: Object | null,
@@ -85,7 +86,10 @@ export interface Spec extends TurboModule {
   setLocation(location: number, longitude: number): void;
   profileGetCleverTapAttributionIdentifier(callback: ((error: Object, result: boolean) => void) | null): void;
   profileGetCleverTapID(callback: ((error: Object, result: boolean) => void) | null): void;
-  getCleverTapID(callback: ((error: Object, result: boolean) => void) | null): void;
+  getCleverTapID(
+    callback: ((error: Object, result: boolean) => void) | null,
+    accountId?: string | null
+  ): void;
   onUserLogin(profile: Object | null): void;
   profileSet(profile: Object | null): void;
   profileGetProperty(

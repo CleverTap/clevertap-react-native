@@ -28,8 +28,13 @@ function defaultCallback(method, err, res) {
 * @param {string} method - the CleverTap method name as a string
 * @param {array} args - The method args
 * @param {function(err, res)} callback - callback
+* @param {string} accountId - which account the call is for; pass null for the
+* default account. Only pass it for native methods that already accept a
+* trailing accountId (the native argument order is callback, then accountId).
+* Leave it undefined for all other methods: the old-architecture Android
+* bridge checks the exact argument count, so an extra argument would throw.
 */
-function callWithCallback(method, args, callback) {
+function callWithCallback(method, args, callback, accountId) {
     if (typeof callback === 'undefined' || callback == null || typeof callback !== 'function') {
         callback = (err, res) => {
             defaultCallback(method, err, res);
@@ -41,6 +46,10 @@ function callWithCallback(method, args, callback) {
     }
 
     args.push(callback);
+
+    if (accountId !== undefined) {
+        args.push(accountId);
+    }
 
     CleverTapReact[method].apply(this, args);
 }
@@ -358,7 +367,9 @@ var CleverTap = {
     */
     recordEvent: function (eventName, props) {
         convertDateToEpochInProperties(props);
-        CleverTapReact.recordEvent(eventName, props);
+        // The trailing accountId MUST be passed explicitly (null = default account):
+        // the old-architecture Android bridge throws on a missing trailing argument.
+        CleverTapReact.recordEvent(eventName, props, null);
     },
 
     /**
@@ -945,7 +956,7 @@ var CleverTap = {
      * @param {function(err, res)} non-null callback to retrieve identifier
      */
     getCleverTapID: function (callback) {
-        callWithCallback('getCleverTapID', null, callback);
+        callWithCallback('getCleverTapID', null, callback, null);
     },
 
     /**

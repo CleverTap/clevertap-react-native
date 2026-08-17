@@ -297,8 +297,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.profileGetCleverTapID(callback)
     }
 
-    override fun getCleverTapID(callback: Callback?) {
-        cleverTapModuleImpl.getCleverTapID(callback)
+    override fun getCleverTapID(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getCleverTapID(callback, accountId)
     }
 
     override fun profileGetProperty(propertyName: String?, callback: Callback?) {
@@ -345,8 +345,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.recordChargedEvent(details, items)
     }
 
-    override fun recordEvent(eventName: String?, props: ReadableMap?) {
-        cleverTapModuleImpl.recordEvent(eventName, props)
+    override fun recordEvent(eventName: String?, props: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.recordEvent(eventName, props, accountId)
     }
 
     override fun recordScreenView(screenName: String?) {

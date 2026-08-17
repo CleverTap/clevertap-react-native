@@ -820,8 +820,8 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getCleverTapID(final Callback callback) {
-        final CleverTapAPI clevertap = getCleverTapAPI();
+    public void getCleverTapID(final Callback callback, String accountId) {
+        final CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             clevertap.getCleverTapID(new OnInitCleverTapIDListener() {
                 @Override
@@ -976,8 +976,8 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void recordEvent(String eventName, ReadableMap props) {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void recordEvent(String eventName, ReadableMap props, String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }

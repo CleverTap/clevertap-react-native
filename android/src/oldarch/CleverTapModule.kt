@@ -348,8 +348,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
-    fun getCleverTapID(callback: Callback?) {
-        cleverTapModuleImpl.getCleverTapID(callback)
+    fun getCleverTapID(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getCleverTapID(callback, accountId)
     }
 
     @ReactMethod
@@ -408,8 +408,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
-    fun recordEvent(eventName: String?, props: ReadableMap?) {
-        cleverTapModuleImpl.recordEvent(eventName, props)
+    fun recordEvent(eventName: String?, props: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.recordEvent(eventName, props, accountId)
     }
 
     @ReactMethod

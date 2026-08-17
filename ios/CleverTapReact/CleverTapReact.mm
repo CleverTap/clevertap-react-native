@@ -363,9 +363,9 @@ RCT_EXPORT_METHOD(recordScreenView:(NSString*)screenName) {
     [[self cleverTapInstance] recordScreenView:screenName];
 }
 
-RCT_EXPORT_METHOD(recordEvent:(NSString*)eventName withProps:(NSDictionary*)props) {
+RCT_EXPORT_METHOD(recordEvent:(NSString*)eventName withProps:(NSDictionary*)props accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap recordEvent:withProps]");
-    [[self cleverTapInstance] recordEvent:eventName withProps:props];
+    [[self resolveInstance:accountId] recordEvent:eventName withProps:props];
 }
 
 RCT_EXPORT_METHOD(recordChargedEvent:(NSDictionary*)details andItems:(NSArray*)items) {
@@ -469,9 +469,9 @@ RCT_EXPORT_METHOD(profileGetCleverTapID:(RCTResponseSenderBlock)callback) {
     [self returnResult:result withCallback:callback andError:nil];
 }
 
-RCT_EXPORT_METHOD(getCleverTapID:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getCleverTapID:(RCTResponseSenderBlock)callback accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap getCleverTapID]");
-    NSString *result = [[self cleverTapInstance] profileGetCleverTapID];
+    NSString *result = [[self resolveInstance:accountId] profileGetCleverTapID];
     [self returnResult:result withCallback:callback andError:nil];
 }
 
