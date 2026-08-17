@@ -277,8 +277,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.getString(key, callback)
     }
 
-    override fun onUserLogin(profile: ReadableMap?) {
-        cleverTapModuleImpl.onUserLogin(profile)
+    override fun onUserLogin(profile: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.onUserLogin(profile, accountId)
     }
 
     override fun profileAddMultiValue(value: String?, key: String?) {
@@ -317,8 +317,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.profileRemoveValueForKey(key)
     }
 
-    override fun profileSet(profile: ReadableMap?) {
-        cleverTapModuleImpl.profileSet(profile)
+    override fun profileSet(profile: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.profileSet(profile, accountId)
     }
 
     override fun profileSetMultiValues(values: ReadableArray?, key: String?) {

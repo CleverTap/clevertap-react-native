@@ -767,8 +767,8 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void onUserLogin(ReadableMap profile) {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void onUserLogin(ReadableMap profile, String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }
@@ -891,8 +891,8 @@ public class CleverTapModuleImpl {
         clevertap.removeValueForKey(key);
     }
 
-    public void profileSet(ReadableMap profile) {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void profileSet(ReadableMap profile, String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }

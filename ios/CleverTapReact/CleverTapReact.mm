@@ -475,16 +475,16 @@ RCT_EXPORT_METHOD(getCleverTapID:(RCTResponseSenderBlock)callback accountId:(NSS
     [self returnResult:result withCallback:callback andError:nil];
 }
 
-RCT_EXPORT_METHOD(onUserLogin:(NSDictionary*)profile) {
+RCT_EXPORT_METHOD(onUserLogin:(NSDictionary*)profile accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap onUserLogin: %@]", profile);
     NSDictionary *_profile = [self formatProfile:profile];
-    [[self cleverTapInstance] onUserLogin:_profile];
+    [[self resolveInstance:accountId] onUserLogin:_profile];
 }
 
-RCT_EXPORT_METHOD(profileSet:(NSDictionary*)profile) {
+RCT_EXPORT_METHOD(profileSet:(NSDictionary*)profile accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap profileSet: %@]", profile);
     NSDictionary *_profile = [self formatProfile:profile];
-    [[self cleverTapInstance] profilePush:_profile];
+    [[self resolveInstance:accountId] profilePush:_profile];
 }
 
 RCT_EXPORT_METHOD(profileGetProperty:(NSString*)propertyName callback:(RCTResponseSenderBlock)callback) {

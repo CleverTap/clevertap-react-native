@@ -852,6 +852,8 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   interface CleverTapInstance {
     readonly accountId: string;
     recordEvent(eventName: string, eventProps?: object): void;
+    onUserLogin(profile: object): void;
+    profileSet(profile: object): void;
     getCleverTapID(callback: CallbackString): void;
     addListener(eventName: string, handler: (event: any) => void): CleverTapEventSubscription;
     removeListener(eventName: string): void;

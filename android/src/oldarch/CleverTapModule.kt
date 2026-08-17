@@ -323,8 +323,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
-    fun onUserLogin(profile: ReadableMap?) {
-        cleverTapModuleImpl.onUserLogin(profile)
+    fun onUserLogin(profile: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.onUserLogin(profile, accountId)
     }
 
     @ReactMethod
@@ -373,8 +373,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
-    fun profileSet(profile: ReadableMap?) {
-        cleverTapModuleImpl.profileSet(profile)
+    fun profileSet(profile: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.profileSet(profile, accountId)
     }
 
     @ReactMethod

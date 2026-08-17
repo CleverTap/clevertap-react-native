@@ -90,8 +90,8 @@ export interface Spec extends TurboModule {
     callback: ((error: Object, result: boolean) => void) | null,
     accountId?: string | null
   ): void;
-  onUserLogin(profile: Object | null): void;
-  profileSet(profile: Object | null): void;
+  onUserLogin(profile: Object | null, accountId?: string | null): void;
+  profileSet(profile: Object | null, accountId?: string | null): void;
   profileGetProperty(
     propertyName: string,
     callback: ((error: Object, result: boolean) => void) | null

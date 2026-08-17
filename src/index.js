@@ -176,6 +176,14 @@ function createHandle(accountId) {
             convertDateToEpochInProperties(props);
             CleverTapReact.recordEvent(eventName, props, toAccountArg(accountId));
         },
+        onUserLogin: (profile) => {
+            convertDateToEpochInProperties(profile);
+            CleverTapReact.onUserLogin(profile, toAccountArg(accountId));
+        },
+        profileSet: (profile) => {
+            convertDateToEpochInProperties(profile);
+            CleverTapReact.profileSet(profile, toAccountArg(accountId));
+        },
         getCleverTapID: (callback) =>
             callWithCallback('getCleverTapID', null, callback, toAccountArg(accountId)),
 
@@ -646,7 +654,7 @@ var CleverTap = {
     */
     onUserLogin: function (profile) {
         convertDateToEpochInProperties(profile);
-        CleverTapReact.onUserLogin(profile);
+        CleverTapReact.onUserLogin(profile, null);
     },
 
     /**
@@ -655,7 +663,7 @@ var CleverTap = {
     */
     profileSet: function (profile) {
         convertDateToEpochInProperties(profile);
-        CleverTapReact.profileSet(profile);
+        CleverTapReact.profileSet(profile, null);
     },
 
     /**
