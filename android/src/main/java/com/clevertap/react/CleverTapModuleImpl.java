@@ -60,9 +60,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nullable;
@@ -98,7 +100,13 @@ public class CleverTapModuleImpl {
 
     private final ReactApplicationContext context;
 
-    private CleverTapAPI mCleverTap;
+    // The "default slot": the instance that unaddressed top-level CleverTap calls use.
+    // null means "not resolved yet" -> falls back to the SDK default (manifest) instance.
+    // setInstanceWithAccountId swaps this pointer (legacy behavior).
+    private CleverTapAPI mDefaultCleverTap;
+
+    // Accounts whose listeners are already wired, so initCtInstance runs exactly once per account.
+    private final Set<String> initedAccountIds = new HashSet<>();
 
     public CleverTapModuleImpl(ReactApplicationContext reactContext) {
         this.context = reactContext;
@@ -1708,24 +1716,58 @@ public class CleverTapModuleImpl {
         CleverTapListenerProxy.INSTANCE.attachToInstance(clevertap);
     }
 
-    private CleverTapAPI getCleverTapAPI() {
-        if (mCleverTap == null) {
-            CleverTapAPI clevertap = CleverTapAPI.getDefaultInstance(this.context);
-            if (clevertap != null) {
-                initCtInstance(clevertap);
+    /**
+     * Resolves the CleverTap instance for the given account id.
+     *
+     * accountId == null -> the DEFAULT SLOT (today's behavior, unchanged).
+     * accountId != null -> the instance for that account, or null if it does not exist.
+     *
+     * Example: resolveInstance(null) returns the manifest account; after
+     * setInstanceWithAccountId("B") it returns account B. resolveInstance("C")
+     * returns account C if it was created (in this run, or restored by the native
+     * SDK from a previous run) — otherwise it logs ONE warning and returns null.
+     */
+    @Nullable
+    private CleverTapAPI resolveInstance(@Nullable String accountId) {
+        CleverTapAPI instance;
+        if (accountId == null) {
+            if (mDefaultCleverTap == null) {
+                mDefaultCleverTap = CleverTapAPI.getDefaultInstance(this.context);
             }
-            mCleverTap = clevertap;
+            instance = mDefaultCleverTap;
+        } else {
+            instance = CleverTapAPI.getGlobalInstance(this.context, accountId);
         }
 
-        return mCleverTap;
+        if (instance == null) {
+            // The ONE warning that covers every bridge method. Method bodies just
+            // null-check and return — do not add per-method warnings, and do not
+            // remove this one: without it a typo'd accountId silently drops every call.
+            if (accountId == null) {
+                Log.w(TAG, "CleverTap default instance is not available — call ignored");
+            } else {
+                Log.w(TAG, "CleverTap instance not found for accountId: " + accountId + " — call ignored");
+            }
+            return null;
+        }
+
+        String key = instance.getAccountId();
+        if (key != null && initedAccountIds.add(key)) {
+            initCtInstance(instance); // wires listeners exactly once per account (Point 4)
+        }
+        return instance;
+    }
+
+    private CleverTapAPI getCleverTapAPI() {
+        return resolveInstance(null);
     }
 
     public void setInstanceWithAccountId(String accountId) {
-        if (mCleverTap == null || !accountId.equals(mCleverTap.getAccountId())) {
+        if (mDefaultCleverTap == null || !accountId.equals(mDefaultCleverTap.getAccountId())) {
             CleverTapAPI cleverTap = CleverTapAPI.getGlobalInstance(this.context, accountId);
             if (cleverTap != null) {
-                initCtInstance(cleverTap);
-                mCleverTap = cleverTap;
+                mDefaultCleverTap = cleverTap; // swap the default slot (legacy behavior)
+                resolveInstance(accountId);    // ensure listeners are wired exactly once
                 Log.i(TAG, "CleverTap instance changed for accountId " + accountId);
             }
         }

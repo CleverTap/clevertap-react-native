@@ -29,13 +29,16 @@
 static NSDateFormatter *dateFormatter;
 
 @interface CleverTapReact()
-@property CleverTap *cleverTapInstance;
+// The "default slot": the instance that unaddressed top-level CleverTap calls use.
+// nil means "not resolved yet" -> falls back to [CleverTap sharedInstance].
+// setInstanceWithAccountId swaps this pointer (legacy behavior).
+@property(nonatomic, strong) CleverTap *defaultInstance;
+// Accounts whose delegates are already wired, so wiring happens exactly once per account.
+@property(nonatomic, strong) NSMutableSet<NSString *> *wiredAccountIds;
 @property(nonatomic, strong) NSMutableDictionary *allVariables;
 @end
 
 @implementation CleverTapReact
-
-@synthesize cleverTapInstance = _cleverTapInstance;
 
 RCT_EXPORT_MODULE();
 
@@ -90,32 +93,67 @@ RCT_EXPORT_MODULE();
     self = [super init];
     if (self) {
         self.allVariables = [NSMutableDictionary dictionary];
+        self.wiredAccountIds = [NSMutableSet set];
     }
     return self;
 }
 
-- (CleverTap *)cleverTapInstance {
-    if (_cleverTapInstance != nil) {
-        return _cleverTapInstance;
+/// Resolves the CleverTap instance for the given account id.
+///
+/// accountId == nil -> the DEFAULT SLOT (today's behavior, unchanged).
+/// accountId != nil -> the instance for that account, or nil if it does not exist.
+///
+/// Example: resolveInstance:nil returns the plist account; after
+/// setInstanceWithAccountId:@"B" it returns account B. resolveInstance:@"C"
+/// returns account C if it was created (in this run, or restored by the native
+/// SDK from a previous run) — otherwise it logs ONE warning and returns nil
+/// (callers message nil, which is a safe no-op in Objective-C).
+- (CleverTap *)resolveInstance:(NSString *)accountId {
+    CleverTap *instance;
+    if (accountId == nil) {
+        if (self.defaultInstance == nil) {
+            self.defaultInstance = [CleverTap sharedInstance];
+        }
+        instance = self.defaultInstance;
+    } else {
+        instance = [CleverTap getGlobalInstance:accountId];
     }
-    return [CleverTap sharedInstance];
+
+    if (instance == nil) {
+        // The ONE warning that covers every bridge method (same rule as Android):
+        // without it a typo'd accountId silently drops every call.
+        if (accountId == nil) {
+            RCTLogWarn(@"CleverTap default instance is not available — call ignored");
+        } else {
+            RCTLogWarn(@"CleverTap instance not found for accountId: %@ — call ignored", accountId);
+        }
+        return nil;
+    }
+
+    NSString *key = instance.config.accountId;
+    if (key != nil && ![self.wiredAccountIds containsObject:key]) {
+        [self.wiredAccountIds addObject:key];
+        [[CleverTapReactManager sharedInstance] setDelegates:instance]; // per-account handlers arrive in Point 4
+    }
+    return instance;
 }
 
-- (void)setCleverTapInstance:(CleverTap *)instance {
-    _cleverTapInstance = instance;
+// Existing accessor used by every method — now just the default slot.
+- (CleverTap *)cleverTapInstance {
+    return [self resolveInstance:nil];
 }
 
 RCT_EXPORT_METHOD(setInstanceWithAccountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap setInstanceWithAccountId]");
-    
+
     CleverTap *instance = [CleverTap getGlobalInstance:accountId];
     if (instance == nil) {
         RCTLogWarn(@"CleverTapInstance not found for accountId: %@", accountId);
         return;
     }
-    
-    [self setCleverTapInstance:instance];
-    [[CleverTapReactManager sharedInstance] setDelegates:instance];
+
+    self.defaultInstance = instance;  // swap the default slot (legacy behavior)
+    [self resolveInstance:accountId]; // ensure delegates are wired exactly once
 }
 
 RCT_EXPORT_METHOD(getInitialUrl:(RCTResponseSenderBlock)callback) {
