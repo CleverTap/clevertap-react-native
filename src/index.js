@@ -92,7 +92,9 @@ var CleverTap = {
     addListener: function (eventName, handler) {
         if (EventEmitter) {
             EventEmitter.addListener(eventName, handler);
-            CleverTapReact.onEventListenerAdded(eventName);
+            // null = arm the buffered-event flush for the default account (resolved natively).
+            // Must be passed explicitly — old-architecture Android throws on a missing arg.
+            CleverTapReact.onEventListenerAdded(eventName, null);
         }
     },
     addOneTimeListener: function (eventName, handler) {

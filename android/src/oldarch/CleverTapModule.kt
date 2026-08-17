@@ -711,8 +711,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
-    fun onEventListenerAdded(eventName: String) {
-        cleverTapModuleImpl.onEventListenerAdded(eventName)
+    fun onEventListenerAdded(eventName: String, accountId: String?) {
+        cleverTapModuleImpl.onEventListenerAdded(eventName, accountId)
     }
 
     @ReactMethod

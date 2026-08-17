@@ -1473,27 +1473,58 @@ static NSMutableSet<NSString *> *observableEvents = [NSMutableSet setWithObjects
 /// See ``startObserving`` for details.
 const int PENDING_EVENTS_TIME_OUT = 5;
 
-/// Called when a observer/listener is added for the event.
-/// Post the pending events for the event name.
+/// Builds the key used in ``observedEvents``. The queue is ACCOUNT-AWARE: each account
+/// observes an event separately ("accountId::eventName"). Bodies with no account tag are
+/// global and use the bare event name as their key.
+static NSString *observedEventKey(NSString *name, NSString *accountId) {
+    return accountId != nil ? [NSString stringWithFormat:@"%@::%@", accountId, name] : name;
+}
+
+/// Reads the account tag from an event body (nil for untagged/global bodies).
+static NSString *accountTagOfBody(id body) {
+    if ([body isKindOfClass:[NSDictionary class]]) {
+        return ((NSDictionary *)body)[kCleverTapAccountIdKey];
+    }
+    return nil;
+}
+
+/// Called when an observer/listener is added for the event.
+/// Marks the event observed for the listener's account and posts ONLY that account's
+/// pending events (plus untagged/global ones). Other accounts' pending events stay queued
+/// until their own listeners attach — posting everything here would silently drop them,
+/// because their listeners are not attached yet to receive the delivery.
 ///
 /// @param name The name of the observed event.
-RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
+/// @param accountId The account the listener belongs to; nil means the default slot.
+RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name accountId:(NSString*)accountId) {
+    NSString *accountKey = accountId ?: [self resolveInstance:nil].config.accountId;
+    [observedEvents addObject:observedEventKey(name, accountKey)];
+    // Untagged (global) bodies go live once ANY listener observes the event:
     [observedEvents addObject:name];
-    NSArray *pendingEventsForName = pendingEvents[name];
+
+    NSMutableArray<CleverTapReactPendingEvent *> *pendingEventsForName = pendingEvents[name];
     if (pendingEventsForName) {
         RCTLogInfo(@"[CleverTap: Posting pending events for event: %@]", name);
+        NSMutableArray<CleverTapReactPendingEvent *> *remaining = [NSMutableArray array];
         for (CleverTapReactPendingEvent *event in pendingEventsForName) {
-            RCTLogInfo(@"[CleverTap: posting pending event: %@ with body: %@]", event.name, event.body);
-            [[NSNotificationCenter defaultCenter] postNotificationName:event.name object:nil userInfo:event.body];
+            NSString *tag = accountTagOfBody(event.body);
+            if (tag == nil || (accountKey != nil && [tag isEqualToString:accountKey])) {
+                RCTLogInfo(@"[CleverTap: posting pending event: %@ with body: %@]", event.name, event.body);
+                [[NSNotificationCenter defaultCenter] postNotificationName:event.name object:nil userInfo:event.body];
+            } else {
+                [remaining addObject:event];
+            }
         }
+        // Replayed events are removed so a second listener cannot receive duplicates.
+        pendingEvents[name] = remaining;
     }
 }
 
 /// Send event when ReactNative has started observing events.
 /// This happens when the first observer/listener is added in ReactNative.
-/// If events are sent before that, the events are queued.
+/// If events are sent before that, the events are queued PER ACCOUNT: a body is queued
+/// until a listener for ITS account observes the event (see ``onEventListenerAdded``).
 /// Events expected to be queued are specified in ``observableEvents``.
-/// If ReactNative has started observing and the event is observed, see ``observedEvents``, the events are emitted directly.
 ///
 /// @param name The event name.
 /// @param body The event body parameters.
@@ -1502,17 +1533,19 @@ RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
         RCTLogWarn(@"[CleverTap: %@ is sent before observing and is not part of the observable events]", name);
         [observableEvents addObject:name];
     }
-    
-    if ([observableEvents containsObject:name] && ![observedEvents containsObject:name]) {
+
+    NSString *tag = accountTagOfBody(body);
+    if ([observableEvents containsObject:name]
+        && ![observedEvents containsObject:observedEventKey(name, tag)]) {
         if (!pendingEvents[name]) {
             pendingEvents[name] = [NSMutableArray array];
         }
-        
+
         CleverTapReactPendingEvent *event = [[CleverTapReactPendingEvent alloc] initWithName:name body:body];
         [pendingEvents[name] addObject:event];
         return;
     }
-    
+
     [[NSNotificationCenter defaultCenter] postNotificationName:name object:nil userInfo:body];
 }
 

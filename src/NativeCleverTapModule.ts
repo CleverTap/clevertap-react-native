@@ -252,7 +252,7 @@ export interface Spec extends TurboModule {
   onFileValueChanged(name: string): void;
   variants(callback: ((error: Object, result: boolean) => void) | null): void;
 
-  onEventListenerAdded(eventType: string): void;
+  onEventListenerAdded(eventType: string, accountId?: string | null): void;
   // NativeEventEmitter methods for the New Architecture.
   // The implementations are handled implicitly by React Native.
   addListener: (eventType: string) => void;

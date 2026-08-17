@@ -1557,16 +1557,20 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void onEventListenerAdded(String eventName) {
+    public void onEventListenerAdded(String eventName, String accountId) {
         CleverTapEvent event = CleverTapEvent.fromName(eventName);
         if (event == null) {
             Log.e(TAG, "Event listener added for unsupported event " + eventName);
             return;
         }
-        // disable the buffering for the specified event as it already has attached listener and
-        // flush all buffered events
-        CleverTapEventEmitter.INSTANCE.disableBuffer(event);
-        CleverTapEventEmitter.INSTANCE.flushBuffer(event);
+        // Arm the buffer for ONLY this listener's account (null = the default slot, resolved
+        // here) and flush that account's buffered events. Other accounts' buffered events stay
+        // buffered until their own listeners attach — flushing everything here would silently
+        // drop them, because their listeners are not attached yet to receive the delivery.
+        CleverTapAPI instance = resolveInstance(accountId);
+        String accountKey = instance != null ? instance.getAccountId() : null;
+        CleverTapEventEmitter.INSTANCE.armAccount(event, accountKey);
+        CleverTapEventEmitter.INSTANCE.flushBuffer(event, accountKey);
     }
 
     private void enableEventEmitter(ReactContext reactContext) {
@@ -1715,7 +1719,9 @@ public class CleverTapModuleImpl {
 
     private void initCtInstance(CleverTapAPI clevertap) {
         clevertap.setLibrary("React-Native");
-        CleverTapListenerProxy.INSTANCE.attachToInstance(clevertap);
+        // One proxy per account; the proxy registry keeps the strong references (see the
+        // LOAD-BEARING note in CleverTapListenerProxy).
+        CleverTapListenerProxy.attachToInstance(clevertap);
     }
 
     /**

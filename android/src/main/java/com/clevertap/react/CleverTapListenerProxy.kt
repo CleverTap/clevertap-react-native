@@ -17,17 +17,55 @@ import com.clevertap.android.sdk.inbox.CTInboxMessage
 import com.clevertap.android.sdk.product_config.CTProductConfigListener
 import com.clevertap.android.sdk.pushnotification.CTPushNotificationListener
 import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.WritableMap
 import org.json.JSONException
 import org.json.JSONObject
 
-object CleverTapListenerProxy : SyncListener, InAppNotificationListener, CTInboxListener,
-    InboxMessageButtonListener, InboxMessageListener, InAppNotificationButtonListener,
-    DisplayUnitListener, CTProductConfigListener, CTFeatureFlagsListener,
-    CTPushNotificationListener, PushPermissionResponseListener {
+/**
+ * One listener proxy PER CleverTap account (the default account included). Each proxy knows
+ * its own account id and stamps it into every event payload it emits, so JS can route the
+ * event to the right account handle.
+ *
+ * Example: the proxy for account "ACCT_B" turns a profile-init callback into a payload
+ * `{CleverTapID: "xyz", __ctAccountId: "ACCT_B"}`; only the "ACCT_B" JS handle's listeners
+ * receive it (and the tag is stripped before user code runs).
+ */
+class CleverTapListenerProxy private constructor(private val accountId: String) : SyncListener,
+    InAppNotificationListener, CTInboxListener, InboxMessageButtonListener, InboxMessageListener,
+    InAppNotificationButtonListener, DisplayUnitListener, CTProductConfigListener,
+    CTFeatureFlagsListener, CTPushNotificationListener, PushPermissionResponseListener {
 
-    private const val LOG_TAG = Constants.REACT_MODULE_NAME
+    companion object {
 
-    fun attachToInstance(instance: CleverTapAPI) {
+        private const val LOG_TAG = Constants.REACT_MODULE_NAME
+
+        // ⚠️ LOAD-BEARING: this map is the ONLY strong reference to the per-account proxies.
+        // The native SDK holds several listeners as WeakReference (DisplayUnitListener,
+        // InAppNotificationButtonListener, CTFeatureFlagsListener, CTProductConfigListener in
+        // CallbackManager). The old singleton `object` proxy could never be garbage-collected;
+        // these per-account instances CAN. Delete this map and those callbacks die silently
+        // after the next garbage collection — it will pass QA and fail in production.
+        private val proxies = mutableMapOf<String, CleverTapListenerProxy>()
+
+        /**
+         * Attach a proxy to the given instance, creating one per account on first use.
+         * Attaching again with the same account reuses the same proxy (safe to call twice).
+         */
+        @JvmStatic
+        fun attachToInstance(instance: CleverTapAPI) {
+            val accountId = instance.accountId
+            if (accountId == null) {
+                Log.e(LOG_TAG, "Cannot attach listeners: instance has no accountId")
+                return
+            }
+            val proxy = synchronized(proxies) {
+                proxies.getOrPut(accountId) { CleverTapListenerProxy(accountId) }
+            }
+            proxy.attach(instance)
+        }
+    }
+
+    private fun attach(instance: CleverTapAPI) {
         instance.unregisterPushPermissionNotificationResponseListener(this)
         instance.registerPushPermissionNotificationResponseListener(this)
         instance.ctPushNotificationListener = this
@@ -40,6 +78,12 @@ object CleverTapListenerProxy : SyncListener, InAppNotificationListener, CTInbox
         instance.setDisplayUnitListener(this)
         instance.setCTProductConfigListener(this)
         instance.setCTFeatureFlagsListener(this)
+    }
+
+    // The ONE place where the account tag is added — every callback below emits through here.
+    private fun emit(event: CleverTapEvent, params: WritableMap = Arguments.createMap()) {
+        params.putString(Constants.CT_ACCOUNT_ID_KEY, accountId)
+        CleverTapEventEmitter.emit(event, params)
     }
 
     // SyncListener
@@ -73,7 +117,7 @@ object CleverTapListenerProxy : SyncListener, InAppNotificationListener, CTInbox
 
         val params = Arguments.createMap()
         params.putMap("updates", updateParams)
-        CleverTapEventEmitter.emit(CleverTapEvent.CLEVERTAP_PROFILE_SYNC, params)
+        emit(CleverTapEvent.CLEVERTAP_PROFILE_SYNC, params)
     }
 
     // SyncListener
@@ -84,7 +128,7 @@ object CleverTapListenerProxy : SyncListener, InAppNotificationListener, CTInbox
         }
         val params = Arguments.createMap()
         params.putString("CleverTapID", cleverTapID)
-        CleverTapEventEmitter.emit(CleverTapEvent.CLEVERTAP_PROFILE_DID_INITIALIZE, params)
+        emit(CleverTapEvent.CLEVERTAP_PROFILE_DID_INITIALIZE, params)
     }
 
     // InAppNotificationListener
@@ -99,7 +143,7 @@ object CleverTapListenerProxy : SyncListener, InAppNotificationListener, CTInbox
         if (data != null) {
             params.putMap("data", CleverTapUtils.convertObjectToWritableMap(data))
         }
-        CleverTapEventEmitter.emit(CleverTapEvent.CLEVERTAP_IN_APP_NOTIFICATION_SHOWED, params)
+        emit(CleverTapEvent.CLEVERTAP_IN_APP_NOTIFICATION_SHOWED, params)
     }
 
     // InAppNotificationListener
@@ -113,30 +157,22 @@ object CleverTapListenerProxy : SyncListener, InAppNotificationListener, CTInbox
         params.putMap("extras", extrasParams)
         params.putMap("actionExtras", actionExtrasParams)
 
-        CleverTapEventEmitter.emit(CleverTapEvent.CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED, params)
+        emit(CleverTapEvent.CLEVERTAP_IN_APP_NOTIFICATION_DISMISSED, params)
     }
 
     // CTInboxListener
     override fun inboxDidInitialize() {
-        // passing an empty map
-        CleverTapEventEmitter.emit(
-            CleverTapEvent.CLEVERTAP_INBOX_DID_INITIALIZE,
-            Arguments.createMap()
-        )
+        emit(CleverTapEvent.CLEVERTAP_INBOX_DID_INITIALIZE)
     }
 
     // CTInboxListener
     override fun inboxMessagesDidUpdate() {
-        // passing an empty map
-        CleverTapEventEmitter.emit(
-            CleverTapEvent.CLEVERTAP_INBOX_MESSAGES_DID_UPDATE,
-            Arguments.createMap()
-        )
+        emit(CleverTapEvent.CLEVERTAP_INBOX_MESSAGES_DID_UPDATE)
     }
 
     // CTInboxListener
     override fun onInboxButtonClick(payload: HashMap<String, String>?) {
-        CleverTapEventEmitter.emit(
+        emit(
             CleverTapEvent.CLEVERTAP_ON_INBOX_BUTTON_CLICK,
             CleverTapUtils.getWritableMapFromMap(payload)
         )
@@ -152,12 +188,12 @@ object CleverTapListenerProxy : SyncListener, InAppNotificationListener, CTInbox
             data?.let { CleverTapUtils.convertObjectToWritableMap(it) } ?: Arguments.createMap())
         params.putInt("contentPageIndex", contentPageIndex)
         params.putInt("buttonIndex", buttonIndex)
-        CleverTapEventEmitter.emit(CleverTapEvent.CLEVERTAP_ON_INBOX_MESSAGE_CLICK, params)
+        emit(CleverTapEvent.CLEVERTAP_ON_INBOX_MESSAGE_CLICK, params)
     }
 
     // InAppNotificationButtonListener
     override fun onInAppButtonClick(payload: HashMap<String, String>?) {
-        CleverTapEventEmitter.emit(
+        emit(
             CleverTapEvent.CLEVERTAP_ON_INAPP_BUTTON_CLICK,
             CleverTapUtils.getWritableMapFromMap(payload)
         )
@@ -167,47 +203,31 @@ object CleverTapListenerProxy : SyncListener, InAppNotificationListener, CTInbox
     override fun onDisplayUnitsLoaded(units: ArrayList<CleverTapDisplayUnit>?) {
         val params = Arguments.createMap()
         params.putArray("displayUnits", CleverTapUtils.getWritableArrayFromDisplayUnitList(units))
-        CleverTapEventEmitter.emit(CleverTapEvent.CLEVERTAP_ON_DISPLAY_UNITS_LOADED, params)
+        emit(CleverTapEvent.CLEVERTAP_ON_DISPLAY_UNITS_LOADED, params)
     }
 
     // CTProductConfigListener
     override fun onActivated() {
-        // passing an empty map
-        CleverTapEventEmitter.emit(
-            CleverTapEvent.CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE,
-            Arguments.createMap()
-        )
+        emit(CleverTapEvent.CLEVERTAP_PRODUCT_CONFIG_DID_ACTIVATE)
     }
 
     // CTProductConfigListener
     override fun onFetched() {
-        // passing an empty map
-        CleverTapEventEmitter.emit(
-            CleverTapEvent.CLEVERTAP_PRODUCT_CONFIG_DID_FETCH,
-            Arguments.createMap()
-        )
+        emit(CleverTapEvent.CLEVERTAP_PRODUCT_CONFIG_DID_FETCH)
     }
 
     // CTProductConfigListener
     override fun onInit() {
-        // passing an empty map
-        CleverTapEventEmitter.emit(
-            CleverTapEvent.CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE,
-            Arguments.createMap()
-        )
+        emit(CleverTapEvent.CLEVERTAP_PRODUCT_CONFIG_DID_INITIALIZE)
     }
 
     override fun featureFlagsUpdated() {
-        // passing an empty map
-        CleverTapEventEmitter.emit(
-            CleverTapEvent.CLEVERTAP_FEATURE_FLAGS_DID_UPDATE,
-            Arguments.createMap()
-        )
+        emit(CleverTapEvent.CLEVERTAP_FEATURE_FLAGS_DID_UPDATE)
     }
 
     // CTPushNotificationListener
     override fun onNotificationClickedPayloadReceived(payload: HashMap<String, Any>?) {
-        CleverTapEventEmitter.emit(
+        emit(
             CleverTapEvent.CLEVERTAP_PUSH_NOTIFICATION_CLICKED,
             CleverTapUtils.getWritableMapFromMap(payload)
         )
@@ -220,6 +240,6 @@ object CleverTapListenerProxy : SyncListener, InAppNotificationListener, CTInbox
         )
         val params = Arguments.createMap()
         params.putBoolean("accepted", accepted)
-        CleverTapEventEmitter.emit(CleverTapEvent.CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE, params)
+        emit(CleverTapEvent.CLEVERTAP_ON_PUSH_PERMISSION_RESPONSE, params)
     }
 }
