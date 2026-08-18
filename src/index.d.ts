@@ -847,16 +847,191 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   /**
    * A handle for ONE CleverTap account. Methods behave like their top-level CleverTap
    * counterparts but act on this handle's account; listeners fire only for this
-   * account's events. v1 exposes the core subset; the surface grows as routing lands.
+   * account's events. OS-level methods (push registration, notification channels,
+   * initial URL) exist on the handle for shape consistency but warn and do nothing —
+   * call them on the top-level CleverTap object. Custom templates and setDebugLevel
+   * are global by design and are not on the handle.
    */
   interface CleverTapInstance {
     readonly accountId: string;
+
+    /* Events & profile (core) */
     recordEvent(eventName: string, eventProps?: object): void;
     onUserLogin(profile: object): void;
     profileSet(profile: object): void;
     getCleverTapID(callback: CallbackString): void;
     addListener(eventName: string, handler: (event: any) => void): CleverTapEventSubscription;
     removeListener(eventName: string): void;
+
+    /* Locale & push tokens */
+    setLocale(locale: string): void;
+    pushRegistrationToken(token: string, pushType: any): void;
+    setFCMPushToken(token: string): void;
+
+    /* Consent, personalization & connectivity */
+    setOptOut(userOptOut: boolean, allowSystemEvents?: boolean): void;
+    setOffline(offline: boolean): void;
+    unmute(): void;
+    enableDeviceNetworkInfoReporting(enable: boolean): void;
+    enablePersonalization(): void;
+    /** Disables the Personalization API for this account. */
+    disablePersonalization(): void;
+
+    /* Events */
+    recordScreenView(screenName: string): void;
+    recordChargedEvent(details: any, items: any): void;
+    eventGetFirstTime(eventName: string, callback: Callback): void;
+    eventGetLastTime(eventName: string, callback: Callback): void;
+    eventGetOccurrences(eventName: string, callback: Callback): void;
+    eventGetDetail(eventName: string, callback: Callback): void;
+    getEventHistory(callback: Callback): void;
+    getUserEventLog(eventName: string, callback: Callback): void;
+    getUserEventLogCount(eventName: string, callback: Callback): void;
+    getUserEventLogHistory(callback: Callback): void;
+
+    /* Location & profile */
+    setLocation(lat: number, lon: number): void;
+    profileGetCleverTapAttributionIdentifier(callback: CallbackString): void;
+    profileGetCleverTapID(callback: CallbackString): void;
+    profileGetProperty(propertyName: string, callback: Callback): void;
+    profileRemoveValueForKey(key: string): void;
+    profileSetMultiValuesForKey(values: any, key: string): void;
+    profileAddMultiValueForKey(value: string, key: string): void;
+    profileAddMultiValuesForKey(values: any, key: string): void;
+    profileRemoveMultiValueForKey(value: string, key: string): void;
+    profileRemoveMultiValuesForKey(values: any, key: string): void;
+    profileIncrementValueForKey(value: number, key: string): void;
+    profileDecrementValueForKey(value: number, key: string): void;
+    pushInstallReferrer(source: string, medium: string, campaign: string): void;
+
+    /* Session */
+    sessionGetTimeElapsed(callback: Callback): void;
+    sessionGetTotalVisits(callback: Callback): void;
+    getUserLastVisitTs(callback: Callback): void;
+    getUserAppLaunchCount(callback: Callback): void;
+    sessionGetScreenCount(callback: Callback): void;
+    sessionGetPreviousVisitTime(callback: Callback): void;
+    sessionGetUTMDetails(callback: Callback): void;
+
+    /* App Inbox */
+    initializeInbox(): void;
+    fetchInbox(callback?: Callback): void;
+    showInbox(styleConfig: any): void;
+    dismissInbox(): void;
+    getInboxMessageCount(callback: Callback): void;
+    getInboxMessageUnreadCount(callback: Callback): void;
+    getAllInboxMessages(callback: Callback): void;
+    getUnreadInboxMessages(callback: Callback): void;
+    getInboxMessageForId(messageId: string, callback: Callback): void;
+    deleteInboxMessageForId(messageId: string): void;
+    deleteInboxMessagesForIDs(messageIds: any): void;
+    markReadInboxMessageForId(messageId: string): void;
+    markReadInboxMessagesForIDs(messageIds: any): void;
+    pushInboxNotificationClickedEventForId(messageId: string): void;
+    pushInboxNotificationViewedEventForId(messageId: string): void;
+
+    /* Native Display */
+    getAllDisplayUnits(callback: Callback): void;
+    getDisplayUnitForId(unitID: string, callback: Callback): void;
+    pushDisplayUnitViewedEventForID(unitID: string): void;
+    pushDisplayUnitClickedEventForID(unitID: string): void;
+    pushDisplayUnitElementClickedEventForID(unitID: string, additionalProperties?: Record<string, unknown>): void;
+
+    /* Product Config & Feature Flags (deprecated natively, still routed) */
+    setDefaultsMap(productConfigMap: any): void;
+    fetch(): void;
+    fetchWithMinimumIntervalInSeconds(intervalInSecs: number): void;
+    activate(): void;
+    fetchAndActivate(): void;
+    setMinimumFetchIntervalInSeconds(intervalInSecs: number): void;
+    resetProductConfig(): void;
+    getProductConfigString(key: string, callback: Callback): void;
+    getProductConfigBoolean(key: string, callback: Callback): void;
+    getNumber(key: string, callback: Callback): void;
+    getLastFetchTimeStampInMillis(callback: Callback): void;
+    getFeatureFlag(key: string, defaultValue: boolean, callback: Callback): void;
+
+    /* InApp controls */
+    suspendInAppNotifications(): void;
+    discardInAppNotifications(dismissInAppIfVisible?: boolean): void;
+    resumeInAppNotifications(): void;
+    dismissPipInApp(): void;
+    fetchInApps(callback: Callback): void;
+    clearInAppResources(expiredOnly: boolean): void;
+
+    /* Product Experiences: Vars */
+    syncVariables(): void;
+    syncVariablesinProd(isProduction: boolean): void;
+    fetchVariables(callback: Callback): void;
+    defineVariables(variables: object): void;
+    defineFileVariable(fileVariable: string): void;
+    getVariable(name: string, callback: Callback): void;
+    getVariables(callback: Callback): void;
+    onVariablesChanged(handler: Function): void;
+    onOneTimeVariablesChanged(handler: Function): void;
+    onValueChanged(name: string, handler: Function): void;
+    onVariablesChangedAndNoDownloadsPending(handler: Function): void;
+    onceVariablesChangedAndNoDownloadsPending(handler: Function): void;
+    onFileValueChanged(name: string, handler: Function): void;
+    variants(callback: Callback): void;
+
+    /* OS-level methods below exist on the handle for shape consistency only:
+       each one warns and does nothing. Call them on the top-level CleverTap object. */
+
+    /** Warns and no-ops on account handles; call registerForPush on the top-level CleverTap object. */
+    registerForPush(): void;
+    /** Warns and no-ops on account handles; call promptForPushPermission on the top-level CleverTap object. */
+    promptForPushPermission(showFallbackSettings: boolean): void;
+    /** Warns and no-ops on account handles; call promptPushPrimer on the top-level CleverTap object. */
+    promptPushPrimer(localInAppConfig: any): void;
+    /** Warns and no-ops on account handles; call isPushPermissionGranted on the top-level CleverTap object. */
+    isPushPermissionGranted(callback: CallbackString): void;
+    /** Warns and no-ops on account handles; call getInitialUrl on the top-level CleverTap object. */
+    getInitialUrl(callback: Callback): void;
+    /** Warns and no-ops on account handles; call createNotificationChannel on the top-level CleverTap object. */
+    createNotificationChannel(
+      channelID: string,
+      channelName: string,
+      channelDescription: string,
+      importance: number,
+      showBadge: boolean
+    ): void;
+    /** Warns and no-ops on account handles; call createNotificationChannelWithSound on the top-level CleverTap object. */
+    createNotificationChannelWithSound(
+      channelID: string,
+      channelName: string,
+      channelDescription: string,
+      importance: number,
+      showBadge: boolean,
+      sound: string
+    ): void;
+    /** Warns and no-ops on account handles; call createNotificationChannelWithGroupId on the top-level CleverTap object. */
+    createNotificationChannelWithGroupId(
+      channelID: string,
+      channelName: string,
+      channelDescription: string,
+      importance: number,
+      groupId: string,
+      showBadge: boolean
+    ): void;
+    /** Warns and no-ops on account handles; call createNotificationChannelWithGroupIdAndSound on the top-level CleverTap object. */
+    createNotificationChannelWithGroupIdAndSound(
+      channelID: string,
+      channelName: string,
+      channelDescription: string,
+      importance: number,
+      groupId: string,
+      showBadge: boolean,
+      sound: string
+    ): void;
+    /** Warns and no-ops on account handles; call createNotificationChannelGroup on the top-level CleverTap object. */
+    createNotificationChannelGroup(groupID: string, groupName: string): void;
+    /** Warns and no-ops on account handles; call deleteNotificationChannel on the top-level CleverTap object. */
+    deleteNotificationChannel(channelID: string): void;
+    /** Warns and no-ops on account handles; call deleteNotificationChannelGroup on the top-level CleverTap object. */
+    deleteNotificationChannelGroup(groupID: string): void;
+    /** Warns and no-ops on account handles; call createNotification on the top-level CleverTap object. */
+    createNotification(extras: any): void;
   }
 
   /**

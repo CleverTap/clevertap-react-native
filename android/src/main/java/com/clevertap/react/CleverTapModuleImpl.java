@@ -137,8 +137,8 @@ public class CleverTapModuleImpl {
 
     }
 
-    public void setLocale(String locale) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void setLocale(String locale, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.setLocale(locale);
         } else {
@@ -146,8 +146,8 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void activate() {
-        CTProductConfigController productConfigController = getCtProductConfigController();
+    public void activate(String accountId) {
+        CTProductConfigController productConfigController = getCtProductConfigController(accountId);
         if (productConfigController == null) {
             return;
         }
@@ -298,24 +298,24 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void disablePersonalization() {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void disablePersonalization(String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }
         clevertap.disablePersonalization();
     }
 
-    public void enableDeviceNetworkInfoReporting(boolean value) {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void enableDeviceNetworkInfoReporting(boolean value, String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }
         clevertap.enableDeviceNetworkInfoReporting(value);
     }
 
-    public void enablePersonalization() {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void enablePersonalization(String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }
@@ -323,11 +323,11 @@ public class CleverTapModuleImpl {
     }
 
 
-    public void getUserEventLog(String eventName, Callback callback) {
+    public void getUserEventLog(String eventName, Callback callback, String accountId) {
         String error = null;
         WritableMap result = null;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             UserEventLog eventLog = clevertap.getUserEventLog(eventName);
             result = eventLogToWritableMap(eventLog);
@@ -337,11 +337,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getUserEventLogCount(String eventName, Callback callback) {
+    public void getUserEventLogCount(String eventName, Callback callback, String accountId) {
         String error = null;
         int result = -1;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             result = clevertap.getUserEventLogCount(eventName);
         } else {
@@ -350,11 +350,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getUserLastVisitTs(Callback callback) {
+    public void getUserLastVisitTs(Callback callback, String accountId) {
         String error = null;
         double result = -1;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             result = clevertap.getUserLastVisitTs();
         } else {
@@ -363,11 +363,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getUserAppLaunchCount(Callback callback) {
+    public void getUserAppLaunchCount(Callback callback, String accountId) {
         String error = null;
         int result = -1;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             result = clevertap.getUserAppLaunchCount();
         } else {
@@ -376,11 +376,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getUserEventLogHistory(Callback callback) {
+    public void getUserEventLogHistory(Callback callback, String accountId) {
         String error = null;
         WritableMap result = null;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             Map<String, UserEventLog> history = clevertap.getUserEventLogHistory();
             result = eventLogHistoryToWritableMap(history);
@@ -391,11 +391,11 @@ public class CleverTapModuleImpl {
     }
 
     @Deprecated(since = "3.2.0")
-    public void eventGetDetail(String eventName, Callback callback) {
+    public void eventGetDetail(String eventName, Callback callback, String accountId) {
         String error = null;
         WritableMap result = null;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             EventDetail detail = clevertap.getDetails(eventName);
             result = eventDetailToWritableMap(detail);
@@ -407,11 +407,11 @@ public class CleverTapModuleImpl {
 
 
     @Deprecated(since = "3.2.0")
-    public void eventGetFirstTime(String eventName, Callback callback) {
+    public void eventGetFirstTime(String eventName, Callback callback, String accountId) {
         String error = null;
         int result = -1;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             result = clevertap.getFirstTime(eventName);
         } else {
@@ -421,11 +421,11 @@ public class CleverTapModuleImpl {
     }
 
     @Deprecated(since = "3.2.0")
-    public void eventGetLastTime(String eventName, Callback callback) {
+    public void eventGetLastTime(String eventName, Callback callback, String accountId) {
         String error = null;
         int result = -1;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             result = clevertap.getLastTime(eventName);
         } else {
@@ -435,11 +435,11 @@ public class CleverTapModuleImpl {
     }
 
     @Deprecated(since = "3.2.0")
-    public void eventGetOccurrences(String eventName, Callback callback) {
+    public void eventGetOccurrences(String eventName, Callback callback, String accountId) {
         String error = null;
         int result = -1;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             result = clevertap.getCount(eventName);
         } else {
@@ -448,8 +448,8 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void fetch() {
-        CTProductConfigController productConfigController = getCtProductConfigController();
+    public void fetch(String accountId) {
+        CTProductConfigController productConfigController = getCtProductConfigController(accountId);
         if (productConfigController == null) {
             return;
         }
@@ -457,8 +457,8 @@ public class CleverTapModuleImpl {
         productConfigController.fetch();
     }
 
-    public void fetchAndActivate() {
-        CTProductConfigController productConfigController = getCtProductConfigController();
+    public void fetchAndActivate(String accountId) {
+        CTProductConfigController productConfigController = getCtProductConfigController(accountId);
         if (productConfigController == null) {
             return;
         }
@@ -466,8 +466,8 @@ public class CleverTapModuleImpl {
         productConfigController.fetchAndActivate();
     }
 
-    public void fetchWithMinimumFetchIntervalInSeconds(int interval) {
-        CTProductConfigController productConfigController = getCtProductConfigController();
+    public void fetchWithMinimumFetchIntervalInSeconds(int interval, String accountId) {
+        CTProductConfigController productConfigController = getCtProductConfigController(accountId);
         if (productConfigController == null) {
             return;
         }
@@ -475,11 +475,11 @@ public class CleverTapModuleImpl {
         productConfigController.fetch(interval);
     }
 
-    public void getAllDisplayUnits(Callback callback) {
+    public void getAllDisplayUnits(Callback callback, String accountId) {
         String error = null;
         WritableArray result = Arguments.createArray();
 
-        CleverTapAPI cleverTap = getCleverTapAPI();
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             result = getWritableArrayFromDisplayUnitList(cleverTap.getAllDisplayUnits());
         } else {
@@ -488,11 +488,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getBoolean(String key, Callback callback) {
+    public void getBoolean(String key, Callback callback, String accountId) {
         String error = null;
         Boolean result = null;
 
-        CleverTapAPI cleverTap = getCleverTapAPI();
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             CTProductConfigController productConfigController = cleverTap.productConfig();
             if (productConfigController != null) {
@@ -506,11 +506,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getDisplayUnitForId(String unitID, Callback callback) {
+    public void getDisplayUnitForId(String unitID, Callback callback, String accountId) {
         String error = null;
         WritableMap result = null;
 
-        CleverTapAPI cleverTap = getCleverTapAPI();
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             CleverTapDisplayUnit displayUnit = cleverTap.getDisplayUnitForId(unitID);
             if (displayUnit != null && displayUnit.getJsonObject() != null) {
@@ -522,11 +522,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getDouble(String key, Callback callback) {
+    public void getDouble(String key, Callback callback, String accountId) {
         String error = null;
         Double result = null;
 
-        CleverTapAPI cleverTap = getCleverTapAPI();
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             CTProductConfigController productConfigController = cleverTap.productConfig();
             if (productConfigController != null) {
@@ -541,11 +541,11 @@ public class CleverTapModuleImpl {
     }
 
     @Deprecated(since = "3.2.0")
-    public void getEventHistory(Callback callback) {
+    public void getEventHistory(Callback callback, String accountId) {
         String error = null;
         WritableMap result = null;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             Map<String, EventDetail> history = clevertap.getHistory();
             result = eventHistoryToWritableMap(history);
@@ -555,11 +555,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getFeatureFlag(String name, Boolean defaultValue, Callback callback) {
+    public void getFeatureFlag(String name, Boolean defaultValue, Callback callback, String accountId) {
         String error = null;
         Boolean result = null;
 
-        CleverTapAPI cleverTap = getCleverTapAPI();
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             CTFeatureFlagsController featureFlagsController = cleverTap.featureFlag();
             if (featureFlagsController != null) {
@@ -573,16 +573,16 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getAllInboxMessages(Callback callback) {
-        getInboxMessages(callback, InBoxMessages.ALL);
+    public void getAllInboxMessages(Callback callback, String accountId) {
+        getInboxMessages(callback, InBoxMessages.ALL, accountId);
     }
 
-    public void getInboxMessageCount(Callback callback) {
+    public void getInboxMessageCount(Callback callback, String accountId) {
 
         String error = null;
         int result = -1;
 
-        CleverTapAPI cleverTap = getCleverTapAPI();
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             result = cleverTap.getInboxMessageCount();
         } else {
@@ -591,11 +591,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getInboxMessageForId(String messageId, Callback callback) {
+    public void getInboxMessageForId(String messageId, Callback callback, String accountId) {
         String error = null;
         WritableMap result = null;
 
-        CleverTapAPI cleverTap = getCleverTapAPI();
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             CTInboxMessage inboxMessage = cleverTap.getInboxMessageForId(messageId);
 
@@ -608,11 +608,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getInboxMessageUnreadCount(Callback callback) {
+    public void getInboxMessageUnreadCount(Callback callback, String accountId) {
         String error = null;
         int result = -1;
 
-        CleverTapAPI cleverTap = getCleverTapAPI();
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             result = cleverTap.getInboxMessageUnreadCount();
         } else {
@@ -621,8 +621,8 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void deleteInboxMessageForId(String messageId) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void deleteInboxMessageForId(String messageId, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.deleteInboxMessage(messageId);
         } else {
@@ -630,22 +630,22 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void getUnreadInboxMessages(Callback callback) {
-        getInboxMessages(callback, InBoxMessages.UNREAD);
+    public void getUnreadInboxMessages(Callback callback, String accountId) {
+        getInboxMessages(callback, InBoxMessages.UNREAD, accountId);
     }
 
 
     //App Inbox methods
-    public void initializeInbox() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void initializeInbox(String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.initializeInbox();
             Log.e(TAG, "initializeInbox Called");
         }
     }
 
-    public void markReadInboxMessageForId(String messageId) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void markReadInboxMessageForId(String messageId, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.markReadInboxMessage(messageId);
         } else {
@@ -653,8 +653,8 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void markReadInboxMessagesForIDs(final ReadableArray messageIDs) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void markReadInboxMessagesForIDs(final ReadableArray messageIDs, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.markReadInboxMessagesForIDs(arrayListStringFromReadableArray(messageIDs));
         } else {
@@ -662,8 +662,8 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void deleteInboxMessagesForIDs(final ReadableArray messageIDs) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void deleteInboxMessagesForIDs(final ReadableArray messageIDs, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.deleteInboxMessagesForIDs(arrayListStringFromReadableArray(messageIDs));
         } else {
@@ -671,8 +671,8 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void pushInboxNotificationClickedEventForId(String messageId) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void pushInboxNotificationClickedEventForId(String messageId, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.pushInboxNotificationClickedEvent(messageId);
         } else {
@@ -680,8 +680,8 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void pushInboxNotificationViewedEventForId(String messageId) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void pushInboxNotificationViewedEventForId(String messageId, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.pushInboxNotificationViewedEvent(messageId);
         } else {
@@ -689,8 +689,8 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void fetchInbox(final Callback callback) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void fetchInbox(final Callback callback, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap == null) {
             String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
             Log.e(TAG, error);
@@ -707,16 +707,16 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void showInbox(ReadableMap styleConfig) {
+    public void showInbox(ReadableMap styleConfig, String accountId) {
         CTInboxStyleConfig inboxStyleConfig = styleConfigFromReadableMap(styleConfig);
-        CleverTapAPI cleverTap = getCleverTapAPI();
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.showAppInbox(inboxStyleConfig);
         }
     }
 
-    public void dismissInbox() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void dismissInbox(String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.dismissAppInbox();
         }
@@ -734,11 +734,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, url);
     }
 
-    public void getLastFetchTimeStampInMillis(Callback callback) {
+    public void getLastFetchTimeStampInMillis(Callback callback, String accountId) {
         String error = null;
         String result = null;
 
-        CleverTapAPI cleverTap = getCleverTapAPI();
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             CTProductConfigController productConfigController = cleverTap.productConfig();
             if (productConfigController != null) {
@@ -752,11 +752,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getString(String key, Callback callback) {
+    public void getString(String key, Callback callback, String accountId) {
         String error = null;
         String result = null;
 
-        CleverTapAPI cleverTap = getCleverTapAPI();
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             CTProductConfigController productConfigController = cleverTap.productConfig();
             if (productConfigController != null) {
@@ -780,16 +780,16 @@ public class CleverTapModuleImpl {
         clevertap.onUserLogin(finalProfile);
     }
 
-    public void profileAddMultiValue(String value, String key) {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void profileAddMultiValue(String value, String key, String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }
         clevertap.addMultiValueForKey(key, value);
     }
 
-    public void profileAddMultiValues(ReadableArray values, String key) {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void profileAddMultiValues(ReadableArray values, String key, String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }
@@ -797,11 +797,11 @@ public class CleverTapModuleImpl {
         clevertap.addMultiValuesForKey(key, finalValues);
     }
 
-    public void profileGetCleverTapAttributionIdentifier(Callback callback) {
+    public void profileGetCleverTapAttributionIdentifier(Callback callback, String accountId) {
         String error = null;
         String result = null;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             result = clevertap.getCleverTapAttributionIdentifier();
         } else {
@@ -810,11 +810,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void profileGetCleverTapID(Callback callback) {
+    public void profileGetCleverTapID(Callback callback, String accountId) {
         String error = null;
         String result = null;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             result = clevertap.getCleverTapID();
         } else {
@@ -840,11 +840,11 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void profileGetProperty(String propertyName, Callback callback) {
+    public void profileGetProperty(String propertyName, Callback callback, String accountId) {
         String error = null;
         Object result = null;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             Object value = clevertap.getProperty(propertyName);
             // Handle JSONArray for multi-values, otherwise everything should be primitive or String
@@ -869,16 +869,16 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void profileRemoveMultiValue(String value, String key) {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void profileRemoveMultiValue(String value, String key, String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }
         clevertap.removeMultiValueForKey(key, value);
     }
 
-    public void profileRemoveMultiValues(ReadableArray values, String key) {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void profileRemoveMultiValues(ReadableArray values, String key, String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }
@@ -886,8 +886,8 @@ public class CleverTapModuleImpl {
         clevertap.removeMultiValuesForKey(key, finalValues);
     }
 
-    public void profileRemoveValueForKey(String key) {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void profileRemoveValueForKey(String key, String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }
@@ -904,8 +904,8 @@ public class CleverTapModuleImpl {
         clevertap.pushProfile(finalProfile);
     }
 
-    public void profileSetMultiValues(ReadableArray values, String key) {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void profileSetMultiValues(ReadableArray values, String key, String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }
@@ -913,8 +913,8 @@ public class CleverTapModuleImpl {
         clevertap.setMultiValuesForKey(key, finalValues);
     }
 
-    public void pushDisplayUnitClickedEventForID(String unitID) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void pushDisplayUnitClickedEventForID(String unitID, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.pushDisplayUnitClickedEventForID(unitID);
         } else {
@@ -922,8 +922,8 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void pushDisplayUnitViewedEventForID(String unitID) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void pushDisplayUnitViewedEventForID(String unitID, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.pushDisplayUnitViewedEventForID(unitID);
         } else {
@@ -931,8 +931,8 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void pushDisplayUnitElementClickedEventForID(String unitID, ReadableMap additionalProperties) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void pushDisplayUnitElementClickedEventForID(String unitID, ReadableMap additionalProperties, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap == null) {
             Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
             return;
@@ -943,16 +943,16 @@ public class CleverTapModuleImpl {
         cleverTap.pushDisplayUnitElementClickedEventForID(unitID, props);
     }
 
-    public void pushInstallReferrer(String source, String medium, String campaign) {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void pushInstallReferrer(String source, String medium, String campaign, String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }
         clevertap.pushInstallReferrer(source, medium, campaign);
     }
 
-    public void recordChargedEvent(ReadableMap details, ReadableArray items) {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void recordChargedEvent(ReadableMap details, ReadableArray items, String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null || details == null) {
             return;
         }
@@ -994,8 +994,8 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void recordScreenView(String screenName) {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void recordScreenView(String screenName, String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }
@@ -1012,8 +1012,8 @@ public class CleverTapModuleImpl {
         Log.i(TAG, "CleverTap.registerForPush is a no-op in Android");
     }
 
-    public void reset() {
-        CTProductConfigController productConfigController = getCtProductConfigController();
+    public void reset(String accountId) {
+        CTProductConfigController productConfigController = getCtProductConfigController(accountId);
         if (productConfigController == null) {
             return;
         }
@@ -1022,11 +1022,11 @@ public class CleverTapModuleImpl {
     }
 
     @Deprecated(since = "3.2.0")
-    public void sessionGetPreviousVisitTime(Callback callback) {
+    public void sessionGetPreviousVisitTime(Callback callback, String accountId) {
         String error = null;
         int result = -1;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             result = clevertap.getPreviousVisitTime();
         } else {
@@ -1035,11 +1035,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void sessionGetScreenCount(Callback callback) {
+    public void sessionGetScreenCount(Callback callback, String accountId) {
         String error = null;
         int result = -1;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             result = clevertap.getScreenCount();
         } else {
@@ -1048,11 +1048,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void sessionGetTimeElapsed(Callback callback) {
+    public void sessionGetTimeElapsed(Callback callback, String accountId) {
         String error = null;
         int result = -1;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             result = clevertap.getTimeElapsed();
         } else {
@@ -1062,11 +1062,11 @@ public class CleverTapModuleImpl {
     }
 
     @Deprecated(since = "3.2.0")
-    public void sessionGetTotalVisits(Callback callback) {
+    public void sessionGetTotalVisits(Callback callback, String accountId) {
         String error = null;
         int result = -1;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             result = clevertap.getTotalVisits();
         } else {
@@ -1075,11 +1075,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void sessionGetUTMDetails(Callback callback) {
+    public void sessionGetUTMDetails(Callback callback, String accountId) {
         String error = null;
         WritableMap result = null;
 
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             UTMDetail details = clevertap.getUTMDetails();
             result = utmDetailsToWritableMap(details);
@@ -1093,8 +1093,8 @@ public class CleverTapModuleImpl {
         CleverTapAPI.setDebugLevel(level);
     }
 
-    public void setDefaultsMap(ReadableMap map) {
-        CTProductConfigController productConfigController = getCtProductConfigController();
+    public void setDefaultsMap(ReadableMap map, String accountId) {
+        CTProductConfigController productConfigController = getCtProductConfigController(accountId);
         if (productConfigController == null) {
             return;
         }
@@ -1103,8 +1103,8 @@ public class CleverTapModuleImpl {
         productConfigController.setDefaults(finalMap);
     }
 
-    public void setLocation(double latitude, double longitude) {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void setLocation(double latitude, double longitude, String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }
@@ -1114,8 +1114,8 @@ public class CleverTapModuleImpl {
         clevertap.setLocation(location);
     }
 
-    public void setMinimumFetchIntervalInSeconds(int interval) {
-        CTProductConfigController productConfigController = getCtProductConfigController();
+    public void setMinimumFetchIntervalInSeconds(int interval, String accountId) {
+        CTProductConfigController productConfigController = getCtProductConfigController(accountId);
         if (productConfigController == null) {
             return;
         }
@@ -1124,16 +1124,16 @@ public class CleverTapModuleImpl {
     }
 
     //Sets the SDK to offline mode
-    public void setOffline(boolean value) {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void setOffline(boolean value, String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }
         clevertap.setOffline(value);
     }
 
-    public void setOptOut(boolean userOptOut, Boolean allowSystemEvents) {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    public void setOptOut(boolean userOptOut, Boolean allowSystemEvents, String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return;
         }
@@ -1145,9 +1145,9 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void pushRegistrationToken(String token, ReadableMap type) {
+    public void pushRegistrationToken(String token, ReadableMap type, String accountId) {
         Logger.v("pushRegistrationToken called with: token = [" + token + "], type = [" + type + "]");
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null || token == null || type == null) {
             return;
         }
@@ -1158,9 +1158,9 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void setFCMPushTokenAsString(String token) {
+    public void setFCMPushTokenAsString(String token, String accountId) {
         Logger.v("setFCMPushTokenAsString called with: token = [" + token + "]");
-        CleverTapAPI clevertap = getCleverTapAPI();
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null || token == null) {
             return;
         }
@@ -1168,37 +1168,37 @@ public class CleverTapModuleImpl {
     }
 
     // Increment/Decrement Operator
-    public void profileIncrementValueForKey(Double value, String key) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void profileIncrementValueForKey(Double value, String key, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.incrementValue(key, value);
         }
     }
 
-    public void profileDecrementValueForKey(Double value, String key) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void profileDecrementValueForKey(Double value, String key, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.decrementValue(key, value);
         }
     }
 
     // InApp Controls
-    public void suspendInAppNotifications() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void suspendInAppNotifications(String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.suspendInAppNotifications();
         }
     }
 
-    public void discardInAppNotifications() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void discardInAppNotifications(String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.discardInAppNotifications();
         }
     }
 
-    public void discardInAppNotifications(Boolean dismissInAppIfVisible) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void discardInAppNotifications(Boolean dismissInAppIfVisible, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             if (dismissInAppIfVisible != null) {
                 cleverTap.discardInAppNotifications(dismissInAppIfVisible);
@@ -1208,22 +1208,22 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void resumeInAppNotifications() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void resumeInAppNotifications(String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.resumeInAppNotifications();
         }
     }
 
-    public void dismissPipInApp() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void dismissPipInApp(String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.dismissPipInApp();
         }
     }
 
-    public void unmute() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void unmute(String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.unmute();
         }
@@ -1318,10 +1318,10 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void variants(final Callback callback) {
+    public void variants(final Callback callback, String accountId) {
         WritableArray result = null;
         String error = null;
-        CleverTapAPI cleverTap = getCleverTapAPI();
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             List<Map<String, Object>> variantsList = cleverTap.variants();
             result = variantsToWritableArray(variantsList);
@@ -1353,26 +1353,26 @@ public class CleverTapModuleImpl {
     /**************************************************
      *  Product Experience Remote Config methods starts
      *************************************************/
-    public void syncVariables() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void syncVariables(String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.syncVariables();
         }
     }
 
-    public void syncVariablesinProd(boolean isProduction, Callback callback) {
+    public void syncVariablesinProd(boolean isProduction, Callback callback, String accountId) {
         Log.i(TAG, "CleverTap syncVariablesinProd is no-op in Android");
     }
 
-    public void fetchVariables() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void fetchVariables(String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.fetchVariables();
         }
     }
 
-    public void defineVariables(ReadableMap object) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void defineVariables(ReadableMap object, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             for (Map.Entry<String, Object> entry : object.toHashMap().entrySet()) {
                 String key = entry.getKey();
@@ -1387,8 +1387,8 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void defineFileVariable(String name) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void defineFileVariable(String name, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             Var<String> variable = cleverTap.defineFileVariable(name);
             if (variable != null) {
@@ -1399,8 +1399,8 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void fetchVariables(final Callback callback) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void fetchVariables(final Callback callback, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.fetchVariables(new FetchVariablesCallback() {
                 @Override
@@ -1414,10 +1414,10 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void getVariable(String key, final Callback callback) {
+    public void getVariable(String key, final Callback callback, String accountId) {
         String error = null;
         Object result = null;
-        CleverTapAPI cleverTap = getCleverTapAPI();
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             try {
                 result = getVariableValue(key);
@@ -1430,11 +1430,15 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getVariables(final Callback callback) {
+    public void getVariables(final Callback callback, String accountId) {
         callbackWithErrorAndResult(callback, null, getVariablesValues());
     }
 
-    public void onValueChanged(final String name) {
+    public void onValueChanged(final String name, String accountId) {
+        // Resolve first so the emitted event carries the REAL account id of the
+        // instance this callback belongs to (null keeps the event global).
+        CleverTapAPI clevertap = resolveInstance(accountId);
+        final String accountKey = clevertap != null ? clevertap.getAccountId() : null;
         if (variables.containsKey(name)) {
 
             Var<Object> var = (Var<Object>) variables.get(name);
@@ -1448,7 +1452,7 @@ public class CleverTapModuleImpl {
                         } catch (IllegalArgumentException e) {
                             Log.e(TAG, e.getLocalizedMessage());
                         }
-                        sendEvent(CleverTapEvent.CLEVERTAP_ON_VALUE_CHANGED, result);
+                        sendEvent(CleverTapEvent.CLEVERTAP_ON_VALUE_CHANGED, result, accountKey);
                     }
                 });
             } else {
@@ -1459,7 +1463,11 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void onFileValueChanged(final String name) {
+    public void onFileValueChanged(final String name, String accountId) {
+        // Resolve first so the emitted event carries the REAL account id of the
+        // instance this callback belongs to (null keeps the event global).
+        CleverTapAPI clevertap = resolveInstance(accountId);
+        final String accountKey = clevertap != null ? clevertap.getAccountId() : null;
         if (variables.containsKey(name)) {
 
             Var<Object> var = (Var<Object>) variables.get(name);
@@ -1473,7 +1481,7 @@ public class CleverTapModuleImpl {
                         } catch (IllegalArgumentException e) {
                             Log.e(TAG, e.getLocalizedMessage());
                         }
-                        sendEvent(CleverTapEvent.CLEVERTAP_ON_FILE_VALUE_CHANGED, result);
+                        sendEvent(CleverTapEvent.CLEVERTAP_ON_FILE_VALUE_CHANGED, result, accountKey);
                     }
                 });
             } else {
@@ -1484,51 +1492,55 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void onVariablesChanged() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void onVariablesChanged(String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
+            final String accountKey = cleverTap.getAccountId();
             cleverTap.addVariablesChangedCallback(new VariablesChangedCallback() {
                 @Override
                 public void variablesChanged() {
-                    sendEvent(CleverTapEvent.CLEVERTAP_ON_VARIABLES_CHANGED, getVariablesValues());
+                    sendEvent(CleverTapEvent.CLEVERTAP_ON_VARIABLES_CHANGED, getVariablesValues(), accountKey);
                 }
             });
         }
     }
 
-    public void onOneTimeVariablesChanged() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void onOneTimeVariablesChanged(String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
+            final String accountKey = cleverTap.getAccountId();
             cleverTap.addOneTimeVariablesChangedCallback(new VariablesChangedCallback() {
                 @Override
                 public void variablesChanged() {
-                    sendEvent(CleverTapEvent.CLEVERTAP_ON_ONE_TIME_VARIABLES_CHANGED, getVariablesValues());
+                    sendEvent(CleverTapEvent.CLEVERTAP_ON_ONE_TIME_VARIABLES_CHANGED, getVariablesValues(), accountKey);
                 }
             });
         }
     }
 
-    public void onVariablesChangedAndNoDownloadsPending() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void onVariablesChangedAndNoDownloadsPending(String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
+            final String accountKey = cleverTap.getAccountId();
             cleverTap.onVariablesChangedAndNoDownloadsPending(new VariablesChangedCallback() {
                 @Override
                 public void variablesChanged() {
                     sendEvent(CleverTapEvent.CLEVERTAP_ON_VARIABLES_CHANGED_AND_NO_DOWNLOADS_PENDING,
-                            getVariablesValues());
+                            getVariablesValues(), accountKey);
                 }
             });
         }
     }
 
-    public void onceVariablesChangedAndNoDownloadsPending() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void onceVariablesChangedAndNoDownloadsPending(String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
+            final String accountKey = cleverTap.getAccountId();
             cleverTap.onceVariablesChangedAndNoDownloadsPending(new VariablesChangedCallback() {
                 @Override
                 public void variablesChanged() {
                     sendEvent(CleverTapEvent.CLEVERTAP_ONCE_VARIABLES_CHANGED_AND_NO_DOWNLOADS_PENDING,
-                            getVariablesValues());
+                            getVariablesValues(), accountKey);
                 }
             });
         }
@@ -1538,15 +1550,15 @@ public class CleverTapModuleImpl {
      *  Product Experience Remote Config methods ends
      ************************************************/
 
-    public void clearInAppResources(final boolean expiredOnly) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void clearInAppResources(final boolean expiredOnly, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.clearInAppResources(expiredOnly);
         }
     }
 
-    public void fetchInApps(final Callback callback) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void fetchInApps(final Callback callback, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.fetchInApps(new FetchInAppsCallback() {
                 @Override
@@ -1914,8 +1926,8 @@ public class CleverTapModuleImpl {
         return CleverTapAPI.LogLevel.INFO;
     }
 
-    private CTProductConfigController getCtProductConfigController() {
-        CleverTapAPI clevertap = getCleverTapAPI();
+    private CTProductConfigController getCtProductConfigController(String accountId) {
+        CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {
             return null;
         }
@@ -1923,12 +1935,12 @@ public class CleverTapModuleImpl {
         return clevertap.productConfig();
     }
 
-    private void getInboxMessages(Callback callback, InBoxMessages type) {
+    private void getInboxMessages(Callback callback, InBoxMessages type, String accountId) {
         String error = null;
         ArrayList<CTInboxMessage> inboxMessages = new ArrayList<>();
         WritableArray result = Arguments.createArray();
 
-        CleverTapAPI cleverTap = getCleverTapAPI();
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
 
             if (type == InBoxMessages.ALL) {
@@ -2010,8 +2022,25 @@ public class CleverTapModuleImpl {
         return profile;
     }
 
-    private void sendEvent(@NonNull CleverTapEvent eventName, @Nullable Object params) {
-        CleverTapEventEmitter.INSTANCE.emit(eventName, params);
+    /**
+     * Emits an event to JS, stamped with the account it belongs to.
+     *
+     * Example: sendEvent(CLEVERTAP_ON_VARIABLES_CHANGED, values, "ACCT_B") adds
+     * {"__ctAccountId": "ACCT_B"} to the payload, so the JS side delivers the event
+     * to account B's listeners only. With accountKey == null the payload stays
+     * unstamped and the JS side treats the event as global (legacy behavior).
+     */
+    private void sendEvent(@NonNull CleverTapEvent eventName, @Nullable Object params,
+            @Nullable String accountKey) {
+        Object payload = params;
+        if (accountKey != null) {
+            // Keep the payload's fields when it already is a map; otherwise build a
+            // fresh map so there is something to stamp the account id on.
+            WritableMap map = params instanceof WritableMap ? (WritableMap) params : Arguments.createMap();
+            map.putString(Constants.CT_ACCOUNT_ID_KEY, accountKey);
+            payload = map;
+        }
+        CleverTapEventEmitter.INSTANCE.emit(eventName, payload);
     }
 
     /**

@@ -38,12 +38,12 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.setLibrary(libName, libVersion.toInt())
     }
 
-    override fun setLocale(locale: String?) {
-        cleverTapModuleImpl.setLocale(locale)
+    override fun setLocale(locale: String?, accountId: String?) {
+        cleverTapModuleImpl.setLocale(locale, accountId)
     }
 
-    override fun activate() {
-        cleverTapModuleImpl.activate()
+    override fun activate(accountId: String?) {
+        cleverTapModuleImpl.activate(accountId)
     }
 
     //Custom Push Notification
@@ -141,216 +141,216 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.isPushPermissionGranted(callback)
     }
 
-    override fun disablePersonalization() {
-        cleverTapModuleImpl.disablePersonalization()
+    override fun disablePersonalization(accountId: String?) {
+        cleverTapModuleImpl.disablePersonalization(accountId)
     }
 
-    override fun enableDeviceNetworkInfoReporting(value: Boolean) {
-        cleverTapModuleImpl.enableDeviceNetworkInfoReporting(value)
+    override fun enableDeviceNetworkInfoReporting(value: Boolean, accountId: String?) {
+        cleverTapModuleImpl.enableDeviceNetworkInfoReporting(value, accountId)
     }
 
-    override fun enablePersonalization() {
-        cleverTapModuleImpl.enablePersonalization()
+    override fun enablePersonalization(accountId: String?) {
+        cleverTapModuleImpl.enablePersonalization(accountId)
     }
 
-    override fun eventGetDetail(eventName: String?, callback: Callback?) {
-        cleverTapModuleImpl.eventGetDetail(eventName, callback)
+    override fun eventGetDetail(eventName: String?, callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.eventGetDetail(eventName, callback, accountId)
     }
 
-    override fun eventGetFirstTime(eventName: String?, callback: Callback?) {
-        cleverTapModuleImpl.eventGetFirstTime(eventName, callback)
+    override fun eventGetFirstTime(eventName: String?, callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.eventGetFirstTime(eventName, callback, accountId)
     }
 
-    override fun eventGetLastTime(eventName: String?, callback: Callback?) {
-        cleverTapModuleImpl.eventGetLastTime(eventName, callback)
+    override fun eventGetLastTime(eventName: String?, callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.eventGetLastTime(eventName, callback, accountId)
     }
 
-    override fun eventGetOccurrences(eventName: String?, callback: Callback?) {
-        cleverTapModuleImpl.eventGetOccurrences(eventName, callback)
+    override fun eventGetOccurrences(eventName: String?, callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.eventGetOccurrences(eventName, callback, accountId)
     }
 
-    override fun fetch() {
-        cleverTapModuleImpl.fetch()
+    override fun fetch(accountId: String?) {
+        cleverTapModuleImpl.fetch(accountId)
     }
 
-    override fun fetchAndActivate() {
-        cleverTapModuleImpl.fetchAndActivate()
+    override fun fetchAndActivate(accountId: String?) {
+        cleverTapModuleImpl.fetchAndActivate(accountId)
     }
 
-    override fun fetchWithMinimumFetchIntervalInSeconds(interval: Double) {
-        cleverTapModuleImpl.fetchWithMinimumFetchIntervalInSeconds(interval.toInt())
+    override fun fetchWithMinimumFetchIntervalInSeconds(interval: Double, accountId: String?) {
+        cleverTapModuleImpl.fetchWithMinimumFetchIntervalInSeconds(interval.toInt(), accountId)
     }
 
-    override fun getAllDisplayUnits(callback: Callback?) {
-        cleverTapModuleImpl.getAllDisplayUnits(callback)
+    override fun getAllDisplayUnits(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getAllDisplayUnits(callback, accountId)
     }
 
-    override fun getDisplayUnitForId(unitID: String?, callback: Callback?) {
-        cleverTapModuleImpl.getDisplayUnitForId(unitID, callback)
+    override fun getDisplayUnitForId(unitID: String?, callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getDisplayUnitForId(unitID, callback, accountId)
     }
 
-    override fun getBoolean(key: String?, callback: Callback?) {
-        cleverTapModuleImpl.getBoolean(key, callback)
+    override fun getBoolean(key: String?, callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getBoolean(key, callback, accountId)
     }
 
-    override fun getDouble(key: String?, callback: Callback?) {
-        cleverTapModuleImpl.getDouble(key, callback)
+    override fun getDouble(key: String?, callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getDouble(key, callback, accountId)
     }
 
-    override fun getEventHistory(callback: Callback?) {
-        cleverTapModuleImpl.getEventHistory(callback)
+    override fun getEventHistory(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getEventHistory(callback, accountId)
     }
 
-    override fun getFeatureFlag(name: String?, defaultValue: Boolean, callback: Callback?) {
-        cleverTapModuleImpl.getFeatureFlag(name, defaultValue, callback)
+    override fun getFeatureFlag(name: String?, defaultValue: Boolean, callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getFeatureFlag(name, defaultValue, callback, accountId)
     }
 
-    override fun getAllInboxMessages(callback: Callback?) {
-        cleverTapModuleImpl.getAllInboxMessages(callback)
+    override fun getAllInboxMessages(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getAllInboxMessages(callback, accountId)
     }
 
-    override fun getInboxMessageCount(callback: Callback?) {
-        cleverTapModuleImpl.getInboxMessageCount(callback)
+    override fun getInboxMessageCount(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getInboxMessageCount(callback, accountId)
     }
 
-    override fun getInboxMessageForId(messageId: String?, callback: Callback?) {
-        cleverTapModuleImpl.getInboxMessageForId(messageId, callback)
+    override fun getInboxMessageForId(messageId: String?, callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getInboxMessageForId(messageId, callback, accountId)
     }
 
-    override fun getInboxMessageUnreadCount(callback: Callback?) {
-        cleverTapModuleImpl.getInboxMessageUnreadCount(callback)
+    override fun getInboxMessageUnreadCount(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getInboxMessageUnreadCount(callback, accountId)
     }
 
-    override fun deleteInboxMessageForId(messageId: String?) {
-        cleverTapModuleImpl.deleteInboxMessageForId(messageId)
+    override fun deleteInboxMessageForId(messageId: String?, accountId: String?) {
+        cleverTapModuleImpl.deleteInboxMessageForId(messageId, accountId)
     }
 
-    override fun getUnreadInboxMessages(callback: Callback?) {
-        cleverTapModuleImpl.getUnreadInboxMessages(callback)
+    override fun getUnreadInboxMessages(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getUnreadInboxMessages(callback, accountId)
     }
 
-    override fun initializeInbox() {
-        cleverTapModuleImpl.initializeInbox()
+    override fun initializeInbox(accountId: String?) {
+        cleverTapModuleImpl.initializeInbox(accountId)
     }
 
-    override fun markReadInboxMessageForId(messageId: String?) {
-        cleverTapModuleImpl.markReadInboxMessageForId(messageId)
+    override fun markReadInboxMessageForId(messageId: String?, accountId: String?) {
+        cleverTapModuleImpl.markReadInboxMessageForId(messageId, accountId)
     }
 
-    override fun markReadInboxMessagesForIDs(messageIDs: ReadableArray?) {
-        cleverTapModuleImpl.markReadInboxMessagesForIDs(messageIDs)
+    override fun markReadInboxMessagesForIDs(messageIDs: ReadableArray?, accountId: String?) {
+        cleverTapModuleImpl.markReadInboxMessagesForIDs(messageIDs, accountId)
     }
 
-    override fun deleteInboxMessagesForIDs(messageIDs: ReadableArray?) {
-        cleverTapModuleImpl.deleteInboxMessagesForIDs(messageIDs)
+    override fun deleteInboxMessagesForIDs(messageIDs: ReadableArray?, accountId: String?) {
+        cleverTapModuleImpl.deleteInboxMessagesForIDs(messageIDs, accountId)
     }
 
-    override fun pushInboxNotificationClickedEventForId(messageId: String?) {
-        cleverTapModuleImpl.pushInboxNotificationClickedEventForId(messageId)
+    override fun pushInboxNotificationClickedEventForId(messageId: String?, accountId: String?) {
+        cleverTapModuleImpl.pushInboxNotificationClickedEventForId(messageId, accountId)
     }
 
-    override fun pushInboxNotificationViewedEventForId(messageId: String?) {
-        cleverTapModuleImpl.pushInboxNotificationViewedEventForId(messageId)
+    override fun pushInboxNotificationViewedEventForId(messageId: String?, accountId: String?) {
+        cleverTapModuleImpl.pushInboxNotificationViewedEventForId(messageId, accountId)
     }
 
-    override fun fetchInbox(callback: Callback?) {
-        cleverTapModuleImpl.fetchInbox(callback)
+    override fun fetchInbox(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.fetchInbox(callback, accountId)
     }
 
-    override fun showInbox(styleConfig: ReadableMap?) {
-        cleverTapModuleImpl.showInbox(styleConfig)
+    override fun showInbox(styleConfig: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.showInbox(styleConfig, accountId)
     }
 
-    override fun dismissInbox() {
-        cleverTapModuleImpl.dismissInbox()
+    override fun dismissInbox(accountId: String?) {
+        cleverTapModuleImpl.dismissInbox(accountId)
     }
 
     override fun getInitialUrl(callback: Callback?) {
         cleverTapModuleImpl.getInitialUrl(callback)
     }
 
-    override fun getLastFetchTimeStampInMillis(callback: Callback?) {
-        cleverTapModuleImpl.getLastFetchTimeStampInMillis(callback)
+    override fun getLastFetchTimeStampInMillis(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getLastFetchTimeStampInMillis(callback, accountId)
     }
 
-    override fun getString(key: String?, callback: Callback?) {
-        cleverTapModuleImpl.getString(key, callback)
+    override fun getString(key: String?, callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getString(key, callback, accountId)
     }
 
     override fun onUserLogin(profile: ReadableMap?, accountId: String?) {
         cleverTapModuleImpl.onUserLogin(profile, accountId)
     }
 
-    override fun profileAddMultiValue(value: String?, key: String?) {
-        cleverTapModuleImpl.profileAddMultiValue(value, key)
+    override fun profileAddMultiValue(value: String?, key: String?, accountId: String?) {
+        cleverTapModuleImpl.profileAddMultiValue(value, key, accountId)
     }
 
-    override fun profileAddMultiValues(values: ReadableArray?, key: String?) {
-        cleverTapModuleImpl.profileAddMultiValues(values, key)
+    override fun profileAddMultiValues(values: ReadableArray?, key: String?, accountId: String?) {
+        cleverTapModuleImpl.profileAddMultiValues(values, key, accountId)
     }
 
-    override fun profileGetCleverTapAttributionIdentifier(callback: Callback?) {
-        cleverTapModuleImpl.profileGetCleverTapAttributionIdentifier(callback)
+    override fun profileGetCleverTapAttributionIdentifier(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.profileGetCleverTapAttributionIdentifier(callback, accountId)
     }
 
-    override fun profileGetCleverTapID(callback: Callback?) {
-        cleverTapModuleImpl.profileGetCleverTapID(callback)
+    override fun profileGetCleverTapID(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.profileGetCleverTapID(callback, accountId)
     }
 
     override fun getCleverTapID(callback: Callback?, accountId: String?) {
         cleverTapModuleImpl.getCleverTapID(callback, accountId)
     }
 
-    override fun profileGetProperty(propertyName: String?, callback: Callback?) {
-        cleverTapModuleImpl.profileGetProperty(propertyName, callback)
+    override fun profileGetProperty(propertyName: String?, callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.profileGetProperty(propertyName, callback, accountId)
     }
 
-    override fun profileRemoveMultiValue(value: String?, key: String?) {
-        cleverTapModuleImpl.profileRemoveMultiValue(value, key)
+    override fun profileRemoveMultiValue(value: String?, key: String?, accountId: String?) {
+        cleverTapModuleImpl.profileRemoveMultiValue(value, key, accountId)
     }
 
-    override fun profileRemoveMultiValues(values: ReadableArray?, key: String?) {
-        cleverTapModuleImpl.profileRemoveMultiValues(values, key)
+    override fun profileRemoveMultiValues(values: ReadableArray?, key: String?, accountId: String?) {
+        cleverTapModuleImpl.profileRemoveMultiValues(values, key, accountId)
     }
 
-    override fun profileRemoveValueForKey(key: String?) {
-        cleverTapModuleImpl.profileRemoveValueForKey(key)
+    override fun profileRemoveValueForKey(key: String?, accountId: String?) {
+        cleverTapModuleImpl.profileRemoveValueForKey(key, accountId)
     }
 
     override fun profileSet(profile: ReadableMap?, accountId: String?) {
         cleverTapModuleImpl.profileSet(profile, accountId)
     }
 
-    override fun profileSetMultiValues(values: ReadableArray?, key: String?) {
-        cleverTapModuleImpl.profileSetMultiValues(values, key)
+    override fun profileSetMultiValues(values: ReadableArray?, key: String?, accountId: String?) {
+        cleverTapModuleImpl.profileSetMultiValues(values, key, accountId)
     }
 
-    override fun pushDisplayUnitClickedEventForID(unitID: String?) {
-        cleverTapModuleImpl.pushDisplayUnitClickedEventForID(unitID)
+    override fun pushDisplayUnitClickedEventForID(unitID: String?, accountId: String?) {
+        cleverTapModuleImpl.pushDisplayUnitClickedEventForID(unitID, accountId)
     }
 
-    override fun pushDisplayUnitViewedEventForID(unitID: String?) {
-        cleverTapModuleImpl.pushDisplayUnitViewedEventForID(unitID)
+    override fun pushDisplayUnitViewedEventForID(unitID: String?, accountId: String?) {
+        cleverTapModuleImpl.pushDisplayUnitViewedEventForID(unitID, accountId)
     }
 
-    override fun pushDisplayUnitElementClickedEventForID(unitID: String?, additionalProperties: ReadableMap?) {
-        cleverTapModuleImpl.pushDisplayUnitElementClickedEventForID(unitID, additionalProperties)
+    override fun pushDisplayUnitElementClickedEventForID(unitID: String?, additionalProperties: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.pushDisplayUnitElementClickedEventForID(unitID, additionalProperties, accountId)
     }
 
-    override fun pushInstallReferrer(source: String?, medium: String?, campaign: String?) {
-        cleverTapModuleImpl.pushInstallReferrer(source, medium, campaign)
+    override fun pushInstallReferrer(source: String?, medium: String?, campaign: String?, accountId: String?) {
+        cleverTapModuleImpl.pushInstallReferrer(source, medium, campaign, accountId)
     }
 
-    override fun recordChargedEvent(details: ReadableMap?, items: ReadableArray?) {
-        cleverTapModuleImpl.recordChargedEvent(details, items)
+    override fun recordChargedEvent(details: ReadableMap?, items: ReadableArray?, accountId: String?) {
+        cleverTapModuleImpl.recordChargedEvent(details, items, accountId)
     }
 
     override fun recordEvent(eventName: String?, props: ReadableMap?, accountId: String?) {
         cleverTapModuleImpl.recordEvent(eventName, props, accountId)
     }
 
-    override fun recordScreenView(screenName: String?) {
-        cleverTapModuleImpl.recordScreenView(screenName)
+    override fun recordScreenView(screenName: String?, accountId: String?) {
+        cleverTapModuleImpl.recordScreenView(screenName, accountId)
     }
 
     // Product Config methods
@@ -359,97 +359,97 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.registerForPush()
     }
 
-    override fun reset() {
-        cleverTapModuleImpl.reset()
+    override fun reset(accountId: String?) {
+        cleverTapModuleImpl.reset(accountId)
     }
 
     // Feature Flag methods
 
-    override fun sessionGetPreviousVisitTime(callback: Callback?) {
-        cleverTapModuleImpl.sessionGetPreviousVisitTime(callback)
+    override fun sessionGetPreviousVisitTime(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.sessionGetPreviousVisitTime(callback, accountId)
     }
 
     // Developer Options
 
-    override fun sessionGetScreenCount(callback: Callback?) {
-        cleverTapModuleImpl.sessionGetScreenCount(callback)
+    override fun sessionGetScreenCount(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.sessionGetScreenCount(callback, accountId)
     }
 
-    override fun sessionGetTimeElapsed(callback: Callback?) {
-        cleverTapModuleImpl.sessionGetTimeElapsed(callback)
+    override fun sessionGetTimeElapsed(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.sessionGetTimeElapsed(callback, accountId)
     }
 
-    override fun sessionGetTotalVisits(callback: Callback?) {
-        cleverTapModuleImpl.sessionGetTotalVisits(callback)
+    override fun sessionGetTotalVisits(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.sessionGetTotalVisits(callback, accountId)
     }
 
-    override fun sessionGetUTMDetails(callback: Callback?) {
-        cleverTapModuleImpl.sessionGetUTMDetails(callback)
+    override fun sessionGetUTMDetails(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.sessionGetUTMDetails(callback, accountId)
     }
 
     override fun setDebugLevel(level: Double) {
         CleverTapAPI.setDebugLevel(level.toInt())
     }
 
-    override fun setDefaultsMap(map: ReadableMap?) {
-        cleverTapModuleImpl.setDefaultsMap(map)
+    override fun setDefaultsMap(map: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.setDefaultsMap(map, accountId)
     }
 
-    override fun setLocation(latitude: Double, longitude: Double) {
-        cleverTapModuleImpl.setLocation(latitude, longitude)
+    override fun setLocation(latitude: Double, longitude: Double, accountId: String?) {
+        cleverTapModuleImpl.setLocation(latitude, longitude, accountId)
     }
 
-    override fun setMinimumFetchIntervalInSeconds(interval: Double) {
-        cleverTapModuleImpl.setMinimumFetchIntervalInSeconds(interval.toInt())
+    override fun setMinimumFetchIntervalInSeconds(interval: Double, accountId: String?) {
+        cleverTapModuleImpl.setMinimumFetchIntervalInSeconds(interval.toInt(), accountId)
     }
 
     //Sets the SDK to offline mode
-    override fun setOffline(value: Boolean) {
-        cleverTapModuleImpl.setOffline(value)
+    override fun setOffline(value: Boolean, accountId: String?) {
+        cleverTapModuleImpl.setOffline(value, accountId)
     }
 
-    override fun setOptOut(userOptOut: Boolean, allowSystemEvents: Boolean?) {
-        cleverTapModuleImpl.setOptOut(userOptOut, allowSystemEvents)
+    override fun setOptOut(userOptOut: Boolean, allowSystemEvents: Boolean?, accountId: String?) {
+        cleverTapModuleImpl.setOptOut(userOptOut, allowSystemEvents, accountId)
     }
 
-    override fun pushRegistrationToken(token: String?, pushType: ReadableMap?) {
-        cleverTapModuleImpl.pushRegistrationToken(token, pushType)
+    override fun pushRegistrationToken(token: String?, pushType: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.pushRegistrationToken(token, pushType, accountId)
     }
 
-    override fun setFCMPushTokenAsString(token: String?) {
-        cleverTapModuleImpl.setFCMPushTokenAsString(token)
+    override fun setFCMPushTokenAsString(token: String?, accountId: String?) {
+        cleverTapModuleImpl.setFCMPushTokenAsString(token, accountId)
     }
 
     // Increment/Decrement Operator
 
-    override fun profileIncrementValueForKey(value: Double?, key: String?) {
-        cleverTapModuleImpl.profileIncrementValueForKey(value, key)
+    override fun profileIncrementValueForKey(value: Double?, key: String?, accountId: String?) {
+        cleverTapModuleImpl.profileIncrementValueForKey(value, key, accountId)
     }
 
-    override fun profileDecrementValueForKey(value: Double?, key: String?) {
-        cleverTapModuleImpl.profileDecrementValueForKey(value, key)
+    override fun profileDecrementValueForKey(value: Double?, key: String?, accountId: String?) {
+        cleverTapModuleImpl.profileDecrementValueForKey(value, key, accountId)
     }
 
     // InApp Controls
 
-    override fun suspendInAppNotifications() {
-        cleverTapModuleImpl.suspendInAppNotifications()
+    override fun suspendInAppNotifications(accountId: String?) {
+        cleverTapModuleImpl.suspendInAppNotifications(accountId)
     }
 
-    override fun discardInAppNotifications(dismissInAppIfVisible: Boolean?) {
-        cleverTapModuleImpl.discardInAppNotifications(dismissInAppIfVisible)
+    override fun discardInAppNotifications(dismissInAppIfVisible: Boolean?, accountId: String?) {
+        cleverTapModuleImpl.discardInAppNotifications(dismissInAppIfVisible, accountId)
     }
 
-    override fun resumeInAppNotifications() {
-        cleverTapModuleImpl.resumeInAppNotifications()
+    override fun resumeInAppNotifications(accountId: String?) {
+        cleverTapModuleImpl.resumeInAppNotifications(accountId)
     }
 
-    override fun dismissPipInApp() {
-        cleverTapModuleImpl.dismissPipInApp()
+    override fun dismissPipInApp(accountId: String?) {
+        cleverTapModuleImpl.dismissPipInApp(accountId)
     }
 
-    override fun unmute() {
-        cleverTapModuleImpl.unmute()
+    override fun unmute(accountId: String?) {
+        cleverTapModuleImpl.unmute(accountId)
     }
 
     override fun setInstanceWithAccountId(accountId: String?) {
@@ -464,12 +464,12 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.getDefaultAccountId(promise)
     }
 
-    override fun fetchInApps(callback: Callback?) {
-        cleverTapModuleImpl.fetchInApps(callback)
+    override fun fetchInApps(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.fetchInApps(callback, accountId)
     }
 
-    override fun clearInAppResources(expiredOnly: Boolean) {
-        cleverTapModuleImpl.clearInAppResources(expiredOnly)
+    override fun clearInAppResources(expiredOnly: Boolean, accountId: String?) {
+        cleverTapModuleImpl.clearInAppResources(expiredOnly, accountId)
     }
 
     override fun customTemplateSetDismissed(templateName: String?, promise: Promise?) {
@@ -543,60 +543,60 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.syncCustomTemplates()
     }
 
-    override fun variants(callback: Callback?) {
-        cleverTapModuleImpl.variants(callback)
+    override fun variants(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.variants(callback, accountId)
     }
 
-    override fun syncVariables() {
-        cleverTapModuleImpl.syncVariables()
+    override fun syncVariables(accountId: String?) {
+        cleverTapModuleImpl.syncVariables(accountId)
     }
 
-    override fun syncVariablesinProd(isProduction: Boolean) {
-        cleverTapModuleImpl.syncVariablesinProd(isProduction, null)
+    override fun syncVariablesinProd(isProduction: Boolean, accountId: String?) {
+        cleverTapModuleImpl.syncVariablesinProd(isProduction, null, accountId)
     }
 
-    override fun defineVariables(`object`: ReadableMap?) {
-        cleverTapModuleImpl.defineVariables(`object`)
+    override fun defineVariables(`object`: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.defineVariables(`object`, accountId)
     }
 
-    override fun defineFileVariable(name: String) {
-        cleverTapModuleImpl.defineFileVariable(name)
+    override fun defineFileVariable(name: String, accountId: String?) {
+        cleverTapModuleImpl.defineFileVariable(name, accountId)
     }
 
-    override fun fetchVariables(callback: Callback?) {
-        cleverTapModuleImpl.fetchVariables(callback)
+    override fun fetchVariables(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.fetchVariables(callback, accountId)
     }
 
-    override fun getVariable(key: String?, callback: Callback?) {
-        cleverTapModuleImpl.getVariable(key, callback)
+    override fun getVariable(key: String?, callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getVariable(key, callback, accountId)
     }
 
-    override fun getVariables(callback: Callback?) {
-        cleverTapModuleImpl.getVariables(callback)
+    override fun getVariables(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getVariables(callback, accountId)
     }
 
-    override fun onVariablesChanged() {
-        cleverTapModuleImpl.onVariablesChanged()
+    override fun onVariablesChanged(accountId: String?) {
+        cleverTapModuleImpl.onVariablesChanged(accountId)
     }
 
-    override fun onOneTimeVariablesChanged() {
-        cleverTapModuleImpl.onOneTimeVariablesChanged()
+    override fun onOneTimeVariablesChanged(accountId: String?) {
+        cleverTapModuleImpl.onOneTimeVariablesChanged(accountId)
     }
 
-    override fun onValueChanged(name: String) {
-        cleverTapModuleImpl.onValueChanged(name)
+    override fun onValueChanged(name: String, accountId: String?) {
+        cleverTapModuleImpl.onValueChanged(name, accountId)
     }
 
-    override fun onFileValueChanged(name: String) {
-        cleverTapModuleImpl.onFileValueChanged(name)
+    override fun onFileValueChanged(name: String, accountId: String?) {
+        cleverTapModuleImpl.onFileValueChanged(name, accountId)
     }
 
-    override fun onVariablesChangedAndNoDownloadsPending() {
-        cleverTapModuleImpl.onVariablesChangedAndNoDownloadsPending()
+    override fun onVariablesChangedAndNoDownloadsPending(accountId: String?) {
+        cleverTapModuleImpl.onVariablesChangedAndNoDownloadsPending(accountId)
     }
 
-    override fun onceVariablesChangedAndNoDownloadsPending() {
-        cleverTapModuleImpl.onceVariablesChangedAndNoDownloadsPending()
+    override fun onceVariablesChangedAndNoDownloadsPending(accountId: String?) {
+        cleverTapModuleImpl.onceVariablesChangedAndNoDownloadsPending(accountId)
     }
 
     override fun onEventListenerAdded(eventName: String, accountId: String?) {
@@ -614,29 +614,30 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     override fun setPushTokenAsStringWithRegion(
         token: String?,
         withType: String?,
-        withRegion: String?
+        withRegion: String?,
+        accountId: String?
     ) {
         return
     }
 
-    override fun getUserEventLog(eventName: String, callback: Callback?) {
-        cleverTapModuleImpl.getUserEventLog(eventName, callback)
+    override fun getUserEventLog(eventName: String, callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getUserEventLog(eventName, callback, accountId)
     }
 
-    override fun getUserEventLogCount(eventName: String, callback: Callback?) {
-        cleverTapModuleImpl.getUserEventLogCount(eventName, callback)
+    override fun getUserEventLogCount(eventName: String, callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getUserEventLogCount(eventName, callback, accountId)
     }
 
-    override fun getUserLastVisitTs(callback: Callback?) {
-        cleverTapModuleImpl.getUserLastVisitTs(callback)
+    override fun getUserLastVisitTs(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getUserLastVisitTs(callback, accountId)
     }
 
-    override fun getUserAppLaunchCount(callback: Callback?) {
-        cleverTapModuleImpl.getUserAppLaunchCount(callback)
+    override fun getUserAppLaunchCount(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getUserAppLaunchCount(callback, accountId)
     }
 
-    override fun getUserEventLogHistory(callback: Callback?) {
-        cleverTapModuleImpl.getUserEventLogHistory(callback)
+    override fun getUserEventLogHistory(callback: Callback?, accountId: String?) {
+        cleverTapModuleImpl.getUserEventLogHistory(callback, accountId)
     }
 
 
