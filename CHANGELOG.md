@@ -1,25 +1,25 @@
 Change Log
 ==========
 
-Version 4.3.0 *(August 11 2026)*
+Version 4.3.0 *(August 19 2026)*
 -------------------------------------------
 **What's new**
 * **[Android Platform]**
   * Supports [CleverTap Android SDK v8.4.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-841-august-2026).
-  * Spin-the-Wheel and Scratch Card gamified in-app templates — available to campaigns built with the Advanced InApp Builder, no app-side wiring needed.
-  * Per-element click attribution for in-apps — the `Notification Clicked` event now records which element of the in-app was tapped, across all templates. Swipe-to-dismiss is now configurable per campaign and is tracked as a `Notification Clicked` event too.
   * Accessibility improvements across in-apps and App Inbox — dynamic text scaling, screen-reader announcements, content descriptions for close buttons/images/media controls, a larger 48dp dismiss tap target, and corrected carousel navigation for TalkBack.
   * Custom-HTML header and footer in-apps now render when the host Activity is not a `FragmentActivity` (for example Unity or Unreal game engines). Opt in with the `CLEVERTAP_INAPP_FRAGMENTLESS_BANNERS` manifest flag; it is off by default, so existing apps are unaffected.
 
 * **[iOS Platform]**
   * Supports [CleverTap iOS SDK v7.8.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-781-august-07-2026).
-  * Spin-the-Wheel and Scratch Card gamified in-app templates — available to campaigns built with the Advanced InApp Builder, no app-side wiring needed.
-  * Per-element click attribution for in-apps — the `Notification Clicked` event now records which element of the in-app was tapped, across all templates. Tap-outside and swipe-to-dismiss gestures are now configurable per campaign and are tracked as `Notification Clicked` events too.
   * Accessibility improvements across in-apps and App Inbox — VoiceOver labels, a larger dismiss-button tap area, and better handling of image content descriptions.
+  
+* **[Android and iOS Platform]**
+  * Spin-the-Wheel and Scratch Card gamified in-app templates — available to campaigns built with the Advanced InApp Builder, no app-side wiring needed.
+  * Per-element click attribution for in-apps — the `Notification Clicked` event now records which element of the in-app was tapped, across all templates. Tap-outside(iOS) and swipe-to-dismiss(Android and iOS) gestures are now configurable per campaign and are tracked as `Notification Clicked` events too.
 
 **API changes**
 * **[Android and iOS Platform]**
-  * Adds `dismissPipInApp()` — dismisses the Picture-in-Picture in-app notification currently on screen. It does nothing when no PIP in-app is visible, and never affects other in-app types.
+  * Adds `dismissPipInApp()` — dismisses the Picture-in-Picture in-app notification currently on screen. It does nothing when no PiP in-app is visible, and never affects other in-app types.
 
 **Bug Fixes**
 * **[Android Platform]**
