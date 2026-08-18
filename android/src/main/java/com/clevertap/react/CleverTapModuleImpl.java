@@ -59,6 +59,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Date;
 import java.util.HashMap;
@@ -107,8 +108,10 @@ public class CleverTapModuleImpl {
     // setInstanceWithAccountId swaps this pointer (legacy behavior).
     private CleverTapAPI mDefaultCleverTap;
 
-    // Accounts whose listeners are already wired, so initCtInstance runs exactly once per account.
-    private final Set<String> initedAccountIds = new HashSet<>();
+    // Accounts whose listeners are already wired, so initCtInstance runs exactly once per
+    // account. Thread-safe: touched from the native-modules thread AND the main thread
+    // (createInstance runs on main — see the note inside it).
+    private final Set<String> initedAccountIds = Collections.synchronizedSet(new HashSet<>());
 
     public CleverTapModuleImpl(ReactApplicationContext reactContext) {
         this.context = reactContext;
@@ -1804,31 +1807,43 @@ public class CleverTapModuleImpl {
             return;
         }
 
-        CleverTapAPI existing = CleverTapAPI.getGlobalInstance(this.context, accountId);
-        if (existing != null) {
-            Log.w(TAG, "createInstance: instance for " + accountId + " already exists; config ignored");
-            resolveInstance(accountId); // ensure listeners are wired
+        // ⚠️ The creation MUST run on the MAIN thread. The native SDK's DeviceInfo posts a
+        // deviceIDCreated callback to the main thread that RE-ENTERS instanceWithConfig
+        // (DeviceInfo.java, "callback on main thread"). instanceWithConfig's get→new→put on
+        // the static instances map is not synchronized, so creating from another thread can
+        // race that callback: TWO CleverTapAPI objects get built for the same account, the
+        // map keeps the callback's copy, and our listeners end up attached to an orphan
+        // (observed on device: "CleverTap SDK initialized" logged twice, different objects).
+        // Running here on main serializes us with that callback: when it re-enters, the map
+        // already holds our instance and it is returned instead of constructed again.
+        final ReadableMap finalConfig = config;
+        com.facebook.react.bridge.UiThreadUtil.runOnUiThread(() -> {
+            CleverTapAPI existing = CleverTapAPI.getGlobalInstance(this.context, accountId);
+            if (existing != null) {
+                Log.w(TAG, "createInstance: instance for " + accountId + " already exists; config ignored");
+                resolveInstance(accountId); // ensure listeners are wired
+                promise.resolve(accountIdResult(accountId));
+                return;
+            }
+
+            String region = finalConfig.hasKey("region") ? finalConfig.getString("region") : null;
+            CleverTapInstanceConfig ctConfig = (region != null && !region.trim().isEmpty())
+                    ? CleverTapInstanceConfig.createInstance(this.context, accountId, accountToken, region)
+                    : CleverTapInstanceConfig.createInstance(this.context, accountId, accountToken);
+            if (ctConfig == null) {
+                promise.reject("ECREATE", "createInstance could not build a config for accountId " + accountId);
+                return;
+            }
+            applyOptionalConfig(ctConfig, finalConfig);
+
+            CleverTapAPI instance = CleverTapAPI.instanceWithConfig(this.context, ctConfig);
+            if (instance == null) {
+                promise.reject("ECREATE", "createInstance failed for accountId " + accountId);
+                return;
+            }
+            resolveInstance(accountId); // wires listeners + setLibrary via initCtInstance
             promise.resolve(accountIdResult(accountId));
-            return;
-        }
-
-        String region = config.hasKey("region") ? config.getString("region") : null;
-        CleverTapInstanceConfig ctConfig = (region != null && !region.trim().isEmpty())
-                ? CleverTapInstanceConfig.createInstance(this.context, accountId, accountToken, region)
-                : CleverTapInstanceConfig.createInstance(this.context, accountId, accountToken);
-        if (ctConfig == null) {
-            promise.reject("ECREATE", "createInstance could not build a config for accountId " + accountId);
-            return;
-        }
-        applyOptionalConfig(ctConfig, config);
-
-        CleverTapAPI instance = CleverTapAPI.instanceWithConfig(this.context, ctConfig);
-        if (instance == null) {
-            promise.reject("ECREATE", "createInstance failed for accountId " + accountId);
-            return;
-        }
-        resolveInstance(accountId); // wires listeners + setLibrary via initCtInstance
-        promise.resolve(accountIdResult(accountId));
+        });
     }
 
     /**
