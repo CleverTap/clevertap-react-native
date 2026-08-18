@@ -1498,6 +1498,7 @@ static NSString *accountTagOfBody(id body) {
 /// @param accountId The account the listener belongs to; nil means the default slot.
 RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name accountId:(NSString*)accountId) {
     NSString *accountKey = accountId ?: [self resolveInstance:nil].config.accountId;
+    RCTLogInfo(@"[CleverTap onEventListenerAdded: %@ accountId=%@ resolved account=%@]", name, accountId, accountKey);
     [observedEvents addObject:observedEventKey(name, accountKey)];
     // Untagged (global) bodies go live once ANY listener observes the event:
     [observedEvents addObject:name];
@@ -1541,11 +1542,13 @@ RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name accountId:(NSString*)acco
             pendingEvents[name] = [NSMutableArray array];
         }
 
+        RCTLogInfo(@"[CleverTap: queueing %@ for account %@ (not observed yet)]", name, tag);
         CleverTapReactPendingEvent *event = [[CleverTapReactPendingEvent alloc] initWithName:name body:body];
         [pendingEvents[name] addObject:event];
         return;
     }
 
+    RCTLogInfo(@"[CleverTap: posting %@ for account %@]", name, tag);
     [[NSNotificationCenter defaultCenter] postNotificationName:name object:nil userInfo:body];
 }
 

@@ -59,6 +59,7 @@ object CleverTapEventEmitter {
         val buffer = eventsBuffers[event] ?: return
         synchronized(buffer.lock) {
             buffer.armedAccounts.add(accountId)
+            Log.i(LOG_TAG, "Armed $event for account $accountId; armed=${buffer.armedAccounts}")
         }
     }
 
@@ -70,17 +71,22 @@ object CleverTapEventEmitter {
     fun flushBuffer(event: CleverTapEvent, accountId: String?) {
         val buffer = eventsBuffers[event] ?: return
         synchronized(buffer.lock) {
+            var sent = 0
             val kept = LinkedList<Any?>()
             while (buffer.size() > 0) {
                 val params = buffer.remove()
                 val tag = accountTagOf(params)
                 if (tag == null || tag == accountId) {
                     sendEvent(event, params)
+                    sent++
                 } else {
                     kept.add(params)
                 }
             }
             kept.forEach { buffer.add(it) }
+            if (sent > 0 || kept.size > 0) {
+                Log.i(LOG_TAG, "Flushed $event for account $accountId: sent=$sent kept=${kept.size}")
+            }
         }
     }
 
@@ -94,10 +100,13 @@ object CleverTapEventEmitter {
      * @see [armAccount]
      */
     fun emit(event: CleverTapEvent, params: Any?) {
+        val tag = accountTagOf(params)
         val buffer = eventsBuffers[event]
-        if (buffer != null && buffer.enabled && !isArmed(buffer, accountTagOf(params))) {
+        if (buffer != null && buffer.enabled && !isArmed(buffer, tag)) {
+            Log.i(LOG_TAG, "Buffering $event for account $tag (not armed yet)")
             addToBuffer(event, params)
         } else {
+            Log.i(LOG_TAG, "Emitting $event for account $tag")
             sendEvent(event, params)
         }
     }

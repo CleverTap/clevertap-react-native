@@ -1569,6 +1569,8 @@ public class CleverTapModuleImpl {
         // drop them, because their listeners are not attached yet to receive the delivery.
         CleverTapAPI instance = resolveInstance(accountId);
         String accountKey = instance != null ? instance.getAccountId() : null;
+        Log.i(TAG, "onEventListenerAdded: " + eventName + " accountId=" + accountId
+                + " resolved account=" + accountKey);
         CleverTapEventEmitter.INSTANCE.armAccount(event, accountKey);
         CleverTapEventEmitter.INSTANCE.flushBuffer(event, accountKey);
     }
@@ -1836,7 +1838,9 @@ public class CleverTapModuleImpl {
      */
     public void getDefaultAccountId(Promise promise) {
         CleverTapAPI defaultInstance = resolveInstance(null);
-        promise.resolve(defaultInstance != null ? defaultInstance.getAccountId() : null);
+        String accountId = defaultInstance != null ? defaultInstance.getAccountId() : null;
+        Log.i(TAG, "getDefaultAccountId -> " + accountId);
+        promise.resolve(accountId);
     }
 
     private WritableMap accountIdResult(String accountId) {

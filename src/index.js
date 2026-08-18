@@ -77,6 +77,13 @@ const routedKey = (accountKey, eventName) => accountKey + '::' + eventName;
 // be passed — the old-architecture Android bridge throws on a missing trailing arg.
 const toAccountArg = (accountId) => (accountId === undefined ? null : accountId);
 
+// Debug logs for the event routing pipeline. __DEV__ builds only.
+const routeDebug = (message) => {
+    if (__DEV__) {
+        console.log('[CleverTap][MultiInstance] ' + message);
+    }
+};
+
 // Which account do the top-level CleverTap listeners follow? Asked from native once;
 // setInstanceWithAccountId updates it synchronously (legacy "slot swap").
 let currentDefaultAccountId = null;
@@ -85,21 +92,32 @@ const defaultAccountIdReady = CleverTapReact.getDefaultAccountId().then((id) => 
     if (!slotSwapped) {
         currentDefaultAccountId = id;
     }
+    routeDebug('default accountId resolved: ' + currentDefaultAccountId);
     return currentDefaultAccountId;
-}).catch(() => currentDefaultAccountId);
+}).catch((error) => {
+    // Never swallow this silently: without the default account id, NO default-account
+    // event can be routed to top-level listeners.
+    console.warn('[CleverTap][MultiInstance] getDefaultAccountId failed — top-level listeners cannot receive events:', error);
+    return currentDefaultAccountId;
+});
 
 const routedHandlers = new Map(); // routedKey -> Set<handler>
 const nativeSubscriptions = new Map(); // eventName -> emitter subscription
 
 function deliverRouted(key, payload) {
     const handlers = routedHandlers.get(key);
-    if (handlers) {
+    if (handlers && handlers.size > 0) {
+        routeDebug('delivering to "' + key + '" (' + handlers.size + ' handler(s))');
         handlers.forEach((handler) => handler(payload));
+        return true;
     }
+    return false;
 }
 
 function routeEvent(eventName, event) {
     const tag = event ? event[CT_ACCOUNT_ID_KEY] : null;
+    routeDebug('received "' + eventName + '" tag=' + tag +
+        ' defaultAccountId=' + currentDefaultAccountId);
     // Immutability: never mutate the shared payload. Every handler receives the same
     // sanitized copy, without the internal tag.
     let payload = event;
@@ -110,12 +128,20 @@ function routeEvent(eventName, event) {
     if (tag == null) {
         // Untagged events (e.g. custom templates, which are global by native design)
         // go to the top-level CleverTap listeners — same audience as before.
-        deliverRouted(routedKey(DEFAULT_SLOT_KEY, eventName), payload);
+        if (!deliverRouted(routedKey(DEFAULT_SLOT_KEY, eventName), payload)) {
+            routeDebug('dropped untagged "' + eventName + '" — no top-level listener');
+        }
         return;
     }
-    deliverRouted(routedKey(tag, eventName), payload);
+    let delivered = deliverRouted(routedKey(tag, eventName), payload);
     if (tag === currentDefaultAccountId) {
-        deliverRouted(routedKey(DEFAULT_SLOT_KEY, eventName), payload);
+        delivered = deliverRouted(routedKey(DEFAULT_SLOT_KEY, eventName), payload) || delivered;
+    }
+    if (!delivered) {
+        routeDebug('dropped "' + eventName + '" tag=' + tag + ' — no listener matched' +
+            (currentDefaultAccountId === null
+                ? ' (default accountId not resolved yet — see getDefaultAccountId)'
+                : ''));
     }
 }
 
@@ -135,12 +161,17 @@ function addListenerForHandle(accountId, eventName, handler) {
         routedHandlers.set(key, new Set());
     }
     routedHandlers.get(key).add(handler);
+    routeDebug('listener added for "' + key + '"');
     // Arm the native buffered-event flush for this account. For the top-level object,
     // wait until the default account id is known — otherwise a flushed event could
     // arrive before routeEvent can recognize it as the default account's.
     if (accountId === undefined) {
-        defaultAccountIdReady.then(() => CleverTapReact.onEventListenerAdded(eventName, null));
+        defaultAccountIdReady.then(() => {
+            routeDebug('arming native flush for "' + eventName + '" (default slot)');
+            CleverTapReact.onEventListenerAdded(eventName, null);
+        });
     } else {
+        routeDebug('arming native flush for "' + eventName + '" (account ' + accountId + ')');
         CleverTapReact.onEventListenerAdded(eventName, accountId);
     }
     return {
