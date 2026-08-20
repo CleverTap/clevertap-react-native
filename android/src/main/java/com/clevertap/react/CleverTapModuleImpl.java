@@ -1390,6 +1390,10 @@ public class CleverTapModuleImpl {
     }
 
     public void defineVariables(ReadableMap object, String accountId) {
+        if (object == null) {
+            Log.w(TAG, "defineVariables called with null variables object");
+            return;
+        }
         CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             Map<String, Object> accountVars = variablesFor(cleverTap);
@@ -1408,6 +1412,12 @@ public class CleverTapModuleImpl {
     }
 
     public void defineFileVariable(String name, String accountId) {
+        // ConcurrentHashMap throws NullPointerException on null KEYS (even for reads,
+        // unlike HashMap) — reject null before it can reach the registry or the SDK.
+        if (name == null) {
+            Log.w(TAG, "defineFileVariable called with null name");
+            return;
+        }
         CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             Var<String> variable = cleverTap.defineFileVariable(name);
@@ -1469,7 +1479,8 @@ public class CleverTapModuleImpl {
         }
         final String accountKey = clevertap.getAccountId();
         final Map<String, Object> accountVars = variablesFor(clevertap);
-        if (accountVars.containsKey(name)) {
+        // name null-guard first: ConcurrentHashMap.containsKey(null) throws NPE.
+        if (name != null && accountVars.containsKey(name)) {
 
             Var<Object> var = (Var<Object>) accountVars.get(name);
             if (var != null) {
@@ -1502,7 +1513,8 @@ public class CleverTapModuleImpl {
         }
         final String accountKey = clevertap.getAccountId();
         final Map<String, Object> accountVars = variablesFor(clevertap);
-        if (accountVars.containsKey(name)) {
+        // name null-guard first: ConcurrentHashMap.containsKey(null) throws NPE.
+        if (name != null && accountVars.containsKey(name)) {
 
             Var<Object> var = (Var<Object>) accountVars.get(name);
             if (var != null) {
@@ -1653,7 +1665,8 @@ public class CleverTapModuleImpl {
     }
 
     private Object getVariableValue(Map<String, Object> accountVars, String name) {
-        // null guard first: ConcurrentHashMap throws NPE on null keys, even for reads.
+        // null-guard first: ConcurrentHashMap.containsKey(null) throws NPE (HashMap
+        // returned false). A null name must take the graceful "does not exist" path.
         if (name != null && accountVars.containsKey(name)) {
             Var<?> variable = (Var<?>) accountVars.get(name);
             Object variableValue = variable.value();
@@ -1672,7 +1685,8 @@ public class CleverTapModuleImpl {
     }
 
     private WritableMap getVariableValueAsWritableMap(Map<String, Object> accountVars, String name) {
-        if (accountVars.containsKey(name)) {
+        // Same null-guard rule as getVariableValue (ConcurrentHashMap NPEs on null keys).
+        if (name != null && accountVars.containsKey(name)) {
             Var<?> variable = (Var<?>) accountVars.get(name);
             Object variableValue = variable.value();
             return CleverTapUtils.MapUtil.addValue(name, variable.value());
