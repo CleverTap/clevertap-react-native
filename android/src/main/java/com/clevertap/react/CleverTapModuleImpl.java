@@ -91,11 +91,14 @@ public class CleverTapModuleImpl {
 
     private static Uri sLaunchUri;
 
-    /**
-     * Written by defineVariables/defineFileVariable while getVariablesValues reads it from SDK
-     * callback threads, so it must stay concurrent.
-     */
-    public static final Map<String, Object> variables = new ConcurrentHashMap<>();
+    // Per-account variable registries: REAL account id -> (variable name -> Var).
+    // Without the account level, two accounts defining the same variable name would
+    // overwrite each other and reads/listeners would silently serve the wrong account.
+    // ⚠️ Thread safety is mandatory: bridge methods run on the native-modules thread,
+    // createInstance runs on the main thread, and the SDK fires variable callbacks on
+    // its own threads — all touch this map. ConcurrentHashMap on BOTH levels; it
+    // forbids null keys/values, so callers must null-guard what they put in.
+    private static final Map<String, Map<String, Object>> accountVariables = new ConcurrentHashMap<>();
 
     public static void setInitialUri(final Uri uri) {
         sLaunchUri = uri;
@@ -1371,17 +1374,34 @@ public class CleverTapModuleImpl {
         }
     }
 
+    /**
+     * Returns the variable registry belonging to the given instance's account,
+     * creating it atomically on first use.
+     */
+    private Map<String, Object> variablesFor(CleverTapAPI cleverTap) {
+        String accountKey = cleverTap.getAccountId();
+        if (accountKey == null) {
+            // ConcurrentHashMap forbids null keys; an instance without an account id
+            // cannot own variables. Hand back an isolated map so callers safely no-op.
+            Log.w(TAG, "Variables unavailable: instance has no accountId");
+            return new ConcurrentHashMap<>();
+        }
+        return accountVariables.computeIfAbsent(accountKey, k -> new ConcurrentHashMap<>());
+    }
+
     public void defineVariables(ReadableMap object, String accountId) {
         CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
+            Map<String, Object> accountVars = variablesFor(cleverTap);
             for (Map.Entry<String, Object> entry : object.toHashMap().entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
                 Var<Object> variable = cleverTap.defineVariable(key, value);
                 if (variable != null) {
-                    variables.put(key, variable);
+                    accountVars.put(key, variable);
                 } else {
-                    Log.e(TAG, "Could not define variable " + key);
+                    // ConcurrentHashMap forbids null values; also nothing to read later.
+                    Log.w(TAG, "defineVariable returned null for name " + key);
                 }
             }
         }
@@ -1392,9 +1412,9 @@ public class CleverTapModuleImpl {
         if (cleverTap != null) {
             Var<String> variable = cleverTap.defineFileVariable(name);
             if (variable != null) {
-                variables.put(name, variable);
+                variablesFor(cleverTap).put(name, variable);
             } else {
-                Log.e(TAG, "Could not define file variable " + name);
+                Log.w(TAG, "defineFileVariable returned null for name " + name);
             }
         }
     }
@@ -1420,7 +1440,7 @@ public class CleverTapModuleImpl {
         CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             try {
-                result = getVariableValue(key);
+                result = getVariableValue(variablesFor(cleverTap), key);
             } catch (IllegalArgumentException e) {
                 error = e.getLocalizedMessage();
             }
@@ -1431,24 +1451,34 @@ public class CleverTapModuleImpl {
     }
 
     public void getVariables(final Callback callback, String accountId) {
-        callbackWithErrorAndResult(callback, null, getVariablesValues());
+        CleverTapAPI cleverTap = resolveInstance(accountId);
+        if (cleverTap == null) {
+            callbackWithErrorAndResult(callback, ErrorMessages.CLEVERTAP_NOT_INITIALIZED, null);
+            return;
+        }
+        callbackWithErrorAndResult(callback, null, getVariablesValues(variablesFor(cleverTap)));
     }
 
     public void onValueChanged(final String name, String accountId) {
-        // Resolve first so the emitted event carries the REAL account id of the
-        // instance this callback belongs to (null keeps the event global).
+        // Resolve first: the listener must attach to THIS account's variable (never a
+        // same-named variable of another account) and the emitted event carries the
+        // REAL account id of the instance the callback belongs to.
         CleverTapAPI clevertap = resolveInstance(accountId);
-        final String accountKey = clevertap != null ? clevertap.getAccountId() : null;
-        if (variables.containsKey(name)) {
+        if (clevertap == null) {
+            return; // resolveInstance already warned
+        }
+        final String accountKey = clevertap.getAccountId();
+        final Map<String, Object> accountVars = variablesFor(clevertap);
+        if (accountVars.containsKey(name)) {
 
-            Var<Object> var = (Var<Object>) variables.get(name);
+            Var<Object> var = (Var<Object>) accountVars.get(name);
             if (var != null) {
                 var.addValueChangedCallback(new VariableCallback<Object>() {
                     @Override
                     public void onValueChanged(final Var<Object> variable) {
                         WritableMap result = null;
                         try {
-                            result = getVariableValueAsWritableMap(name);
+                            result = getVariableValueAsWritableMap(accountVars, name);
                         } catch (IllegalArgumentException e) {
                             Log.e(TAG, e.getLocalizedMessage());
                         }
@@ -1464,20 +1494,24 @@ public class CleverTapModuleImpl {
     }
 
     public void onFileValueChanged(final String name, String accountId) {
-        // Resolve first so the emitted event carries the REAL account id of the
-        // instance this callback belongs to (null keeps the event global).
+        // Resolve first: the listener must attach to THIS account's file variable and
+        // the emitted event carries the REAL account id of the owning instance.
         CleverTapAPI clevertap = resolveInstance(accountId);
-        final String accountKey = clevertap != null ? clevertap.getAccountId() : null;
-        if (variables.containsKey(name)) {
+        if (clevertap == null) {
+            return; // resolveInstance already warned
+        }
+        final String accountKey = clevertap.getAccountId();
+        final Map<String, Object> accountVars = variablesFor(clevertap);
+        if (accountVars.containsKey(name)) {
 
-            Var<Object> var = (Var<Object>) variables.get(name);
+            Var<Object> var = (Var<Object>) accountVars.get(name);
             if (var != null) {
                 var.addFileReadyHandler(new VariableCallback<Object>() {
                     @Override
                     public void onValueChanged(final Var<Object> variable) {
                         WritableMap result = null;
                         try {
-                            result = getVariableValueAsWritableMap(name);
+                            result = getVariableValueAsWritableMap(accountVars, name);
                         } catch (IllegalArgumentException e) {
                             Log.e(TAG, e.getLocalizedMessage());
                         }
@@ -1496,10 +1530,11 @@ public class CleverTapModuleImpl {
         CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             final String accountKey = cleverTap.getAccountId();
+            final Map<String, Object> accountVars = variablesFor(cleverTap);
             cleverTap.addVariablesChangedCallback(new VariablesChangedCallback() {
                 @Override
                 public void variablesChanged() {
-                    sendEvent(CleverTapEvent.CLEVERTAP_ON_VARIABLES_CHANGED, getVariablesValues(), accountKey);
+                    sendEvent(CleverTapEvent.CLEVERTAP_ON_VARIABLES_CHANGED, getVariablesValues(accountVars), accountKey);
                 }
             });
         }
@@ -1509,10 +1544,11 @@ public class CleverTapModuleImpl {
         CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             final String accountKey = cleverTap.getAccountId();
+            final Map<String, Object> accountVars = variablesFor(cleverTap);
             cleverTap.addOneTimeVariablesChangedCallback(new VariablesChangedCallback() {
                 @Override
                 public void variablesChanged() {
-                    sendEvent(CleverTapEvent.CLEVERTAP_ON_ONE_TIME_VARIABLES_CHANGED, getVariablesValues(), accountKey);
+                    sendEvent(CleverTapEvent.CLEVERTAP_ON_ONE_TIME_VARIABLES_CHANGED, getVariablesValues(accountVars), accountKey);
                 }
             });
         }
@@ -1522,11 +1558,12 @@ public class CleverTapModuleImpl {
         CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             final String accountKey = cleverTap.getAccountId();
+            final Map<String, Object> accountVars = variablesFor(cleverTap);
             cleverTap.onVariablesChangedAndNoDownloadsPending(new VariablesChangedCallback() {
                 @Override
                 public void variablesChanged() {
                     sendEvent(CleverTapEvent.CLEVERTAP_ON_VARIABLES_CHANGED_AND_NO_DOWNLOADS_PENDING,
-                            getVariablesValues(), accountKey);
+                            getVariablesValues(accountVars), accountKey);
                 }
             });
         }
@@ -1536,11 +1573,12 @@ public class CleverTapModuleImpl {
         CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             final String accountKey = cleverTap.getAccountId();
+            final Map<String, Object> accountVars = variablesFor(cleverTap);
             cleverTap.onceVariablesChangedAndNoDownloadsPending(new VariablesChangedCallback() {
                 @Override
                 public void variablesChanged() {
                     sendEvent(CleverTapEvent.CLEVERTAP_ONCE_VARIABLES_CHANGED_AND_NO_DOWNLOADS_PENDING,
-                            getVariablesValues(), accountKey);
+                            getVariablesValues(accountVars), accountKey);
                 }
             });
         }
@@ -1614,9 +1652,10 @@ public class CleverTapModuleImpl {
         }
     }
 
-    private Object getVariableValue(String name) {
-        if (name != null && variables.containsKey(name)) {
-            Var<?> variable = (Var<?>) variables.get(name);
+    private Object getVariableValue(Map<String, Object> accountVars, String name) {
+        // null guard first: ConcurrentHashMap throws NPE on null keys, even for reads.
+        if (name != null && accountVars.containsKey(name)) {
+            Var<?> variable = (Var<?>) accountVars.get(name);
             Object variableValue = variable.value();
             Object value;
             switch (variable.kind()) {
@@ -1632,9 +1671,9 @@ public class CleverTapModuleImpl {
                 "Variable name = " + name + " does not exist. Make sure you set variable first.");
     }
 
-    private WritableMap getVariableValueAsWritableMap(String name) {
-        if (variables.containsKey(name)) {
-            Var<?> variable = (Var<?>) variables.get(name);
+    private WritableMap getVariableValueAsWritableMap(Map<String, Object> accountVars, String name) {
+        if (accountVars.containsKey(name)) {
+            Var<?> variable = (Var<?>) accountVars.get(name);
             Object variableValue = variable.value();
             return CleverTapUtils.MapUtil.addValue(name, variable.value());
         }
@@ -1642,9 +1681,9 @@ public class CleverTapModuleImpl {
                 "Variable name = " + name + " does not exist.");
     }
 
-    private WritableMap getVariablesValues() {
+    private WritableMap getVariablesValues(Map<String, Object> accountVars) {
         WritableMap writableMap = Arguments.createMap();
-        for (Map.Entry<String, Object> entry : variables.entrySet()) {
+        for (Map.Entry<String, Object> entry : accountVars.entrySet()) {
             String key = entry.getKey();
             Var<?> variable = (Var<?>) entry.getValue();
 

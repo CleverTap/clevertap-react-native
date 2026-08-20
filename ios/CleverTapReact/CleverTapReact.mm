@@ -38,7 +38,13 @@ static NSDateFormatter *dateFormatter;
 // Which account's App Inbox is currently presented (this module is the inbox view's
 // delegate, so inbox tap events are stamped with this account id).
 @property(nonatomic, strong) NSString *inboxAccountId;
-@property(nonatomic, strong) NSMutableDictionary *allVariables;
+// Per-account variable registries: REAL account id -> (variable name -> CTVar).
+// Without the account level, two accounts defining the same variable name would
+// overwrite each other and reads/listeners would silently serve the wrong account.
+// ⚠️ Thread safety is mandatory: the SDK invokes variable callbacks on its own
+// threads while bridge methods run on the main queue — EVERY access goes through
+// @synchronized (self.variablesByAccount).
+@property(nonatomic, strong) NSMutableDictionary<NSString *, NSMutableDictionary *> *variablesByAccount;
 @end
 
 @implementation CleverTapReact
@@ -95,7 +101,7 @@ RCT_EXPORT_MODULE();
 {
     self = [super init];
     if (self) {
-        self.allVariables = [NSMutableDictionary dictionary];
+        self.variablesByAccount = [NSMutableDictionary dictionary];
         self.wiredAccountIds = [NSMutableSet set];
     }
     return self;
@@ -755,11 +761,40 @@ RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
     return (numID == boolID);
 }
 
-- (NSMutableDictionary *)getVariableValues {
+/// Returns the variable registry belonging to the given instance's account, creating
+/// it on first use. An instance without an account id gets an isolated empty registry
+/// so callers safely no-op.
+- (NSMutableDictionary *)variablesForInstance:(CleverTap *)instance {
+    NSString *accountKey = instance.config.accountId;
+    if (accountKey == nil) {
+        RCTLogWarn(@"[CleverTap variables unavailable: instance has no accountId]");
+        return [NSMutableDictionary dictionary];
+    }
+    @synchronized (self.variablesByAccount) {
+        NSMutableDictionary *accountVars = self.variablesByAccount[accountKey];
+        if (accountVars == nil) {
+            accountVars = [NSMutableDictionary dictionary];
+            self.variablesByAccount[accountKey] = accountVars;
+        }
+        return accountVars;
+    }
+}
+
+- (CTVar *)varForName:(NSString *)name usingInstance:(CleverTap *)instance {
+    NSMutableDictionary *accountVars = [self variablesForInstance:instance];
+    @synchronized (self.variablesByAccount) {
+        return accountVars[name];
+    }
+}
+
+- (NSMutableDictionary *)getVariableValuesForInstance:(CleverTap *)instance {
     NSMutableDictionary *varValues = [NSMutableDictionary dictionary];
-    [self.allVariables enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, CTVar*  _Nonnull var, BOOL * _Nonnull stop) {
-        varValues[key] = var.value;
-    }];
+    NSMutableDictionary *accountVars = [self variablesForInstance:instance];
+    @synchronized (self.variablesByAccount) {
+        [accountVars enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, CTVar*  _Nonnull var, BOOL * _Nonnull stop) {
+            varValues[key] = var.value;
+        }];
+    }
     return varValues;
 }
 
@@ -1266,14 +1301,14 @@ RCT_EXPORT_METHOD(syncVariablesinProd:(BOOL)isProduction accountId:(NSString*)ac
 
 RCT_EXPORT_METHOD(getVariable:(NSString * _Nonnull)name callback:(RCTResponseSenderBlock)callback accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap getVariable:name]");
-    CTVar *var = self.allVariables[name];
+    CTVar *var = [self varForName:name usingInstance:[self resolveInstance:accountId]];
     [self returnResult:var.value withCallback:callback andError:nil];
 }
 
 RCT_EXPORT_METHOD(getVariables:(RCTResponseSenderBlock)callback accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap getVariables]");
 
-    NSMutableDictionary *varValues = [self getVariableValues];
+    NSMutableDictionary *varValues = [self getVariableValuesForInstance:[self resolveInstance:accountId]];
     [self returnResult:varValues withCallback:callback andError:nil];
 }
 
@@ -1297,11 +1332,14 @@ RCT_EXPORT_METHOD(defineVariables:(NSDictionary*)variables accountId:(NSString*)
     if (!variables) return;
 
     CleverTap *instance = [self resolveInstance:accountId];
+    NSMutableDictionary *accountVars = [self variablesForInstance:instance];
     [variables enumerateKeysAndObjectsUsingBlock:^(NSString*  _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
         CTVar *var = [self createVarForName:key andValue:value usingInstance:instance];
 
         if (var) {
-            self.allVariables[key] = var;
+            @synchronized (self.variablesByAccount) {
+                accountVars[key] = var;
+            }
         }
     }];
 }
@@ -1309,9 +1347,13 @@ RCT_EXPORT_METHOD(defineVariables:(NSDictionary*)variables accountId:(NSString*)
 RCT_EXPORT_METHOD(defineFileVariable:(NSString*)fileVariable accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap defineFileVariable]");
     if (!fileVariable) return;
-    CTVar *fileVar = [[self resolveInstance:accountId] defineFileVar:fileVariable];
+    CleverTap *instance = [self resolveInstance:accountId];
+    CTVar *fileVar = [instance defineFileVar:fileVariable];
     if (fileVar) {
-        self.allVariables[fileVariable] = fileVar;
+        NSMutableDictionary *accountVars = [self variablesForInstance:instance];
+        @synchronized (self.variablesByAccount) {
+            accountVars[fileVariable] = fileVar;
+        }
     }
 }
 
@@ -1320,7 +1362,7 @@ RCT_EXPORT_METHOD(onVariablesChanged:(NSString*)accountId) {
     CleverTap *instance = [self resolveInstance:accountId];
     NSString *accountKey = instance.config.accountId;
     [instance onVariablesChanged:^{
-        NSMutableDictionary *body = [[self getVariableValues] mutableCopy];
+        NSMutableDictionary *body = [self getVariableValuesForInstance:instance];
         if (accountKey != nil) {
             body[kCleverTapAccountIdKey] = accountKey;
         }
@@ -1333,7 +1375,7 @@ RCT_EXPORT_METHOD(onOneTimeVariablesChanged:(NSString*)accountId) {
     CleverTap *instance = [self resolveInstance:accountId];
     NSString *accountKey = instance.config.accountId;
     [instance onceVariablesChanged:^{
-        NSMutableDictionary *body = [[self getVariableValues] mutableCopy];
+        NSMutableDictionary *body = [self getVariableValuesForInstance:instance];
         if (accountKey != nil) {
             body[kCleverTapAccountIdKey] = accountKey;
         }
@@ -1345,7 +1387,7 @@ RCT_EXPORT_METHOD(onValueChanged:(NSString*)name accountId:(NSString*)accountId)
     RCTLogInfo(@"[CleverTap onValueChanged]");
     CleverTap *instance = [self resolveInstance:accountId];
     NSString *accountKey = instance.config.accountId;
-    CTVar *var = self.allVariables[name];
+    CTVar *var = [self varForName:name usingInstance:instance];
     if (var) {
         [var onValueChanged:^{
             NSMutableDictionary *varResult = [@{
@@ -1364,7 +1406,7 @@ RCT_EXPORT_METHOD(onVariablesChangedAndNoDownloadsPending:(NSString*)accountId) 
     CleverTap *instance = [self resolveInstance:accountId];
     NSString *accountKey = instance.config.accountId;
     [instance onVariablesChangedAndNoDownloadsPending:^{
-        NSMutableDictionary *body = [[self getVariableValues] mutableCopy];
+        NSMutableDictionary *body = [self getVariableValuesForInstance:instance];
         if (accountKey != nil) {
             body[kCleverTapAccountIdKey] = accountKey;
         }
@@ -1377,7 +1419,7 @@ RCT_EXPORT_METHOD(onceVariablesChangedAndNoDownloadsPending:(NSString*)accountId
     CleverTap *instance = [self resolveInstance:accountId];
     NSString *accountKey = instance.config.accountId;
     [instance onceVariablesChangedAndNoDownloadsPending:^{
-        NSMutableDictionary *body = [[self getVariableValues] mutableCopy];
+        NSMutableDictionary *body = [self getVariableValuesForInstance:instance];
         if (accountKey != nil) {
             body[kCleverTapAccountIdKey] = accountKey;
         }
@@ -1389,7 +1431,7 @@ RCT_EXPORT_METHOD(onFileValueChanged:(NSString*)name accountId:(NSString*)accoun
     RCTLogInfo(@"[CleverTap onFileChanged]");
     CleverTap *instance = [self resolveInstance:accountId];
     NSString *accountKey = instance.config.accountId;
-    CTVar *var = self.allVariables[name];
+    CTVar *var = [self varForName:name usingInstance:instance];
     if (var) {
         [var onFileIsReady:^{
             NSMutableDictionary *varFileResult = [@{
