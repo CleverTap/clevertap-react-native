@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 4.3.0 *(August 19 2026)*
+Version 4.3.0 *(August 20 2026)*
 -------------------------------------------
 **What's new**
 * **[Android Platform]**
@@ -26,6 +26,7 @@ Version 4.3.0 *(August 19 2026)*
   * Fixes App Inbox messages never being saved on Android 6.0 through Android 10 (API 23–29), which left the inbox permanently empty on those devices. Affects every app using App Inbox on RN SDK v4.1.0 and v4.2.0; messages reappear on the next inbox fetch after updating, with no code change on your side.
   * Fixes the built-in App Inbox not repainting the message list after a pull-to-refresh — newly fetched messages previously appeared only after closing and reopening the inbox.
   * Fixes a crash when a Picture-in-Picture in-app played video on Android 6.0. Only affects apps whose `minSdkVersion` is below 24; the same fix also covers in-app and App Inbox video playback on that OS version.
+  * Fixes a rare NPE that occurs when the push permission prompt is triggered from a background thread by ensuring it is launched on the main thread.
 
 * **[iOS Platform]**
   * Fixes the built-in App Inbox not repainting the message list after a pull-to-refresh — newly fetched messages previously appeared only after closing and reopening the inbox.
