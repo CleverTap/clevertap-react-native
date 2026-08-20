@@ -553,6 +553,18 @@ CleverTap.discardInAppNotifications();
 CleverTap.resumeInAppNotifications();
 ```
 
+#### Dismiss PIP InApp Notification
+
+*Available from CleverTap React Native SDK v4.3.0.*
+
+Dismisses the Picture-in-Picture (PIP) InApp notification that is currently on screen. Calling it when no PIP InApp is visible does nothing, and other InApp notification types are never affected.
+
+Dismissing frees the InApp display slot, so the next queued InApp notification (if any) may appear right away. To keep a screen free of all InApp notifications, call `suspendInAppNotifications()` when the screen opens and `resumeInAppNotifications()` when it closes.
+
+```javascript
+CleverTap.dismissPipInApp();
+```
+
 
 ### For more information,
  - [See included Example Application](/Example/app/App.js) 

@@ -1,6 +1,41 @@
 Change Log
 ==========
 
+Version 4.3.0 *(August 20 2026)*
+-------------------------------------------
+**What's new**
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v8.4.1](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-841-august-2026).
+  * Accessibility improvements across in-apps and App Inbox — dynamic text scaling, screen-reader announcements, content descriptions for close buttons/images/media controls, a larger 48dp dismiss tap target, and corrected carousel navigation for TalkBack.
+  * Custom-HTML header and footer in-apps now render when the host Activity is not a `FragmentActivity` (for example Unity or Unreal game engines). Opt in with the `CLEVERTAP_INAPP_FRAGMENTLESS_BANNERS` manifest flag; it is off by default, so existing apps are unaffected.
+
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.8.1](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-781-august-07-2026).
+  * Accessibility improvements across in-apps and App Inbox — VoiceOver labels, a larger dismiss-button tap area, and better handling of image content descriptions.
+  
+* **[Android and iOS Platform]**
+  * Spin-the-Wheel and Scratch Card gamified in-app templates — available to campaigns built with the Advanced InApp Builder, no app-side wiring needed.
+  * Per-element click attribution for in-apps — the `Notification Clicked` event now records which element of the in-app was tapped, across all templates. Tap-outside(iOS) and swipe-to-dismiss(Android and iOS) gestures are now configurable per campaign and are tracked as `Notification Clicked` events too.
+
+**API changes**
+* **[Android and iOS Platform]**
+  * Adds `dismissPipInApp()` — dismisses the Picture-in-Picture in-app notification currently on screen. It does nothing when no PiP in-app is visible, and never affects other in-app types.
+
+**Bug Fixes**
+* **[Android Platform]**
+  * Fixes App Inbox messages never being saved on Android 6.0 through Android 10 (API 23–29), which left the inbox permanently empty on those devices. Affects every app using App Inbox on RN SDK v4.1.0 and v4.2.0; messages reappear on the next inbox fetch after updating, with no code change on your side.
+  * Fixes the built-in App Inbox not repainting the message list after a pull-to-refresh — newly fetched messages previously appeared only after closing and reopening the inbox.
+  * Fixes a crash when a Picture-in-Picture in-app played video on Android 6.0. Only affects apps whose `minSdkVersion` is below 24; the same fix also covers in-app and App Inbox video playback on that OS version.
+  * Fixes a rare NPE that occurs when the push permission prompt is triggered from a background thread by ensuring it is launched on the main thread.
+
+* **[iOS Platform]**
+  * Fixes the built-in App Inbox not repainting the message list after a pull-to-refresh — newly fetched messages previously appeared only after closing and reopening the inbox.
+  * Fixes in-apps that were missed while the app was in the background not being shown when the app returned to the foreground.
+  * Fixes the `Notification Clicked` event not carrying deeplink properties for custom-HTML in-apps.
+  * Fixes client-side in-apps not being persisted when an empty campaign list was received.
+  * Fixes full-screen cover in-apps built with the Advanced InApp Builder not respecting the device safe area.
+  * Fixes two potential crashes — one while saving variable diffs, and one during simultaneous variable updates.
+
 Version 4.2.0 *(June 5 2026)*
 -------------------------------------------
 **What's new**

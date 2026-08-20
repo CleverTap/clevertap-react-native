@@ -524,6 +524,11 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
+    fun dismissPipInApp() {
+        cleverTapModuleImpl.dismissPipInApp()
+    }
+
+    @ReactMethod
     fun unmute() {
         cleverTapModuleImpl.unmute()
     }
