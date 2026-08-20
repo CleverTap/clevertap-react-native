@@ -444,6 +444,10 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.resumeInAppNotifications()
     }
 
+    override fun dismissPipInApp() {
+        cleverTapModuleImpl.dismissPipInApp()
+    }
+
     override fun unmute() {
         cleverTapModuleImpl.unmute()
     }

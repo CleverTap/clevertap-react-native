@@ -710,6 +710,13 @@ export const getFeatureFlag = () => {
     });
 };
 
+// InApp Controls
+export const dismissPipInApp = () => {
+    CleverTap.dismissPipInApp();
+    console.log('dismissPipInApp -> requested dismissal of the visible PIP InApp, if any');
+    showToast('Dismiss PIP InApp', 'No-op when no PIP InApp is on screen');
+};
+
 // App Personalisation
 export const enablePersonalization = () => {
     CleverTap.enablePersonalization();

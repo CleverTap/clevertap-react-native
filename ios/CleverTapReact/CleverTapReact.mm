@@ -960,6 +960,11 @@ RCT_EXPORT_METHOD(resumeInAppNotifications) {
     [[self cleverTapInstance] resumeInAppNotifications];
 }
 
+RCT_EXPORT_METHOD(dismissPipInApp) {
+    RCTLogInfo(@"[CleverTap dismissPipInApp]");
+    [[self cleverTapInstance] dismissPipInApp];
+}
+
 RCT_EXPORT_METHOD(unmute) {
     RCTLogInfo(@"[CleverTap unmute]");
     [[self cleverTapInstance] unmute];

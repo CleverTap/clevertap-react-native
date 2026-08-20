@@ -47,6 +47,7 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
+import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
@@ -244,7 +245,13 @@ public class CleverTapModuleImpl {
     public void promptForPushPermission(boolean showFallbackSettings) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
-            cleverTap.promptForPushPermission(showFallbackSettings);
+            // Must run on the main thread. startActivity() internally walks the outgoing
+            // activity's view hierarchy (Activity.cancelInputsAndStartExitTransition),
+            // which is main-thread-only. Calling it from the native modules thread races
+            // against the main thread's view removals and can crash with an NPE inside
+            // ViewGroup.dispatchCancelPendingInputEvents.
+            UiThreadUtil.runOnUiThread(
+                    () -> cleverTap.promptForPushPermission(showFallbackSettings));
         } else {
             Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
         }
@@ -254,7 +261,9 @@ public class CleverTapModuleImpl {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             JSONObject jsonObject = localInAppConfigFromReadableMap(localInAppConfig);
-            cleverTap.promptPushPrimer(jsonObject);
+            // Main thread required, same reason as promptForPushPermission above. The
+            // ReadableMap conversion stays on the calling thread; only the UI call hops.
+            UiThreadUtil.runOnUiThread(() -> cleverTap.promptPushPrimer(jsonObject));
         } else {
             Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
         }
@@ -1185,6 +1194,13 @@ public class CleverTapModuleImpl {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.resumeInAppNotifications();
+        }
+    }
+
+    public void dismissPipInApp() {
+        CleverTapAPI cleverTap = getCleverTapAPI();
+        if (cleverTap != null) {
+            cleverTap.dismissPipInApp();
         }
     }
 
