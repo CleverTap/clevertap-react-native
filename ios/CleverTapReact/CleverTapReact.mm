@@ -788,13 +788,19 @@ RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
 }
 
 - (NSMutableDictionary *)getVariableValuesForInstance:(CleverTap *)instance {
-    NSMutableDictionary *varValues = [NSMutableDictionary dictionary];
+    // Snapshot the registry under the lock, then read the CTVar values OUTSIDE it.
+    // Never call into SDK objects (var.value) while holding our lock: if the SDK
+    // ever synchronizes that getter internally, reading it under our lock could
+    // form a lock-order inversion with SDK threads that call back into us.
+    NSDictionary *snapshot;
     NSMutableDictionary *accountVars = [self variablesForInstance:instance];
     @synchronized (self.variablesByAccount) {
-        [accountVars enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, CTVar*  _Nonnull var, BOOL * _Nonnull stop) {
-            varValues[key] = var.value;
-        }];
+        snapshot = [accountVars copy];
     }
+    NSMutableDictionary *varValues = [NSMutableDictionary dictionary];
+    [snapshot enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, CTVar*  _Nonnull var, BOOL * _Nonnull stop) {
+        varValues[key] = var.value;
+    }];
     return varValues;
 }
 
