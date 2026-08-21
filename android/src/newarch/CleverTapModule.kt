@@ -153,20 +153,20 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.enablePersonalization(accountId)
     }
 
-    override fun eventGetDetail(eventName: String?, callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.eventGetDetail(eventName, callback, accountId)
+    override fun eventGetDetail(eventName: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.eventGetDetail(eventName, accountId, callback)
     }
 
-    override fun eventGetFirstTime(eventName: String?, callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.eventGetFirstTime(eventName, callback, accountId)
+    override fun eventGetFirstTime(eventName: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.eventGetFirstTime(eventName, accountId, callback)
     }
 
-    override fun eventGetLastTime(eventName: String?, callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.eventGetLastTime(eventName, callback, accountId)
+    override fun eventGetLastTime(eventName: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.eventGetLastTime(eventName, accountId, callback)
     }
 
-    override fun eventGetOccurrences(eventName: String?, callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.eventGetOccurrences(eventName, callback, accountId)
+    override fun eventGetOccurrences(eventName: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.eventGetOccurrences(eventName, accountId, callback)
     }
 
     override fun fetch(accountId: String?) {
@@ -181,52 +181,52 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.fetchWithMinimumFetchIntervalInSeconds(interval.toInt(), accountId)
     }
 
-    override fun getAllDisplayUnits(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getAllDisplayUnits(callback, accountId)
+    override fun getAllDisplayUnits(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getAllDisplayUnits(accountId, callback)
     }
 
-    override fun getDisplayUnitForId(unitID: String?, callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getDisplayUnitForId(unitID, callback, accountId)
+    override fun getDisplayUnitForId(unitID: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getDisplayUnitForId(unitID, accountId, callback)
     }
 
-    override fun getBoolean(key: String?, callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getBoolean(key, callback, accountId)
+    override fun getBoolean(key: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getBoolean(key, accountId, callback)
     }
 
-    override fun getDouble(key: String?, callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getDouble(key, callback, accountId)
+    override fun getDouble(key: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getDouble(key, accountId, callback)
     }
 
-    override fun getEventHistory(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getEventHistory(callback, accountId)
+    override fun getEventHistory(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getEventHistory(accountId, callback)
     }
 
-    override fun getFeatureFlag(name: String?, defaultValue: Boolean, callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getFeatureFlag(name, defaultValue, callback, accountId)
+    override fun getFeatureFlag(name: String?, defaultValue: Boolean, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getFeatureFlag(name, defaultValue, accountId, callback)
     }
 
-    override fun getAllInboxMessages(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getAllInboxMessages(callback, accountId)
+    override fun getAllInboxMessages(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getAllInboxMessages(accountId, callback)
     }
 
-    override fun getInboxMessageCount(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getInboxMessageCount(callback, accountId)
+    override fun getInboxMessageCount(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getInboxMessageCount(accountId, callback)
     }
 
-    override fun getInboxMessageForId(messageId: String?, callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getInboxMessageForId(messageId, callback, accountId)
+    override fun getInboxMessageForId(messageId: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getInboxMessageForId(messageId, accountId, callback)
     }
 
-    override fun getInboxMessageUnreadCount(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getInboxMessageUnreadCount(callback, accountId)
+    override fun getInboxMessageUnreadCount(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getInboxMessageUnreadCount(accountId, callback)
     }
 
     override fun deleteInboxMessageForId(messageId: String?, accountId: String?) {
         cleverTapModuleImpl.deleteInboxMessageForId(messageId, accountId)
     }
 
-    override fun getUnreadInboxMessages(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getUnreadInboxMessages(callback, accountId)
+    override fun getUnreadInboxMessages(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getUnreadInboxMessages(accountId, callback)
     }
 
     override fun initializeInbox(accountId: String?) {
@@ -253,8 +253,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.pushInboxNotificationViewedEventForId(messageId, accountId)
     }
 
-    override fun fetchInbox(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.fetchInbox(callback, accountId)
+    override fun fetchInbox(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.fetchInbox(accountId, callback)
     }
 
     override fun showInbox(styleConfig: ReadableMap?, accountId: String?) {
@@ -269,12 +269,12 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.getInitialUrl(callback)
     }
 
-    override fun getLastFetchTimeStampInMillis(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getLastFetchTimeStampInMillis(callback, accountId)
+    override fun getLastFetchTimeStampInMillis(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getLastFetchTimeStampInMillis(accountId, callback)
     }
 
-    override fun getString(key: String?, callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getString(key, callback, accountId)
+    override fun getString(key: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getString(key, accountId, callback)
     }
 
     override fun onUserLogin(profile: ReadableMap?, accountId: String?) {
@@ -289,20 +289,20 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.profileAddMultiValues(values, key, accountId)
     }
 
-    override fun profileGetCleverTapAttributionIdentifier(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.profileGetCleverTapAttributionIdentifier(callback, accountId)
+    override fun profileGetCleverTapAttributionIdentifier(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.profileGetCleverTapAttributionIdentifier(accountId, callback)
     }
 
-    override fun profileGetCleverTapID(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.profileGetCleverTapID(callback, accountId)
+    override fun profileGetCleverTapID(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.profileGetCleverTapID(accountId, callback)
     }
 
-    override fun getCleverTapID(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getCleverTapID(callback, accountId)
+    override fun getCleverTapID(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getCleverTapID(accountId, callback)
     }
 
-    override fun profileGetProperty(propertyName: String?, callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.profileGetProperty(propertyName, callback, accountId)
+    override fun profileGetProperty(propertyName: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.profileGetProperty(propertyName, accountId, callback)
     }
 
     override fun profileRemoveMultiValue(value: String?, key: String?, accountId: String?) {
@@ -365,26 +365,26 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
 
     // Feature Flag methods
 
-    override fun sessionGetPreviousVisitTime(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.sessionGetPreviousVisitTime(callback, accountId)
+    override fun sessionGetPreviousVisitTime(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.sessionGetPreviousVisitTime(accountId, callback)
     }
 
     // Developer Options
 
-    override fun sessionGetScreenCount(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.sessionGetScreenCount(callback, accountId)
+    override fun sessionGetScreenCount(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.sessionGetScreenCount(accountId, callback)
     }
 
-    override fun sessionGetTimeElapsed(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.sessionGetTimeElapsed(callback, accountId)
+    override fun sessionGetTimeElapsed(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.sessionGetTimeElapsed(accountId, callback)
     }
 
-    override fun sessionGetTotalVisits(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.sessionGetTotalVisits(callback, accountId)
+    override fun sessionGetTotalVisits(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.sessionGetTotalVisits(accountId, callback)
     }
 
-    override fun sessionGetUTMDetails(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.sessionGetUTMDetails(callback, accountId)
+    override fun sessionGetUTMDetails(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.sessionGetUTMDetails(accountId, callback)
     }
 
     override fun setDebugLevel(level: Double) {
@@ -464,8 +464,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.getDefaultAccountId(promise)
     }
 
-    override fun fetchInApps(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.fetchInApps(callback, accountId)
+    override fun fetchInApps(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.fetchInApps(accountId, callback)
     }
 
     override fun clearInAppResources(expiredOnly: Boolean, accountId: String?) {
@@ -543,8 +543,8 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.syncCustomTemplates()
     }
 
-    override fun variants(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.variants(callback, accountId)
+    override fun variants(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.variants(accountId, callback)
     }
 
     override fun syncVariables(accountId: String?) {
@@ -552,7 +552,7 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     override fun syncVariablesinProd(isProduction: Boolean, accountId: String?) {
-        cleverTapModuleImpl.syncVariablesinProd(isProduction, null, accountId)
+        cleverTapModuleImpl.syncVariablesinProd(isProduction, accountId)
     }
 
     override fun defineVariables(`object`: ReadableMap?, accountId: String?) {
@@ -563,16 +563,16 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.defineFileVariable(name, accountId)
     }
 
-    override fun fetchVariables(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.fetchVariables(callback, accountId)
+    override fun fetchVariables(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.fetchVariables(accountId, callback)
     }
 
-    override fun getVariable(key: String?, callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getVariable(key, callback, accountId)
+    override fun getVariable(key: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getVariable(key, accountId, callback)
     }
 
-    override fun getVariables(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getVariables(callback, accountId)
+    override fun getVariables(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getVariables(accountId, callback)
     }
 
     override fun onVariablesChanged(accountId: String?) {
@@ -620,24 +620,24 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         return
     }
 
-    override fun getUserEventLog(eventName: String, callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getUserEventLog(eventName, callback, accountId)
+    override fun getUserEventLog(eventName: String, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getUserEventLog(eventName, accountId, callback)
     }
 
-    override fun getUserEventLogCount(eventName: String, callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getUserEventLogCount(eventName, callback, accountId)
+    override fun getUserEventLogCount(eventName: String, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getUserEventLogCount(eventName, accountId, callback)
     }
 
-    override fun getUserLastVisitTs(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getUserLastVisitTs(callback, accountId)
+    override fun getUserLastVisitTs(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getUserLastVisitTs(accountId, callback)
     }
 
-    override fun getUserAppLaunchCount(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getUserAppLaunchCount(callback, accountId)
+    override fun getUserAppLaunchCount(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getUserAppLaunchCount(accountId, callback)
     }
 
-    override fun getUserEventLogHistory(callback: Callback?, accountId: String?) {
-        cleverTapModuleImpl.getUserEventLogHistory(callback, accountId)
+    override fun getUserEventLogHistory(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getUserEventLogHistory(accountId, callback)
     }
 
 

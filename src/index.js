@@ -29,10 +29,16 @@ function defaultCallback(method, err, res) {
 * @param {array} args - The method args
 * @param {function(err, res)} callback - callback
 * @param {string} accountId - which account the call is for; pass null for the
-* default account. Only pass it for native methods that already accept a
-* trailing accountId (the native argument order is callback, then accountId).
-* Leave it undefined for all other methods: the old-architecture Android
-* bridge checks the exact argument count, so an extra argument would throw.
+* default account. Only pass it for native methods that accept an accountId
+* (the native argument order is accountId, then callback). Leave it undefined
+* for methods with no accountId parameter: the old-architecture Android bridge
+* checks the exact argument count, so an extra argument would throw.
+*
+* ⚠️ ORDER IS LOAD-BEARING: the callback MUST be the LAST argument. React
+* Native's old-architecture bridge reads callbacks off the END of the argument
+* list and throws "Cannot have a non-function arg after a function arg." if
+* anything follows a function (NativeModules.js — not dev-only, crashes
+* release builds). Never append anything after the callback.
 */
 function callWithCallback(method, args, callback, accountId) {
     if (typeof callback === 'undefined' || callback == null || typeof callback !== 'function') {
@@ -45,11 +51,11 @@ function callWithCallback(method, args, callback, accountId) {
         args = [];
     }
 
-    args.push(callback);
-
     if (accountId !== undefined) {
         args.push(accountId);
     }
+
+    args.push(callback);
 
     CleverTapReact[method].apply(this, args);
 }

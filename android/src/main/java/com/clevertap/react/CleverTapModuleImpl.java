@@ -326,7 +326,7 @@ public class CleverTapModuleImpl {
     }
 
 
-    public void getUserEventLog(String eventName, Callback callback, String accountId) {
+    public void getUserEventLog(String eventName, String accountId, Callback callback) {
         String error = null;
         WritableMap result = null;
 
@@ -340,7 +340,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getUserEventLogCount(String eventName, Callback callback, String accountId) {
+    public void getUserEventLogCount(String eventName, String accountId, Callback callback) {
         String error = null;
         int result = -1;
 
@@ -353,7 +353,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getUserLastVisitTs(Callback callback, String accountId) {
+    public void getUserLastVisitTs(String accountId, Callback callback) {
         String error = null;
         double result = -1;
 
@@ -366,7 +366,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getUserAppLaunchCount(Callback callback, String accountId) {
+    public void getUserAppLaunchCount(String accountId, Callback callback) {
         String error = null;
         int result = -1;
 
@@ -379,7 +379,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getUserEventLogHistory(Callback callback, String accountId) {
+    public void getUserEventLogHistory(String accountId, Callback callback) {
         String error = null;
         WritableMap result = null;
 
@@ -394,7 +394,7 @@ public class CleverTapModuleImpl {
     }
 
     @Deprecated(since = "3.2.0")
-    public void eventGetDetail(String eventName, Callback callback, String accountId) {
+    public void eventGetDetail(String eventName, String accountId, Callback callback) {
         String error = null;
         WritableMap result = null;
 
@@ -410,7 +410,7 @@ public class CleverTapModuleImpl {
 
 
     @Deprecated(since = "3.2.0")
-    public void eventGetFirstTime(String eventName, Callback callback, String accountId) {
+    public void eventGetFirstTime(String eventName, String accountId, Callback callback) {
         String error = null;
         int result = -1;
 
@@ -424,7 +424,7 @@ public class CleverTapModuleImpl {
     }
 
     @Deprecated(since = "3.2.0")
-    public void eventGetLastTime(String eventName, Callback callback, String accountId) {
+    public void eventGetLastTime(String eventName, String accountId, Callback callback) {
         String error = null;
         int result = -1;
 
@@ -438,7 +438,7 @@ public class CleverTapModuleImpl {
     }
 
     @Deprecated(since = "3.2.0")
-    public void eventGetOccurrences(String eventName, Callback callback, String accountId) {
+    public void eventGetOccurrences(String eventName, String accountId, Callback callback) {
         String error = null;
         int result = -1;
 
@@ -478,7 +478,7 @@ public class CleverTapModuleImpl {
         productConfigController.fetch(interval);
     }
 
-    public void getAllDisplayUnits(Callback callback, String accountId) {
+    public void getAllDisplayUnits(String accountId, Callback callback) {
         String error = null;
         WritableArray result = Arguments.createArray();
 
@@ -491,7 +491,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getBoolean(String key, Callback callback, String accountId) {
+    public void getBoolean(String key, String accountId, Callback callback) {
         String error = null;
         Boolean result = null;
 
@@ -509,7 +509,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getDisplayUnitForId(String unitID, Callback callback, String accountId) {
+    public void getDisplayUnitForId(String unitID, String accountId, Callback callback) {
         String error = null;
         WritableMap result = null;
 
@@ -525,7 +525,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getDouble(String key, Callback callback, String accountId) {
+    public void getDouble(String key, String accountId, Callback callback) {
         String error = null;
         Double result = null;
 
@@ -544,7 +544,7 @@ public class CleverTapModuleImpl {
     }
 
     @Deprecated(since = "3.2.0")
-    public void getEventHistory(Callback callback, String accountId) {
+    public void getEventHistory(String accountId, Callback callback) {
         String error = null;
         WritableMap result = null;
 
@@ -558,7 +558,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getFeatureFlag(String name, Boolean defaultValue, Callback callback, String accountId) {
+    public void getFeatureFlag(String name, Boolean defaultValue, String accountId, Callback callback) {
         String error = null;
         Boolean result = null;
 
@@ -576,11 +576,11 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getAllInboxMessages(Callback callback, String accountId) {
-        getInboxMessages(callback, InBoxMessages.ALL, accountId);
+    public void getAllInboxMessages(String accountId, Callback callback) {
+        getInboxMessages(InBoxMessages.ALL, accountId, callback);
     }
 
-    public void getInboxMessageCount(Callback callback, String accountId) {
+    public void getInboxMessageCount(String accountId, Callback callback) {
 
         String error = null;
         int result = -1;
@@ -594,7 +594,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getInboxMessageForId(String messageId, Callback callback, String accountId) {
+    public void getInboxMessageForId(String messageId, String accountId, Callback callback) {
         String error = null;
         WritableMap result = null;
 
@@ -611,7 +611,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getInboxMessageUnreadCount(Callback callback, String accountId) {
+    public void getInboxMessageUnreadCount(String accountId, Callback callback) {
         String error = null;
         int result = -1;
 
@@ -633,8 +633,8 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void getUnreadInboxMessages(Callback callback, String accountId) {
-        getInboxMessages(callback, InBoxMessages.UNREAD, accountId);
+    public void getUnreadInboxMessages(String accountId, Callback callback) {
+        getInboxMessages(InBoxMessages.UNREAD, accountId, callback);
     }
 
 
@@ -692,7 +692,7 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void fetchInbox(final Callback callback, String accountId) {
+    public void fetchInbox(String accountId, final Callback callback) {
         CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap == null) {
             String error = ErrorMessages.CLEVERTAP_NOT_INITIALIZED;
@@ -737,7 +737,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, url);
     }
 
-    public void getLastFetchTimeStampInMillis(Callback callback, String accountId) {
+    public void getLastFetchTimeStampInMillis(String accountId, Callback callback) {
         String error = null;
         String result = null;
 
@@ -755,7 +755,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getString(String key, Callback callback, String accountId) {
+    public void getString(String key, String accountId, Callback callback) {
         String error = null;
         String result = null;
 
@@ -800,7 +800,7 @@ public class CleverTapModuleImpl {
         clevertap.addMultiValuesForKey(key, finalValues);
     }
 
-    public void profileGetCleverTapAttributionIdentifier(Callback callback, String accountId) {
+    public void profileGetCleverTapAttributionIdentifier(String accountId, Callback callback) {
         String error = null;
         String result = null;
 
@@ -813,7 +813,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void profileGetCleverTapID(Callback callback, String accountId) {
+    public void profileGetCleverTapID(String accountId, Callback callback) {
         String error = null;
         String result = null;
 
@@ -826,7 +826,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getCleverTapID(final Callback callback, String accountId) {
+    public void getCleverTapID(String accountId, final Callback callback) {
         final CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             clevertap.getCleverTapID(new OnInitCleverTapIDListener() {
@@ -843,7 +843,7 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void profileGetProperty(String propertyName, Callback callback, String accountId) {
+    public void profileGetProperty(String propertyName, String accountId, Callback callback) {
         String error = null;
         Object result = null;
 
@@ -1025,7 +1025,7 @@ public class CleverTapModuleImpl {
     }
 
     @Deprecated(since = "3.2.0")
-    public void sessionGetPreviousVisitTime(Callback callback, String accountId) {
+    public void sessionGetPreviousVisitTime(String accountId, Callback callback) {
         String error = null;
         int result = -1;
 
@@ -1038,7 +1038,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void sessionGetScreenCount(Callback callback, String accountId) {
+    public void sessionGetScreenCount(String accountId, Callback callback) {
         String error = null;
         int result = -1;
 
@@ -1051,7 +1051,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void sessionGetTimeElapsed(Callback callback, String accountId) {
+    public void sessionGetTimeElapsed(String accountId, Callback callback) {
         String error = null;
         int result = -1;
 
@@ -1065,7 +1065,7 @@ public class CleverTapModuleImpl {
     }
 
     @Deprecated(since = "3.2.0")
-    public void sessionGetTotalVisits(Callback callback, String accountId) {
+    public void sessionGetTotalVisits(String accountId, Callback callback) {
         String error = null;
         int result = -1;
 
@@ -1078,7 +1078,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void sessionGetUTMDetails(Callback callback, String accountId) {
+    public void sessionGetUTMDetails(String accountId, Callback callback) {
         String error = null;
         WritableMap result = null;
 
@@ -1321,7 +1321,7 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void variants(final Callback callback, String accountId) {
+    public void variants(String accountId, final Callback callback) {
         WritableArray result = null;
         String error = null;
         CleverTapAPI cleverTap = resolveInstance(accountId);
@@ -1363,7 +1363,7 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void syncVariablesinProd(boolean isProduction, Callback callback, String accountId) {
+    public void syncVariablesinProd(boolean isProduction, String accountId) {
         Log.i(TAG, "CleverTap syncVariablesinProd is no-op in Android");
     }
 
@@ -1429,7 +1429,7 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void fetchVariables(final Callback callback, String accountId) {
+    public void fetchVariables(String accountId, final Callback callback) {
         CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.fetchVariables(new FetchVariablesCallback() {
@@ -1444,7 +1444,7 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void getVariable(String key, final Callback callback, String accountId) {
+    public void getVariable(String key, String accountId, final Callback callback) {
         String error = null;
         Object result = null;
         CleverTapAPI cleverTap = resolveInstance(accountId);
@@ -1460,7 +1460,7 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    public void getVariables(final Callback callback, String accountId) {
+    public void getVariables(String accountId, final Callback callback) {
         CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap == null) {
             callbackWithErrorAndResult(callback, ErrorMessages.CLEVERTAP_NOT_INITIALIZED, null);
@@ -1607,7 +1607,7 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void fetchInApps(final Callback callback, String accountId) {
+    public void fetchInApps(String accountId, final Callback callback) {
         CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.fetchInApps(new FetchInAppsCallback() {
@@ -1988,7 +1988,7 @@ public class CleverTapModuleImpl {
         return clevertap.productConfig();
     }
 
-    private void getInboxMessages(Callback callback, InBoxMessages type, String accountId) {
+    private void getInboxMessages(InBoxMessages type, String accountId, Callback callback) {
         String error = null;
         ArrayList<CTInboxMessage> inboxMessages = new ArrayList<>();
         WritableArray result = Arguments.createArray();

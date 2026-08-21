@@ -65,61 +65,61 @@ export interface Spec extends TurboModule {
   ): void;
   eventGetFirstTime(
     eventName: string,
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   eventGetLastTime(
     eventName: string,
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   eventGetOccurrences(
     eventName: string,
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   eventGetDetail(
     eventName: string,
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   getUserEventLog(
     eventName: string,
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   getUserEventLogCount(
     eventName: string,
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   getEventHistory(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   getUserEventLogHistory(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   setLocation(location: number, longitude: number, accountId?: string | null): void;
   profileGetCleverTapAttributionIdentifier(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   profileGetCleverTapID(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   getCleverTapID(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   onUserLogin(profile: Object | null, accountId?: string | null): void;
   profileSet(profile: Object | null, accountId?: string | null): void;
   profileGetProperty(
     propertyName: string,
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   profileRemoveValueForKey(key: string, accountId?: string | null): void;
   profileSetMultiValues(
@@ -148,32 +148,32 @@ export interface Spec extends TurboModule {
     accountId?: string | null
   ): void;
   sessionGetTimeElapsed(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   sessionGetTotalVisits(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   sessionGetScreenCount(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   sessionGetPreviousVisitTime(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   sessionGetUTMDetails(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   getUserLastVisitTs(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   getUserAppLaunchCount(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   createNotificationChannel(
     channelId: string,
@@ -215,25 +215,25 @@ export interface Spec extends TurboModule {
   ): void;
   setDebugLevel(level: number): void;
   getInboxMessageCount(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   getInboxMessageUnreadCount(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   getAllInboxMessages(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   getUnreadInboxMessages(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   getInboxMessageForId(
     messageId: string,
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   pushInboxNotificationViewedEventForId(messageId: string, accountId?: string | null): void;
   pushInboxNotificationClickedEventForId(messageId: string, accountId?: string | null): void;
@@ -244,21 +244,21 @@ export interface Spec extends TurboModule {
   dismissInbox(accountId?: string | null): void;
   initializeInbox(accountId?: string | null): void;
   fetchInbox(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   showInbox(
     styleConfig: Object | null,
     accountId?: string | null
   ): void;
   getAllDisplayUnits(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   getDisplayUnitForId(
     unitId: string,
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   pushDisplayUnitViewedEventForID(unitId: string, accountId?: string | null): void;
   pushDisplayUnitClickedEventForID(unitId: string, accountId?: string | null): void;
@@ -270,8 +270,8 @@ export interface Spec extends TurboModule {
   getFeatureFlag(
     flag: string,
     withdefaultValue: boolean,
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   setDefaultsMap(
     jsonDict: Object | null,
@@ -282,21 +282,21 @@ export interface Spec extends TurboModule {
   activate(accountId?: string | null): void;
   fetchAndActivate(accountId?: string | null): void;
   setMinimumFetchIntervalInSeconds(time: number, accountId?: string | null): void;
-  getLastFetchTimeStampInMillis(callback: (callback: string) => void, accountId?: string | null): void;
+  getLastFetchTimeStampInMillis(accountId: string | null, callback: (callback: string) => void): void;
   getString(
     key: string,
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   getBoolean(
     key: string,
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   getDouble(
     key: string,
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   reset(accountId?: string | null): void;
   suspendInAppNotifications(accountId?: string | null): void;
@@ -304,8 +304,8 @@ export interface Spec extends TurboModule {
   resumeInAppNotifications(accountId?: string | null): void;
   dismissPipInApp(accountId?: string | null): void;
   fetchInApps(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   clearInAppResources(expiredOnly: boolean, accountId?: string | null): void;
   customTemplateSetDismissed(templateName: string): Promise<void>;
@@ -326,16 +326,16 @@ export interface Spec extends TurboModule {
   syncVariablesinProd(isProduction: boolean, accountId?: string | null): void;
   getVariable(
     name: string,
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   fetchVariables(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   getVariables(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
   defineVariables(
     variables: Object | null,
@@ -349,8 +349,8 @@ export interface Spec extends TurboModule {
   onceVariablesChangedAndNoDownloadsPending(accountId?: string | null): void;
   onFileValueChanged(name: string, accountId?: string | null): void;
   variants(
-    callback: ((error: Object, result: boolean) => void) | null,
-    accountId?: string | null
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
   ): void;
 
   onEventListenerAdded(eventType: string, accountId?: string | null): void;
