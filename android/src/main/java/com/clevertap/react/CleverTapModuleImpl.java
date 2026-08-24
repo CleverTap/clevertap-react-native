@@ -1980,6 +1980,44 @@ public class CleverTapModuleImpl {
         if (config.hasKey("useCustomCleverTapId")) {
             ctConfig.setEnableCustomCleverTapId(config.getBoolean("useCustomCleverTapId"));
         }
+        applyAndroidOnlyConfig(ctConfig, config.hasKey("android") ? config.getMap("android") : null);
+        // The "ios" block is intentionally ignored here — each platform reads only
+        // its own nested block, so platform-targeted config needs no warnings.
+    }
+
+    private void applyAndroidOnlyConfig(CleverTapInstanceConfig ctConfig, ReadableMap androidConfig) {
+        if (androidConfig == null) {
+            return;
+        }
+        if (androidConfig.hasKey("useGoogleAdId")) {
+            ctConfig.useGoogleAdId(androidConfig.getBoolean("useGoogleAdId"));
+        }
+        if (androidConfig.hasKey("backgroundSync")) {
+            ctConfig.setBackgroundSync(androidConfig.getBoolean("backgroundSync"));
+        }
+        if (androidConfig.hasKey("pushProviders")) {
+            ReadableArray providers = androidConfig.getArray("pushProviders");
+            if (providers != null) {
+                for (int i = 0; i < providers.size(); i++) {
+                    ReadableMap provider = providers.getMap(i);
+                    if (provider == null) {
+                        continue;
+                    }
+                    String type = provider.getString("type");
+                    String prefKey = provider.getString("prefKey");
+                    String className = provider.getString("className");
+                    String messagingSDKClassName = provider.getString("messagingSDKClassName");
+                    // All four parts are required by the native PushType contract.
+                    if (type == null || prefKey == null || className == null
+                            || messagingSDKClassName == null) {
+                        Log.w(TAG, "createInstance: pushProviders[" + i
+                                + "] is missing one of type/prefKey/className/messagingSDKClassName; skipped");
+                        continue;
+                    }
+                    ctConfig.addPushType(new PushType(type, prefKey, className, messagingSDKClassName));
+                }
+            }
+        }
     }
 
     // 'none' -> NONE(0), 'medium' -> MEDIUM(1, PII only), 'high' -> FULL_DATA(2, all data).

@@ -256,6 +256,17 @@ RCT_EXPORT_METHOD(createInstance:(NSDictionary *)config
     if (config[@"useCustomCleverTapId"]) {
         ctConfig.useCustomCleverTapId = [config[@"useCustomCleverTapId"] boolValue];
     }
+    // Platform-specific options live in nested blocks; each platform reads only its
+    // own block (the "android" block is intentionally ignored here).
+    NSDictionary *iosConfig = config[@"ios"];
+    if ([iosConfig isKindOfClass:[NSDictionary class]]) {
+        if (iosConfig[@"disableIDFV"]) {
+            ctConfig.disableIDFV = [iosConfig[@"disableIDFV"] boolValue];
+        }
+        if (iosConfig[@"enableFileProtection"]) {
+            ctConfig.enableFileProtection = [iosConfig[@"enableFileProtection"] boolValue];
+        }
+    }
 
     // A custom CleverTap ID can only be supplied AT CREATION on both platforms.
     // Without this, useCustomCleverTapId=true would create an instance that waits

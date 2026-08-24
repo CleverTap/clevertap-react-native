@@ -860,6 +860,30 @@ export function isPushPermissionGranted(callback: CallbackString): void;
      * and only meaningful with useCustomCleverTapId: true.
      */
     cleverTapId?: string;
+    /** Android-only options; ignored on iOS. */
+    android?: {
+      /** Allow this account to collect the Google Advertising ID. */
+      useGoogleAdId?: boolean;
+      /** Enable background/pull notification sync jobs. */
+      backgroundSync?: boolean;
+      /**
+       * Extra push providers beyond FCM. Same four parts as the manifest
+       * CLEVERTAP_PROVIDER_1/2 keys and the pushRegistrationToken pushType object.
+       */
+      pushProviders?: Array<{
+        type: string;
+        prefKey: string;
+        className: string;
+        messagingSDKClassName: string;
+      }>;
+    };
+    /** iOS-only options; ignored on Android. */
+    ios?: {
+      /** Do not derive the device id from identifierForVendor. */
+      disableIDFV?: boolean;
+      /** Apply iOS complete file protection to SDK-stored files. */
+      enableFileProtection?: boolean;
+    };
   };
 
   /** Subscription returned by addListener; call remove() to detach the handler. */
