@@ -834,11 +834,32 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     region?: string;
     proxyDomain?: string;
     spikyProxyDomain?: string;
+    /** Custom domain for the SDK's initial handshake request. */
+    handshakeDomain?: string;
+    /**
+     * Which profile keys identify a user (e.g. ['Email', 'Identity']).
+     * Applies to accounts created from JS; the DEFAULT account takes identity
+     * keys only from AndroidManifest.xml / Info.plist.
+     */
     identityKeys?: string[];
+    /** 'verbose' maps to 'debug' on iOS (iOS has no verbose level). */
     logLevel?: 'off' | 'info' | 'debug' | 'verbose';
-    encryptionLevel?: 'none' | 'medium';
+    /** Restrict this account to analytics only (no in-apps or engagement rendering). */
+    analyticsOnly?: boolean;
+    /** Enable the local personalization getters (profile/event property reads). */
+    enablePersonalization?: boolean;
+    /** Suppress the automatic "App Launched" system event for this account. */
+    disableAppLaunchedEvent?: boolean;
+    /** At-rest encryption: 'none', 'medium' (PII only) or 'high' (all data). */
+    encryptionLevel?: 'none' | 'medium' | 'high';
     encryptionInTransit?: boolean;
+    /** Set true when supplying your own CleverTap ID — pair it with cleverTapId. */
     useCustomCleverTapId?: boolean;
+    /**
+     * Your custom CleverTap ID for this account's user. Only honored at creation
+     * and only meaningful with useCustomCleverTapId: true.
+     */
+    cleverTapId?: string;
   };
 
   /** Subscription returned by addListener; call remove() to detach the handler. */

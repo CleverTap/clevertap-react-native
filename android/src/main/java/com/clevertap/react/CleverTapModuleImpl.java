@@ -1901,7 +1901,14 @@ public class CleverTapModuleImpl {
             }
             applyOptionalConfig(ctConfig, finalConfig);
 
-            CleverTapAPI instance = CleverTapAPI.instanceWithConfig(this.context, ctConfig);
+            // A custom CleverTap ID can only be supplied AT CREATION on both platforms.
+            // Without this, useCustomCleverTapId=true would create an instance that
+            // waits for an ID nobody can ever provide (error device id).
+            String cleverTapId = finalConfig.hasKey("cleverTapId")
+                    ? finalConfig.getString("cleverTapId") : null;
+            CleverTapAPI instance = (cleverTapId != null && !cleverTapId.trim().isEmpty())
+                    ? CleverTapAPI.instanceWithConfig(this.context, ctConfig, cleverTapId)
+                    : CleverTapAPI.instanceWithConfig(this.context, ctConfig);
             if (instance == null) {
                 promise.reject("ECREATE", "createInstance failed for accountId " + accountId);
                 return;
@@ -1949,12 +1956,23 @@ public class CleverTapModuleImpl {
                 ctConfig.setIdentityKeys(identityKeys);
             }
         }
+        if (config.hasKey("handshakeDomain")) {
+            ctConfig.setCustomHandshakeDomain(config.getString("handshakeDomain"));
+        }
         if (config.hasKey("logLevel")) {
             ctConfig.setDebugLevel(toLogLevel(config.getString("logLevel")));
         }
+        if (config.hasKey("analyticsOnly")) {
+            ctConfig.setAnalyticsOnly(config.getBoolean("analyticsOnly"));
+        }
+        if (config.hasKey("enablePersonalization")) {
+            ctConfig.enablePersonalization(config.getBoolean("enablePersonalization"));
+        }
+        if (config.hasKey("disableAppLaunchedEvent")) {
+            ctConfig.setDisableAppLaunchedEvent(config.getBoolean("disableAppLaunchedEvent"));
+        }
         if (config.hasKey("encryptionLevel")) {
-            ctConfig.setEncryptionLevel("medium".equals(config.getString("encryptionLevel"))
-                    ? EncryptionLevel.MEDIUM : EncryptionLevel.NONE);
+            ctConfig.setEncryptionLevel(toEncryptionLevel(config.getString("encryptionLevel")));
         }
         if (config.hasKey("encryptionInTransit")) {
             ctConfig.setEncryptionInTransit(config.getBoolean("encryptionInTransit"));
@@ -1962,6 +1980,18 @@ public class CleverTapModuleImpl {
         if (config.hasKey("useCustomCleverTapId")) {
             ctConfig.setEnableCustomCleverTapId(config.getBoolean("useCustomCleverTapId"));
         }
+    }
+
+    // 'none' -> NONE(0), 'medium' -> MEDIUM(1, PII only), 'high' -> FULL_DATA(2, all data).
+    // (iOS maps the same strings to CleverTapEncryptionNone/Medium/High.)
+    private EncryptionLevel toEncryptionLevel(String level) {
+        if ("medium".equals(level)) {
+            return EncryptionLevel.MEDIUM;
+        }
+        if ("high".equals(level)) {
+            return EncryptionLevel.FULL_DATA;
+        }
+        return EncryptionLevel.NONE;
     }
 
     // 'off' -> OFF(-1), 'info' -> INFO(0), 'debug' -> DEBUG(2), 'verbose' -> VERBOSE(3).

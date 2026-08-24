@@ -173,8 +173,12 @@ static CleverTapLogLevel ctLogLevelFromString(NSString *level) {
     return CleverTapLogInfo;
 }
 
+// 'none' -> None(0), 'medium' -> Medium(1, PII only), 'high' -> High(2, all data).
+// (Android maps the same strings to NONE/MEDIUM/FULL_DATA.)
 static CleverTapEncryptionLevel ctEncryptionLevelFromString(NSString *level) {
-    return [level isEqualToString:@"medium"] ? CleverTapEncryptionMedium : CleverTapEncryptionNone;
+    if ([level isEqualToString:@"medium"]) return CleverTapEncryptionMedium;
+    if ([level isEqualToString:@"high"]) return CleverTapEncryptionHigh;
+    return CleverTapEncryptionNone;
 }
 
 RCT_EXPORT_METHOD(createInstance:(NSDictionary *)config
@@ -225,11 +229,23 @@ RCT_EXPORT_METHOD(createInstance:(NSDictionary *)config
     }
 
     // These ARE writable properties on the iOS config:
+    if (config[@"handshakeDomain"]) {
+        ctConfig.handshakeDomain = config[@"handshakeDomain"];
+    }
     if (config[@"identityKeys"]) {
         ctConfig.identityKeys = config[@"identityKeys"];
     }
     if (config[@"logLevel"]) {
         ctConfig.logLevel = ctLogLevelFromString(config[@"logLevel"]);
+    }
+    if (config[@"analyticsOnly"]) {
+        ctConfig.analyticsOnly = [config[@"analyticsOnly"] boolValue];
+    }
+    if (config[@"enablePersonalization"]) {
+        ctConfig.enablePersonalization = [config[@"enablePersonalization"] boolValue];
+    }
+    if (config[@"disableAppLaunchedEvent"]) {
+        ctConfig.disableAppLaunchedEvent = [config[@"disableAppLaunchedEvent"] boolValue];
     }
     if (config[@"encryptionLevel"]) {
         ctConfig.encryptionLevel = ctEncryptionLevelFromString(config[@"encryptionLevel"]);
@@ -241,7 +257,13 @@ RCT_EXPORT_METHOD(createInstance:(NSDictionary *)config
         ctConfig.useCustomCleverTapId = [config[@"useCustomCleverTapId"] boolValue];
     }
 
-    CleverTap *instance = [CleverTap instanceWithConfig:ctConfig];
+    // A custom CleverTap ID can only be supplied AT CREATION on both platforms.
+    // Without this, useCustomCleverTapId=true would create an instance that waits
+    // for an ID nobody can ever provide (error device id).
+    NSString *cleverTapId = config[@"cleverTapId"];
+    CleverTap *instance = (cleverTapId.length > 0)
+        ? [CleverTap instanceWithConfig:ctConfig andCleverTapID:cleverTapId]
+        : [CleverTap instanceWithConfig:ctConfig];
     if (instance == nil) {
         reject(@"ECREATE", [NSString stringWithFormat:@"createInstance failed for accountId %@", accountId], nil);
         return;
