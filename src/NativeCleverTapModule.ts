@@ -308,17 +308,19 @@ export interface Spec extends TurboModule {
     callback: ((error: Object, result: boolean) => void) | null
   ): void;
   clearInAppResources(expiredOnly: boolean, accountId?: string | null): void;
-  customTemplateSetDismissed(templateName: string): Promise<void>;
-  customTemplateSetPresented(templateName: string): Promise<void>;
-  customTemplateRunAction(templateName: string, argName: string): Promise<void>;
-  customTemplateGetStringArg(templateName: string, argName: string): Promise<string>;
-  customTemplateGetNumberArg(templateName: string, argName: string): Promise<number>;
-  customTemplateGetBooleanArg(templateName: string, argName: string): Promise<boolean>;
-  customTemplateGetFileArg(templateName: string, argName: string): Promise<string>;
-  customTemplateGetObjectArg(templateName: string, argName: string): Promise<any>;
-  customTemplateContextToString(templateName: string): Promise<string>;
-  syncCustomTemplates(): void;
-  syncCustomTemplatesInProd(isProduction: boolean): void;
+  // On the customTemplate* methods the accountId comes BEFORE the implicit promise
+  // (the promise is the always-last argument — same iron rule as trailing callbacks).
+  customTemplateSetDismissed(templateName: string, accountId?: string | null): Promise<void>;
+  customTemplateSetPresented(templateName: string, accountId?: string | null): Promise<void>;
+  customTemplateRunAction(templateName: string, argName: string, accountId?: string | null): Promise<void>;
+  customTemplateGetStringArg(templateName: string, argName: string, accountId?: string | null): Promise<string>;
+  customTemplateGetNumberArg(templateName: string, argName: string, accountId?: string | null): Promise<number>;
+  customTemplateGetBooleanArg(templateName: string, argName: string, accountId?: string | null): Promise<boolean>;
+  customTemplateGetFileArg(templateName: string, argName: string, accountId?: string | null): Promise<string>;
+  customTemplateGetObjectArg(templateName: string, argName: string, accountId?: string | null): Promise<any>;
+  customTemplateContextToString(templateName: string, accountId?: string | null): Promise<string>;
+  syncCustomTemplates(accountId?: string | null): void;
+  syncCustomTemplatesInProd(isProduction: boolean, accountId?: string | null): void;
   promptForPushPermission(showFallbackSettings: boolean): void;
   promptPushPrimer(json: Object): void;
   isPushPermissionGranted(callback: ((error: Object, result: boolean) => void) | null): void;

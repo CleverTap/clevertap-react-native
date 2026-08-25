@@ -894,8 +894,10 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    * counterparts but act on this handle's account; listeners fire only for this
    * account's events. OS-level methods (push registration, notification channels,
    * initial URL) exist on the handle for shape consistency but warn and do nothing —
-   * call them on the top-level CleverTap object. Custom templates and setDebugLevel
-   * are global by design and are not on the handle.
+   * call them on the top-level CleverTap object. setDebugLevel is global by design
+   * and is not on the handle. Custom template DEFINITIONS are app-wide (every account
+   * gets the registered templates), but presenting, argument reads and dismissal are
+   * per-account — those methods are on the handle.
    */
   interface CleverTapInstance {
     readonly accountId: string;
@@ -1019,6 +1021,33 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     onceVariablesChangedAndNoDownloadsPending(handler: Function): void;
     onFileValueChanged(name: string, handler: Function): void;
     variants(callback: Callback): void;
+
+    /* Custom templates. The active template context lives PER ACCOUNT natively:
+       only the account whose campaign presented the template can read its arguments
+       or dismiss it. Template definitions stay app-wide. */
+
+    /** Uploads the registered templates to THIS account's dashboard (debug builds only). */
+    syncCustomTemplates(): void;
+    /** Uploads the registered templates to THIS account's dashboard. */
+    syncCustomTemplatesInProd(isProduction: boolean): void;
+    /** Notify the SDK that this account's active template was dismissed (frees its in-app queue). */
+    customTemplateSetDismissed(templateName: string): Promise<void>;
+    /** Notify the SDK that this account's active template is presented to the user. */
+    customTemplateSetPresented(templateName: string): Promise<void>;
+    /** Trigger an action argument of this account's active template. */
+    customTemplateRunAction(templateName: string, argName: string): Promise<void>;
+    /** Read a string argument of this account's active template. */
+    customTemplateGetStringArg(templateName: string, argName: string): Promise<string>;
+    /** Read a number argument of this account's active template. */
+    customTemplateGetNumberArg(templateName: string, argName: string): Promise<number>;
+    /** Read a boolean argument of this account's active template. */
+    customTemplateGetBooleanArg(templateName: string, argName: string): Promise<boolean>;
+    /** Read a file argument (a file path) of this account's active template. */
+    customTemplateGetFileArg(templateName: string, argName: string): Promise<string>;
+    /** Read an object argument of this account's active template. */
+    customTemplateGetObjectArg(templateName: string, argName: string): Promise<any>;
+    /** A string representation of this account's active template context. */
+    customTemplateContextToString(templateName: string): Promise<string>;
 
     /* OS-level methods below exist on the handle for shape consistency only:
        each one warns and does nothing. Call them on the top-level CleverTap object. */

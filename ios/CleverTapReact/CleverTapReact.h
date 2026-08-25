@@ -34,6 +34,12 @@ static NSString *const kXPS = @"XPS";
 /// it before user handlers run.
 static NSString *const kCleverTapAccountIdKey = @"__ctAccountId";
 
+/// Key that carries a primitive event payload inside the tagged body. Some events
+/// (custom templates) deliver a bare string to user code; a string cannot hold the
+/// account tag, so native wraps it — {__ctAccountId: id, __ctPayload: @"name"} —
+/// and the JS demux unwraps it, delivering exactly the string users always got.
+static NSString *const kCleverTapPayloadKey = @"__ctPayload";
+
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <CTTurboModuleSpec/CTTurboModuleSpec.h>
 @interface CleverTapReact: RCTEventEmitter <NativeCleverTapModuleSpec>

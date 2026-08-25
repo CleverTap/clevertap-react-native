@@ -472,75 +472,84 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.clearInAppResources(expiredOnly, accountId)
     }
 
-    override fun customTemplateSetDismissed(templateName: String?, promise: Promise?) {
-        cleverTapModuleImpl.customTemplateSetDismissed(templateName, promise)
+    override fun customTemplateSetDismissed(templateName: String?, accountId: String?, promise: Promise?) {
+        cleverTapModuleImpl.customTemplateSetDismissed(templateName, accountId, promise)
     }
 
-    override fun customTemplateSetPresented(templateName: String?, promise: Promise?) {
-        cleverTapModuleImpl.customTemplateSetPresented(templateName, promise)
+    override fun customTemplateSetPresented(templateName: String?, accountId: String?, promise: Promise?) {
+        cleverTapModuleImpl.customTemplateSetPresented(templateName, accountId, promise)
     }
 
     override fun customTemplateRunAction(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateRunAction(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateRunAction(templateName, argName, accountId, promise)
     }
 
     override fun customTemplateGetStringArg(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateGetStringArg(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateGetStringArg(templateName, argName, accountId, promise)
     }
 
     override fun customTemplateGetNumberArg(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateGetNumberArg(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateGetNumberArg(templateName, argName, accountId, promise)
     }
 
     override fun customTemplateGetBooleanArg(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateGetBooleanArg(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateGetBooleanArg(templateName, argName, accountId, promise)
     }
 
     override fun customTemplateGetFileArg(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateGetFileArg(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateGetFileArg(templateName, argName, accountId, promise)
     }
 
     override fun customTemplateGetObjectArg(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateGetObjectArg(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateGetObjectArg(templateName, argName, accountId, promise)
     }
 
     override fun customTemplateContextToString(
         templateName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateContextToString(templateName, promise)
+        cleverTapModuleImpl.customTemplateContextToString(templateName, accountId, promise)
     }
 
-    override fun syncCustomTemplates() {
-        cleverTapModuleImpl.syncCustomTemplates()
+    override fun syncCustomTemplates(accountId: String?) {
+        cleverTapModuleImpl.syncCustomTemplates(accountId)
     }
 
-    override fun syncCustomTemplatesInProd(isProduction: Boolean) {
-        cleverTapModuleImpl.syncCustomTemplates()
+    override fun syncCustomTemplatesInProd(isProduction: Boolean, accountId: String?) {
+        // Android has no isProduction variant natively; route by account like the
+        // parameterless sync (the spec keeps isProduction for iOS parity).
+        cleverTapModuleImpl.syncCustomTemplates(accountId)
     }
 
     override fun variants(accountId: String?, callback: Callback?) {

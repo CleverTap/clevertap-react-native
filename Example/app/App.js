@@ -187,6 +187,7 @@ export default class App extends Component {
         { action: Actions.MULTI_INSTANCE_PROFILE_SET, name: 'profileSet on account B' },
         { action: Actions.MULTI_INSTANCE_CLEVERTAP_ID, name: 'getCleverTapID of account B' },
         { action: Actions.MULTI_INSTANCE_UNKNOWN_ACCOUNT, name: 'call on unknown account (warns, no crash)' },
+        { action: Actions.MULTI_INSTANCE_CUSTOM_TEMPLATES, name: 'custom templates on account B (listen + sync)' },
       ],
     },
     {
@@ -998,6 +999,9 @@ export default class App extends Component {
         break;
       case Actions.MULTI_INSTANCE_UNKNOWN_ACCOUNT:
         AppUtils.multiInstance_unknownAccount();
+        break;
+      case Actions.MULTI_INSTANCE_CUSTOM_TEMPLATES:
+        AppUtils.multiInstance_customTemplates();
         break;
       default:
         console.warn('Action not recognized:', item.action);

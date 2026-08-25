@@ -1232,23 +1232,24 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void customTemplateSetDismissed(String templateName, Promise promise) {
-        resolveWithTemplateContext(templateName, promise, templateContext -> {
+    public void customTemplateSetDismissed(String templateName, String accountId, Promise promise) {
+        resolveWithTemplateContext(templateName, accountId, promise, templateContext -> {
             templateContext.setDismissed();
             return null;
         });
     }
 
-    public void customTemplateSetPresented(String templateName, Promise promise) {
-        resolveWithTemplateContext(templateName, promise, templateContext -> {
+    public void customTemplateSetPresented(String templateName, String accountId, Promise promise) {
+        resolveWithTemplateContext(templateName, accountId, promise, templateContext -> {
             templateContext.setPresented();
             return null;
         });
     }
 
-    public void customTemplateRunAction(String templateName, String argName, Promise promise) {
+    public void customTemplateRunAction(String templateName, String argName, String accountId, Promise promise) {
         resolveWithTemplateContext(
                 templateName,
+                accountId,
                 promise,
                 customTemplateContext -> {
                     if (customTemplateContext instanceof CustomTemplateContext.TemplateContext) {
@@ -1259,41 +1260,46 @@ public class CleverTapModuleImpl {
         );
     }
 
-    public void customTemplateGetStringArg(String templateName, String argName, Promise promise) {
+    public void customTemplateGetStringArg(String templateName, String argName, String accountId, Promise promise) {
         resolveWithTemplateContext(
                 templateName,
+                accountId,
                 promise,
                 templateContext -> templateContext.getString(argName)
         );
     }
 
-    public void customTemplateGetNumberArg(String templateName, String argName, Promise promise) {
+    public void customTemplateGetNumberArg(String templateName, String argName, String accountId, Promise promise) {
         resolveWithTemplateContext(
                 templateName,
+                accountId,
                 promise,
                 templateContext -> templateContext.getDouble(argName)
         );
     }
 
-    public void customTemplateGetBooleanArg(String templateName, String argName, Promise promise) {
+    public void customTemplateGetBooleanArg(String templateName, String argName, String accountId, Promise promise) {
         resolveWithTemplateContext(
                 templateName,
+                accountId,
                 promise,
                 templateContext -> templateContext.getBoolean(argName)
         );
     }
 
-    public void customTemplateGetFileArg(String templateName, String argName, Promise promise) {
+    public void customTemplateGetFileArg(String templateName, String argName, String accountId, Promise promise) {
         resolveWithTemplateContext(
                 templateName,
+                accountId,
                 promise,
                 templateContext -> templateContext.getFile(argName)
         );
     }
 
-    public void customTemplateGetObjectArg(String templateName, String argName, Promise promise) {
+    public void customTemplateGetObjectArg(String templateName, String argName, String accountId, Promise promise) {
         resolveWithTemplateContext(
                 templateName,
+                accountId,
                 promise,
                 templateContext -> {
                     Map<String, Object> mapArg = templateContext.getMap(argName);
@@ -1306,16 +1312,17 @@ public class CleverTapModuleImpl {
         );
     }
 
-    public void customTemplateContextToString(String templateName, Promise promise) {
+    public void customTemplateContextToString(String templateName, String accountId, Promise promise) {
         resolveWithTemplateContext(
                 templateName,
+                accountId,
                 promise,
                 templateContext -> templateContext.toString()
         );
     }
 
-    public void syncCustomTemplates() {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void syncCustomTemplates(String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             cleverTap.syncRegisteredInAppTemplates();
         }
@@ -1334,8 +1341,12 @@ public class CleverTapModuleImpl {
         callbackWithErrorAndResult(callback, error, result);
     }
 
-    private void resolveWithTemplateContext(String templateName, Promise promise, TemplateContextAction action) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    // Active template contexts live PER INSTANCE in the native SDK — asking the wrong
+    // account always answers "not currently being presented", so the account must be
+    // resolved here, not hardcoded to the default slot.
+    private void resolveWithTemplateContext(String templateName, String accountId, Promise promise,
+            TemplateContextAction action) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             CustomTemplateContext templateContext = cleverTap.getActiveContextForTemplate(templateName);
             if (templateContext != null) {
@@ -1906,9 +1917,19 @@ public class CleverTapModuleImpl {
             // waits for an ID nobody can ever provide (error device id).
             String cleverTapId = finalConfig.hasKey("cleverTapId")
                     ? finalConfig.getString("cleverTapId") : null;
-            CleverTapAPI instance = (cleverTapId != null && !cleverTapId.trim().isEmpty())
-                    ? CleverTapAPI.instanceWithConfig(this.context, ctConfig, cleverTapId)
-                    : CleverTapAPI.instanceWithConfig(this.context, ctConfig);
+            // Instance creation can THROW, not just return null: registered custom
+            // template producers run inside it, and e.g. duplicate template names
+            // raise CustomTemplateException. We are on the MAIN thread here — an
+            // uncaught throw would crash the app instead of rejecting the promise.
+            CleverTapAPI instance;
+            try {
+                instance = (cleverTapId != null && !cleverTapId.trim().isEmpty())
+                        ? CleverTapAPI.instanceWithConfig(this.context, ctConfig, cleverTapId)
+                        : CleverTapAPI.instanceWithConfig(this.context, ctConfig);
+            } catch (Throwable t) {
+                promise.reject("ECREATE", "createInstance failed for accountId " + accountId, t);
+                return;
+            }
             if (instance == null) {
                 promise.reject("ECREATE", "createInstance failed for accountId " + accountId);
                 return;

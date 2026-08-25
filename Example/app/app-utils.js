@@ -1032,10 +1032,10 @@ export const printDisplayUnit = (element) => {
 // Replace with your own second CleverTap test account to see its data on the dashboard.
 // The main (default) account from AndroidManifest.xml / Info.plist keeps working as-is.
 const SECOND_ACCOUNT_CONFIG = {
-    accountId: 'TEST-ACCOUNT-B-ID',
-    accountToken: 'TEST-ACCOUNT-B-TOKEN',
+    accountId: '46W-WWR-R85Z',
+    accountToken: 'TEST-200-064',
     region: 'eu1',
-    logLevel: 'debug'
+    logLevel: 'verbose'
 };
 
 let secondAccount = null;
@@ -1115,4 +1115,30 @@ export const multiInstance_unknownAccount = () => {
     CleverTap.getInstance('NEVER-CREATED-ID').recordEvent('Should Be Ignored');
     showToast('Multi Instance', 'unknown account call ignored — see native warning log');
     console.log('recordEvent on unknown account: expect a native warning, no crash');
+};
+
+export const multiInstance_customTemplates = () => {
+    const handle = requireSecondAccount();
+    if (handle == null) {
+        return;
+    }
+    // Listen for account B's template presents ONLY (a template presented by the main
+    // account never fires this). The handler reads an argument from B's active context
+    // and dismisses it — dismissal is what unblocks B's in-app queue.
+    handle.addListener(CleverTap.CleverTapCustomTemplatePresent, async (templateName) => {
+        console.log('Account B template presented ->', templateName);
+        try {
+            const text = await handle.customTemplateGetStringArg(templateName, 'Text');
+            showToast(`Account B template: ${templateName}`, `Text arg: ${text}`);
+        } catch (error) {
+            console.log('Account B customTemplateGetStringArg error ->', error);
+        }
+        await handle.customTemplateSetPresented(templateName);
+        await handle.customTemplateSetDismissed(templateName);
+        console.log('Account B template dismissed ->', templateName);
+    });
+    // Upload the registered template definitions to ACCOUNT B's dashboard (debug
+    // builds only), so a campaign can be created there to trigger the listener above.
+    handle.syncCustomTemplates();
+    showToast('Multi Instance', `template listener added + synced templates on ${handle.accountId}`);
 };

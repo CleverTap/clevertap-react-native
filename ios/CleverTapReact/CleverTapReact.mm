@@ -272,9 +272,20 @@ RCT_EXPORT_METHOD(createInstance:(NSDictionary *)config
     // Without this, useCustomCleverTapId=true would create an instance that waits
     // for an ID nobody can ever provide (error device id).
     NSString *cleverTapId = config[@"cleverTapId"];
-    CleverTap *instance = (cleverTapId.length > 0)
-        ? [CleverTap instanceWithConfig:ctConfig andCleverTapID:cleverTapId]
-        : [CleverTap instanceWithConfig:ctConfig];
+    // Instance creation can THROW, not just return nil: registered custom template
+    // producers run inside it, and e.g. duplicate template names raise NSException
+    // (CleverTapCustomTemplateException). An uncaught throw would crash the app
+    // instead of rejecting the promise.
+    CleverTap *instance;
+    @try {
+        instance = (cleverTapId.length > 0)
+            ? [CleverTap instanceWithConfig:ctConfig andCleverTapID:cleverTapId]
+            : [CleverTap instanceWithConfig:ctConfig];
+    } @catch (NSException *exception) {
+        reject(@"ECREATE", [NSString stringWithFormat:@"createInstance failed for accountId %@: %@",
+                            accountId, exception.reason], nil);
+        return;
+    }
     if (instance == nil) {
         reject(@"ECREATE", [NSString stringWithFormat:@"createInstance failed for accountId %@", accountId], nil);
         return;
@@ -1486,99 +1497,113 @@ RCT_EXPORT_METHOD(onFileValueChanged:(NSString*)name accountId:(NSString*)accoun
 
 # pragma mark - Custom Code Templates
 
-RCT_EXPORT_METHOD(syncCustomTemplates) {
+RCT_EXPORT_METHOD(syncCustomTemplates:(NSString *)accountId) {
     RCTLogInfo(@"[CleverTap syncCustomTemplates]");
-    [[self cleverTapInstance] syncCustomTemplates];
+    [[self resolveInstance:accountId] syncCustomTemplates];
 }
 
-RCT_EXPORT_METHOD(syncCustomTemplatesInProd:(BOOL)isProduction) {
+RCT_EXPORT_METHOD(syncCustomTemplatesInProd:(BOOL)isProduction accountId:(NSString *)accountId) {
     RCTLogInfo(@"[CleverTap syncCustomTemplates:isProduction]");
-    [[self cleverTapInstance] syncCustomTemplates:isProduction];
+    [[self resolveInstance:accountId] syncCustomTemplates:isProduction];
 }
 
-RCT_EXPORT_METHOD(customTemplateGetBooleanArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+// ⚠️ In every customTemplate* method the accountId comes BEFORE resolve/reject:
+// the promise pair is the implicitly-last argument pattern of the bridge (same
+// iron rule as trailing callbacks — nothing may follow it).
+
+RCT_EXPORT_METHOD(customTemplateGetBooleanArg:(NSString *)templateName argName:(NSString *)argName accountId:(NSString *)accountId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         NSNumber *number = [context numberNamed:argName];
         return number ? number : [NSNull null];
     }];
 }
 
-RCT_EXPORT_METHOD(customTemplateGetFileArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+RCT_EXPORT_METHOD(customTemplateGetFileArg:(NSString *)templateName argName:(NSString *)argName accountId:(NSString *)accountId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         NSString *filePath = [context fileNamed:argName];
         return filePath ? filePath : [NSNull null];
     }];
 }
 
-RCT_EXPORT_METHOD(customTemplateGetNumberArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+RCT_EXPORT_METHOD(customTemplateGetNumberArg:(NSString *)templateName argName:(NSString *)argName accountId:(NSString *)accountId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         NSNumber *number = [context numberNamed:argName];
         return number ? number : [NSNull null];
     }];
 }
 
-RCT_EXPORT_METHOD(customTemplateGetObjectArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+RCT_EXPORT_METHOD(customTemplateGetObjectArg:(NSString *)templateName argName:(NSString *)argName accountId:(NSString *)accountId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         NSDictionary *dictionary = [context dictionaryNamed:argName];
         return dictionary ? dictionary : [NSNull null];
     }];
 }
 
-RCT_EXPORT_METHOD(customTemplateGetStringArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+RCT_EXPORT_METHOD(customTemplateGetStringArg:(NSString *)templateName argName:(NSString *)argName accountId:(NSString *)accountId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         NSString *str = [context stringNamed:argName];
         return str ? str : [NSNull null];
     }];
 }
 
-RCT_EXPORT_METHOD(customTemplateRunAction:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+RCT_EXPORT_METHOD(customTemplateRunAction:(NSString *)templateName argName:(NSString *)argName accountId:(NSString *)accountId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         [context triggerActionNamed:argName];
         return nil;
     }];
 }
 
-RCT_EXPORT_METHOD(customTemplateSetDismissed:(NSString *)templateName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+RCT_EXPORT_METHOD(customTemplateSetDismissed:(NSString *)templateName
+                         accountId:(NSString *)accountId
+                           resolve:(RCTPromiseResolveBlock)resolve
+                            reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         [context dismissed];
         return nil;
     }];
 }
 
 RCT_EXPORT_METHOD(customTemplateSetPresented:(NSString *)templateName
+                         accountId:(NSString *)accountId
                            resolve:(RCTPromiseResolveBlock)resolve
                             reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         [context presented];
         return nil;
     }];
 }
 
 RCT_EXPORT_METHOD(customTemplateContextToString:(NSString *)templateName
+                         accountId:(NSString *)accountId
                            resolve:(RCTPromiseResolveBlock)resolve
                             reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         return [context debugDescription];
     }];
 }
 
+// Active template contexts live PER INSTANCE in the native SDK — asking the wrong
+// account always answers "not currently being presented", so the account must be
+// resolved here, not hardcoded to the default slot.
 - (void)resolveWithTemplateContext:(NSString *)templateName
+                         accountId:(NSString *)accountId
                            resolve:(RCTPromiseResolveBlock)resolve
                             reject:(RCTPromiseRejectBlock)reject
                              block: (id (^)(CTTemplateContext *context))blockName {
-    if (![self cleverTapInstance]) {
+    CleverTap *instance = [self resolveInstance:accountId];
+    if (!instance) {
         reject(@"CustomTemplateError", @"CleverTap is not initialized", nil);
         return;
     }
-    
-    CTTemplateContext *context  = [[self cleverTapInstance] activeContextForTemplate:templateName];
+
+    CTTemplateContext *context  = [instance activeContextForTemplate:templateName];
     if (!context) {
         reject(@"CustomTemplateError",
                [NSString stringWithFormat:@"Custom template: %@ is not currently being presented", templateName],
                nil);
         return;
     }
-    
+
     resolve(blockName(context));
 }
 

@@ -10,12 +10,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// A `CTTemplatePresenter` handling Custom Templates presentation.
-/// Posts a `kCleverTapCustomTemplatePresent` notification to ReactNative
-/// when a Custom Template `onPresent:` is called.
-/// Posts a `kCleverTapCustomTemplateClose` notification to ReactNative
-/// when a Custom Template `onCloseClicked:` is called.
+/// A `CTTemplatePresenter` handling Custom Templates presentation for ONE CleverTap
+/// account. Posts a `kCleverTapCustomTemplatePresent` notification to ReactNative
+/// when a Custom Template `onPresent:` is called and `kCleverTapCustomTemplateClose`
+/// on `onCloseClicked:` — each body tagged with this presenter's account id so JS
+/// routes the event to the right account handle.
 @interface CleverTapReactTemplatePresenter : NSObject <CTTemplatePresenter>
+
+- (instancetype)initWithAccountId:(nullable NSString *)accountId;
+
+@property (nonatomic, strong, readonly, nullable) NSString *accountId;
 
 @end
 

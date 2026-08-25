@@ -569,86 +569,98 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.clearInAppResources(expiredOnly, accountId)
     }
 
+    // ⚠️ In every customTemplate* method the accountId comes BEFORE the Promise:
+    // the promise is the implicitly-last argument on the old-architecture bridge
+    // (same iron rule as trailing callbacks — nothing may follow it).
     @ReactMethod
-    fun customTemplateSetDismissed(templateName: String?, promise: Promise?) {
-        cleverTapModuleImpl.customTemplateSetDismissed(templateName, promise)
+    fun customTemplateSetDismissed(templateName: String?, accountId: String?, promise: Promise?) {
+        cleverTapModuleImpl.customTemplateSetDismissed(templateName, accountId, promise)
     }
 
     @ReactMethod
-    fun customTemplateSetPresented(templateName: String?, promise: Promise?) {
-        cleverTapModuleImpl.customTemplateSetPresented(templateName, promise)
+    fun customTemplateSetPresented(templateName: String?, accountId: String?, promise: Promise?) {
+        cleverTapModuleImpl.customTemplateSetPresented(templateName, accountId, promise)
     }
 
     @ReactMethod
     fun customTemplateRunAction(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateRunAction(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateRunAction(templateName, argName, accountId, promise)
     }
 
     @ReactMethod
     fun customTemplateGetStringArg(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateGetStringArg(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateGetStringArg(templateName, argName, accountId, promise)
     }
 
     @ReactMethod
     fun customTemplateGetNumberArg(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateGetNumberArg(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateGetNumberArg(templateName, argName, accountId, promise)
     }
 
     @ReactMethod
     fun customTemplateGetBooleanArg(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateGetBooleanArg(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateGetBooleanArg(templateName, argName, accountId, promise)
     }
 
     @ReactMethod
     fun customTemplateGetFileArg(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateGetFileArg(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateGetFileArg(templateName, argName, accountId, promise)
     }
 
     @ReactMethod
     fun customTemplateGetObjectArg(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateGetObjectArg(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateGetObjectArg(templateName, argName, accountId, promise)
     }
 
     @ReactMethod
     fun customTemplateContextToString(
         templateName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateContextToString(templateName, promise)
+        cleverTapModuleImpl.customTemplateContextToString(templateName, accountId, promise)
     }
 
     @ReactMethod
-    fun syncCustomTemplates() {
-        cleverTapModuleImpl.syncCustomTemplates()
+    fun syncCustomTemplates(accountId: String?) {
+        cleverTapModuleImpl.syncCustomTemplates(accountId)
     }
 
     @ReactMethod
-    fun syncCustomTemplatesInProd(isProduction: Boolean) {
-        cleverTapModuleImpl.syncCustomTemplates()
+    fun syncCustomTemplatesInProd(isProduction: Boolean, accountId: String?) {
+        // Android has no isProduction variant natively; route by account like the
+        // parameterless sync (the spec keeps isProduction for iOS parity).
+        cleverTapModuleImpl.syncCustomTemplates(accountId)
     }
 
     @ReactMethod

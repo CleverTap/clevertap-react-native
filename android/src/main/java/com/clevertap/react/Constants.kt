@@ -18,4 +18,12 @@ object Constants {
      * tag and strips it before user handlers run.
      */
     const val CT_ACCOUNT_ID_KEY = "__ctAccountId"
+
+    /**
+     * Key that carries a primitive event payload inside the tagged map. Some events
+     * (custom templates) deliver a bare string to user code; a string cannot hold the
+     * account tag, so native wraps it — {__ctAccountId: id, __ctPayload: "name"} —
+     * and the JS demux unwraps it, delivering exactly the string users always got.
+     */
+    const val CT_PAYLOAD_KEY = "__ctPayload"
 }

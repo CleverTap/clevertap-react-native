@@ -74,6 +74,11 @@ function callWithCallback(method, args, callback, accountId) {
 // Defined once — no magic strings. Must match Constants.CT_ACCOUNT_ID_KEY (Android)
 // and kCleverTapAccountIdKey (iOS).
 const CT_ACCOUNT_ID_KEY = '__ctAccountId';
+// Wrapper for primitive event payloads. Custom template events deliver a bare
+// STRING (the template name) to user code; a string cannot carry the account tag,
+// so native wraps it — {__ctAccountId, __ctPayload} — and routeEvent unwraps it.
+// Must match Constants.CT_PAYLOAD_KEY (Android) and kCleverTapPayloadKey (iOS).
+const CT_PAYLOAD_KEY = '__ctPayload';
 // Internal routing key for the top-level CleverTap object (the "default slot").
 const DEFAULT_SLOT_KEY = '__default__';
 
@@ -136,9 +141,15 @@ function routeEvent(eventName, event) {
         payload = Object.assign({}, event);
         delete payload[CT_ACCOUNT_ID_KEY];
     }
+    // Native wraps primitive payloads (custom template events send the template name
+    // as a string) so they can carry the account tag. Unwrap here: handlers keep
+    // receiving exactly what released SDKs delivered — the bare string.
+    if (payload !== null && typeof payload === 'object' && CT_PAYLOAD_KEY in payload) {
+        payload = payload[CT_PAYLOAD_KEY];
+    }
     if (tag == null) {
-        // Untagged events (e.g. custom templates, which are global by native design)
-        // go to the top-level CleverTap listeners — same audience as before.
+        // Untagged events go to the top-level CleverTap listeners — same audience
+        // as before the demux existed.
         if (!deliverRouted(routedKey(DEFAULT_SLOT_KEY, eventName), payload)) {
             routeDebug('dropped untagged "' + eventName + '" — no top-level listener');
         }
@@ -209,8 +220,10 @@ function removeListenersForHandle(accountId, eventName) {
  *
  * OS-level methods (push registration, notification channels, initial URL) exist on
  * the handle for shape consistency but warn and do nothing — call them on the
- * top-level CleverTap object. Custom templates and setDebugLevel are global by
- * design and are not on the handle at all.
+ * top-level CleverTap object. setDebugLevel is global by design and is not on the
+ * handle at all. Custom template DEFINITIONS are app-wide (every account gets the
+ * registered templates), but presenting, argument reads and dismissal are
+ * per-account — those methods are on the handle.
  */
 function createHandle(accountId) {
     const handle = {
@@ -460,6 +473,33 @@ function createHandle(accountId) {
         },
         variants: (callback) =>
             callWithCallback('variants', null, callback, toAccountArg(accountId)),
+
+        // --- Custom templates ---
+        // The active template context lives PER ACCOUNT natively: only the account
+        // whose campaign presented the template can read its arguments or dismiss it.
+        // Definitions stay app-wide (registered at launch for every account).
+        syncCustomTemplates: () =>
+            CleverTapReact.syncCustomTemplates(toAccountArg(accountId)),
+        syncCustomTemplatesInProd: (isProduction) =>
+            CleverTapReact.syncCustomTemplatesInProd(isProduction, toAccountArg(accountId)),
+        customTemplateSetDismissed: (templateName) =>
+            CleverTapReact.customTemplateSetDismissed(templateName, toAccountArg(accountId)),
+        customTemplateSetPresented: (templateName) =>
+            CleverTapReact.customTemplateSetPresented(templateName, toAccountArg(accountId)),
+        customTemplateRunAction: (templateName, argName) =>
+            CleverTapReact.customTemplateRunAction(templateName, argName, toAccountArg(accountId)),
+        customTemplateGetStringArg: (templateName, argName) =>
+            CleverTapReact.customTemplateGetStringArg(templateName, argName, toAccountArg(accountId)),
+        customTemplateGetNumberArg: (templateName, argName) =>
+            CleverTapReact.customTemplateGetNumberArg(templateName, argName, toAccountArg(accountId)),
+        customTemplateGetBooleanArg: (templateName, argName) =>
+            CleverTapReact.customTemplateGetBooleanArg(templateName, argName, toAccountArg(accountId)),
+        customTemplateGetFileArg: (templateName, argName) =>
+            CleverTapReact.customTemplateGetFileArg(templateName, argName, toAccountArg(accountId)),
+        customTemplateGetObjectArg: (templateName, argName) =>
+            CleverTapReact.customTemplateGetObjectArg(templateName, argName, toAccountArg(accountId)),
+        customTemplateContextToString: (templateName) =>
+            CleverTapReact.customTemplateContextToString(templateName, toAccountArg(accountId)),
 
         // --- OS-level methods: on the handle for shape consistency only.
         // They warn and do nothing; call them on the top-level CleverTap object. ---
@@ -1673,7 +1713,7 @@ var CleverTap = {
      * Requires Development/Debug build/configuration.
      */
     syncCustomTemplates: function () {
-        CleverTapReact.syncCustomTemplates();
+        CleverTapReact.syncCustomTemplates(null);
     },
 
     /**
@@ -1682,7 +1722,7 @@ var CleverTap = {
      * @param {boolean} isProduction Provide `true` if templates must be sync in Productuon build/configuration.
      */
     syncCustomTemplatesInProd: function (isProduction) {
-        CleverTapReact.syncCustomTemplatesInProd(isProduction)
+        CleverTapReact.syncCustomTemplatesInProd(isProduction, null)
     },
 
     /**
@@ -1703,7 +1743,7 @@ var CleverTap = {
      * @param {string} templateName The name of the active template
      */
     customTemplateSetDismissed: function (templateName) {
-        return CleverTapReact.customTemplateSetDismissed(templateName);
+        return CleverTapReact.customTemplateSetDismissed(templateName, null);
     },
 
     /**
@@ -1712,7 +1752,7 @@ var CleverTap = {
      * @param {string} templateName The name of the active template
      */
     customTemplateSetPresented: function (templateName) {
-        return CleverTapReact.customTemplateSetPresented(templateName);
+        return CleverTapReact.customTemplateSetPresented(templateName, null);
     },
 
     /**
@@ -1722,7 +1762,7 @@ var CleverTap = {
      * @param {string} argName The action argument name
      */
     customTemplateRunAction: function (templateName, argName) {
-        return CleverTapReact.customTemplateRunAction(templateName, argName);
+        return CleverTapReact.customTemplateRunAction(templateName, argName, null);
     },
 
     /**
@@ -1734,7 +1774,7 @@ var CleverTap = {
      * @returns {string} The argument value or null if no such argument is defined for the template.
      */
     customTemplateGetStringArg: function (templateName, argName) {
-       return CleverTapReact.customTemplateGetStringArg(templateName, argName);
+       return CleverTapReact.customTemplateGetStringArg(templateName, argName, null);
     },
 
     /**
@@ -1746,7 +1786,7 @@ var CleverTap = {
      * @returns {number} The argument value or null if no such argument is defined for the template.
      */
     customTemplateGetNumberArg: function (templateName, argName) {
-        return CleverTapReact.customTemplateGetNumberArg(templateName, argName);
+        return CleverTapReact.customTemplateGetNumberArg(templateName, argName, null);
     },
 
     /**
@@ -1758,7 +1798,7 @@ var CleverTap = {
      * @returns {boolean} The argument value or null if no such argument is defined for the template.
      */
     customTemplateGetBooleanArg: function (templateName, argName) {
-        return CleverTapReact.customTemplateGetBooleanArg(templateName, argName);
+        return CleverTapReact.customTemplateGetBooleanArg(templateName, argName, null);
     },
 
     /**
@@ -1770,7 +1810,7 @@ var CleverTap = {
      * @returns {string} The file path to the file or null if no such argument is defined for the template.
      */
     customTemplateGetFileArg: function (templateName, argName) {
-        return CleverTapReact.customTemplateGetFileArg(templateName, argName);
+        return CleverTapReact.customTemplateGetFileArg(templateName, argName, null);
     },
 
     /**
@@ -1782,7 +1822,7 @@ var CleverTap = {
      * @returns {any} The argument value or null if no such argument is defined for the template.
      */
     customTemplateGetObjectArg: function (templateName, argName) {
-        return CleverTapReact.customTemplateGetObjectArg(templateName, argName);
+        return CleverTapReact.customTemplateGetObjectArg(templateName, argName, null);
     },
 
     /**
@@ -1792,7 +1832,7 @@ var CleverTap = {
      * @returns {string}
      */
     customTemplateContextToString: function (templateName) {
-        return CleverTapReact.customTemplateContextToString(templateName);
+        return CleverTapReact.customTemplateContextToString(templateName, null);
     }
 };
 
