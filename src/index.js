@@ -121,13 +121,18 @@ function deliverRouted(key, payload) {
 }
 
 function routeEvent(eventName, event) {
-    const tag = event ? event[CT_ACCOUNT_ID_KEY] : null;
+    // A payload that is not an object can carry no account tag, and the `in`
+    // operator below THROWS on primitives ("Cannot use 'in' operator..."). Custom
+    // template events deliver the bare template name as a string, so without this
+    // guard every template present/close crashed the app.
+    const isObject = event !== null && typeof event === 'object';
+    const tag = isObject ? event[CT_ACCOUNT_ID_KEY] : null;
     routeDebug('received "' + eventName + '" tag=' + tag +
         ' defaultAccountId=' + currentDefaultAccountId);
     // Immutability: never mutate the shared payload. Every handler receives the same
     // sanitized copy, without the internal tag.
     let payload = event;
-    if (event && CT_ACCOUNT_ID_KEY in event) {
+    if (isObject && CT_ACCOUNT_ID_KEY in event) {
         payload = Object.assign({}, event);
         delete payload[CT_ACCOUNT_ID_KEY];
     }
