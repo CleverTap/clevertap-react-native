@@ -1058,9 +1058,9 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     promptForPushPermission(showFallbackSettings: boolean): void;
     /** Warns and no-ops on account handles; call promptPushPrimer on the top-level CleverTap object. */
     promptPushPrimer(localInAppConfig: any): void;
-    /** Warns and no-ops on account handles; call isPushPermissionGranted on the top-level CleverTap object. */
+    /** Not supported on account handles: warns and invokes the callback with an error; call isPushPermissionGranted on the top-level CleverTap object. */
     isPushPermissionGranted(callback: CallbackString): void;
-    /** Warns and no-ops on account handles; call getInitialUrl on the top-level CleverTap object. */
+    /** Not supported on account handles: warns and invokes the callback with an error; call getInitialUrl on the top-level CleverTap object. */
     getInitialUrl(callback: Callback): void;
     /** Warns and no-ops on account handles; call createNotificationChannel on the top-level CleverTap object. */
     createNotificationChannel(
@@ -1117,7 +1117,9 @@ export function isPushPermissionGranted(callback: CallbackString): void;
 
   /**
    * Returns the handle for an account. Always returns a handle (never null); calls on a
-   * handle whose account does not exist natively warn and do nothing.
+   * handle whose account does not exist natively warn and do nothing. An invalid
+   * accountId (empty or not a string) logs an error and returns the DEFAULT account's
+   * handle, so calls and listeners stay consistent instead of silently splitting.
    */
   export function getInstance(accountId: string): CleverTapInstance;
 

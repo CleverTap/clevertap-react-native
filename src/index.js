@@ -525,11 +525,23 @@ function createHandle(accountId) {
         promptPushPrimer: (value) => {
             console.warn('[CleverTap] promptPushPrimer is not supported on account handles; call it on the top-level CleverTap object');
         },
+        // Why do these two stubs CALL the callback instead of only warning? A caller
+        // that waits for the callback (or wraps it in a Promise) would otherwise wait
+        // forever — the warning scrolls by, the await never resolves. Completing with
+        // an error keeps every caller's control flow alive. Example:
+        //   const granted = await promisify(handle.isPushPermissionGranted)();
+        // hangs forever without this; with it, the promise rejects with a clear message.
         isPushPermissionGranted: (callback) => {
             console.warn('[CleverTap] isPushPermissionGranted is not supported on account handles; call it on the top-level CleverTap object');
+            if (typeof callback === 'function') {
+                callback('isPushPermissionGranted is not supported on account handles', null);
+            }
         },
         getInitialUrl: (callback) => {
             console.warn('[CleverTap] getInitialUrl is not supported on account handles; call it on the top-level CleverTap object');
+            if (typeof callback === 'function') {
+                callback('getInitialUrl is not supported on account handles', null);
+            }
         },
         createNotificationChannel: (channelId, channelName, channelDescription, importance, showBadge) => {
             console.warn('[CleverTap] createNotificationChannel is not supported on account handles; call it on the top-level CleverTap object');
@@ -1580,6 +1592,12 @@ var CleverTap = {
     * @returns {object} the account's handle
     */
     getInstance: function (accountId) {
+        if (typeof accountId !== 'string' || accountId.length === 0) {
+            console.error('[CleverTap] getInstance called with an invalid accountId (' +
+                accountId + '); returning the DEFAULT account handle. Pass the real ' +
+                'account id string to address a specific account.');
+            return getOrMakeHandle(undefined);
+        }
         return getOrMakeHandle(accountId);
     },
 
