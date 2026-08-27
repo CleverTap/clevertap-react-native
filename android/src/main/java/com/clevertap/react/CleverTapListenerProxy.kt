@@ -65,6 +65,16 @@ class CleverTapListenerProxy private constructor(private val accountId: String) 
         }
     }
 
+    // Why @Synchronized? attach() can be reached from two places that may overlap:
+    // the host app's launch init (CleverTapRnAPI.initReactNativeIntegration, main
+    // thread) and the React module's own init (resolveInstance, bridge thread). The
+    // unregister+register pair below is not atomic on its own: if two threads run it
+    // at the same time, both unregister first (nothing to remove) and then BOTH
+    // register — the proxy ends up in the SDK's push-permission listener list twice,
+    // and one tap on the permission dialog fires TWO identical events to JS. The
+    // lock is per proxy (per account), guards only these quick listener-list
+    // assignments (no I/O, no callbacks), so it can never block anyone noticeably.
+    @Synchronized
     private fun attach(instance: CleverTapAPI) {
         instance.unregisterPushPermissionNotificationResponseListener(this)
         instance.registerPushPermissionNotificationResponseListener(this)
