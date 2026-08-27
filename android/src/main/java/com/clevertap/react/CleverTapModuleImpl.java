@@ -120,7 +120,18 @@ public class CleverTapModuleImpl {
     // The "default slot": the instance that unaddressed top-level CleverTap calls use.
     // null means "not resolved yet" -> falls back to the SDK default (manifest) instance.
     // setInstanceWithAccountId swaps this pointer (legacy behavior).
-    private CleverTapAPI mDefaultCleverTap;
+    //
+    // Why volatile? This pointer can be touched from more than one thread over the
+    // module's life: the constructor resolves it on whatever thread React Native
+    // creates the module on, bridge methods read and swap it on the NativeModules
+    // thread, and createInstance deliberately runs its work on the main thread.
+    // Without volatile, a thread is allowed to keep seeing a STALE pointer after
+    // another thread swapped it. Example of the bug this prevents: an app calls
+    // setInstanceWithAccountId("B") and immediately records an event from a code
+    // path on another thread — the stale read would silently send that event to the
+    // OLD account. volatile costs nothing here (single reference read/write, no
+    // lock, nothing the main thread can block on) and removes the whole question.
+    private volatile CleverTapAPI mDefaultCleverTap;
 
     // Accounts whose listeners are already wired, so initCtInstance runs exactly once per
     // account. Thread-safe: touched from the native-modules thread AND the main thread
