@@ -89,7 +89,18 @@ public class CleverTapModuleImpl {
 
     }
 
-    private static Uri sLaunchUri;
+    // The deep link from the push notification that launched the app.
+    //
+    // Why volatile? Two DIFFERENT threads touch this field: the host app WRITES it on
+    // the main thread at launch (CleverTapRnAPI.setInitialUri in Activity.onCreate),
+    // and JS READS it later from the bridge thread (getInitialUrl). Without volatile,
+    // Java does not promise that the reading thread ever sees the writing thread's
+    // value — it may keep seeing null. Example of the bug this prevents: the app is
+    // opened from a push with deep link "myapp://offer/42"; the main thread stores it;
+    // JS calls getInitialUrl() a moment later and still gets "InitialUrl is null", so
+    // the app never opens the offer screen — no crash, no error, just a silently lost
+    // deep link. volatile makes the write visible to every thread immediately.
+    private static volatile Uri sLaunchUri;
 
     // Per-account variable registries: REAL account id -> (variable name -> Var).
     // Without the account level, two accounts defining the same variable name would
