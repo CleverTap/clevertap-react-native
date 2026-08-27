@@ -508,7 +508,10 @@ RCT_EXPORT_METHOD(getUserEventLogHistory:(NSString*)accountId callback:(RCTRespo
 RCT_EXPORT_METHOD(setLocation:(double)latitude longitude:(double)longitude accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap setLocation: %f %f]", latitude, longitude);
     CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(latitude, longitude);
-    [CleverTap setLocation:coordinate];
+    // Use the INSTANCE method, not the class method: [CleverTap setLocation:] is
+    // hardwired to [CleverTap sharedInstance] (the plist account), so it silently
+    // ignored both the accountId and a swapped default slot.
+    [[self resolveInstance:accountId] setLocation:coordinate];
 }
 
 RCT_EXPORT_METHOD(profileGetCleverTapAttributionIdentifier:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
