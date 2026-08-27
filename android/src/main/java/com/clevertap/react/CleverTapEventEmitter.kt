@@ -5,7 +5,6 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import java.util.LinkedList
-import java.util.Queue
 
 /**
  * CleverTapEventEmitter is responsible for emitting events to the React Native JavaScript layer.
@@ -25,27 +24,38 @@ import java.util.Queue
  *
  * Payloads with no account tag are treated as GLOBAL: they go live once ANY account arms the
  * event (same behavior as before for events that are not per-account, like custom templates).
+ *
+ * ⚠️ THREAD SAFETY (SDK-6021): emits arrive on the native SDK's callback threads (usually main)
+ * while arming/flushing runs on the NativeModules thread. ALL buffer state — the item list, the
+ * armed-accounts set AND the enabled flag — is therefore guarded by ONE monitor per [Buffer],
+ * and the buffer/send decision in [emit] is a single atomic [Buffer.offer] (a separate
+ * check-then-add allowed a payload to slip in AFTER its account's flush and be silently
+ * discarded later). A previous version locked only the drain, which crashed in production with
+ * NoSuchElementException at LinkedList.removeFirst (unsynchronized add racing the drain).
+ * Events are always SENT outside the lock — never invoke React Native while holding it.
  */
 object CleverTapEventEmitter {
     private const val LOG_TAG = "CleverTapEventEmitter"
 
-    /** Volatile so SDK callback threads see a new context right away instead of dropping events. */
+    // Written once from the module constructor thread, read from every emitting thread.
     @Volatile
     var reactContext: ReactContext? = null
 
-    /** Volatile so a reset from the main thread is visible to SDK callback threads right away. */
-    @Volatile
-    private var eventsBuffers: Map<CleverTapEvent, Buffer> = createBuffersMap(enableBuffers = true)
+    // Fixed keys, immutable map: safe to read from any thread without a lock. All mutable
+    // state lives INSIDE each Buffer, guarded by that buffer's monitor — the map itself is
+    // never replaced (a swapped map let a racing emit buffer into a discarded copy).
+    private val eventsBuffers: Map<CleverTapEvent, Buffer> =
+        CleverTapEvent.values().filter { it.bufferable }.associateWith { Buffer(enabled = true) }
 
     /**
-     * Clear all the buffered events from all buffers and set whether all buffers should be enabled
-     * after that. Note: with `enableBuffers = false` this DISCARDS whatever is still buffered —
-     * it is the "listeners never showed up" safety valve, not a flush.
+     * Clear all the buffered events from all buffers and set whether all buffers should be
+     * enabled after that. Note: with `enableBuffers = false` this DISCARDS whatever is still
+     * buffered — it is the "listeners never showed up" safety valve, not a flush.
      *
      * @param enableBuffers enable/disable all buffers after they are cleared
      */
     fun resetAllBuffers(enableBuffers: Boolean) {
-        eventsBuffers = createBuffersMap(enableBuffers)
+        eventsBuffers.values.forEach { buffer -> buffer.reset(enableBuffers) }
         Log.i(LOG_TAG, "Buffers reset and enabled: $enableBuffers")
     }
 
@@ -57,10 +67,8 @@ object CleverTapEventEmitter {
      */
     fun armAccount(event: CleverTapEvent, accountId: String?) {
         val buffer = eventsBuffers[event] ?: return
-        synchronized(buffer.lock) {
-            buffer.armedAccounts.add(accountId)
-            Log.i(LOG_TAG, "Armed $event for account $accountId; armed=${buffer.armedAccounts}")
-        }
+        buffer.arm(accountId)
+        Log.i(LOG_TAG, "Armed $event for account $accountId")
     }
 
     /**
@@ -70,29 +78,20 @@ object CleverTapEventEmitter {
      */
     fun flushBuffer(event: CleverTapEvent, accountId: String?) {
         val buffer = eventsBuffers[event] ?: return
-        synchronized(buffer.lock) {
-            var sent = 0
-            val kept = LinkedList<Any?>()
-            while (buffer.size() > 0) {
-                val params = buffer.remove()
-                val tag = accountTagOf(params)
-                if (tag == null || tag == accountId) {
-                    sendEvent(event, params)
-                    sent++
-                } else {
-                    kept.add(params)
-                }
-            }
-            kept.forEach { buffer.add(it) }
-            if (sent > 0 || kept.size > 0) {
-                Log.i(LOG_TAG, "Flushed $event for account $accountId: sent=$sent kept=${kept.size}")
-            }
+        // Drain under the lock, send outside it: React Native must never be invoked
+        // while a buffer monitor is held.
+        val toSend = buffer.drainFor(accountId)
+        if (toSend.isNotEmpty()) {
+            Log.i(LOG_TAG, "Flushing $event for account $accountId: sending ${toSend.size}")
         }
+        toSend.forEach { params -> sendEvent(event, params) }
     }
 
     /**
      * Emit an event with specified params. The event is buffered when buffering is enabled and
      * the payload's account has not armed this event yet; it is sent immediately otherwise.
+     * The decision and the enqueue are ONE atomic step ([Buffer.offer]) so a payload can never
+     * slip into the buffer after its account's flush already ran.
      *
      * @param event The event to be emitted
      * @param params Optional event parameters
@@ -102,21 +101,11 @@ object CleverTapEventEmitter {
     fun emit(event: CleverTapEvent, params: Any?) {
         val tag = accountTagOf(params)
         val buffer = eventsBuffers[event]
-        if (buffer != null && buffer.enabled && !isArmed(buffer, tag)) {
-            Log.i(LOG_TAG, "Buffering $event for account $tag (not armed yet)")
-            addToBuffer(event, params)
+        if (buffer != null && buffer.offer(tag, params)) {
+            Log.i(LOG_TAG, "Buffered $event for account $tag (not armed yet)")
         } else {
             Log.i(LOG_TAG, "Emitting $event for account $tag")
             sendEvent(event, params)
-        }
-    }
-
-    private fun isArmed(buffer: Buffer, accountTag: String?): Boolean = synchronized(buffer.lock) {
-        if (accountTag == null) {
-            // Untagged payloads are global: live once anyone listens to the event.
-            buffer.armedAccounts.isNotEmpty()
-        } else {
-            buffer.armedAccounts.contains(accountTag)
         }
     }
 
@@ -127,20 +116,6 @@ object CleverTapEventEmitter {
         } else {
             null
         }
-    }
-
-    /**
-     * Adds an event to the buffer for future emission.
-     * Events will remain in the buffer until [flushBuffer] delivers them to their account or
-     * [resetAllBuffers] discards them.
-     *
-     * @param event The event to be buffered.
-     * @param params Optional event parameters to be sent when the event is emitted.
-     */
-    private fun addToBuffer(event: CleverTapEvent, params: Any?) {
-        val buffer = eventsBuffers[event] ?: return
-        buffer.add(params)
-        Log.i(LOG_TAG, "Event $event added to buffer.")
     }
 
     private fun sendEvent(event: CleverTapEvent, params: Any?) {
@@ -160,34 +135,74 @@ object CleverTapEventEmitter {
         }
     }
 
-    private fun createBuffersMap(enableBuffers: Boolean) =
-        CleverTapEvent.values().filter { it.bufferable }.associateWith {
-            Buffer(enabled = enableBuffers)
-        }
-
     /**
-     * A buffer of pending event params. Every access to [items] takes [lock], and [flushBuffer]
-     * holds it for the whole drain so an add cannot interleave with a remove.
+     * One event's buffer. EVERY member is guarded by this buffer's own monitor — reads
+     * included. Only pure data work happens inside the lock; the emitter sends events
+     * after the lock is released.
      */
     private class Buffer(enabled: Boolean) {
 
-        /** Guards [items]. Shared with [flushBuffer] so the drain and the writes use one monitor. */
-        val lock = Any()
-
-        /** Read by [emit] on SDK threads, written by [enableBuffer]/[disableBuffer] on others. */
-        @Volatile
-        var enabled: Boolean = enabled
-
-        private val items: Queue<Any?> = LinkedList()
-
-        fun add(item: Any?) = synchronized(lock) { items.add(item) }
-
-        fun remove(): Any? = synchronized(lock) { items.remove() }
-
-        fun size(): Int = synchronized(lock) { items.size }
-
+        // All guarded by synchronized(this):
+        private var enabled: Boolean = enabled
+        private val items = LinkedList<Any?>()
         // Accounts whose listeners have attached for this event (null entries are tolerated
-        // and simply never match a tagged payload). Guarded by [lock] like everything else.
-        val armedAccounts: MutableSet<String?> = mutableSetOf()
+        // and simply never match a tagged payload).
+        private val armedAccounts = mutableSetOf<String?>()
+
+        /**
+         * Buffers the payload and returns true when buffering is on and the payload's
+         * account has not armed this event yet; returns false (caller sends immediately)
+         * otherwise. Check and enqueue are one atomic step on purpose.
+         */
+        @Synchronized
+        fun offer(accountTag: String?, item: Any?): Boolean {
+            val armed = if (accountTag == null) {
+                // Untagged payloads are global: live once anyone listens to the event.
+                armedAccounts.isNotEmpty()
+            } else {
+                armedAccounts.contains(accountTag)
+            }
+            if (!enabled || armed) {
+                return false
+            }
+            items.add(item)
+            return true
+        }
+
+        @Synchronized
+        fun arm(accountId: String?) {
+            armedAccounts.add(accountId)
+        }
+
+        /**
+         * Removes and returns the payloads belonging to the given account — plus untagged
+         * (global) ones — keeping the other accounts' payloads buffered, in order.
+         */
+        @Synchronized
+        fun drainFor(accountId: String?): List<Any?> {
+            if (items.isEmpty()) {
+                return emptyList()
+            }
+            val send = ArrayList<Any?>()
+            val kept = LinkedList<Any?>()
+            while (items.isNotEmpty()) {
+                val params = items.remove()
+                val tag = accountTagOf(params)
+                if (tag == null || tag == accountId) {
+                    send.add(params)
+                } else {
+                    kept.add(params)
+                }
+            }
+            items.addAll(kept)
+            return send
+        }
+
+        @Synchronized
+        fun reset(enable: Boolean) {
+            items.clear()
+            armedAccounts.clear()
+            enabled = enable
+        }
     }
 }
