@@ -1693,9 +1693,33 @@ RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name accountId:(NSString*)acco
 /// until a listener for ITS account observes the event (see ``onEventListenerAdded``).
 /// Events expected to be queued are specified in ``observableEvents``.
 ///
+/// ⚠️ THREAD SAFETY: the queue state (``pendingEvents``, ``observedEvents``,
+/// ``observableEvents``, ``isObserving``) is MAIN-CONFINED. Its other mutators —
+/// ``onEventListenerAdded`` and ``startObserving`` (methodQueue is main) and the
+/// ``clearPendingEvents`` timeout (dispatch_after on main) — already run on main, but
+/// SDK callbacks arrive elsewhere: profileDidInitialize is dispatched on a GLOBAL
+/// BACKGROUND queue (verified at CleverTap-iOS-SDK 7.8.1, CleverTap.m) and the
+/// push-tap delegate runs on its caller's thread. Mutating these NSMutable
+/// collections cross-thread can corrupt them or drop a pending event, so off-main
+/// callers hop to main here. An async hop (not a lock) on purpose: delivery is
+/// already asynchronous, ordering per account is preserved (main is serial), and no
+/// lock means no new main-thread blocking to reason about.
+///
 /// @param name The event name.
 /// @param body The event body parameters.
 + (void)sendEventOnObserving:(NSString *)name body:(id)body {
+    if (![NSThread isMainThread]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self sendEventOnObservingMain:name body:body];
+        });
+        return;
+    }
+    [self sendEventOnObservingMain:name body:body];
+}
+
+/// Main-thread half of ``sendEventOnObserving`` — the ONLY reader/writer of the
+/// pending-events state besides the (already main) listener/observer callbacks.
++ (void)sendEventOnObservingMain:(NSString *)name body:(id)body {
     if (!isObserving && ![observableEvents containsObject:name]) {
         RCTLogWarn(@"[CleverTap: %@ is sent before observing and is not part of the observable events]", name);
         [observableEvents addObject:name];
