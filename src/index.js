@@ -119,7 +119,20 @@ function deliverRouted(key, payload) {
     const handlers = routedHandlers.get(key);
     if (handlers && handlers.size > 0) {
         routeDebug('delivering to "' + key + '" (' + handlers.size + ' handler(s))');
-        handlers.forEach((handler) => handler(payload));
+        // Why try/catch around EACH handler? One event can have several independent
+        // listeners (e.g. an analytics module and a navigation module both listening
+        // to CleverTapProfileSync). Without the guard, the FIRST handler that throws
+        // would stop the loop — the remaining listeners would silently never hear an
+        // event that was delivered to the app, and the error would bubble into the
+        // native event emitter. A listener's bug should cost only that listener, so
+        // we log it loudly and keep delivering to the others.
+        handlers.forEach((handler) => {
+            try {
+                handler(payload);
+            } catch (error) {
+                console.error('[CleverTap] a listener for "' + key + '" threw:', error);
+            }
+        });
         return true;
     }
     return false;
