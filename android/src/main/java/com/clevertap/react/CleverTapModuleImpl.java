@@ -182,10 +182,21 @@ public class CleverTapModuleImpl {
 
     //Custom Push Notification
     public void createNotification(ReadableMap extras) {
-        CleverTapAPI clevertap = getCleverTapAPI();
-        if (clevertap == null) {
+        // No "default instance" guard on purpose. The ACCOUNT for this notification is
+        // chosen by the native SDK from the payload itself — createNotification reads
+        // wzrk_acct_id from the bundle and routes to THAT account's instance (rendering
+        // and the Notification Viewed event land on the right account automatically).
+        // The old guard only checked that the DEFAULT (manifest) account existed, which
+        // silently broke this method for apps that create their instances from JS.
+        // Example: an app with no manifest credentials receives a push for its JS-created
+        // account 'B' and hands the payload here — with the guard this returned without
+        // a trace; now the native SDK finds (or, on a cold process, restores) account B
+        // and renders the notification.
+        if (extras == null) {
+            Log.w(TAG, "createNotification called with null extras — ignored");
             return;
         }
+        warnIfNoInstanceExistsYet("createNotification");
         JSONObject extrasJsonObject;
         try {
             extrasJsonObject = jsonObjectFromReadableMap(extras);
@@ -197,7 +208,7 @@ public class CleverTapModuleImpl {
             }
             CleverTapAPI.createNotification(this.context, bundle);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "createNotification failed to parse extras — notification not shown", e);
         }
     }
 
