@@ -908,6 +908,8 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     profileSet(profile: object): void;
     getCleverTapID(callback: CallbackString): void;
     addListener(eventName: string, handler: (event: any) => void): CleverTapEventSubscription;
+    /** Like addListener, but the handler fires only once — for the first matching event of this account — then detaches itself. */
+    addOneTimeListener(eventName: string, handler: (event: any) => void): CleverTapEventSubscription;
     removeListener(eventName: string): void;
 
     /* Locale & push tokens */

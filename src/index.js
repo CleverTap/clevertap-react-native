@@ -569,6 +569,19 @@ function createHandle(accountId) {
         },
 
         addListener: (eventName, handler) => addListenerForHandle(accountId, eventName, handler),
+        // Like addListener, but the handler runs only ONCE — for the first matching
+        // event of THIS account — and then detaches itself. Example: wait for account
+        // B's first profile init without remembering to clean up:
+        //   handleB.addOneTimeListener(CleverTap.CleverTapProfileDidInitialize, (e) => ...);
+        // The subscription removes itself from inside the wrapper, so a second event
+        // can never fire the handler again. Mirrors CleverTap.addOneTimeListener.
+        addOneTimeListener: (eventName, handler) => {
+            const subscription = addListenerForHandle(accountId, eventName, (event) => {
+                handler(event);
+                subscription.remove();
+            });
+            return subscription;
+        },
         removeListener: (eventName) => removeListenersForHandle(accountId, eventName)
     };
     return Object.freeze(handle);
