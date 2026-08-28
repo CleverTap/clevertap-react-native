@@ -201,87 +201,97 @@ public class CleverTapModuleImpl {
         }
     }
 
+    // No "default instance" guard on the notification-channel methods below, on purpose.
+    // Notification channels are an OS-level, app-wide resource — the native static picks
+    // ANY available CleverTap instance itself (the default account, or the first created
+    // one) and only uses it for a background executor and a logger; the real work is a
+    // plain NotificationManager call.
     @RequiresApi(api = VERSION_CODES.O)
     public void createNotificationChannel(String channelId, String channelName, String channelDescription,
                                           int importance, boolean showBadge) {
-        CleverTapAPI clevertap = getCleverTapAPI();
-        if (clevertap == null || channelId == null || channelName == null || channelDescription == null) {
+        if (channelId == null || channelName == null || channelDescription == null) {
+            Log.w(TAG, "createNotificationChannel called with null arguments — ignored");
             return;
         }
+        warnIfNoInstanceExistsYet("createNotificationChannel");
         CleverTapAPI.createNotificationChannel(this.context, channelId, channelName, channelDescription, importance,
                 showBadge);
-        Log.i(TAG, "Notification Channel " + channelName + " created");
+        Log.i(TAG, "Notification Channel " + channelName + " creation requested");
     }
 
     @RequiresApi(api = VERSION_CODES.O)
     public void createNotificationChannelGroup(String groupId, String groupName) {
-        CleverTapAPI clevertap = getCleverTapAPI();
-        if (clevertap == null || groupId == null || groupName == null) {
+        if (groupId == null || groupName == null) {
+            Log.w(TAG, "createNotificationChannelGroup called with null arguments — ignored");
             return;
         }
+        warnIfNoInstanceExistsYet("createNotificationChannelGroup");
         CleverTapAPI.createNotificationChannelGroup(this.context, groupId, groupName);
-        Log.i(TAG, "Notification Channel Group " + groupName + " created");
+        Log.i(TAG, "Notification Channel Group " + groupName + " creation requested");
     }
 
     @RequiresApi(api = VERSION_CODES.O)
     public void createNotificationChannelWithGroupId(String channelId, String channelName, String channelDescription,
                                                      int importance, String groupId, boolean showBadge) {
-        CleverTapAPI clevertap = getCleverTapAPI();
-        if (clevertap == null || channelId == null || channelName == null || channelDescription == null
-                || groupId == null) {
+        if (channelId == null || channelName == null || channelDescription == null || groupId == null) {
+            Log.w(TAG, "createNotificationChannelWithGroupId called with null arguments — ignored");
             return;
         }
+        warnIfNoInstanceExistsYet("createNotificationChannelWithGroupId");
         CleverTapAPI.createNotificationChannel(this.context, channelId, channelName, channelDescription, importance,
                 groupId, showBadge);
-        Log.i(TAG, "Notification Channel " + channelName + " with Group Id " + groupId + " created");
+        Log.i(TAG, "Notification Channel " + channelName + " with Group Id " + groupId + " creation requested");
     }
 
     @RequiresApi(api = VERSION_CODES.O)
     public void createNotificationChannelWithGroupIdAndSound(String channelId, String channelName,
                                                              String channelDescription, int importance, String groupId, boolean showBadge, String sound) {
-        CleverTapAPI clevertap = getCleverTapAPI();
-        if (clevertap == null || channelId == null || channelName == null || channelDescription == null
+        if (channelId == null || channelName == null || channelDescription == null
                 || groupId == null || sound == null) {
+            Log.w(TAG, "createNotificationChannelWithGroupIdAndSound called with null arguments — ignored");
             return;
         }
+        warnIfNoInstanceExistsYet("createNotificationChannelWithGroupIdAndSound");
         CleverTapAPI.createNotificationChannel(this.context, channelId, channelName, channelDescription, importance,
                 groupId, showBadge, sound);
         Log.i(TAG, "Notification Channel " + channelName + " with Group Id " + groupId + " and sound file " + sound
-                + " created");
+                + " creation requested");
     }
 
     @RequiresApi(api = VERSION_CODES.O)
     public void createNotificationChannelWithSound(String channelId, String channelName, String channelDescription,
                                                    int importance, boolean showBadge, String sound) {
-        CleverTapAPI clevertap = getCleverTapAPI();
-        if (clevertap == null || channelId == null || channelName == null || channelDescription == null
-                || sound == null) {
+        if (channelId == null || channelName == null || channelDescription == null || sound == null) {
+            Log.w(TAG, "createNotificationChannelWithSound called with null arguments — ignored");
             return;
         }
+        warnIfNoInstanceExistsYet("createNotificationChannelWithSound");
         CleverTapAPI.createNotificationChannel(this.context, channelId, channelName, channelDescription, importance,
                 showBadge, sound);
-        Log.i(TAG, "Notification Channel " + channelName + " with sound file " + sound + " created");
+        Log.i(TAG, "Notification Channel " + channelName + " with sound file " + sound + " creation requested");
     }
 
 
     @RequiresApi(api = VERSION_CODES.O)
     public void deleteNotificationChannel(String channelId) {
-        CleverTapAPI clevertap = getCleverTapAPI();
-        if (clevertap == null || channelId == null) {
+        if (channelId == null) {
+            Log.w(TAG, "deleteNotificationChannel called with null channelId — ignored");
             return;
         }
+        warnIfNoInstanceExistsYet("deleteNotificationChannel");
         CleverTapAPI.deleteNotificationChannel(this.context, channelId);
-        Log.i(TAG, "Notification Channel Id " + channelId + " deleted");
+        Log.i(TAG, "Notification Channel Id " + channelId + " deletion requested");
     }
 
     @RequiresApi(api = VERSION_CODES.O)
     public void deleteNotificationChannelGroup(String groupId) {
-        CleverTapAPI clevertap = getCleverTapAPI();
-        if (clevertap == null || groupId == null) {
+        if (groupId == null) {
+            Log.w(TAG, "deleteNotificationChannelGroup called with null groupId — ignored");
             return;
         }
+        warnIfNoInstanceExistsYet("deleteNotificationChannelGroup");
         CleverTapAPI.deleteNotificationChannelGroup(this.context, groupId);
-        Log.i(TAG, "Notification Channel Group Id " + groupId + " deleted");
+        Log.i(TAG, "Notification Channel Group Id " + groupId + " deletion requested");
     }
 
     //Push permission methods
@@ -1871,6 +1881,21 @@ public class CleverTapModuleImpl {
 
     private CleverTapAPI getCleverTapAPI() {
         return resolveInstance(null);
+    }
+
+    /**
+     * The native channel/notification statics need at least ONE CleverTap instance to
+     * exist (any account — they only borrow its executor and logger). Their own
+     * "no instance found" log is verbose-gated and invisible at the default log level,
+     * so if nothing was ever created we would drop the call with no trace. This check
+     * uses only this module's own state — no CleverTap core internals — which is why
+     * the message says "will drop" conditionally
+     */
+    private void warnIfNoInstanceExistsYet(String methodName) {
+        if (mDefaultCleverTap == null && initedAccountIds.isEmpty()) {
+            Log.w(TAG, methodName + ": no CleverTap instance exists yet in this app run — "
+                    + "the native SDK will drop this call. Call createInstance(config) first.");
+        }
     }
 
     public void setInstanceWithAccountId(String accountId) {
