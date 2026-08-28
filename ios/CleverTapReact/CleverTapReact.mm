@@ -195,13 +195,6 @@ RCT_EXPORT_METHOD(createInstance:(NSDictionary *)config
         return;
     }
 
-    // Idempotent: an existing account is returned as-is and the config is ignored.
-    if ([CleverTap getGlobalInstance:accountId] != nil) {
-        RCTLogWarn(@"createInstance: instance for %@ already exists; config ignored", accountId);
-        [self resolveInstance:accountId];
-        resolve(@{@"accountId": accountId});
-        return;
-    }
 
     NSString *region = config[@"region"];
     NSString *proxy = config[@"proxyDomain"];

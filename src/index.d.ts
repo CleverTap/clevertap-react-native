@@ -1112,7 +1112,10 @@ export function isPushPermissionGranted(callback: CallbackString): void;
 
   /**
    * Creates an additional CleverTap account from JavaScript and resolves with its handle.
-   * Idempotent: an already-existing account resolves with its handle; config is ignored.
+   * Config semantics match the native SDKs: on a fresh app launch the passed config is
+   * applied and persisted (fetch-config-and-create on every launch works; changes take
+   * effect next launch). A repeat call in the SAME app run resolves with the existing
+   * instance and the new config is not applied (native in-process behavior).
    * Rejects when accountId/accountToken are missing or empty.
    */
   export function createInstance(config: CleverTapInstanceConfig): Promise<CleverTapInstance>;

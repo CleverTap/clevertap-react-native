@@ -1916,13 +1916,6 @@ public class CleverTapModuleImpl {
         // already holds our instance and it is returned instead of constructed again.
         final ReadableMap finalConfig = config;
         com.facebook.react.bridge.UiThreadUtil.runOnUiThread(() -> {
-            CleverTapAPI existing = CleverTapAPI.getGlobalInstance(this.context, accountId);
-            if (existing != null) {
-                Log.w(TAG, "createInstance: instance for " + accountId + " already exists; config ignored");
-                resolveInstance(accountId); // ensure listeners are wired
-                promise.resolve(accountIdResult(accountId));
-                return;
-            }
 
             String region = finalConfig.hasKey("region") ? finalConfig.getString("region") : null;
             CleverTapInstanceConfig ctConfig = (region != null && !region.trim().isEmpty())

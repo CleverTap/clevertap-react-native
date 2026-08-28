@@ -1572,8 +1572,13 @@ var CleverTap = {
 
     /**
     * Creates an additional CleverTap account from JavaScript and resolves with its handle.
-    * Idempotent: for an already-existing account it resolves with that account's handle
-    * and the new config is ignored (a native warning is logged).
+    *
+    * Config semantics match the native SDKs exactly: on a FRESH app launch the config
+    * you pass is applied (and persisted by the native SDK) — so fetching your config
+    * from a server and calling createInstance on every launch works, and config changes
+    * take effect on the next launch. Calling createInstance again for the same account
+    * in the SAME app run resolves with the existing instance and the new config is not
+    * applied (the native SDK keeps the original for the life of the process).
     *
     * @example
     * const accountB = await CleverTap.createInstance({
