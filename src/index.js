@@ -516,27 +516,27 @@ function createHandle(accountId) {
 
         // --- OS-level methods: on the handle for shape consistency only.
         // They warn and do nothing; call them on the top-level CleverTap object. ---
+        // --- Push permission ---
+        // These are REAL per-account calls: natively they are instance
+        // methods, and the permission RESPONSE is delivered only to the PROMPTING
+        // instance's listeners. So handleB.promptForPushPermission(true) shows the
+        // (app-wide) system dialog and the CleverTapPushPermissionResponseReceived
+        // event fires on handleB's listeners. The permission ITSELF is app-wide —
+        // whichever account prompts, the OS grants or denies it for the whole app.
+        promptForPushPermission: (showFallbackSettings) =>
+            CleverTapReact.promptForPushPermission(showFallbackSettings, toAccountArg(accountId)),
+        promptPushPrimer: (value) =>
+            CleverTapReact.promptPushPrimer(value, toAccountArg(accountId)),
+        isPushPermissionGranted: (callback) =>
+            callWithCallback('isPushPermissionGranted', null, callback, toAccountArg(accountId)),
+
         registerForPush: () => {
             console.warn('[CleverTap] registerForPush is not supported on account handles; call it on the top-level CleverTap object');
         },
-        promptForPushPermission: (showFallbackSettings) => {
-            console.warn('[CleverTap] promptForPushPermission is not supported on account handles; call it on the top-level CleverTap object');
-        },
-        promptPushPrimer: (value) => {
-            console.warn('[CleverTap] promptPushPrimer is not supported on account handles; call it on the top-level CleverTap object');
-        },
-        // Why do these two stubs CALL the callback instead of only warning? A caller
-        // that waits for the callback (or wraps it in a Promise) would otherwise wait
+        // Why does this stub CALL the callback instead of only warning? A caller that
+        // waits for the callback (or wraps it in a Promise) would otherwise wait
         // forever — the warning scrolls by, the await never resolves. Completing with
-        // an error keeps every caller's control flow alive. Example:
-        //   const granted = await promisify(handle.isPushPermissionGranted)();
-        // hangs forever without this; with it, the promise rejects with a clear message.
-        isPushPermissionGranted: (callback) => {
-            console.warn('[CleverTap] isPushPermissionGranted is not supported on account handles; call it on the top-level CleverTap object');
-            if (typeof callback === 'function') {
-                callback('isPushPermissionGranted is not supported on account handles', null);
-            }
-        },
+        // an error keeps the caller's control flow alive.
         getInitialUrl: (callback) => {
             console.warn('[CleverTap] getInitialUrl is not supported on account handles; call it on the top-level CleverTap object');
             if (typeof callback === 'function') {
@@ -803,7 +803,7 @@ var CleverTap = {
      * @param {string} showFallbackSettings - If the value is true then SDK shows an alert dialog which routes to app's notification settings page.
     */
     promptForPushPermission: function (showFallbackSettings) {
-        CleverTapReact.promptForPushPermission(showFallbackSettings);
+        CleverTapReact.promptForPushPermission(showFallbackSettings, null);
     },
 
     /**
@@ -811,7 +811,7 @@ var CleverTap = {
     * @param {object} value - key-value belongs to the localInApp properties. Refer documentation for details.
     */
     promptPushPrimer: function (value) {
-        CleverTapReact.promptPushPrimer(value);
+        CleverTapReact.promptPushPrimer(value, null);
     },
 
     /**
@@ -820,7 +820,7 @@ var CleverTap = {
     * @param {function(err, res)} non-null callback to retrieve the result
     */
     isPushPermissionGranted: function (callback) {
-        callWithCallback('isPushPermissionGranted', null, callback);
+        callWithCallback('isPushPermissionGranted', null, callback, null);
     },
 
     /**

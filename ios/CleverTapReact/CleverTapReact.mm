@@ -1309,27 +1309,41 @@ RCT_EXPORT_METHOD(clearInAppResources:(BOOL)expiredOnly accountId:(NSString*)acc
     return inAppBuilder;
 }
 
-RCT_EXPORT_METHOD(promptForPushPermission:(BOOL)showFallbackSettings){
+// Push permission methods. Routed by accountId like every other native INSTANCE
+// method: the OS permission itself is app-wide, but the prompt runs through the
+// resolved account, and the permission RESPONSE is delivered only to the PROMPTING
+// instance's delegate — so the CleverTapPushPermissionResponseReceived event reaches
+// the handle that asked.
+RCT_EXPORT_METHOD(promptForPushPermission:(BOOL)showFallbackSettings accountId:(NSString *)accountId){
     RCTLogInfo(@"[CleverTap promptForPushPermission: %i]", showFallbackSettings);
-    [[self cleverTapInstance] promptForPushPermission:showFallbackSettings];
+    [[self resolveInstance:accountId] promptForPushPermission:showFallbackSettings];
 }
 
-RCT_EXPORT_METHOD(promptPushPrimer:(NSDictionary *_Nonnull)json){
+RCT_EXPORT_METHOD(promptPushPrimer:(NSDictionary *_Nonnull)json accountId:(NSString *)accountId){
     RCTLogInfo(@"[CleverTap promptPushPrimer]");
     CTLocalInApp *localInAppBuilder = [self _localInAppConfigFromReadableMap:json];
-    [[self cleverTapInstance] promptPushPrimer:localInAppBuilder.getLocalInAppSettings];
+    [[self resolveInstance:accountId] promptPushPrimer:localInAppBuilder.getLocalInAppSettings];
 }
 
-RCT_EXPORT_METHOD(isPushPermissionGranted:(RCTResponseSenderBlock)callback){
+RCT_EXPORT_METHOD(isPushPermissionGranted:(NSString *)accountId callback:(RCTResponseSenderBlock)callback){
+    CleverTap *instance = [self resolveInstance:accountId];
+    if (instance == nil) {
+        // Explicit nil check on purpose: messaging nil would silently swallow the
+        // completion handler and the JS callback would NEVER fire — anyone awaiting
+        // it hangs forever. Complete the callback with an error instead.
+        [self returnResult:nil withCallback:callback andError:@"CleverTap is not initialized"];
+        return;
+    }
     if (@available(iOS 10.0, *)) {
-        [[self cleverTapInstance] getNotificationPermissionStatusWithCompletionHandler:^(UNAuthorizationStatus status) {
+        [instance getNotificationPermissionStatusWithCompletionHandler:^(UNAuthorizationStatus status) {
                 BOOL result = (status == UNAuthorizationStatusAuthorized);
                 RCTLogInfo(@"[CleverTap isPushPermissionGranted: %i]", result);
                 [self returnResult:@(result) withCallback:callback andError:nil];
             }];
     } else {
-        // Fallback on earlier versions
+        // Same rule as above: never leave the callback un-invoked.
         RCTLogInfo(@"Push Notification is available from iOS v10.0 or later");
+        [self returnResult:nil withCallback:callback andError:@"Push permission status requires iOS 10.0 or later"];
     }
 }
 

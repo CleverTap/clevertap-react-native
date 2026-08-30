@@ -305,9 +305,15 @@ public class CleverTapModuleImpl {
         Log.i(TAG, "Notification Channel Group Id " + groupId + " deletion requested");
     }
 
-    //Push permission methods
-    public void promptForPushPermission(boolean showFallbackSettings) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    // Push permission methods. Routed by accountId like every other native INSTANCE
+    // method: the OS permission itself is app-wide, but the prompt runs through the
+    // resolved account's in-app machinery and — verified in the native SDK — the
+    // permission RESPONSE is delivered only to the PROMPTING instance's listeners,
+    // so the CleverTapPushPermissionResponseReceived event reaches the handle that
+    // asked. Example: handleB.promptForPushPermission(true) → the user answers →
+    // only handleB's listener fires (tagged ACCT_B).
+    public void promptForPushPermission(boolean showFallbackSettings, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             // Must run on the main thread. startActivity() internally walks the outgoing
             // activity's view hierarchy (Activity.cancelInputsAndStartExitTransition),
@@ -321,8 +327,8 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void promptPushPrimer(ReadableMap localInAppConfig) {
-        CleverTapAPI cleverTap = getCleverTapAPI();
+    public void promptPushPrimer(ReadableMap localInAppConfig, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
         if (cleverTap != null) {
             JSONObject jsonObject = localInAppConfigFromReadableMap(localInAppConfig);
             // Main thread required, same reason as promptForPushPermission above. The
@@ -333,8 +339,8 @@ public class CleverTapModuleImpl {
         }
     }
 
-    public void isPushPermissionGranted(final Callback callback) {
-        final CleverTapAPI clevertap = getCleverTapAPI();
+    public void isPushPermissionGranted(String accountId, final Callback callback) {
+        final CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap != null) {
             boolean isPushPermissionGranted = clevertap.isPushPermissionGranted();
             callbackWithErrorAndResult(callback, null, isPushPermissionGranted);

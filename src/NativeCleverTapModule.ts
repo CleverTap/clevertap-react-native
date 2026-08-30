@@ -321,9 +321,15 @@ export interface Spec extends TurboModule {
   customTemplateContextToString(templateName: string, accountId?: string | null): Promise<string>;
   syncCustomTemplates(accountId?: string | null): void;
   syncCustomTemplatesInProd(isProduction: boolean, accountId?: string | null): void;
-  promptForPushPermission(showFallbackSettings: boolean): void;
-  promptPushPrimer(json: Object): void;
-  isPushPermissionGranted(callback: ((error: Object, result: boolean) => void) | null): void;
+  // Native instance methods (the permission RESPONSE event is routed per account),
+  // so they take the trailing accountId like every other routed method — with the
+  // callback staying LAST on isPushPermissionGranted (old-arch iron rule).
+  promptForPushPermission(showFallbackSettings: boolean, accountId?: string | null): void;
+  promptPushPrimer(json: Object, accountId?: string | null): void;
+  isPushPermissionGranted(
+    accountId: string | null,
+    callback: ((error: Object, result: boolean) => void) | null
+  ): void;
   syncVariables(accountId?: string | null): void;
   syncVariablesinProd(isProduction: boolean, accountId?: string | null): void;
   getVariable(

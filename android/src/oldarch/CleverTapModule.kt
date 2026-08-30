@@ -138,18 +138,18 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
 
     //Push permission methods
     @ReactMethod
-    fun promptForPushPermission(showFallbackSettings: Boolean) {
-        cleverTapModuleImpl.promptForPushPermission(showFallbackSettings)
+    fun promptForPushPermission(showFallbackSettings: Boolean, accountId: String?) {
+        cleverTapModuleImpl.promptForPushPermission(showFallbackSettings, accountId)
     }
 
     @ReactMethod
-    fun promptPushPrimer(localInAppConfig: ReadableMap?) {
-        cleverTapModuleImpl.promptPushPrimer(localInAppConfig)
+    fun promptPushPrimer(localInAppConfig: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.promptPushPrimer(localInAppConfig, accountId)
     }
 
     @ReactMethod
-    fun isPushPermissionGranted(callback: Callback?) {
-        cleverTapModuleImpl.isPushPermissionGranted(callback)
+    fun isPushPermissionGranted(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.isPushPermissionGranted(accountId, callback)
     }
 
     @ReactMethod

@@ -1054,14 +1054,19 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     /* OS-level methods below exist on the handle for shape consistency only:
        each one warns and does nothing. Call them on the top-level CleverTap object. */
 
+    /* Push permission. Real per-account calls: the OS permission is app-wide, but the
+       prompt runs through THIS account and the CleverTapPushPermissionResponseReceived
+       event fires on THIS handle's listeners. */
+
+    /** Shows the (app-wide) system push-permission dialog via this account; the response event fires on this handle. */
+    promptForPushPermission(showFallbackSettings: boolean): void;
+    /** Shows the push primer local in-app through this account's in-app engine. */
+    promptPushPrimer(localInAppConfig: any): void;
+    /** Returns the app-wide push permission state (same answer for every account). */
+    isPushPermissionGranted(callback: CallbackString): void;
+
     /** Warns and no-ops on account handles; call registerForPush on the top-level CleverTap object. */
     registerForPush(): void;
-    /** Warns and no-ops on account handles; call promptForPushPermission on the top-level CleverTap object. */
-    promptForPushPermission(showFallbackSettings: boolean): void;
-    /** Warns and no-ops on account handles; call promptPushPrimer on the top-level CleverTap object. */
-    promptPushPrimer(localInAppConfig: any): void;
-    /** Not supported on account handles: warns and invokes the callback with an error; call isPushPermissionGranted on the top-level CleverTap object. */
-    isPushPermissionGranted(callback: CallbackString): void;
     /** Not supported on account handles: warns and invokes the callback with an error; call getInitialUrl on the top-level CleverTap object. */
     getInitialUrl(callback: Callback): void;
     /** Warns and no-ops on account handles; call createNotificationChannel on the top-level CleverTap object. */
