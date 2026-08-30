@@ -45,6 +45,14 @@ static NSDateFormatter *dateFormatter;
 // threads while bridge methods run on the main queue — EVERY access goes through
 // @synchronized (self.variablesByAccount).
 @property(nonatomic, strong) NSMutableDictionary<NSString *, NSMutableDictionary *> *variablesByAccount;
+// Remembered from the JS import-time setLibrary call so that EVERY instance wired
+// later (createInstance, getInstance calls, a slot swap) reports the same wrapper
+// name and version — the stamping happens in resolveInstance's wire-once block, the
+// choke point every instance passes through exactly once. Without this, secondary
+// accounts under-reported the wrapper version, and in an app with no plist account
+// the version was lost entirely. Main-queue confined like the rest of this module.
+@property(nonatomic, strong) NSString *customSdkName;
+@property(nonatomic, assign) int customSdkVersion;
 @end
 
 @implementation CleverTapReact
@@ -142,7 +150,15 @@ RCT_EXPORT_MODULE();
     NSString *key = instance.config.accountId;
     if (key != nil && ![self.wiredAccountIds containsObject:key]) {
         [self.wiredAccountIds addObject:key];
-        [[CleverTapReactManager sharedInstance] setDelegates:instance]; // per-account handlers arrive in Point 4
+        // Stamp the wrapper name/version remembered from the import-time setLibrary
+        // call (see customSdkName above) — every account's analytics report it, not
+        // just the default's. JS calls setLibrary at module import, before any
+        // account can be wired, so the values are always populated by now.
+        [instance setLibrary:@"React-Native"];
+        if (self.customSdkName != nil) {
+            [instance setCustomSdkVersion:self.customSdkName version:self.customSdkVersion];
+        }
+        [[CleverTapReactManager sharedInstance] setDelegates:instance];
     }
     return instance;
 }
@@ -283,8 +299,9 @@ RCT_EXPORT_METHOD(createInstance:(NSDictionary *)config
         reject(@"ECREATE", [NSString stringWithFormat:@"createInstance failed for accountId %@", accountId], nil);
         return;
     }
-    [instance setLibrary:@"React-Native"];
-    [self resolveInstance:accountId]; // wires delegates exactly once
+    // Library name + wrapper version are stamped inside resolveInstance's wire-once
+    // block — the single owner for every wiring path, not just createInstance.
+    [self resolveInstance:accountId]; // wires delegates + library stamp exactly once
     resolve(@{@"accountId": accountId});
 }
 
@@ -312,6 +329,8 @@ RCT_EXPORT_METHOD(getInitialUrl:(RCTResponseSenderBlock)callback) {
 RCT_EXPORT_METHOD(setLibrary:(NSString*)name andVersion:(double)version) {
     int libVersion = (int)version;
     RCTLogInfo(@"[CleverTap setLibrary:%@ andVersion:%d]", name, libVersion);
+    self.customSdkName = name;
+    self.customSdkVersion = libVersion;
     [[self cleverTapInstance] setLibrary:name];
     [[self cleverTapInstance] setCustomSdkVersion:name version:libVersion];
 }

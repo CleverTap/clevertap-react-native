@@ -153,8 +153,21 @@ public class CleverTapModuleImpl {
         return constants;
     }
 
+    // Remembered from the JS import-time setLibrary call so that EVERY instance wired
+    // later (createInstance, getInstance calls, a slot swap) reports the same wrapper
+    // name and version — the stamping happens in initCtInstance, the one choke point
+    // every instance passes through exactly once. Without this, secondary accounts
+    // under-reported the wrapper version, and in an app with no manifest account the
+    // version was lost entirely (there was no default instance to stamp at import
+    // time). volatile: written on the bridge thread at JS import, read wherever an
+    // instance is first wired (createInstance wires on the main thread).
+    private volatile String customSdkName;
+    private volatile int customSdkVersion;
+
     @SuppressLint("RestrictedApi")
     public void setLibrary(String libName, int libVersion) {
+        customSdkName = libName;
+        customSdkVersion = libVersion;
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
             cleverTap.setCustomSdkVersion(libName, libVersion);
@@ -1847,8 +1860,16 @@ public class CleverTapModuleImpl {
         return props;
     }
 
+    @SuppressLint("RestrictedApi")
     private void initCtInstance(CleverTapAPI clevertap) {
         clevertap.setLibrary("React-Native");
+        // Stamp the wrapper version remembered from the import-time setLibrary call
+        // (see customSdkName above) — every account's analytics report it, not just
+        // the default's. JS calls setLibrary at module import, before any account can
+        // be wired, so the fields are always populated by the time we get here.
+        if (customSdkName != null) {
+            clevertap.setCustomSdkVersion(customSdkName, customSdkVersion);
+        }
         // One proxy per account; the proxy registry keeps the strong references (see the
         // LOAD-BEARING note in CleverTapListenerProxy).
         CleverTapListenerProxy.attachToInstance(clevertap);
