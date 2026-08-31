@@ -16,8 +16,20 @@ import java.util.Queue
 object CleverTapEventEmitter {
     private const val LOG_TAG = "CleverTapEventEmitter"
 
+    /**
+     * Set whenever a React module is constructed, which happens once per React context and so
+     * again after a reload. It is read by [sendEvent] on SDK callback threads, so it is volatile
+     * to make a new context visible to them immediately. Otherwise those threads can keep reading
+     * a stale value and silently drop events.
+     */
+    @Volatile
     var reactContext: ReactContext? = null
 
+    /**
+     * Replaced wholesale by [resetAllBuffers] on the main thread, and read by [emit] on SDK
+     * callback threads. Volatile so a reset is visible to them right away.
+     */
+    @Volatile
     private var eventsBuffers: Map<CleverTapEvent, Buffer> = createBuffersMap(enableBuffers = true)
 
     /**
@@ -118,11 +130,28 @@ object CleverTapEventEmitter {
             Buffer(enabled = enableBuffers)
         }
 
-    private class Buffer(var enabled: Boolean) {
-        private val items: Queue<Any?> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) { LinkedList() }
+    /**
+     * A buffer of pending event params. All access to [items] is guarded by this instance's
+     * monitor, which [flushBuffer] also holds to keep a whole drain atomic. Guarding only the
+     * drain is not enough: [addToBuffer] writes from SDK callback threads while [flushBuffer]
+     * removes, and an unguarded add can interleave with removeFirst() so that `size` stays above
+     * zero while `first` is already null, making the next remove() throw NoSuchElementException.
+     */
+    private class Buffer(enabled: Boolean) {
 
+        /** Read by [emit] on SDK threads, written by [enableBuffer]/[disableBuffer] on others. */
+        @Volatile
+        var enabled: Boolean = enabled
+
+        private val items: Queue<Any?> = LinkedList()
+
+        @Synchronized
         fun add(item: Any?) = items.add(item)
+
+        @Synchronized
         fun remove(): Any? = items.remove()
+
+        @Synchronized
         fun size(): Int = items.size
     }
 }
