@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+Version 4.3.1 *(September 1 2026)*
+-------------------------------------------
+**Bug Fixes**
+* **[Android Platform]**
+  * Fixes a crash at app startup that occurs when a listener is registered while the SDK is still delivering events, by locking the event buffer on writes as well as drains.
+  * Fixes a crash and occasional loss of remote-config variables when they are defined while updated values arrive from the server, by holding them in a thread-safe map.
+
 Version 4.3.0 *(August 20 2026)*
 -------------------------------------------
 **What's new**
