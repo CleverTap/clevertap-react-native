@@ -61,7 +61,7 @@ object CleverTapEventEmitter {
      */
     fun flushBuffer(event: CleverTapEvent) {
         val buffer = eventsBuffers[event] ?: return
-        synchronized(buffer) {
+        synchronized(buffer.lock) {
             while (buffer.size() > 0) {
                 val params = buffer.remove()
                 sendEvent(event, params)
@@ -123,10 +123,13 @@ object CleverTapEventEmitter {
         }
 
     /**
-     * A buffer of pending event params. Every access to [items] takes this instance's monitor,
-     * and [flushBuffer] holds it for the whole drain so an add cannot interleave with a remove.
+     * A buffer of pending event params. Every access to [items] takes [lock], and [flushBuffer]
+     * holds it for the whole drain so an add cannot interleave with a remove.
      */
     private class Buffer(enabled: Boolean) {
+
+        /** Guards [items]. Shared with [flushBuffer] so the drain and the writes use one monitor. */
+        val lock = Any()
 
         /** Read by [emit] on SDK threads, written by [enableBuffer]/[disableBuffer] on others. */
         @Volatile
@@ -134,13 +137,10 @@ object CleverTapEventEmitter {
 
         private val items: Queue<Any?> = LinkedList()
 
-        @Synchronized
-        fun add(item: Any?) = items.add(item)
+        fun add(item: Any?) = synchronized(lock) { items.add(item) }
 
-        @Synchronized
-        fun remove(): Any? = items.remove()
+        fun remove(): Any? = synchronized(lock) { items.remove() }
 
-        @Synchronized
-        fun size(): Int = items.size
+        fun size(): Int = synchronized(lock) { items.size }
     }
 }
