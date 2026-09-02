@@ -1584,7 +1584,7 @@ public class CleverTapModuleImpl {
     }
 
     private Object getVariableValue(String name) {
-        if (variables.containsKey(name)) {
+        if (name != null && variables.containsKey(name)) {
             Var<?> variable = (Var<?>) variables.get(name);
             Object variableValue = variable.value();
             Object value;
