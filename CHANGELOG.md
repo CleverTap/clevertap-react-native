@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 4.3.1 *(September 1 2026)*
+Version 4.3.1 *(September 2 2026)*
 -------------------------------------------
 **Bug Fixes**
 * **[Android Platform]**
