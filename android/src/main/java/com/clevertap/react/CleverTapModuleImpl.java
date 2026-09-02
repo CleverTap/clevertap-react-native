@@ -87,11 +87,8 @@ public class CleverTapModuleImpl {
     private static Uri sLaunchUri;
 
     /**
-     * Defined remote-config variables, keyed by name. Written by {@link #defineVariables} and
-     * {@link #defineFileVariable} while {@link #getVariablesValues} walks it from SDK callback
-     * threads, so it must stay a concurrent map: a plain HashMap throws
-     * ConcurrentModificationException on that read and can drop entries on concurrent writes.
-     * Rejects null values, which those two callers guard for.
+     * Written by defineVariables/defineFileVariable while getVariablesValues reads it from SDK
+     * callback threads, so it must stay concurrent.
      */
     public static final Map<String, Object> variables = new ConcurrentHashMap<>();
 
