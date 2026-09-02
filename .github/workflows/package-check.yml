@@ -9,39 +9,156 @@ name: package-check
 #
 # It also enforces a size budget, which is what would have caught the 209 MB
 # Example.zip that shipped in v3.8.0 and v3.8.1.
+#
+# On pull requests it also packs the base branch and reports what this PR adds
+# to or removes from the tarball, and runs publint on the tarball.
+#
+# Every step prints the commands it runs (set -x) and their full output, and the
+# check step writes a job summary, so a failure can be read straight from the
+# run page. To see the same file list locally: npm pack --dry-run --ignore-scripts
+#
+# Actions are pinned to full commit SHAs (tag in the comment) so a moved tag
+# cannot change what runs here.
 
 on:
   pull_request:
     branches: [develop, master]
   workflow_dispatch:
 
+# npm pack runs package.json lifecycle scripts, which a PR can change.
+# Read-only token, and don't leave it in the checkout for those scripts to find.
+permissions:
+  contents: read
+
+# A new push to the same PR cancels the run for the previous push.
+concurrency:
+  group: package-check-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    # -e: stop on the first error. -u: unset variables are errors.
+    # -x: echo every command before running it, so the log shows what ran.
+    shell: bash -euxo pipefail {0}
+
 jobs:
   contents:
     name: tarball contents
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: 20
+          persist-credentials: false
 
-      - name: Check what would be published
+      # The base branch, packed the same way, so the check can report exactly
+      # which files this PR adds to or removes from the tarball.
+      - if: github.event_name == 'pull_request'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.base_ref }}
+          path: base
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+
+      # Each run step below also writes its commands and output to a log file
+      # under $RUNNER_TEMP. The last step puts those logs in the job summary.
+      - name: Show environment
         run: |
-          npm pack --dry-run --json > pack.json
-          node <<'EOF'
-          const result = JSON.parse(require('fs').readFileSync('pack.json'))[0];
-          const paths = new Set(result.files.map((f) => f.path));
+          LOG="$RUNNER_TEMP/1-environment.log"
+          run() { echo "$ $*" | tee -a "$LOG"; "$@" 2>&1 | tee -a "$LOG"; }
+          run node --version
+          run npm --version
+          run git log -1 --oneline
+          run node -p "'package.json version: ' + require('./package.json').version"
+          run node -p "'package.json files[]: ' + JSON.stringify(require('./package.json').files ?? null, null, 2)"
+          run bash -c 'echo ".npmignore:"; cat .npmignore 2>/dev/null || echo "(none)"'
+
+      - name: Build the tarball
+        run: |
+          # --ignore-scripts: a PR can add a prepack script to package.json and
+          # npm pack would execute it. Nothing here needs those scripts.
+          # --json is parsed by the check step. --json silences npm's own file
+          # listing, so a plain dry run follows to put that listing in the log.
+          # Written to $RUNNER_TEMP, outside the checkout, so the tarball and
+          # pack.json never show up in the listing themselves.
+          LOG="$RUNNER_TEMP/2-pack.log"
+          run() { echo "$ $*" | tee -a "$LOG"; "$@" 2>&1 | tee -a "$LOG"; }
+          # The base checkout has to be moved out of the workspace first, or it
+          # would be packed as part of this branch when no files[] allowlist exists.
+          if [ -d base ]; then run mv base "$RUNNER_TEMP/base"; fi
+          echo "$ npm pack --ignore-scripts --json --pack-destination \$RUNNER_TEMP > \$RUNNER_TEMP/pack.json" | tee -a "$LOG"
+          npm pack --ignore-scripts --json --pack-destination "$RUNNER_TEMP" 2>&1 > "$RUNNER_TEMP/pack.json" | tee -a "$LOG"
+          run ls -la "$RUNNER_TEMP"/*.tgz
+          run npm pack --dry-run --ignore-scripts
+          if [ -d "$RUNNER_TEMP/base" ]; then
+            echo "$ (cd \$RUNNER_TEMP/base && npm pack --dry-run --ignore-scripts --json > \$RUNNER_TEMP/base-pack.json)" | tee -a "$LOG"
+            (cd "$RUNNER_TEMP/base" && npm pack --dry-run --ignore-scripts --json 2>&1 > "$RUNNER_TEMP/base-pack.json" | tee -a "$LOG")
+          fi
+
+      - name: Lint the tarball with publint
+        # publint checks package.json against the tarball: main/types point at
+        # shipped files, no test or config files are published, and so on.
+        # It reports suggestions and warnings but only fails on errors.
+        run: |
+          LOG="$RUNNER_TEMP/3-publint.log"
+          run() { echo "$ $*" | tee -a "$LOG"; "$@" 2>&1 | tee -a "$LOG"; }
+          run npx --yes publint@0.3.24 "$RUNNER_TEMP"/*.tgz
+
+      - name: Check tarball contents
+        # Prints every file with its size, then one PASS / FAIL line per check,
+        # and writes the same to the job summary.
+        run: |
+          LOG="$RUNNER_TEMP/4-check.log"
+          echo '$ node check-script "$RUNNER_TEMP/pack.json" "$RUNNER_TEMP/base-pack.json"   # inline script below' > "$LOG"
+          NPM_VERSION="$(npm --version)" node - "$RUNNER_TEMP/pack.json" "$RUNNER_TEMP/base-pack.json" 2>&1 <<'EOF' | tee -a "$LOG"
+
+          const fs = require('fs');
+
+          const [packFile, baseFile] = process.argv.slice(2);
+          const result = JSON.parse(fs.readFileSync(packFile, 'utf8'))[0];
+          // Base branch pack, present on pull_request runs only.
+          const base = baseFile && fs.existsSync(baseFile) ? JSON.parse(fs.readFileSync(baseFile, 'utf8'))[0] : null;
+          const files = [...result.files].sort((a, b) => a.path.localeCompare(b.path));
+          const paths = new Set(files.map((f) => f.path));
           const failures = [];
 
-          // Every path a host app needs at build time, and who needs it.
+          const kb = (n) => `${(n / 1024).toFixed(1)} KB`;
+          const mb = (n) => `${(n / 1024 / 1024).toFixed(2)} MB`;
+          const inCI = !!process.env.GITHUB_ACTIONS;
+          const group = (title) => console.log(inCI ? `::group::${title}` : `\n== ${title} ==`);
+          const endGroup = () => { if (inCI) console.log('::endgroup::'); };
+          const results = [];
+          const pass = (msg) => { console.log(`  PASS  ${msg}`); results.push([true, msg]); };
+          const fail = (msg) => { console.log(`  FAIL  ${msg}`); results.push([false, msg]); failures.push(msg); };
+
+          // 1. Everything npm would publish, with sizes.
+          group(`Files in the tarball (${files.length})`);
+          const width = Math.max(...files.map((f) => f.path.length));
+          for (const f of files) console.log(`  ${f.path.padEnd(width)}  ${kb(f.size).padStart(10)}`);
+          endGroup();
+
+          // 2. The largest files, since size regressions come from a few big ones.
+          group('Largest 10 files');
+          for (const f of [...files].sort((a, b) => b.size - a.size).slice(0, 10)) {
+            console.log(`  ${kb(f.size).padStart(10)}  ${f.path}`);
+          }
+          endGroup();
+
+          // 3. Required paths: everything a host app needs at build time, and who needs it.
+          group('Check: required files');
+          //    Entry points come from package.json itself, so a rename there is followed.
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
           const required = [
             ['package.json', 'npm metadata'],
             ['README.md', 'rendered on the npm page'],
             ['LICENSE', 'license'],
-            ['src/index.js', 'package.json "main"'],
-            ['src/index.d.ts', 'package.json "types"'],
-            ['src/NativeCleverTapModule.ts', 'codegenConfig jsSrcsDir, read by new-arch codegen'],
+            [pkg.main, 'package.json "main"'],
+            [pkg.types, 'package.json "types"'],
+            ['src/NativeCleverTapModule.ts', `codegenConfig jsSrcsDir (${pkg.codegenConfig?.jsSrcsDir}), read by new-arch codegen`],
             ['clevertap-react-native.podspec', 'CocoaPods autolinking'],
             ['android/build.gradle', 'React Native Android autolinking'],
             ['android/gradle.properties', 'AndroidX flags'],
@@ -51,33 +168,142 @@ jobs:
             ['ios/CleverTapReact.xcodeproj/project.pbxproj', 'manual linking, see docs/install.md'],
           ];
           for (const [p, why] of required) {
-            if (!paths.has(p)) failures.push(`missing ${p} — needed for ${why}`);
+            if (paths.has(p)) pass(`${p}  (${why})`);
+            else fail(`missing ${p} — needed for ${why}`);
           }
+          endGroup();
 
-          // The podspec globs ios/CleverTapReact/*.{h,m,mm}. Ship fewer and iOS fails to link.
-          const ios = [...paths].filter((p) => /^ios\/CleverTapReact\/[^/]+\.(h|m|mm)$/.test(p));
-          if (ios.length < 12) {
-            failures.push(`only ${ios.length} iOS sources match the podspec glob, expected at least 12`);
+          // 4. The podspec globs ios/CleverTapReact/*.{h,m,mm}. Every such file in the
+          //    checkout must be in the tarball, or iOS fails to link. Comparing against
+          //    the checkout, not a fixed count, catches a newly added file being dropped.
+          group('Check: iOS sources matching the podspec glob');
+          const isIosSource = (name) => /\.(h|m|mm)$/.test(name);
+          const iosOnDisk = fs.readdirSync('ios/CleverTapReact').filter(isIosSource).sort().map((n) => `ios/CleverTapReact/${n}`);
+          const ios = [...paths].filter((p) => /^ios\/CleverTapReact\/[^/]+$/.test(p) && isIosSource(p));
+          for (const p of iosOnDisk) {
+            if (paths.has(p)) pass(p);
+            else fail(`missing ${p} — the podspec globs ios/CleverTapReact/*.{h,m,mm}`);
           }
+          if (iosOnDisk.length === 0) fail('no iOS sources found in ios/CleverTapReact in the checkout');
+          endGroup();
 
-          // The tarball is around 0.5 MB. A budget well above that still catches
-          // build output or an archive being picked up.
+          // 5. Size budget. The tarball is around 0.5 MB. A budget well above that still
+          //    catches build output or an archive being picked up.
+          group('Check: size budget');
           const budget = 1024 * 1024;
-          const mb = (n) => `${(n / 1024 / 1024).toFixed(2)} MB`;
-          if (result.unpackedSize > budget) {
-            failures.push(`unpacked size ${mb(result.unpackedSize)} is over the ${mb(budget)} budget`);
+          console.log(`        unpacked:  ${mb(result.unpackedSize)}`);
+          console.log(`        published: ${mb(result.size)}`);
+          console.log(`        budget:    ${mb(budget)}`);
+          if (result.unpackedSize <= budget) pass(`unpacked size ${mb(result.unpackedSize)} is within the ${mb(budget)} budget`);
+          else fail(`unpacked size ${mb(result.unpackedSize)} is over the ${mb(budget)} budget`);
+          endGroup();
+
+          // 6. What this PR changes in the tarball compared with the base branch.
+          //    Informational: reviewers see added and removed files at a glance.
+          let added = [], removed = [], sizeDelta = 0;
+          if (base) {
+            const basePaths = new Map(base.files.map((f) => [f.path, f.size]));
+            added = files.filter((f) => !basePaths.has(f.path));
+            removed = [...basePaths].filter(([p]) => !paths.has(p)).map(([path, size]) => ({ path, size }));
+            sizeDelta = result.unpackedSize - base.unpackedSize;
+            group(`Compared with base branch (${process.env.GITHUB_BASE_REF || 'base'})`);
+            console.log(`        base unpacked: ${mb(base.unpackedSize)}, this PR: ${mb(result.unpackedSize)}, delta: ${sizeDelta >= 0 ? '+' : ''}${kb(sizeDelta)}`);
+            console.log(`        files added: ${added.length}, removed: ${removed.length}`);
+            for (const f of added) console.log(`  +     ${f.path}  (${kb(f.size)})`);
+            for (const f of removed) console.log(`  -     ${f.path}  (${kb(f.size)})`);
+            endGroup();
           }
 
-          console.log(`files:       ${result.entryCount}`);
-          console.log(`unpacked:    ${(result.unpackedSize / 1024).toFixed(0)} KB`);
-          console.log(`published:   ${(result.size / 1024).toFixed(0)} KB`);
-          console.log(`iOS sources: ${ios.length}`);
+          // 7. Job summary, shown on the run page in GitHub Actions. Carries the
+          //    same detail as the log so nobody has to open the raw log.
+          if (process.env.GITHUB_STEP_SUMMARY) {
+            const status = failures.length === 0 ? ':white_check_mark: passed' : ':x: failed';
+            const code = (t) => `\`${t}\``;
+            const largest = [...files].sort((a, b) => b.size - a.size).slice(0, 10);
+            const lines = [
+              `## Tarball contents ${status}`,
+              '',
+              '| | |',
+              '|---|---|',
+              `| Package | ${code(`${pkg.name}@${pkg.version}`)} |`,
+              `| Commit | ${code(process.env.GITHUB_SHA || 'n/a')} |`,
+              `| Node / npm | ${code(process.version)} / ${code(process.env.NPM_VERSION || 'see log')} |`,
+              `| Files | ${files.length} |`,
+              `| Unpacked | ${mb(result.unpackedSize)} (budget ${mb(budget)}) |`,
+              `| Published | ${mb(result.size)} |`,
+              `| iOS sources | ${ios.length} of ${iosOnDisk.length} on disk |`,
+              `| Checks | ${results.length - failures.length} passed, ${failures.length} failed |`,
+            ];
+            if (base) {
+              lines.push(`| Vs base (${process.env.GITHUB_BASE_REF}) | ${sizeDelta >= 0 ? '+' : ''}${kb(sizeDelta)} unpacked, ${added.length} file(s) added, ${removed.length} removed |`);
+            }
+            lines.push('');
+            if (failures.length > 0) {
+              lines.push('### Failures', '', ...failures.map((f) => `- ${f}`), '', 'Fix the `files` array in package.json.', '');
+            }
+            if (base && (added.length || removed.length)) {
+              lines.push(`### Tarball changes vs ${process.env.GITHUB_BASE_REF}`, '', '| | Path | Size |', '|---|---|---|');
+              for (const f of added) lines.push(`| :heavy_plus_sign: added | ${code(f.path)} | ${kb(f.size)} |`);
+              for (const f of removed) lines.push(`| :heavy_minus_sign: removed | ${code(f.path)} | ${kb(f.size)} |`);
+              lines.push('');
+            }
+            lines.push('### Checks', '', '| Result | Check |', '|---|---|');
+            for (const [ok, msg] of results) lines.push(`| ${ok ? ':white_check_mark:' : ':x:'} | ${msg} |`);
+            lines.push('', '### Largest 10 files', '', '| Size | Path |', '|---|---|');
+            for (const f of largest) lines.push(`| ${kb(f.size)} | ${code(f.path)} |`);
+            lines.push('', '<details><summary>package.json files[] allowlist</summary>', '', '```json', JSON.stringify(pkg.files ?? null, null, 2), '```', '', '</details>', '');
+            lines.push(`<details><summary>All ${files.length} files in the tarball</summary>`, '', '| Path | Size |', '|---|---|');
+            for (const f of files) lines.push(`| ${code(f.path)} | ${kb(f.size)} |`);
+            lines.push('', '</details>', '');
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\n'));
+          }
 
+          console.log('');
           if (failures.length > 0) {
-            console.error('\nThe tarball is wrong:\n');
-            for (const f of failures) console.error(`  - ${f}`);
-            console.error('\nFix the "files" array in package.json.\n');
+            console.log(`${failures.length} check(s) failed:\n`);
+            for (const f of failures) console.log(`  - ${f}`);
+            console.log('\nFix the "files" array in package.json. To reproduce locally, run:');
+            console.log('  npm pack --dry-run --ignore-scripts\n');
             process.exit(1);
           }
-          console.log('\nEverything a host app needs is in the tarball.');
+          console.log('All checks passed. Everything a host app needs is in the tarball.');
           EOF
+
+      - name: Write step logs to the summary
+        # Always runs, so the summary shows what ran and what it printed even
+        # when an earlier step failed.
+        if: always()
+        run: |
+          {
+            echo '## Step logs'
+            echo
+            echo 'Every command each step ran, with its full output. `$` marks a command.'
+            echo
+            for f in "$RUNNER_TEMP"/[0-9]-*.log; do
+              [ -f "$f" ] || continue
+              name="$(basename "$f" .log)"; name="${name#*-}"
+              echo "<details><summary>Step: ${name}</summary>"
+              echo
+              echo '```text'
+              # Strip colour codes and the ::group:: markers meant for the live log.
+              sed -e 's/\x1b\[[0-9;]*m//g' -e '/^::\(end\)\?group::/d' "$f"
+              echo '```'
+              echo
+              echo '</details>'
+              echo
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the tarball and pack.json
+        # Always upload, so the exact tarball and npm's raw output can be
+        # downloaded and inspected after a failure too.
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: package-tarball
+          path: |
+            ${{ runner.temp }}/*.tgz
+            ${{ runner.temp }}/pack.json
+            ${{ runner.temp }}/base-pack.json
+          if-no-files-found: ignore
+          retention-days: 7
