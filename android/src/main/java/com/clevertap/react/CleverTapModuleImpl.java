@@ -63,6 +63,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nullable;
 
@@ -85,7 +86,11 @@ public class CleverTapModuleImpl {
 
     private static Uri sLaunchUri;
 
-    public static Map<String, Object> variables = new HashMap<>();
+    /**
+     * Written by defineVariables/defineFileVariable while getVariablesValues reads it from SDK
+     * callback threads, so it must stay concurrent.
+     */
+    public static final Map<String, Object> variables = new ConcurrentHashMap<>();
 
     public static void setInitialUri(final Uri uri) {
         sLaunchUri = uri;
@@ -1359,7 +1364,12 @@ public class CleverTapModuleImpl {
             for (Map.Entry<String, Object> entry : object.toHashMap().entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
-                variables.put(key, cleverTap.defineVariable(key, value));
+                Var<Object> variable = cleverTap.defineVariable(key, value);
+                if (variable != null) {
+                    variables.put(key, variable);
+                } else {
+                    Log.e(TAG, "Could not define variable " + key);
+                }
             }
         }
     }
@@ -1367,7 +1377,12 @@ public class CleverTapModuleImpl {
     public void defineFileVariable(String name) {
         CleverTapAPI cleverTap = getCleverTapAPI();
         if (cleverTap != null) {
-            variables.put(name, cleverTap.defineFileVariable(name));
+            Var<String> variable = cleverTap.defineFileVariable(name);
+            if (variable != null) {
+                variables.put(name, variable);
+            } else {
+                Log.e(TAG, "Could not define file variable " + name);
+            }
         }
     }
 
@@ -1569,7 +1584,7 @@ public class CleverTapModuleImpl {
     }
 
     private Object getVariableValue(String name) {
-        if (variables.containsKey(name)) {
+        if (name != null && variables.containsKey(name)) {
             Var<?> variable = (Var<?>) variables.get(name);
             Object variableValue = variable.value();
             Object value;
