@@ -1602,7 +1602,14 @@ var CleverTap = {
     * never called createInstance. Calls on a handle whose account does not exist natively
     * log one warning and do nothing.
     *
+    * Use getInstance for accounts created natively at app launch — i.e. accounts passed
+    * to CleverTapRnAPI.initReactNativeIntegration(context, launchConfigs) on Android or
+    * applicationDidLaunchWithOptions:launchConfigs: on iOS. Those accounts already exist
+    * (with the config the app supplied at launch), so do NOT pass a config again from JS.
+    * For every other account, call createInstance(config) as its first touch each run.
+    *
     * @example
+    * // 'ACCT_B' was listed in the native launch configs, so it exists already:
     * const accountB = CleverTap.getInstance('ACCT_B');
     * accountB.addListener(CleverTap.CleverTapProfileDidInitialize, (e) => { });
     *

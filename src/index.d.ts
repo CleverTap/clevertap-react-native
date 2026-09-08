@@ -1130,6 +1130,13 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    * handle whose account does not exist natively warn and do nothing. An invalid
    * accountId (empty or not a string) logs an error and returns the DEFAULT account's
    * handle, so calls and listeners stay consistent instead of silently splitting.
+   *
+   * Use getInstance for accounts created natively at app launch — accounts passed to
+   * `CleverTapRnAPI.initReactNativeIntegration(context, launchConfigs)` (Android) or
+   * `applicationDidLaunchWithOptions:launchConfigs:` (iOS). Those already exist with the
+   * config the app supplied at launch (and can receive cold-start events such as the push
+   * tap that launched the app), so do NOT pass a config again from JS. For every other
+   * account, call `createInstance(config)` as its first touch each run.
    */
   export function getInstance(accountId: string): CleverTapInstance;
 

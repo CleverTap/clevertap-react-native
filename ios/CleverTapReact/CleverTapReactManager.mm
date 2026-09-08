@@ -80,4 +80,50 @@
     }
 }
 
+- (void)applicationDidLaunchWithOptions:(NSDictionary *)options
+                          launchConfigs:(NSArray<CleverTapReactLaunchConfig *> *)launchConfigs {
+    // The launch accounts are created HERE, on the main thread, inside
+    // didFinishLaunchingWithOptions — deliberately:
+    // 1. The SDK hands the launch push payload out via the "did finish launching"
+    //    notification, which fires right after didFinishLaunchingWithOptions returns,
+    //    and ONLY to instances that already exist at that moment. An instance still
+    //    being built on a background queue misses the launch push forever — the very
+    //    event this API exists to catch.
+    // 2. [CleverTap instanceWithConfig:] mutates an unlocked shared dictionary; it is
+    //    not safe to call from a background queue while the main thread can touch it.
+    // The launch-time cost is small: the SDK runs its heavy work on its own queues;
+    // the synchronous part is the same setup the default account already pays.
+    for (CleverTapReactLaunchConfig *launch in launchConfigs) {
+        @try {
+            NSString *accountId = launch.config.accountId;
+            if (launch.cleverTapID.length > 0 && !launch.config.useCustomCleverTapId) {
+                // Without this, the SDK ignores the passed ID with no message at all.
+                RCTLogWarn(@"CleverTapReact: cleverTapID given for '%@' but useCustomCleverTapId "
+                           "is NO — the ID will be IGNORED and the SDK will generate its own",
+                           accountId);
+            }
+            // Same branching as the JS createInstance path: use the two-argument
+            // factory only when an ID was actually supplied, so the no-custom-ID
+            // path stays exactly today's behavior.
+            CleverTap *instance = (launch.cleverTapID.length > 0)
+                ? [CleverTap instanceWithConfig:launch.config andCleverTapID:launch.cleverTapID]
+                : [CleverTap instanceWithConfig:launch.config];
+            if (instance) {
+                [self setDelegates:instance]; // idempotent — same wiring the default account gets
+            } else {
+                RCTLogWarn(@"CleverTapReact: launch config for '%@' produced no instance, skipping",
+                           accountId);
+            }
+        } @catch (NSException *e) {
+            // Instance creation can throw (e.g. a registered custom template raising on a
+            // duplicate name). One bad config must never crash app launch or take the
+            // remaining accounts down with it.
+            RCTLogWarn(@"CleverTapReact: failed to create launch instance for '%@', skipping: %@",
+                       launch.config.accountId, e);
+        }
+    }
+
+    [self applicationDidLaunchWithOptions:options]; // existing deep-link capture, unchanged
+}
+
 @end
