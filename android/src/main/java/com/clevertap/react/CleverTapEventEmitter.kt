@@ -183,18 +183,21 @@ object CleverTapEventEmitter {
             if (items.isEmpty()) {
                 return emptyList()
             }
-            val send = ArrayList<Any?>()
-            val kept = LinkedList<Any?>()
-            while (items.isNotEmpty()) {
-                val params = items.remove()
+            // Pre-sized for the worst case (every item matches) so the list never regrows;
+            // items.size is a stored counter on LinkedList, and the lock keeps it stable.
+            val send = ArrayList<Any?>(items.size)
+            // Remove matching payloads in place with the iterator (O(1) per unhook on a
+            // LinkedList) — the other accounts' payloads stay buffered without being
+            // drained into a temporary list and copied back.
+            val iterator = items.iterator()
+            while (iterator.hasNext()) {
+                val params = iterator.next()
                 val tag = accountTagOf(params)
                 if (tag == null || tag == accountId) {
                     send.add(params)
-                } else {
-                    kept.add(params)
+                    iterator.remove()
                 }
             }
-            items.addAll(kept)
             return send
         }
 
