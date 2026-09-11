@@ -828,7 +828,7 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    * Note: on iOS, `region` wins over `proxyDomain`/`spikyProxyDomain` (a warning is
    * logged); Android applies both. `logLevel` 'verbose' maps to 'debug' on iOS.
    */
-  type CleverTapInstanceConfig = {
+  export type CleverTapInstanceConfig = {
     accountId: string;
     accountToken: string;
     region?: string;
@@ -887,7 +887,7 @@ export function isPushPermissionGranted(callback: CallbackString): void;
   };
 
   /** Subscription returned by addListener; call remove() to detach the handler. */
-  type CleverTapEventSubscription = { remove: () => void };
+  export type CleverTapEventSubscription = { remove: () => void };
 
   /**
    * A handle for ONE CleverTap account. Methods behave like their top-level CleverTap
@@ -899,7 +899,7 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    * gets the registered templates), but presenting, argument reads and dismissal are
    * per-account — those methods are on the handle.
    */
-  interface CleverTapInstance {
+  export interface CleverTapInstance {
     readonly accountId: string;
 
     /* Events & profile (core) */
