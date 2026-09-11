@@ -853,11 +853,16 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     /** At-rest encryption: 'none', 'medium' (PII only) or 'high' (all data). */
     encryptionLevel?: 'none' | 'medium' | 'high';
     encryptionInTransit?: boolean;
-    /** Set true when supplying your own CleverTap ID — pair it with cleverTapId. */
+    /**
+     * Set true when supplying your own CleverTap ID. Must be given TOGETHER with
+     * `cleverTapId` (or both left out): `createInstance` rejects with `EINVALID` on a
+     * mismatch, because the native SDKs would otherwise silently ignore the ID (flag
+     * missing) or leave the account with an error device id (ID missing).
+     */
     useCustomCleverTapId?: boolean;
     /**
-     * Your custom CleverTap ID for this account's user. Only honored at creation
-     * and only meaningful with useCustomCleverTapId: true.
+     * Your custom CleverTap ID for this account's user (e.g. your own customer id).
+     * Only honored at creation, and only together with `useCustomCleverTapId: true`.
      */
     cleverTapId?: string;
     /** Android-only options; ignored on iOS. */
@@ -1121,7 +1126,8 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    * applied and persisted (fetch-config-and-create on every launch works; changes take
    * effect next launch). A repeat call in the SAME app run resolves with the existing
    * instance and the new config is not applied (native in-process behavior).
-   * Rejects when accountId/accountToken are missing or empty.
+   * Rejects with `EINVALID` when accountId/accountToken are missing or empty, or when
+   * `cleverTapId` and `useCustomCleverTapId: true` are not given together.
    */
   export function createInstance(config: CleverTapInstanceConfig): Promise<CleverTapInstance>;
 

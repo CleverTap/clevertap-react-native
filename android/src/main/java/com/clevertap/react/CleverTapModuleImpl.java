@@ -1968,6 +1968,29 @@ public class CleverTapModuleImpl {
             return;
         }
 
+        // A custom CleverTap ID can only be supplied AT CREATION, and only works together
+        // with the useCustomCleverTapId flag. The native SDK does not fail on a mismatch:
+        // an ID without the flag is IGNORED (a random SDK id is generated, the app's id is
+        // lost), and the flag without an ID leaves the account on an "error device id".
+        // Both only surface as a native debug log that a React Native developer never
+        // sees, and identity cannot be repaired later from RN — so reject up front.
+        // Type-checked reads: a JS `null` arrives as ReadableType.Null, and getBoolean /
+        // getString would throw on it instead of reading "not set" (getType itself throws
+        // NoSuchKeyException on a missing key, hence the hasKey guard first).
+        boolean useCustomCleverTapId = config.hasKey("useCustomCleverTapId")
+                && config.getType("useCustomCleverTapId") == ReadableType.Boolean
+                && config.getBoolean("useCustomCleverTapId");
+        String cleverTapId = config.hasKey("cleverTapId")
+                && config.getType("cleverTapId") == ReadableType.String
+                ? config.getString("cleverTapId") : null;
+        boolean hasCleverTapId = cleverTapId != null && !cleverTapId.trim().isEmpty();
+        if (useCustomCleverTapId != hasCleverTapId) {
+            promise.reject("EINVALID", "createInstance: cleverTapId and useCustomCleverTapId: true must be"
+                    + " given together (or both left out) — the native SDK ignores an ID without the flag,"
+                    + " and the flag without an ID leaves the account with an error device id");
+            return;
+        }
+
         // ⚠️ The creation MUST run on the MAIN thread. The native SDK's DeviceInfo posts a
         // deviceIDCreated callback to the main thread that RE-ENTERS instanceWithConfig
         // (DeviceInfo.java, "callback on main thread"). instanceWithConfig's get→new→put on
@@ -1990,18 +2013,14 @@ public class CleverTapModuleImpl {
             }
             applyOptionalConfig(ctConfig, finalConfig);
 
-            // A custom CleverTap ID can only be supplied AT CREATION on both platforms.
-            // Without this, useCustomCleverTapId=true would create an instance that
-            // waits for an ID nobody can ever provide (error device id).
-            String cleverTapId = finalConfig.hasKey("cleverTapId")
-                    ? finalConfig.getString("cleverTapId") : null;
             // Instance creation can THROW, not just return null: registered custom
             // template producers run inside it, and e.g. duplicate template names
             // raise CustomTemplateException. We are on the MAIN thread here — an
             // uncaught throw would crash the app instead of rejecting the promise.
             CleverTapAPI instance;
             try {
-                instance = (cleverTapId != null && !cleverTapId.trim().isEmpty())
+                // hasCleverTapId implies useCustomCleverTapId (validated above).
+                instance = hasCleverTapId
                         ? CleverTapAPI.instanceWithConfig(this.context, ctConfig, cleverTapId)
                         : CleverTapAPI.instanceWithConfig(this.context, ctConfig);
             } catch (Throwable t) {

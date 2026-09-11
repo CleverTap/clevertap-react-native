@@ -246,6 +246,23 @@ RCT_EXPORT_METHOD(createInstance:(NSDictionary *)config
         return;
     }
 
+    // A custom CleverTap ID can only be supplied AT CREATION, and only works together
+    // with the useCustomCleverTapId flag. The native SDK does not fail on a mismatch:
+    // an ID without the flag is IGNORED (CTDeviceInfo logs it and generates its own id,
+    // the app's id is lost), and the flag without an ID leaves the account on an "error
+    // device id". Both only surface as a native log a React Native developer never
+    // sees, and identity cannot be repaired later from RN — so reject up front.
+    // Type-checked reads: a JS `null` arrives as NSNull, which would crash on boolValue.
+    id useCustomFlag = config[@"useCustomCleverTapId"];
+    BOOL useCustomCleverTapId = [useCustomFlag isKindOfClass:[NSNumber class]] && [useCustomFlag boolValue];
+    NSString *cleverTapId = config[@"cleverTapId"];
+    BOOL hasCleverTapId = [cleverTapId isKindOfClass:[NSString class]] && cleverTapId.length > 0;
+    if (useCustomCleverTapId != hasCleverTapId) {
+        reject(@"EINVALID", @"createInstance: cleverTapId and useCustomCleverTapId: true must be given together"
+               " (or both left out) — the native SDK ignores an ID without the flag, and the flag without"
+               " an ID leaves the account with an error device id", nil);
+        return;
+    }
 
     NSString *region = config[@"region"];
     NSString *proxy = config[@"proxyDomain"];
@@ -312,17 +329,14 @@ RCT_EXPORT_METHOD(createInstance:(NSDictionary *)config
         }
     }
 
-    // A custom CleverTap ID can only be supplied AT CREATION on both platforms.
-    // Without this, useCustomCleverTapId=true would create an instance that waits
-    // for an ID nobody can ever provide (error device id).
-    NSString *cleverTapId = config[@"cleverTapId"];
     // Instance creation can THROW, not just return nil: registered custom template
     // producers run inside it, and e.g. duplicate template names raise NSException
     // (CleverTapCustomTemplateException). An uncaught throw would crash the app
     // instead of rejecting the promise.
     CleverTap *instance;
     @try {
-        instance = (cleverTapId.length > 0)
+        // hasCleverTapId implies useCustomCleverTapId (validated above).
+        instance = hasCleverTapId
             ? [CleverTap instanceWithConfig:ctConfig andCleverTapID:cleverTapId]
             : [CleverTap instanceWithConfig:ctConfig];
     } @catch (NSException *exception) {

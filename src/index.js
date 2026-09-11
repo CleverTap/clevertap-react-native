@@ -1588,9 +1588,11 @@ var CleverTap = {
     *
     * @param {object} config - { accountId, accountToken, region?, proxyDomain?,
     * spikyProxyDomain?, identityKeys?, logLevel?, encryptionLevel?, encryptionInTransit?,
-    * useCustomCleverTapId? }. Note: on iOS, region wins over proxyDomain (warned);
-    * Android applies both.
-    * @returns {Promise<object>} resolves with the account's handle
+    * useCustomCleverTapId?, cleverTapId? }. Note: on iOS, region wins over proxyDomain
+    * (warned); Android applies both. cleverTapId and useCustomCleverTapId: true must be
+    * given together (or both left out) — the promise rejects with EINVALID otherwise.
+    * @returns {Promise<object>} resolves with the account's handle; rejects with
+    * EINVALID for an invalid config or ECREATE when the native SDK could not create it
     */
     createInstance: function (config) {
         return CleverTapReact.createInstance(config).then((result) => getOrMakeHandle(result.accountId));
