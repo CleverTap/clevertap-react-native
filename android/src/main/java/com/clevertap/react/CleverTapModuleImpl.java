@@ -1702,15 +1702,16 @@ public class CleverTapModuleImpl {
             return;
         }
         // Arm the buffer for ONLY this listener's account (null = the default slot, resolved
-        // here) and flush that account's buffered events. Other accounts' buffered events stay
-        // buffered until their own listeners attach — flushing everything here would silently
-        // drop them, because their listeners are not attached yet to receive the delivery.
+        // here) and flush that account's buffered events — one operation, so a same-account
+        // event arriving right now cannot be sent ahead of the older buffered ones. Other
+        // accounts' buffered events stay buffered until their own listeners attach; flushing
+        // everything here would silently drop them, because their listeners are not attached
+        // yet to receive the delivery.
         CleverTapAPI instance = resolveInstance(accountId);
         String accountKey = instance != null ? instance.getAccountId() : null;
         Log.i(TAG, "onEventListenerAdded: " + eventName + " accountId=" + accountId
                 + " resolved account=" + accountKey);
-        CleverTapEventEmitter.INSTANCE.armAccount(event, accountKey);
-        CleverTapEventEmitter.INSTANCE.flushBuffer(event, accountKey);
+        CleverTapEventEmitter.INSTANCE.armAndFlush(event, accountKey);
     }
 
     private void enableEventEmitter(ReactContext reactContext) {
