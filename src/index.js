@@ -84,9 +84,16 @@ const DEFAULT_SLOT_KEY = '__default__';
 
 const routedKey = (accountKey, eventName) => accountKey + '::' + eventName;
 
-// Keeps the trailing native arg explicit: null = the default account. It must always
-// be passed — the old-architecture Android bridge throws on a missing trailing arg.
-const toAccountArg = (accountId) => (accountId === undefined ? null : accountId);
+// The trailing native `accountId` argument used by the top-level CleverTap object.
+// null means "the default account": the manifest/plist account, or the account swapped
+// in by setInstanceWithAccountId. It must ALWAYS be passed explicitly — the
+// old-architecture Android bridge checks the exact argument count and throws when a
+// trailing argument is missing.
+const DEFAULT_ACCOUNT = null;
+
+// The same trailing arg for account handles: a handle created for the default slot
+// (accountId undefined) addresses the default account, any other handle its own account.
+const toAccountArg = (accountId) => (accountId === undefined ? DEFAULT_ACCOUNT : accountId);
 
 // Debug logs for the event routing pipeline. __DEV__ builds only.
 const routeDebug = (message) => {
@@ -683,7 +690,7 @@ var CleverTap = {
     * @param {string} locale - the locale string
     */
     setLocale: function (locale) {
-        CleverTapReact.setLocale(locale, null);
+        CleverTapReact.setLocale(locale, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -701,7 +708,7 @@ var CleverTap = {
      */
     pushRegistrationToken: function (token, pushType) {
         console.log(`CleverTap RN | pushRegistrationToken| received : token: '${token}'`)
-        CleverTapReact.pushRegistrationToken(token, pushType, null);
+        CleverTapReact.pushRegistrationToken(token, pushType, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -710,7 +717,7 @@ var CleverTap = {
      */
     setFCMPushToken: function (token) {
         console.log(`CleverTap RN | setFCMPushToken | received : token: '${token}'`)
-        CleverTapReact.setFCMPushTokenAsString(token, null);
+        CleverTapReact.setFCMPushTokenAsString(token, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -803,7 +810,7 @@ var CleverTap = {
      * @param {string} showFallbackSettings - If the value is true then SDK shows an alert dialog which routes to app's notification settings page.
     */
     promptForPushPermission: function (showFallbackSettings) {
-        CleverTapReact.promptForPushPermission(showFallbackSettings, null);
+        CleverTapReact.promptForPushPermission(showFallbackSettings, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -811,7 +818,7 @@ var CleverTap = {
     * @param {object} value - key-value belongs to the localInApp properties. Refer documentation for details.
     */
     promptPushPrimer: function (value) {
-        CleverTapReact.promptPushPrimer(value, null);
+        CleverTapReact.promptPushPrimer(value, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -820,7 +827,7 @@ var CleverTap = {
     * @param {function(err, res)} non-null callback to retrieve the result
     */
     isPushPermissionGranted: function (callback) {
-        callWithCallback('isPushPermissionGranted', null, callback, null);
+        callWithCallback('isPushPermissionGranted', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -854,7 +861,7 @@ var CleverTap = {
      * @returns {void}
  */
     setOptOut: function(userOptOut, allowSystemEvents = false) {
-        CleverTapReact.setOptOut(userOptOut, allowSystemEvents, null);
+        CleverTapReact.setOptOut(userOptOut, allowSystemEvents, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -862,14 +869,14 @@ var CleverTap = {
     * @param {boolean} value - A boolean for enabling or disabling sending events for current user
     */
     setOffline: function (value) {
-        CleverTapReact.setOffline(value, null);
+        CleverTapReact.setOffline(value, DEFAULT_ACCOUNT);
     },
 
     /**
     * Clears a backend-imposed mute state on the CleverTap SDK, resuming network operations immediately.
     */
     unmute: function () {
-        CleverTapReact.unmute(null);
+        CleverTapReact.unmute(DEFAULT_ACCOUNT);
     },
 
     /**
@@ -877,21 +884,21 @@ var CleverTap = {
     * @param {boolean} - A boolean for enabling or disabling device network related information to be sent to CleverTap
     */
     enableDeviceNetworkInfoReporting: function (value) {
-        CleverTapReact.enableDeviceNetworkInfoReporting(value, null);
+        CleverTapReact.enableDeviceNetworkInfoReporting(value, DEFAULT_ACCOUNT);
     },
 
     /**
     * Enables the personalization API.  Call this prior to using the profile/event API getters
     */
     enablePersonalization: function () {
-        CleverTapReact.enablePersonalization(null);
+        CleverTapReact.enablePersonalization(DEFAULT_ACCOUNT);
     },
 
     /**
     * Disables the personalization API.
     */
     disablePersonalization: function () {
-        CleverTapReact.disablePersonalization(null);
+        CleverTapReact.disablePersonalization(DEFAULT_ACCOUNT);
     },
 
     /**
@@ -899,7 +906,7 @@ var CleverTap = {
     * @param {string} screenName - the name of the screen
     */
     recordScreenView: function (screenName) {
-        CleverTapReact.recordScreenView(screenName, null);
+        CleverTapReact.recordScreenView(screenName, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -910,9 +917,7 @@ var CleverTap = {
     */
     recordEvent: function (eventName, props) {
         convertDateToEpochInProperties(props);
-        // The trailing accountId MUST be passed explicitly (null = default account):
-        // the old-architecture Android bridge throws on a missing trailing argument.
-        CleverTapReact.recordEvent(eventName, props, null);
+        CleverTapReact.recordEvent(eventName, props, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -927,7 +932,7 @@ var CleverTap = {
                 convertDateToEpochInProperties(value);
             });
         }
-        CleverTapReact.recordChargedEvent(details, items, null);
+        CleverTapReact.recordChargedEvent(details, items, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -937,7 +942,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a res of epoch seconds or -1
     */
     eventGetFirstTime: function (eventName, callback) {
-        callWithCallback('eventGetFirstTime', [eventName], callback, null);
+        callWithCallback('eventGetFirstTime', [eventName], callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -947,7 +952,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a res of epoch seconds or -1
     */
     eventGetLastTime: function (eventName, callback) {
-        callWithCallback('eventGetLastTime', [eventName], callback, null);
+        callWithCallback('eventGetLastTime', [eventName], callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -957,7 +962,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a res of int
     */
     eventGetOccurrences: function (eventName, callback) {
-        callWithCallback('eventGetOccurrences', [eventName], callback, null);
+        callWithCallback('eventGetOccurrences', [eventName], callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -967,7 +972,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a res of object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>} or empty object
     */
     eventGetDetail: function (eventName, callback) {
-        callWithCallback('eventGetDetail', [eventName], callback, null);
+        callWithCallback('eventGetDetail', [eventName], callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -976,7 +981,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a res of object {"eventName1":<event1 details object>, "eventName2":<event2 details object>}
     */
     getEventHistory: function (callback) {
-        callWithCallback('getEventHistory', null, callback, null);
+        callWithCallback('getEventHistory', null, callback, DEFAULT_ACCOUNT);
     },
     /**
     * Get the details of a specific event
@@ -984,7 +989,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a res of object {"eventName": <string>, "firstTime":<epoch seconds>, "lastTime": <epoch seconds>, "count": <int>, "deviceID": <string>, "normalizedEventName": <string>} or empty object
     */
     getUserEventLog: function (eventName, callback) {
-        callWithCallback('getUserEventLog', [eventName], callback, null);
+        callWithCallback('getUserEventLog', [eventName], callback, DEFAULT_ACCOUNT);
     },
     
     /**
@@ -993,7 +998,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a res of int
     */
     getUserEventLogCount: function (eventName, callback) {
-        callWithCallback('getUserEventLogCount', [eventName], callback, null);
+        callWithCallback('getUserEventLogCount', [eventName], callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1001,7 +1006,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a res of object {"eventName1":<event1 details object>, "eventName2":<event2 details object>}
     */
     getUserEventLogHistory: function (callback) {
-        callWithCallback('getUserEventLogHistory', null, callback, null);
+        callWithCallback('getUserEventLogHistory', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1010,7 +1015,7 @@ var CleverTap = {
     * @param {float} longitude
     */
     setLocation: function (latitude, longitude) {
-        CleverTapReact.setLocation(latitude, longitude, null);
+        CleverTapReact.setLocation(latitude, longitude, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1019,7 +1024,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a string res
     */
     profileGetCleverTapAttributionIdentifier: function (callback) {
-        callWithCallback('profileGetCleverTapAttributionIdentifier', null, callback, null);
+        callWithCallback('profileGetCleverTapAttributionIdentifier', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1028,7 +1033,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a string res
     */
     profileGetCleverTapID: function (callback) {
-        callWithCallback('profileGetCleverTapID', null, callback, null);
+        callWithCallback('profileGetCleverTapID', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1048,7 +1053,7 @@ var CleverTap = {
     */
     onUserLogin: function (profile) {
         convertDateToEpochInProperties(profile);
-        CleverTapReact.onUserLogin(profile, null);
+        CleverTapReact.onUserLogin(profile, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1057,7 +1062,7 @@ var CleverTap = {
     */
     profileSet: function (profile) {
         convertDateToEpochInProperties(profile);
-        CleverTapReact.profileSet(profile, null);
+        CleverTapReact.profileSet(profile, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1066,7 +1071,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a res of the property value or null
     */
     profileGetProperty: function (key, callback) {
-        callWithCallback('profileGetProperty', [key], callback, null);
+        callWithCallback('profileGetProperty', [key], callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1075,7 +1080,7 @@ var CleverTap = {
     * @param {string} the key to remove
     */
     profileRemoveValueForKey: function (key) {
-        CleverTapReact.profileRemoveValueForKey(key, null);
+        CleverTapReact.profileRemoveValueForKey(key, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1084,7 +1089,7 @@ var CleverTap = {
     * @param {string} the property key
     */
     profileSetMultiValuesForKey: function (values, key) {
-        CleverTapReact.profileSetMultiValues(values, key, null);
+        CleverTapReact.profileSetMultiValues(values, key, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1093,7 +1098,7 @@ var CleverTap = {
     * @param {string} the property key
     */
     profileAddMultiValueForKey: function (value, key) {
-        CleverTapReact.profileAddMultiValue(value, key, null);
+        CleverTapReact.profileAddMultiValue(value, key, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1102,7 +1107,7 @@ var CleverTap = {
     * @param {string} the property key
     */
     profileAddMultiValuesForKey: function (values, key) {
-        CleverTapReact.profileAddMultiValues(values, key, null);
+        CleverTapReact.profileAddMultiValues(values, key, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1111,7 +1116,7 @@ var CleverTap = {
     * @param {string} the property key
     */
     profileRemoveMultiValueForKey: function (value, key) {
-        CleverTapReact.profileRemoveMultiValue(value, key, null);
+        CleverTapReact.profileRemoveMultiValue(value, key, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1120,7 +1125,7 @@ var CleverTap = {
     * @param {string} the property key
     */
     profileRemoveMultiValuesForKey: function (values, key) {
-        CleverTapReact.profileRemoveMultiValues(values, key, null);
+        CleverTapReact.profileRemoveMultiValues(values, key, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1130,7 +1135,7 @@ var CleverTap = {
     * @param key   {string} profile property
     */
     profileIncrementValueForKey: function (value, key) {
-        CleverTapReact.profileIncrementValueForKey(value, key, null);
+        CleverTapReact.profileIncrementValueForKey(value, key, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1140,7 +1145,7 @@ var CleverTap = {
      * @param key   {string} profile property
      */
     profileDecrementValueForKey: function (value, key) {
-        CleverTapReact.profileDecrementValueForKey(value, key, null);
+        CleverTapReact.profileDecrementValueForKey(value, key, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1150,7 +1155,7 @@ var CleverTap = {
     * @param {string} the utm referrer campaign
     */
     pushInstallReferrer: function (source, medium, campaign) {
-        CleverTapReact.pushInstallReferrer(source, medium, campaign, null);
+        CleverTapReact.pushInstallReferrer(source, medium, campaign, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1158,7 +1163,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a res of int seconds
     */
     sessionGetTimeElapsed: function (callback) {
-        callWithCallback('sessionGetTimeElapsed', null, callback, null);
+        callWithCallback('sessionGetTimeElapsed', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1167,7 +1172,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a res of int
     */
     sessionGetTotalVisits: function (callback) {
-        callWithCallback('sessionGetTotalVisits', null, callback, null);
+        callWithCallback('sessionGetTotalVisits', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1175,7 +1180,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a res of epoch seconds or -1
     */
     getUserLastVisitTs: function (callback) {
-        callWithCallback('getUserLastVisitTs', null, callback, null);
+        callWithCallback('getUserLastVisitTs', null, callback, DEFAULT_ACCOUNT);
     },
     
     /**
@@ -1183,7 +1188,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a res of int
     */
     getUserAppLaunchCount: function (callback) {
-        callWithCallback('getUserAppLaunchCount', null, callback, null);
+        callWithCallback('getUserAppLaunchCount', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1191,7 +1196,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a res of int
     */
     sessionGetScreenCount: function (callback) {
-        callWithCallback('sessionGetScreenCount', null, callback, null);
+        callWithCallback('sessionGetScreenCount', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1200,7 +1205,7 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a res of epoch seconds or -1
     */
     sessionGetPreviousVisitTime: function (callback) {
-        callWithCallback('sessionGetPreviousVisitTime', null, callback, null);
+        callWithCallback('sessionGetPreviousVisitTime', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1208,14 +1213,14 @@ var CleverTap = {
     * @param {function(err, res)} callback that returns a res of object {"source": <string>, "medium": <string>, "campaign": <string>} or empty object
     */
     sessionGetUTMDetails: function (callback) {
-        callWithCallback('sessionGetUTMDetails', null, callback, null);
+        callWithCallback('sessionGetUTMDetails', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
     * Method to initalize the App Inbox
     */
     initializeInbox: function () {
-        CleverTapReact.initializeInbox(null);
+        CleverTapReact.initializeInbox(DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1223,7 +1228,7 @@ var CleverTap = {
      * @param {function(err, res)} callback optional callback with a boolean flag indicating whether the fetch was successful
      */
     fetchInbox: function (callback) {
-        callWithCallback('fetchInbox', null, callback, null);
+        callWithCallback('fetchInbox', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1231,14 +1236,14 @@ var CleverTap = {
     * @param {object} styleConfig - key-value profile properties.  keys and values are strings
     */
     showInbox: function (styleConfig) {
-        CleverTapReact.showInbox(styleConfig, null);
+        CleverTapReact.showInbox(styleConfig, DEFAULT_ACCOUNT);
     },
 
     /**
      * Method to dismiss the App Inbox
      */
     dismissInbox: function () {
-        CleverTapReact.dismissInbox(null);
+        CleverTapReact.dismissInbox(DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1246,7 +1251,7 @@ var CleverTap = {
      * @param {function(err, res)} callback that returns a res of count of inbox messages or -1
      */
     getInboxMessageCount: function (callback) {
-        callWithCallback('getInboxMessageCount', null, callback, null);
+        callWithCallback('getInboxMessageCount', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1254,7 +1259,7 @@ var CleverTap = {
      * @param {function(err, res)} callback that returns a res of count of unread inbox messages or -1
      */
     getInboxMessageUnreadCount: function (callback) {
-        callWithCallback('getInboxMessageUnreadCount', null, callback, null);
+        callWithCallback('getInboxMessageUnreadCount', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1262,7 +1267,7 @@ var CleverTap = {
      * @param {function(err, res)} callback that returns a list of json string representation of CTInboxMessage
      */
     getAllInboxMessages: function (callback) {
-        callWithCallback('getAllInboxMessages', null, callback, null);
+        callWithCallback('getAllInboxMessages', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1270,7 +1275,7 @@ var CleverTap = {
      * @param {function(err, res)} callback that returns a list of json string representation of CTInboxMessage
      */
     getUnreadInboxMessages: function (callback) {
-        callWithCallback('getUnreadInboxMessages', null, callback, null);
+        callWithCallback('getUnreadInboxMessages', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1278,7 +1283,7 @@ var CleverTap = {
      * @param {function(err, res)} callback that returns json string representation of CTInboxMessage
      */
     getInboxMessageForId: function (messageId, callback) {
-        callWithCallback('getInboxMessageForId', [messageId], callback, null);
+        callWithCallback('getInboxMessageForId', [messageId], callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1286,7 +1291,7 @@ var CleverTap = {
      * @param {string} message id of inbox message of type CTInboxMessage
      */
     deleteInboxMessageForId: function (messageId) {
-        CleverTapReact.deleteInboxMessageForId(messageId, null);
+        CleverTapReact.deleteInboxMessageForId(messageId, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1294,7 +1299,7 @@ var CleverTap = {
      * @param {array} messageIds a collection of ids of inbox messages
      */
     deleteInboxMessagesForIDs: function (messageIds) {
-        CleverTapReact.deleteInboxMessagesForIDs(messageIds, null);
+        CleverTapReact.deleteInboxMessagesForIDs(messageIds, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1302,7 +1307,7 @@ var CleverTap = {
      * @param {string} message id of inbox message of type CTInboxMessage
      */
     markReadInboxMessageForId: function (messageId) {
-        CleverTapReact.markReadInboxMessageForId(messageId, null);
+        CleverTapReact.markReadInboxMessageForId(messageId, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1310,7 +1315,7 @@ var CleverTap = {
      * @param {array} messageIds a collection of ids of inbox messages
      */
     markReadInboxMessagesForIDs: function (messageIds) {
-        CleverTapReact.markReadInboxMessagesForIDs(messageIds, null);
+        CleverTapReact.markReadInboxMessagesForIDs(messageIds, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1318,7 +1323,7 @@ var CleverTap = {
      * @param {string} message id of inbox message of type CTInboxMessage
      */
     pushInboxNotificationClickedEventForId: function (messageId) {
-        CleverTapReact.pushInboxNotificationClickedEventForId(messageId, null);
+        CleverTapReact.pushInboxNotificationClickedEventForId(messageId, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1326,7 +1331,7 @@ var CleverTap = {
      * @param {string} message id of inbox message of type CTInboxMessage
      */
     pushInboxNotificationViewedEventForId: function (messageId) {
-        CleverTapReact.pushInboxNotificationViewedEventForId(messageId, null);
+        CleverTapReact.pushInboxNotificationViewedEventForId(messageId, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1334,7 +1339,7 @@ var CleverTap = {
      * @param {function(err, res)} callback that returns a list of json string representation of CleverTapDisplayUnit
      */
     getAllDisplayUnits: function (callback) {
-        callWithCallback('getAllDisplayUnits', null, callback, null);
+        callWithCallback('getAllDisplayUnits', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1343,7 +1348,7 @@ var CleverTap = {
      * @param {function(err, res)} callback that returns a json string representation of CleverTapDisplayUnit
      */
     getDisplayUnitForId: function (unitID, callback) {
-        callWithCallback('getDisplayUnitForId', [unitID], callback, null);
+        callWithCallback('getDisplayUnitForId', [unitID], callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1351,7 +1356,7 @@ var CleverTap = {
      * @param {string} unit id of display unit of type CleverTapDisplayUnit
      */
     pushDisplayUnitViewedEventForID: function (unitID) {
-        CleverTapReact.pushDisplayUnitViewedEventForID(unitID, null);
+        CleverTapReact.pushDisplayUnitViewedEventForID(unitID, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1359,7 +1364,7 @@ var CleverTap = {
      * @param {string} unit id of display unit of type CleverTapDisplayUnit
      */
     pushDisplayUnitClickedEventForID: function (unitID) {
-        CleverTapReact.pushDisplayUnitClickedEventForID(unitID, null);
+        CleverTapReact.pushDisplayUnitClickedEventForID(unitID, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1368,7 +1373,7 @@ var CleverTap = {
      * @param {object} additionalProperties - optional per-click context (e.g. element id, action url, custom KVs)
      */
     pushDisplayUnitElementClickedEventForID: function (unitID, additionalProperties) {
-        CleverTapReact.pushDisplayUnitElementClickedEventForID(unitID, additionalProperties, null);
+        CleverTapReact.pushDisplayUnitElementClickedEventForID(unitID, additionalProperties, DEFAULT_ACCOUNT);
     },
 
 
@@ -1379,7 +1384,7 @@ var CleverTap = {
      * @param {object} productConfigMap - key-value product config properties.  keys are strings and values can be string, double, integer, boolean or json in string format.
      */
     setDefaultsMap: function (productConfigMap) {
-        CleverTapReact.setDefaultsMap(productConfigMap, null);
+        CleverTapReact.setDefaultsMap(productConfigMap, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1388,7 +1393,7 @@ var CleverTap = {
      * Starts fetching product configs, adhering to the default minimum fetch interval.
      */
     fetch: function () {
-        CleverTapReact.fetch(null);
+        CleverTapReact.fetch(DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1398,7 +1403,7 @@ var CleverTap = {
      * @param {int} intervalInSecs - minimum fetch interval in seconds.
      */
     fetchWithMinimumIntervalInSeconds: function (intervalInSecs) {
-        CleverTapReact.fetchWithMinimumFetchIntervalInSeconds(intervalInSecs, null);
+        CleverTapReact.fetchWithMinimumFetchIntervalInSeconds(intervalInSecs, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1407,7 +1412,7 @@ var CleverTap = {
      * Activates the most recently fetched product configs, so that the fetched key value pairs take effect.
      */
     activate: function () {
-        CleverTapReact.activate(null);
+        CleverTapReact.activate(DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1416,7 +1421,7 @@ var CleverTap = {
      * Asynchronously fetches and then activates the fetched product configs.
      */
     fetchAndActivate: function () {
-        CleverTapReact.fetchAndActivate(null);
+        CleverTapReact.fetchAndActivate(DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1426,7 +1431,7 @@ var CleverTap = {
      * @param {int} intervalInSecs - interval in seconds between successive fetch calls.
      */
     setMinimumFetchIntervalInSeconds: function (intervalInSecs) {
-        CleverTapReact.setMinimumFetchIntervalInSeconds(intervalInSecs, null);
+        CleverTapReact.setMinimumFetchIntervalInSeconds(intervalInSecs, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1435,7 +1440,7 @@ var CleverTap = {
      * Deletes all activated, fetched and defaults configs as well as all Product Config settings.
      */
     resetProductConfig: function () {
-        CleverTapReact.reset(null);
+        CleverTapReact.reset(DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1446,7 +1451,7 @@ var CleverTap = {
      * @param {function(err, res)} callback that returns a value of type string if present else blank
      */
     getProductConfigString: function (key, callback) {
-        callWithCallback('getString', [key], callback, null);
+        callWithCallback('getString', [key], callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1457,7 +1462,7 @@ var CleverTap = {
      * @param {function(err, res)} callback that returns a value of type boolean if present else false
      */
     getProductConfigBoolean: function (key, callback) {
-        callWithCallback('getBoolean', [key], callback, null);
+        callWithCallback('getBoolean', [key], callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1468,7 +1473,7 @@ var CleverTap = {
      * @param {function(err, res)} callback that returns a value of type number if present else 0
      */
     getNumber: function (key, callback) {
-        callWithCallback('getDouble', [key], callback, null);
+        callWithCallback('getDouble', [key], callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1478,7 +1483,7 @@ var CleverTap = {
      * @param {function(err, res)} callback that returns value of timestamp in millis as a string.
      */
     getLastFetchTimeStampInMillis: function (callback) {
-        callWithCallback('getLastFetchTimeStampInMillis', null, callback, null);
+        callWithCallback('getLastFetchTimeStampInMillis', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1490,7 +1495,7 @@ var CleverTap = {
      * @param {function(err, res)} callback that returns a feature flag value of type boolean if present else provided default value
      */
     getFeatureFlag: function (name, defaultValue, callback) {
-        callWithCallback('getFeatureFlag', [name, defaultValue], callback, null);
+        callWithCallback('getFeatureFlag', [name, defaultValue], callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1499,7 +1504,7 @@ var CleverTap = {
      * @param {function(err, res)} non-null callback to retrieve identifier
      */
     getCleverTapID: function (callback) {
-        callWithCallback('getCleverTapID', null, callback, null);
+        callWithCallback('getCleverTapID', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1508,7 +1513,7 @@ var CleverTap = {
      * and will be displayed once resumeInAppNotifications() is called.
      */
     suspendInAppNotifications: function () {
-        CleverTapReact.suspendInAppNotifications(null);
+        CleverTapReact.suspendInAppNotifications(DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1518,7 +1523,7 @@ var CleverTap = {
      * @param {boolean} dismissInAppIfVisible - Optional. If true, dismisses the currently visible InApp notification.
      */
     discardInAppNotifications: function (dismissInAppIfVisible = false) {
-        CleverTapReact.discardInAppNotifications(dismissInAppIfVisible, null);
+        CleverTapReact.discardInAppNotifications(dismissInAppIfVisible, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1532,7 +1537,7 @@ var CleverTap = {
      * InApp Notifications on events raised after this method is called.
      */
     resumeInAppNotifications: function () {
-        CleverTapReact.resumeInAppNotifications(null);
+        CleverTapReact.resumeInAppNotifications(DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1546,7 +1551,7 @@ var CleverTap = {
      * suspendInAppNotifications() on screen entry and resumeInAppNotifications() on exit.
      */
     dismissPipInApp: function () {
-        CleverTapReact.dismissPipInApp(null);
+        CleverTapReact.dismissPipInApp(DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1632,7 +1637,7 @@ var CleverTap = {
     * Uploads variables to the server. Requires Development/Debug build/configuration.
     */
     syncVariables: function () {
-        CleverTapReact.syncVariables(null);
+        CleverTapReact.syncVariables(DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1641,7 +1646,7 @@ var CleverTap = {
     * @param {boolean} isProduction Provide `true` if variables must be sync in Productuon build/configuration.
     */
     syncVariablesinProd: function (isProduction) {
-        CleverTapReact.syncVariablesinProd(isProduction, null);
+        CleverTapReact.syncVariablesinProd(isProduction, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1649,7 +1654,7 @@ var CleverTap = {
     *
     */
     fetchVariables: function (callback) {
-        callWithCallback('fetchVariables', null, callback, null);
+        callWithCallback('fetchVariables', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1658,7 +1663,7 @@ var CleverTap = {
      * @param {object} variables The JSON Object specifying the varibles to be created.
      */
     defineVariables: function (variables) {
-        CleverTapReact.defineVariables(variables, null);
+        CleverTapReact.defineVariables(variables, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1666,7 +1671,7 @@ var CleverTap = {
     * @param {string} fileVariable - the file variable string
     */
     defineFileVariable: function (fileVariable) {
-        CleverTapReact.defineFileVariable(fileVariable, null);
+        CleverTapReact.defineFileVariable(fileVariable, DEFAULT_ACCOUNT);
     },
     
     /**
@@ -1675,7 +1680,7 @@ var CleverTap = {
      * @param {string} name - name.
      */
     getVariable: function (name, callback) {
-        callWithCallback('getVariable', [name], callback, null);
+        callWithCallback('getVariable', [name], callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1683,7 +1688,7 @@ var CleverTap = {
      * 
      */
     getVariables: function (callback) {
-        callWithCallback('getVariables', null, callback, null);
+        callWithCallback('getVariables', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1692,7 +1697,7 @@ var CleverTap = {
      * @param {function} handler The callback to add
      */
     onVariablesChanged: function (handler) {
-        CleverTapReact.onVariablesChanged(null);
+        CleverTapReact.onVariablesChanged(DEFAULT_ACCOUNT);
         this.addListener(CleverTapReact.getConstants().CleverTapOnVariablesChanged, handler);
     },
 
@@ -1703,7 +1708,7 @@ var CleverTap = {
      */
     onOneTimeVariablesChanged: function (handler) {
         this.addOneTimeListener(CleverTapReact.getConstants().CleverTapOnOneTimeVariablesChanged, handler);
-        CleverTapReact.onOneTimeVariablesChanged(null);
+        CleverTapReact.onOneTimeVariablesChanged(DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1713,7 +1718,7 @@ var CleverTap = {
      * @param {function} handler The callback to add
      */
     onValueChanged: function (name, handler) {
-        CleverTapReact.onValueChanged(name, null);
+        CleverTapReact.onValueChanged(name, DEFAULT_ACCOUNT);
         this.addListener(CleverTapReact.getConstants().CleverTapOnValueChanged, handler);
     },
 
@@ -1724,7 +1729,7 @@ var CleverTap = {
      */
     onVariablesChangedAndNoDownloadsPending: function (handler) {
         this.addListener(CleverTapReact.getConstants().CleverTapOnVariablesChangedAndNoDownloadsPending, handler);
-        CleverTapReact.onVariablesChangedAndNoDownloadsPending(null);
+        CleverTapReact.onVariablesChangedAndNoDownloadsPending(DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1734,7 +1739,7 @@ var CleverTap = {
      */
     onceVariablesChangedAndNoDownloadsPending: function (handler) {
         this.addOneTimeListener(CleverTapReact.getConstants().CleverTapOnceVariablesChangedAndNoDownloadsPending, handler);
-        CleverTapReact.onceVariablesChangedAndNoDownloadsPending(null);
+        CleverTapReact.onceVariablesChangedAndNoDownloadsPending(DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1745,7 +1750,7 @@ var CleverTap = {
      */
     onFileValueChanged: function (name, handler) {
         this.addListener(CleverTapReact.getConstants().CleverTapOnFileValueChanged, handler);
-        CleverTapReact.onFileValueChanged(name, null);
+        CleverTapReact.onFileValueChanged(name, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1754,7 +1759,7 @@ var CleverTap = {
      * @param callback {function(err, res)} a callback with a boolean flag whether the update was successful
      */
     fetchInApps: function (callback) {
-        callWithCallback('fetchInApps', null, callback, null);
+        callWithCallback('fetchInApps', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1763,7 +1768,7 @@ var CleverTap = {
      * @param {boolean} expiredOnly to clear only assets which will not be needed further for inapps
      */
     clearInAppResources: function (expiredOnly) {
-        CleverTapReact.clearInAppResources(expiredOnly, null);
+        CleverTapReact.clearInAppResources(expiredOnly, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1771,7 +1776,7 @@ var CleverTap = {
      * Requires Development/Debug build/configuration.
      */
     syncCustomTemplates: function () {
-        CleverTapReact.syncCustomTemplates(null);
+        CleverTapReact.syncCustomTemplates(DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1780,7 +1785,7 @@ var CleverTap = {
      * @param {boolean} isProduction Provide `true` if templates must be sync in Productuon build/configuration.
      */
     syncCustomTemplatesInProd: function (isProduction) {
-        CleverTapReact.syncCustomTemplatesInProd(isProduction, null)
+        CleverTapReact.syncCustomTemplatesInProd(isProduction, DEFAULT_ACCOUNT)
     },
 
     /**
@@ -1790,7 +1795,7 @@ var CleverTap = {
      * @param {function(err, res)} callback that returns a list of variant objects
      */
     variants: function (callback) {
-        callWithCallback('variants', null, callback, null);
+        callWithCallback('variants', null, callback, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1801,7 +1806,7 @@ var CleverTap = {
      * @param {string} templateName The name of the active template
      */
     customTemplateSetDismissed: function (templateName) {
-        return CleverTapReact.customTemplateSetDismissed(templateName, null);
+        return CleverTapReact.customTemplateSetDismissed(templateName, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1810,7 +1815,7 @@ var CleverTap = {
      * @param {string} templateName The name of the active template
      */
     customTemplateSetPresented: function (templateName) {
-        return CleverTapReact.customTemplateSetPresented(templateName, null);
+        return CleverTapReact.customTemplateSetPresented(templateName, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1820,7 +1825,7 @@ var CleverTap = {
      * @param {string} argName The action argument name
      */
     customTemplateRunAction: function (templateName, argName) {
-        return CleverTapReact.customTemplateRunAction(templateName, argName, null);
+        return CleverTapReact.customTemplateRunAction(templateName, argName, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1832,7 +1837,7 @@ var CleverTap = {
      * @returns {string} The argument value or null if no such argument is defined for the template.
      */
     customTemplateGetStringArg: function (templateName, argName) {
-       return CleverTapReact.customTemplateGetStringArg(templateName, argName, null);
+       return CleverTapReact.customTemplateGetStringArg(templateName, argName, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1844,7 +1849,7 @@ var CleverTap = {
      * @returns {number} The argument value or null if no such argument is defined for the template.
      */
     customTemplateGetNumberArg: function (templateName, argName) {
-        return CleverTapReact.customTemplateGetNumberArg(templateName, argName, null);
+        return CleverTapReact.customTemplateGetNumberArg(templateName, argName, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1856,7 +1861,7 @@ var CleverTap = {
      * @returns {boolean} The argument value or null if no such argument is defined for the template.
      */
     customTemplateGetBooleanArg: function (templateName, argName) {
-        return CleverTapReact.customTemplateGetBooleanArg(templateName, argName, null);
+        return CleverTapReact.customTemplateGetBooleanArg(templateName, argName, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1868,7 +1873,7 @@ var CleverTap = {
      * @returns {string} The file path to the file or null if no such argument is defined for the template.
      */
     customTemplateGetFileArg: function (templateName, argName) {
-        return CleverTapReact.customTemplateGetFileArg(templateName, argName, null);
+        return CleverTapReact.customTemplateGetFileArg(templateName, argName, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1880,7 +1885,7 @@ var CleverTap = {
      * @returns {any} The argument value or null if no such argument is defined for the template.
      */
     customTemplateGetObjectArg: function (templateName, argName) {
-        return CleverTapReact.customTemplateGetObjectArg(templateName, argName, null);
+        return CleverTapReact.customTemplateGetObjectArg(templateName, argName, DEFAULT_ACCOUNT);
     },
 
     /**
@@ -1890,7 +1895,7 @@ var CleverTap = {
      * @returns {string}
      */
     customTemplateContextToString: function (templateName) {
-        return CleverTapReact.customTemplateContextToString(templateName, null);
+        return CleverTapReact.customTemplateContextToString(templateName, DEFAULT_ACCOUNT);
     }
 };
 
