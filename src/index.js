@@ -233,6 +233,20 @@ function removeListenersForHandle(accountId, eventName) {
     routedHandlers.delete(routedKey(accountKey, eventName));
 }
 
+// Like addListenerForHandle, but the handler runs only ONCE — for the first matching
+// event of that account — and then detaches itself. The subscription is removed BEFORE
+// the handler runs: deliverRouted catches a throwing handler, so a removal placed after
+// the call would be skipped and the "once" wrapper would fire again on the next event.
+// Example: wait for account B's first profile init without remembering to clean up:
+//   handleB.addOneTimeListener(CleverTap.CleverTapProfileDidInitialize, (e) => ...);
+function addOneTimeListenerForHandle(accountId, eventName, handler) {
+    const subscription = addListenerForHandle(accountId, eventName, (event) => {
+        subscription.remove();
+        handler(event);
+    });
+    return subscription;
+}
+
 /**
  * Builds a handle for one CleverTap account. Every method forwards the handle's
  * accountId as the trailing native argument; listeners receive only this account's
@@ -466,10 +480,7 @@ function createHandle(accountId) {
             addListenerForHandle(accountId, CleverTapReact.getConstants().CleverTapOnVariablesChanged, handler);
         },
         onOneTimeVariablesChanged: (handler) => {
-            const subscription = addListenerForHandle(accountId, CleverTapReact.getConstants().CleverTapOnOneTimeVariablesChanged, (event) => {
-                handler(event);
-                subscription.remove();
-            });
+            addOneTimeListenerForHandle(accountId, CleverTapReact.getConstants().CleverTapOnOneTimeVariablesChanged, handler);
             CleverTapReact.onOneTimeVariablesChanged(toAccountArg(accountId));
         },
         onValueChanged: (name, handler) => {
@@ -481,10 +492,7 @@ function createHandle(accountId) {
             CleverTapReact.onVariablesChangedAndNoDownloadsPending(toAccountArg(accountId));
         },
         onceVariablesChangedAndNoDownloadsPending: (handler) => {
-            const subscription = addListenerForHandle(accountId, CleverTapReact.getConstants().CleverTapOnceVariablesChangedAndNoDownloadsPending, (event) => {
-                handler(event);
-                subscription.remove();
-            });
+            addOneTimeListenerForHandle(accountId, CleverTapReact.getConstants().CleverTapOnceVariablesChangedAndNoDownloadsPending, handler);
             CleverTapReact.onceVariablesChangedAndNoDownloadsPending(toAccountArg(accountId));
         },
         onFileValueChanged: (name, handler) => {
@@ -576,19 +584,9 @@ function createHandle(accountId) {
         },
 
         addListener: (eventName, handler) => addListenerForHandle(accountId, eventName, handler),
-        // Like addListener, but the handler runs only ONCE — for the first matching
-        // event of THIS account — and then detaches itself. Example: wait for account
-        // B's first profile init without remembering to clean up:
-        //   handleB.addOneTimeListener(CleverTap.CleverTapProfileDidInitialize, (e) => ...);
-        // The subscription removes itself from inside the wrapper, so a second event
-        // can never fire the handler again. Mirrors CleverTap.addOneTimeListener.
-        addOneTimeListener: (eventName, handler) => {
-            const subscription = addListenerForHandle(accountId, eventName, (event) => {
-                handler(event);
-                subscription.remove();
-            });
-            return subscription;
-        },
+        // Runs the handler only once for THIS account's first matching event, then
+        // detaches itself (see addOneTimeListenerForHandle). Mirrors CleverTap.addOneTimeListener.
+        addOneTimeListener: (eventName, handler) => addOneTimeListenerForHandle(accountId, eventName, handler),
         removeListener: (eventName) => removeListenersForHandle(accountId, eventName)
     };
     return Object.freeze(handle);
@@ -644,11 +642,9 @@ var CleverTap = {
         return addListenerForHandle(undefined, eventName, handler);
     },
     addOneTimeListener: function (eventName, handler) {
-        const subscription = addListenerForHandle(undefined, eventName, (event) => {
-            handler(event);
-            subscription.remove();
-        });
-        return subscription;
+        // Fires once for the default account's first matching event, then detaches
+        // itself (see addOneTimeListenerForHandle). Returns the subscription.
+        return addOneTimeListenerForHandle(undefined, eventName, handler);
     },
 
     /**
