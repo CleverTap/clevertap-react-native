@@ -1126,7 +1126,8 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    * applied and persisted (fetch-config-and-create on every launch works; changes take
    * effect next launch). A repeat call in the SAME app run resolves with the existing
    * instance and the new config is not applied (native in-process behavior).
-   * Rejects with `EINVALID` when accountId/accountToken are missing or empty, or when
+   * Rejects with `EINVALID` when accountId/accountToken are missing or empty, when a
+   * field has the wrong type (a `null` value simply means "not set"), or when
    * `cleverTapId` and `useCustomCleverTapId: true` are not given together.
    */
   export function createInstance(config: CleverTapInstanceConfig): Promise<CleverTapInstance>;

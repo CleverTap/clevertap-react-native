@@ -1958,71 +1958,51 @@ public class CleverTapModuleImpl {
      * resolves with {accountId: 'ACCT_B'} and resolveInstance("ACCT_B") starts working.
      */
     public void createInstance(ReadableMap config, Promise promise) {
-        String accountId = config != null ? config.getString("accountId") : null;
-        String accountToken = config != null ? config.getString("accountToken") : null;
-        // Reject EMPTY as well as missing: the native SDK only null-checks, so an
-        // empty string would create a "zombie" instance whose events go nowhere
-        // while every call looks successful.
-        if (accountId == null || accountId.trim().isEmpty()
-                || accountToken == null || accountToken.trim().isEmpty()) {
-            promise.reject("EINVALID", "createInstance requires non-empty accountId and accountToken");
+        // 1. Parse and validate on the CALLING thread, before any native work, so every bad
+        //    input rejects the promise right here. Reading the ReadableMap where it is used
+        //    (getBoolean on a JS null or on a string) throws inside React Native; done on the
+        //    main-thread task below, that throw would crash the app instead of rejecting.
+        //    The reading rules — null = not set, wrong type = EINVALID — live in
+        //    InstanceConfigRequest, which is unit tested on the JVM.
+        final InstanceConfigRequest request;
+        try {
+            request = InstanceConfigRequest.parse(config);
+        } catch (InstanceConfigRequest.InvalidConfigException e) {
+            promise.reject("EINVALID", "createInstance: " + e.getMessage());
             return;
         }
+        final String accountId = request.getAccountId();
 
-        // A custom CleverTap ID can only be supplied AT CREATION, and only works together
-        // with the useCustomCleverTapId flag. The native SDK does not fail on a mismatch:
-        // an ID without the flag is IGNORED (a random SDK id is generated, the app's id is
-        // lost), and the flag without an ID leaves the account on an "error device id".
-        // Both only surface as a native debug log that a React Native developer never
-        // sees, and identity cannot be repaired later from RN — so reject up front.
-        // Type-checked reads: a JS `null` arrives as ReadableType.Null, and getBoolean /
-        // getString would throw on it instead of reading "not set" (getType itself throws
-        // NoSuchKeyException on a missing key, hence the hasKey guard first).
-        boolean useCustomCleverTapId = config.hasKey("useCustomCleverTapId")
-                && config.getType("useCustomCleverTapId") == ReadableType.Boolean
-                && config.getBoolean("useCustomCleverTapId");
-        String cleverTapId = config.hasKey("cleverTapId")
-                && config.getType("cleverTapId") == ReadableType.String
-                ? config.getString("cleverTapId") : null;
-        boolean hasCleverTapId = cleverTapId != null && !cleverTapId.trim().isEmpty();
-        if (useCustomCleverTapId != hasCleverTapId) {
-            promise.reject("EINVALID", "createInstance: cleverTapId and useCustomCleverTapId: true must be"
-                    + " given together (or both left out) — the native SDK ignores an ID without the flag,"
-                    + " and the flag without an ID leaves the account with an error device id");
+        // 2. Build the SDK config object. Plain data (it only reads manifest info), so it
+        //    does not need the main thread either.
+        final CleverTapInstanceConfig ctConfig = request.getRegion() != null
+                ? CleverTapInstanceConfig.createInstance(this.context, accountId, request.getAccountToken(), request.getRegion())
+                : CleverTapInstanceConfig.createInstance(this.context, accountId, request.getAccountToken());
+        if (ctConfig == null) {
+            promise.reject("ECREATE", "createInstance could not build a config for accountId " + accountId);
             return;
         }
+        applyOptionalConfig(ctConfig, request);
 
-        // ⚠️ The creation MUST run on the MAIN thread. The native SDK's DeviceInfo posts a
-        // deviceIDCreated callback to the main thread that RE-ENTERS instanceWithConfig
-        // (DeviceInfo.java, "callback on main thread"). instanceWithConfig's get→new→put on
-        // the static instances map is not synchronized, so creating from another thread can
-        // race that callback: TWO CleverTapAPI objects get built for the same account, the
-        // map keeps the callback's copy, and our listeners end up attached to an orphan
-        // (observed on device: "CleverTap SDK initialized" logged twice, different objects).
-        // Running here on main serializes us with that callback: when it re-enters, the map
-        // already holds our instance and it is returned instead of constructed again.
-        final ReadableMap finalConfig = config;
-        com.facebook.react.bridge.UiThreadUtil.runOnUiThread(() -> {
-
-            String region = finalConfig.hasKey("region") ? finalConfig.getString("region") : null;
-            CleverTapInstanceConfig ctConfig = (region != null && !region.trim().isEmpty())
-                    ? CleverTapInstanceConfig.createInstance(this.context, accountId, accountToken, region)
-                    : CleverTapInstanceConfig.createInstance(this.context, accountId, accountToken);
-            if (ctConfig == null) {
-                promise.reject("ECREATE", "createInstance could not build a config for accountId " + accountId);
-                return;
-            }
-            applyOptionalConfig(ctConfig, finalConfig);
-
+        // 3. ⚠️ The creation MUST run on the MAIN thread. The native SDK's DeviceInfo posts a
+        //    deviceIDCreated callback to the main thread that RE-ENTERS instanceWithConfig
+        //    (DeviceInfo.java, "callback on main thread"). instanceWithConfig's get→new→put on
+        //    the static instances map is not synchronized, so creating from another thread can
+        //    race that callback: TWO CleverTapAPI objects get built for the same account, the
+        //    map keeps the callback's copy, and our listeners end up attached to an orphan
+        //    (observed on device: "CleverTap SDK initialized" logged twice, different objects).
+        //    Running here on main serializes us with that callback: when it re-enters, the map
+        //    already holds our instance and it is returned instead of constructed again.
+        UiThreadUtil.runOnUiThread(() -> {
             // Instance creation can THROW, not just return null: registered custom
             // template producers run inside it, and e.g. duplicate template names
             // raise CustomTemplateException. We are on the MAIN thread here — an
             // uncaught throw would crash the app instead of rejecting the promise.
             CleverTapAPI instance;
             try {
-                // hasCleverTapId implies useCustomCleverTapId (validated above).
-                instance = hasCleverTapId
-                        ? CleverTapAPI.instanceWithConfig(this.context, ctConfig, cleverTapId)
+                // A non-null cleverTapId implies useCustomCleverTapId (validated by the parser).
+                instance = request.getCleverTapId() != null
+                        ? CleverTapAPI.instanceWithConfig(this.context, ctConfig, request.getCleverTapId())
                         : CleverTapAPI.instanceWithConfig(this.context, ctConfig);
             } catch (Throwable t) {
                 promise.reject("ECREATE", "createInstance failed for accountId " + accountId, t);
@@ -2055,87 +2035,56 @@ public class CleverTapModuleImpl {
         return result;
     }
 
-    // Android applies BOTH region and proxy settings when given together; iOS can
-    // only honor region and warns that proxy was ignored (documented platform
-    // difference — the iOS config's region/proxy fields are constructor-only).
-    private void applyOptionalConfig(CleverTapInstanceConfig ctConfig, ReadableMap config) {
-        if (config.hasKey("proxyDomain")) {
-            ctConfig.setProxyDomain(config.getString("proxyDomain"));
+    // Copies the validated optional fields onto the SDK config. Region itself is applied
+    // by the factory call in createInstance. Android applies BOTH region and proxy settings
+    // when given together; iOS can only honor region and warns that proxy was ignored
+    // (documented platform difference — the iOS config's region/proxy fields are
+    // constructor-only). A null field means "not given": the SDK config keeps its default.
+    private void applyOptionalConfig(CleverTapInstanceConfig ctConfig, InstanceConfigRequest request) {
+        if (request.getProxyDomain() != null) {
+            ctConfig.setProxyDomain(request.getProxyDomain());
         }
-        if (config.hasKey("spikyProxyDomain")) {
-            ctConfig.setSpikyProxyDomain(config.getString("spikyProxyDomain"));
+        if (request.getSpikyProxyDomain() != null) {
+            ctConfig.setSpikyProxyDomain(request.getSpikyProxyDomain());
         }
-        if (config.hasKey("identityKeys")) {
-            ReadableArray keys = config.getArray("identityKeys");
-            if (keys != null && keys.size() > 0) {
-                String[] identityKeys = new String[keys.size()];
-                for (int i = 0; i < keys.size(); i++) {
-                    identityKeys[i] = keys.getString(i);
-                }
-                ctConfig.setIdentityKeys(identityKeys);
-            }
+        if (request.getIdentityKeys() != null && !request.getIdentityKeys().isEmpty()) {
+            ctConfig.setIdentityKeys(request.getIdentityKeys().toArray(new String[0]));
         }
-        if (config.hasKey("handshakeDomain")) {
-            ctConfig.setCustomHandshakeDomain(config.getString("handshakeDomain"));
+        if (request.getHandshakeDomain() != null) {
+            ctConfig.setCustomHandshakeDomain(request.getHandshakeDomain());
         }
-        if (config.hasKey("logLevel")) {
-            ctConfig.setDebugLevel(toLogLevel(config.getString("logLevel")));
+        if (request.getLogLevel() != null) {
+            ctConfig.setDebugLevel(toLogLevel(request.getLogLevel()));
         }
-        if (config.hasKey("analyticsOnly")) {
-            ctConfig.setAnalyticsOnly(config.getBoolean("analyticsOnly"));
+        if (request.getAnalyticsOnly() != null) {
+            ctConfig.setAnalyticsOnly(request.getAnalyticsOnly());
         }
-        if (config.hasKey("enablePersonalization")) {
-            ctConfig.enablePersonalization(config.getBoolean("enablePersonalization"));
+        if (request.getEnablePersonalization() != null) {
+            ctConfig.enablePersonalization(request.getEnablePersonalization());
         }
-        if (config.hasKey("disableAppLaunchedEvent")) {
-            ctConfig.setDisableAppLaunchedEvent(config.getBoolean("disableAppLaunchedEvent"));
+        if (request.getDisableAppLaunchedEvent() != null) {
+            ctConfig.setDisableAppLaunchedEvent(request.getDisableAppLaunchedEvent());
         }
-        if (config.hasKey("encryptionLevel")) {
-            ctConfig.setEncryptionLevel(toEncryptionLevel(config.getString("encryptionLevel")));
+        if (request.getEncryptionLevel() != null) {
+            ctConfig.setEncryptionLevel(toEncryptionLevel(request.getEncryptionLevel()));
         }
-        if (config.hasKey("encryptionInTransit")) {
-            ctConfig.setEncryptionInTransit(config.getBoolean("encryptionInTransit"));
+        if (request.getEncryptionInTransit() != null) {
+            ctConfig.setEncryptionInTransit(request.getEncryptionInTransit());
         }
-        if (config.hasKey("useCustomCleverTapId")) {
-            ctConfig.setEnableCustomCleverTapId(config.getBoolean("useCustomCleverTapId"));
+        if (request.getUseCustomCleverTapId() != null) {
+            ctConfig.setEnableCustomCleverTapId(request.getUseCustomCleverTapId());
         }
-        applyAndroidOnlyConfig(ctConfig, config.hasKey("android") ? config.getMap("android") : null);
-        // The "ios" block is intentionally ignored here — each platform reads only
-        // its own nested block, so platform-targeted config needs no warnings.
-    }
-
-    private void applyAndroidOnlyConfig(CleverTapInstanceConfig ctConfig, ReadableMap androidConfig) {
-        if (androidConfig == null) {
-            return;
+        // Android-only block (the "ios" block is read by iOS alone — each platform reads
+        // only its own nested block, so platform-targeted config needs no warnings).
+        if (request.getUseGoogleAdId() != null) {
+            ctConfig.useGoogleAdId(request.getUseGoogleAdId());
         }
-        if (androidConfig.hasKey("useGoogleAdId")) {
-            ctConfig.useGoogleAdId(androidConfig.getBoolean("useGoogleAdId"));
+        if (request.getBackgroundSync() != null) {
+            ctConfig.setBackgroundSync(request.getBackgroundSync());
         }
-        if (androidConfig.hasKey("backgroundSync")) {
-            ctConfig.setBackgroundSync(androidConfig.getBoolean("backgroundSync"));
-        }
-        if (androidConfig.hasKey("pushProviders")) {
-            ReadableArray providers = androidConfig.getArray("pushProviders");
-            if (providers != null) {
-                for (int i = 0; i < providers.size(); i++) {
-                    ReadableMap provider = providers.getMap(i);
-                    if (provider == null) {
-                        continue;
-                    }
-                    String type = provider.getString("type");
-                    String prefKey = provider.getString("prefKey");
-                    String className = provider.getString("className");
-                    String messagingSDKClassName = provider.getString("messagingSDKClassName");
-                    // All four parts are required by the native PushType contract.
-                    if (type == null || prefKey == null || className == null
-                            || messagingSDKClassName == null) {
-                        Log.w(TAG, "createInstance: pushProviders[" + i
-                                + "] is missing one of type/prefKey/className/messagingSDKClassName; skipped");
-                        continue;
-                    }
-                    ctConfig.addPushType(new PushType(type, prefKey, className, messagingSDKClassName));
-                }
-            }
+        for (InstanceConfigRequest.PushProvider provider : request.getPushProviders()) {
+            ctConfig.addPushType(new PushType(provider.getType(), provider.getPrefKey(),
+                    provider.getClassName(), provider.getMessagingSDKClassName()));
         }
     }
 

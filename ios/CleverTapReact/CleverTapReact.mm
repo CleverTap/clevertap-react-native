@@ -20,6 +20,7 @@
 #import "CleverTap+CTVar.h"
 #import "CTVar.h"
 #import "CleverTapReactPendingEvent.h"
+#import "CleverTapReactInstanceConfigRequest.h"
 #import "CTTemplateContext.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -237,107 +238,88 @@ RCT_EXPORT_METHOD(createInstance:(NSDictionary *)config
                   reject:(RCTPromiseRejectBlock)reject) {
     RCTLogInfo(@"[CleverTap createInstance]");
 
-    NSString *accountId = config[@"accountId"];
-    NSString *token = config[@"accountToken"];
-    // .length == 0 covers BOTH missing and empty — an empty string would create a
-    // "zombie" instance whose events go nowhere while every call looks successful.
-    if (accountId.length == 0 || token.length == 0) {
-        reject(@"EINVALID", @"createInstance requires non-empty accountId and accountToken", nil);
+    // 1. Parse and validate before any native work, so every bad input rejects the promise
+    //    right here (same three steps as Android). The reading rules — null = not set,
+    //    wrong type = EINVALID naming the field — live in CleverTapReactInstanceConfigRequest.
+    NSString *configError = nil;
+    CleverTapReactInstanceConfigRequest *request = [CleverTapReactInstanceConfigRequest parse:config error:&configError];
+    if (request == nil) {
+        reject(@"EINVALID", [@"createInstance: " stringByAppendingString:configError], nil);
         return;
     }
+    NSString *accountId = request.accountId;
 
-    // A custom CleverTap ID can only be supplied AT CREATION, and only works together
-    // with the useCustomCleverTapId flag. The native SDK does not fail on a mismatch:
-    // an ID without the flag is IGNORED (CTDeviceInfo logs it and generates its own id,
-    // the app's id is lost), and the flag without an ID leaves the account on an "error
-    // device id". Both only surface as a native log a React Native developer never
-    // sees, and identity cannot be repaired later from RN — so reject up front.
-    // Type-checked reads: a JS `null` arrives as NSNull, which would crash on boolValue.
-    id useCustomFlag = config[@"useCustomCleverTapId"];
-    BOOL useCustomCleverTapId = [useCustomFlag isKindOfClass:[NSNumber class]] && [useCustomFlag boolValue];
-    NSString *cleverTapId = config[@"cleverTapId"];
-    BOOL hasCleverTapId = [cleverTapId isKindOfClass:[NSString class]] && cleverTapId.length > 0;
-    if (useCustomCleverTapId != hasCleverTapId) {
-        reject(@"EINVALID", @"createInstance: cleverTapId and useCustomCleverTapId: true must be given together"
-               " (or both left out) — the native SDK ignores an ID without the flag, and the flag without"
-               " an ID leaves the account with an error device id", nil);
-        return;
-    }
-
-    NSString *region = config[@"region"];
-    NSString *proxy = config[@"proxyDomain"];
-    NSString *spiky = config[@"spikyProxyDomain"];
-
-    // region/proxyDomain/spikyProxyDomain are READONLY on the iOS config — they can
-    // only be set through one of the four initializers, and none of them accepts
-    // region AND proxy together. Agreed rule: region wins, proxy settings are
-    // ignored with a warning (Android applies both).
+    // 2. Build the SDK config. region/proxyDomain/spikyProxyDomain are READONLY on the iOS
+    //    config — they can only be set through one of the four initializers, and none of
+    //    them accepts region AND proxy together. Agreed rule: region wins, proxy settings
+    //    are ignored with a warning (Android applies both). Empty proxy strings count as
+    //    "not given", as before.
+    BOOL hasProxy = request.proxyDomain.length > 0;
+    BOOL hasSpiky = request.spikyProxyDomain.length > 0;
     CleverTapInstanceConfig *ctConfig;
-    if (region.length > 0) {
-        if (proxy.length > 0 || spiky.length > 0) {
+    if (request.region != nil) {
+        if (hasProxy || hasSpiky) {
             RCTLogWarn(@"createInstance: iOS cannot combine region with proxyDomain/spikyProxyDomain; region applied, proxy settings ignored (Android applies both)");
         }
-        ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:token accountRegion:region];
-    } else if (proxy.length > 0 && spiky.length > 0) {
-        ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:token proxyDomain:proxy spikyProxyDomain:spiky];
-    } else if (proxy.length > 0) {
-        ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:token proxyDomain:proxy];
+        ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:request.accountToken accountRegion:request.region];
+    } else if (hasProxy && hasSpiky) {
+        ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:request.accountToken proxyDomain:request.proxyDomain spikyProxyDomain:request.spikyProxyDomain];
+    } else if (hasProxy) {
+        ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:request.accountToken proxyDomain:request.proxyDomain];
     } else {
-        if (spiky.length > 0) {
+        if (hasSpiky) {
             RCTLogWarn(@"createInstance: spikyProxyDomain requires proxyDomain; ignored");
         }
-        ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:token];
+        ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:request.accountToken];
     }
 
-    // These ARE writable properties on the iOS config:
-    if (config[@"handshakeDomain"]) {
-        ctConfig.handshakeDomain = config[@"handshakeDomain"];
+    // These ARE writable properties on the iOS config. nil = not given: the config keeps
+    // its default.
+    if (request.handshakeDomain != nil) {
+        ctConfig.handshakeDomain = request.handshakeDomain;
     }
-    if (config[@"identityKeys"]) {
-        ctConfig.identityKeys = config[@"identityKeys"];
+    if (request.identityKeys != nil) {
+        ctConfig.identityKeys = request.identityKeys;
     }
-    if (config[@"logLevel"]) {
-        ctConfig.logLevel = ctLogLevelFromString(config[@"logLevel"]);
+    if (request.logLevel != nil) {
+        ctConfig.logLevel = ctLogLevelFromString(request.logLevel);
     }
-    if (config[@"analyticsOnly"]) {
-        ctConfig.analyticsOnly = [config[@"analyticsOnly"] boolValue];
+    if (request.analyticsOnly != nil) {
+        ctConfig.analyticsOnly = request.analyticsOnly.boolValue;
     }
-    if (config[@"enablePersonalization"]) {
-        ctConfig.enablePersonalization = [config[@"enablePersonalization"] boolValue];
+    if (request.enablePersonalization != nil) {
+        ctConfig.enablePersonalization = request.enablePersonalization.boolValue;
     }
-    if (config[@"disableAppLaunchedEvent"]) {
-        ctConfig.disableAppLaunchedEvent = [config[@"disableAppLaunchedEvent"] boolValue];
+    if (request.disableAppLaunchedEvent != nil) {
+        ctConfig.disableAppLaunchedEvent = request.disableAppLaunchedEvent.boolValue;
     }
-    if (config[@"encryptionLevel"]) {
-        ctConfig.encryptionLevel = ctEncryptionLevelFromString(config[@"encryptionLevel"]);
+    if (request.encryptionLevel != nil) {
+        ctConfig.encryptionLevel = ctEncryptionLevelFromString(request.encryptionLevel);
     }
-    if (config[@"encryptionInTransit"]) {
-        ctConfig.encryptionInTransitEnabled = [config[@"encryptionInTransit"] boolValue];
+    if (request.encryptionInTransit != nil) {
+        ctConfig.encryptionInTransitEnabled = request.encryptionInTransit.boolValue;
     }
-    if (config[@"useCustomCleverTapId"]) {
-        ctConfig.useCustomCleverTapId = [config[@"useCustomCleverTapId"] boolValue];
+    if (request.useCustomCleverTapId != nil) {
+        ctConfig.useCustomCleverTapId = request.useCustomCleverTapId.boolValue;
     }
-    // Platform-specific options live in nested blocks; each platform reads only its
-    // own block (the "android" block is intentionally ignored here).
-    NSDictionary *iosConfig = config[@"ios"];
-    if ([iosConfig isKindOfClass:[NSDictionary class]]) {
-        if (iosConfig[@"disableIDFV"]) {
-            ctConfig.disableIDFV = [iosConfig[@"disableIDFV"] boolValue];
-        }
-        if (iosConfig[@"enableFileProtection"]) {
-            ctConfig.enableFileProtection = [iosConfig[@"enableFileProtection"] boolValue];
-        }
+    // iOS-only block (the "android" block is read by Android alone — each platform reads
+    // only its own nested block, so platform-targeted config needs no warnings).
+    if (request.disableIDFV != nil) {
+        ctConfig.disableIDFV = request.disableIDFV.boolValue;
+    }
+    if (request.enableFileProtection != nil) {
+        ctConfig.enableFileProtection = request.enableFileProtection.boolValue;
     }
 
-    // Instance creation can THROW, not just return nil: registered custom template
-    // producers run inside it, and e.g. duplicate template names raise NSException
-    // (CleverTapCustomTemplateException). An uncaught throw would crash the app
-    // instead of rejecting the promise.
+    // 3. Instance creation can THROW, not just return nil: registered custom template
+    //    producers run inside it, and e.g. duplicate template names raise NSException
+    //    (CleverTapCustomTemplateException). An uncaught throw would crash the app
+    //    instead of rejecting the promise.
     CleverTap *instance;
     @try {
-        // hasCleverTapId implies useCustomCleverTapId (validated above).
-        instance = hasCleverTapId
-            ? [CleverTap instanceWithConfig:ctConfig andCleverTapID:cleverTapId]
+        // A non-nil cleverTapId implies useCustomCleverTapId (validated by the parser).
+        instance = (request.cleverTapId != nil)
+            ? [CleverTap instanceWithConfig:ctConfig andCleverTapID:request.cleverTapId]
             : [CleverTap instanceWithConfig:ctConfig];
     } @catch (NSException *exception) {
         reject(@"ECREATE", [NSString stringWithFormat:@"createInstance failed for accountId %@: %@",
