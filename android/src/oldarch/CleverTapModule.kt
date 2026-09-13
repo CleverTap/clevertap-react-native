@@ -675,9 +675,9 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
 
     @ReactMethod
     fun syncVariablesinProd(isProduction: Boolean, accountId: String?) {
-        // Must match the spec's (isProduction, accountId) shape — the old-arch bridge
-        // checks the exact argument count. The impl's callback param is unused (no-op
-        // on Android), so pass null like the new-arch shim does.
+        // Same (isProduction, accountId) shape as the spec — the old-arch bridge checks the
+        // exact argument count. Android has no production/debug variant of variable sync
+        // natively, so the impl logs and no-ops (iOS honors isProduction).
         cleverTapModuleImpl.syncVariablesinProd(isProduction, accountId)
     }
 
