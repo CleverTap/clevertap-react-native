@@ -106,7 +106,14 @@ const routeDebug = (message) => {
 // setInstanceWithAccountId updates it synchronously (legacy "slot swap").
 let currentDefaultAccountId = null;
 let slotSwapped = false;
-const defaultAccountIdReady = CleverTapReact.getDefaultAccountId().then((id) => {
+// Runs at IMPORT time, so it is guarded: with a native binary older than this JS (stale
+// pods / no Android rebuild) or a partial Jest mock of the native module, an unguarded
+// call would throw and fail the whole SDK import instead of only default-account routing.
+// The call itself only enqueues a native request and returns a promise; nothing waits on it.
+const defaultAccountIdPromise = typeof CleverTapReact.getDefaultAccountId === 'function'
+    ? CleverTapReact.getDefaultAccountId()
+    : Promise.reject(new Error('getDefaultAccountId is not available in the linked native module'));
+const defaultAccountIdReady = defaultAccountIdPromise.then((id) => {
     if (!slotSwapped) {
         currentDefaultAccountId = id;
     }
