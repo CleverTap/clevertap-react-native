@@ -440,14 +440,34 @@ RCT_EXPORT_METHOD(setPushTokenAsStringWithRegion:(NSString*)token withType:(NSSt
 
 #pragma mark - Personalization
 
+// The SDK reads `config.enablePersonalization` on EVERY profile/event getter, per instance
+// (CleverTap.m, e.g. profileGet:, eventGetFirstTime:). Android's instance methods flip that
+// flag. The iOS SDK only offers CLASS methods, which persist a preference that is read
+// once — when the plist default config is built — so they never affected a secondary
+// account, nor even the default account within the current run. Flip the instance flag
+// directly (immediate, per account, Android parity) and keep the class-method persistence
+// for the default slot so the next launch starts exactly as it does today.
+- (void)setPersonalization:(BOOL)enabled accountId:(NSString *)accountId {
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        instance.config.enablePersonalization = enabled;
+    }];
+    if (accountId == nil) {
+        if (enabled) {
+            [CleverTap enablePersonalization];
+        } else {
+            [CleverTap disablePersonalization];
+        }
+    }
+}
+
 RCT_EXPORT_METHOD(enablePersonalization:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap enablePersonalization]");
-    [CleverTap enablePersonalization];
+    [self setPersonalization:YES accountId:accountId];
 }
 
 RCT_EXPORT_METHOD(disablePersonalization:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap disablePersonalization]");
-    [CleverTap disablePersonalization];
+    [self setPersonalization:NO accountId:accountId];
 }
 
 
