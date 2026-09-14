@@ -28,9 +28,28 @@ static NSString *ctReadString(NSDictionary *dict, NSString *key, NSString *prefi
     return ctRead(dict, key, [NSString class], @"a string", prefix, error);
 }
 
-// JS booleans arrive as NSNumber — the only boxed class for them (see the header).
+// JS booleans arrive as NSNumber — but so do JS numbers. Only a real boolean (a CFBoolean
+// underneath) is accepted, so `analyticsOnly: 1` is rejected exactly as Android rejects it
+// with ReadableType.Boolean; otherwise boolValue would quietly turn 2 into YES.
 static NSNumber *ctReadBool(NSDictionary *dict, NSString *key, NSString *prefix, NSString **error) {
-    return ctRead(dict, key, [NSNumber class], @"a boolean", prefix, error);
+    NSNumber *value = ctRead(dict, key, [NSNumber class], @"a boolean", prefix, error);
+    if (value != nil && CFGetTypeID((__bridge CFTypeRef)value) != CFBooleanGetTypeID()) {
+        *error = [NSString stringWithFormat:@"%@%@ must be a boolean", prefix, key];
+        return nil;
+    }
+    return value;
+}
+
+// A string that must be exactly one of `allowed`. A typo or a different case must not fall
+// back silently to a default level — `encryptionLevel: "HIGH"` used to mean "none" without
+// a word to the developer.
+static NSString *ctReadEnum(NSDictionary *dict, NSString *key, NSArray<NSString *> *allowed, NSString **error) {
+    NSString *value = ctReadString(dict, key, @"", error);
+    if (value != nil && ![allowed containsObject:value]) {
+        *error = [NSString stringWithFormat:@"%@ must be one of %@", key, [allowed componentsJoinedByString:@", "]];
+        return nil;
+    }
+    return value;
 }
 
 static NSDictionary *ctReadDict(NSDictionary *dict, NSString *key, NSString *prefix, NSString **error) {
@@ -106,8 +125,10 @@ static NSString *ctNonBlank(NSString *string) {
     request->_spikyProxyDomain = [ctReadString(config, @"spikyProxyDomain", @"", error) copy];
     request->_handshakeDomain = [ctReadString(config, @"handshakeDomain", @"", error) copy];
     request->_identityKeys = [ctReadStringArray(config, @"identityKeys", @"", error) copy];
-    request->_logLevel = [ctReadString(config, @"logLevel", @"", error) copy];
-    request->_encryptionLevel = [ctReadString(config, @"encryptionLevel", @"", error) copy];
+    // Same accepted words as Android (InstanceConfigRequest.LOG_LEVELS / ENCRYPTION_LEVELS);
+    // iOS maps "verbose" to its debug level.
+    request->_logLevel = [ctReadEnum(config, @"logLevel", @[@"off", @"info", @"debug", @"verbose"], error) copy];
+    request->_encryptionLevel = [ctReadEnum(config, @"encryptionLevel", @[@"none", @"medium", @"high"], error) copy];
     request->_analyticsOnly = ctReadBool(config, @"analyticsOnly", @"", error);
     request->_enablePersonalization = ctReadBool(config, @"enablePersonalization", @"", error);
     request->_disableAppLaunchedEvent = ctReadBool(config, @"disableAppLaunchedEvent", @"", error);

@@ -18,7 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
  * handed to the SDK as an NSString.
  *
  * Nullable NSNumber properties are the iOS spelling of Kotlin's `Boolean?`: nil = not set,
- * otherwise @YES / @NO (Objective-C has no separate Boolean class).
+ * otherwise @YES / @NO (Objective-C has no separate Boolean class). Only real booleans are
+ * accepted — a JS number under a boolean key is rejected, as on Android.
  */
 @interface CleverTapReactInstanceConfigRequest : NSObject
 
@@ -30,7 +31,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly, nullable) NSString *spikyProxyDomain;
 @property (nonatomic, copy, readonly, nullable) NSString *handshakeDomain;
 @property (nonatomic, copy, readonly, nullable) NSArray<NSString *> *identityKeys;
+/// One of "off", "info", "debug", "verbose", or nil.
 @property (nonatomic, copy, readonly, nullable) NSString *logLevel;
+/// One of "none", "medium", "high", or nil.
 @property (nonatomic, copy, readonly, nullable) NSString *encryptionLevel;
 @property (nonatomic, strong, readonly, nullable) NSNumber *analyticsOnly;
 @property (nonatomic, strong, readonly, nullable) NSNumber *enablePersonalization;

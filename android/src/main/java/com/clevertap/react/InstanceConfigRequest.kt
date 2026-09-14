@@ -29,10 +29,12 @@ class InstanceConfigRequest private constructor(
     val spikyProxyDomain: String?,
     val identityKeys: List<String>?,
     val handshakeDomain: String?,
+    /** One of [LOG_LEVELS], or null. */
     val logLevel: String?,
     val analyticsOnly: Boolean?,
     val enablePersonalization: Boolean?,
     val disableAppLaunchedEvent: Boolean?,
+    /** One of [ENCRYPTION_LEVELS], or null. */
     val encryptionLevel: String?,
     val encryptionInTransit: Boolean?,
     /** null = not given; the SDK config keeps its manifest-derived default then. */
@@ -56,6 +58,14 @@ class InstanceConfigRequest private constructor(
     class InvalidConfigException(message: String) : IllegalArgumentException(message)
 
     companion object {
+
+        /** Accepted `logLevel` words. iOS maps "verbose" to its debug level (it has no verbose). */
+        @JvmField
+        val LOG_LEVELS: List<String> = listOf("off", "info", "debug", "verbose")
+
+        /** Accepted `encryptionLevel` words: none, PII only, all data. */
+        @JvmField
+        val ENCRYPTION_LEVELS: List<String> = listOf("none", "medium", "high")
 
         @JvmStatic
         @Throws(InvalidConfigException::class)
@@ -100,11 +110,11 @@ class InstanceConfigRequest private constructor(
                 spikyProxyDomain = optString(config, "spikyProxyDomain"),
                 identityKeys = optStringList(config, "identityKeys"),
                 handshakeDomain = optString(config, "handshakeDomain"),
-                logLevel = optString(config, "logLevel"),
+                logLevel = optEnum(config, "logLevel", LOG_LEVELS),
                 analyticsOnly = optBoolean(config, "analyticsOnly"),
                 enablePersonalization = optBoolean(config, "enablePersonalization"),
                 disableAppLaunchedEvent = optBoolean(config, "disableAppLaunchedEvent"),
-                encryptionLevel = optString(config, "encryptionLevel"),
+                encryptionLevel = optEnum(config, "encryptionLevel", ENCRYPTION_LEVELS),
                 encryptionInTransit = optBoolean(config, "encryptionInTransit"),
                 useCustomCleverTapId = useCustomCleverTapId,
                 cleverTapId = cleverTapId,
@@ -148,6 +158,19 @@ class InstanceConfigRequest private constructor(
                 ReadableType.Array -> map.getArray(key)
                 else -> throw InvalidConfigException("$prefix$key must be an array")
             }
+
+        /**
+         * A string that must be exactly one of [allowed]. A typo or a different case must not
+         * fall back silently to a default level — `encryptionLevel: "HIGH"` used to mean
+         * "none" without a word to the developer.
+         */
+        private fun optEnum(map: ReadableMap, key: String, allowed: List<String>): String? {
+            val value = optString(map, key) ?: return null
+            if (value !in allowed) {
+                throw InvalidConfigException("$key must be one of ${allowed.joinToString(", ")}")
+            }
+            return value
+        }
 
         private fun optStringList(map: ReadableMap, key: String): List<String>? {
             val array = optArray(map, key) ?: return null

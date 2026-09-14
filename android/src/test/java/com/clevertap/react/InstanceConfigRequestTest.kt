@@ -171,6 +171,26 @@ class InstanceConfigRequestTest {
     }
 
     @Test
+    fun parse_logLevelAndEncryptionLevel_acceptOnlyKnownValues() {
+        for (level in listOf("off", "info", "debug", "verbose")) {
+            assertEquals(level, InstanceConfigRequest.parse(config("logLevel", level)).logLevel)
+        }
+        for (level in listOf("none", "medium", "high")) {
+            assertEquals(level, InstanceConfigRequest.parse(config("encryptionLevel", level)).encryptionLevel)
+        }
+        val unset = InstanceConfigRequest.parse(config("logLevel", null, "encryptionLevel", null))
+        assertNull(unset.logLevel)
+        assertNull(unset.encryptionLevel)
+
+        // A typo or a different case must not silently fall back to a default level.
+        assertRejects("logLevel", config("logLevel", "verbse"))
+        assertRejects("logLevel", config("logLevel", "DEBUG"))
+        assertRejects("encryptionLevel", config("encryptionLevel", "HIGH"))
+        assertRejects("encryptionLevel", config("encryptionLevel", "full"))
+        assertRejects("encryptionLevel", config("encryptionLevel", 2))
+    }
+
+    @Test
     fun parse_blankRegion_readsAsNoRegion() {
         assertNull(InstanceConfigRequest.parse(config("region", "  ")).region)
         assertEquals("in1", InstanceConfigRequest.parse(config("region", "in1")).region)
