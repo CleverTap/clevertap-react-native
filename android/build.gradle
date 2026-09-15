@@ -50,6 +50,12 @@ android {
         }
     }
 
+    testOptions {
+        // JVM unit tests call android.util.Log through the code under test; return
+        // defaults instead of throwing "not mocked".
+        unitTests.returnDefaultValues = true
+    }
+
     namespace 'com.clevertap.react'
 }
 
@@ -60,4 +66,5 @@ dependencies {
     implementation 'com.facebook.react:react-native:+'
     implementation 'androidx.core:core-ktx:1.9.0'
     compileOnly 'androidx.annotation:annotation:1.2.0'
+    testImplementation 'junit:junit:4.13.2'
 }

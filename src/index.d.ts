@@ -3,14 +3,15 @@
    ******************/
 
    /**
-    * Add a CleverTap event listener
+    * Add a CleverTap event listener for the default account's events.
     * @param {string} eventName - the CleverTap event name
     * @param {function(event)} handler - Event handler
+    * @returns a subscription; call `remove()` to detach only this handler
     */
    export function addListener(
    eventName: string,
    handler: Function
-   ): void;
+   ): { remove: () => void };
 
    /**
     * Removes all of the registered listeners for given eventName.
@@ -813,12 +814,343 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    ******************/
 
   /**
-    * Change the native instance of CleverTapAPI by using the instance for
-    * specific account. Used by Leanplum RN SDK.
+    * Swaps the DEFAULT SLOT: from this call on, the top-level `CleverTap` object's
+    * calls AND listeners address the given account. Handles from `getInstance` /
+    * `createInstance` are never affected by a swap — each stays pinned to its own
+    * account.
     *
-    * @param accountId {string} - The ID of the account to use when switching instance.
+    * Prefer `CleverTap.getInstance(accountId)` when you want to talk to another
+    * account WITHOUT changing what the top-level object means; use this method when
+    * you deliberately want every existing top-level call site to start addressing a
+    * different account (e.g. a whole-app brand switch).
+    *
+    * @param accountId {string} - The ID of the account the default slot should point to.
     */
   export function setInstanceWithAccountId(accountId: string): void;
+
+  /**
+   * Configuration for creating an additional CleverTap account from JavaScript.
+   * Note: on iOS, `region` wins over `proxyDomain`/`spikyProxyDomain` (a warning is
+   * logged); Android applies both. `logLevel` 'verbose' maps to 'debug' on iOS.
+   */
+  export type CleverTapInstanceConfig = {
+    accountId: string;
+    accountToken: string;
+    region?: string;
+    proxyDomain?: string;
+    spikyProxyDomain?: string;
+    /** Custom domain for the SDK's initial handshake request. */
+    handshakeDomain?: string;
+    /**
+     * Which profile keys identify a user (e.g. ['Email', 'Identity']).
+     * Applies to accounts created from JS; the DEFAULT account takes identity
+     * keys only from AndroidManifest.xml / Info.plist.
+     */
+    identityKeys?: string[];
+    /** 'verbose' maps to 'debug' on iOS (iOS has no verbose level). */
+    logLevel?: 'off' | 'info' | 'debug' | 'verbose';
+    /** Restrict this account to analytics only (no in-apps or engagement rendering). */
+    analyticsOnly?: boolean;
+    /** Enable the local personalization getters (profile/event property reads). */
+    enablePersonalization?: boolean;
+    /** Suppress the automatic "App Launched" system event for this account. */
+    disableAppLaunchedEvent?: boolean;
+    /** At-rest encryption: 'none', 'medium' (PII only) or 'high' (all data). */
+    encryptionLevel?: 'none' | 'medium' | 'high';
+    encryptionInTransit?: boolean;
+    /**
+     * Set true when supplying your own CleverTap ID. Must be given TOGETHER with
+     * `cleverTapId` (or both left out): `createInstance` rejects with `EINVALID` on a
+     * mismatch, because the native SDKs would otherwise silently ignore the ID (flag
+     * missing) or leave the account with an error device id (ID missing).
+     */
+    useCustomCleverTapId?: boolean;
+    /**
+     * Your custom CleverTap ID for this account's user (e.g. your own customer id).
+     * Only honored at creation, and only together with `useCustomCleverTapId: true`.
+     */
+    cleverTapId?: string;
+    /** Android-only options; ignored on iOS. */
+    android?: {
+      /** Allow this account to collect the Google Advertising ID. */
+      useGoogleAdId?: boolean;
+      /** Enable background/pull notification sync jobs. */
+      backgroundSync?: boolean;
+      /**
+       * Extra push providers beyond FCM. Same four parts as the manifest
+       * CLEVERTAP_PROVIDER_1/2 keys and the pushRegistrationToken pushType object.
+       */
+      pushProviders?: Array<{
+        type: string;
+        prefKey: string;
+        className: string;
+        messagingSDKClassName: string;
+      }>;
+    };
+    /** iOS-only options; ignored on Android. */
+    ios?: {
+      /** Do not derive the device id from identifierForVendor. */
+      disableIDFV?: boolean;
+      /** Apply iOS complete file protection to SDK-stored files. */
+      enableFileProtection?: boolean;
+    };
+  };
+
+  /** Subscription returned by addListener; call remove() to detach the handler. */
+  export type CleverTapEventSubscription = { remove: () => void };
+
+  /**
+   * A handle for ONE CleverTap account. Methods behave like their top-level CleverTap
+   * counterparts but act on this handle's account; listeners fire only for this
+   * account's events. OS-level methods (push registration, notification channels,
+   * initial URL) exist on the handle for shape consistency but warn and do nothing —
+   * call them on the top-level CleverTap object. setDebugLevel is global by design
+   * and is not on the handle. Custom template DEFINITIONS are app-wide (every account
+   * gets the registered templates), but presenting, argument reads and dismissal are
+   * per-account — those methods are on the handle.
+   */
+  export interface CleverTapInstance {
+    readonly accountId: string;
+
+    /* Events & profile (core) */
+    recordEvent(eventName: string, eventProps?: object): void;
+    onUserLogin(profile: object): void;
+    profileSet(profile: object): void;
+    getCleverTapID(callback: CallbackString): void;
+    addListener(eventName: string, handler: (event: any) => void): CleverTapEventSubscription;
+    /** Like addListener, but the handler fires only once — for the first matching event of this account — then detaches itself. */
+    addOneTimeListener(eventName: string, handler: (event: any) => void): CleverTapEventSubscription;
+    removeListener(eventName: string): void;
+
+    /* Locale & push tokens */
+    setLocale(locale: string): void;
+    pushRegistrationToken(token: string, pushType: any): void;
+    setFCMPushToken(token: string): void;
+
+    /* Consent, personalization & connectivity */
+    setOptOut(userOptOut: boolean, allowSystemEvents?: boolean): void;
+    setOffline(offline: boolean): void;
+    unmute(): void;
+    enableDeviceNetworkInfoReporting(enable: boolean): void;
+    enablePersonalization(): void;
+    /** Disables the Personalization API for this account. */
+    disablePersonalization(): void;
+
+    /* Events */
+    recordScreenView(screenName: string): void;
+    recordChargedEvent(details: any, items: any): void;
+    eventGetFirstTime(eventName: string, callback: Callback): void;
+    eventGetLastTime(eventName: string, callback: Callback): void;
+    eventGetOccurrences(eventName: string, callback: Callback): void;
+    eventGetDetail(eventName: string, callback: Callback): void;
+    getEventHistory(callback: Callback): void;
+    getUserEventLog(eventName: string, callback: Callback): void;
+    getUserEventLogCount(eventName: string, callback: Callback): void;
+    getUserEventLogHistory(callback: Callback): void;
+
+    /* Location & profile */
+    setLocation(lat: number, lon: number): void;
+    profileGetCleverTapAttributionIdentifier(callback: CallbackString): void;
+    profileGetCleverTapID(callback: CallbackString): void;
+    profileGetProperty(propertyName: string, callback: Callback): void;
+    profileRemoveValueForKey(key: string): void;
+    profileSetMultiValuesForKey(values: any, key: string): void;
+    profileAddMultiValueForKey(value: string, key: string): void;
+    profileAddMultiValuesForKey(values: any, key: string): void;
+    profileRemoveMultiValueForKey(value: string, key: string): void;
+    profileRemoveMultiValuesForKey(values: any, key: string): void;
+    profileIncrementValueForKey(value: number, key: string): void;
+    profileDecrementValueForKey(value: number, key: string): void;
+    pushInstallReferrer(source: string, medium: string, campaign: string): void;
+
+    /* Session */
+    sessionGetTimeElapsed(callback: Callback): void;
+    sessionGetTotalVisits(callback: Callback): void;
+    getUserLastVisitTs(callback: Callback): void;
+    getUserAppLaunchCount(callback: Callback): void;
+    sessionGetScreenCount(callback: Callback): void;
+    sessionGetPreviousVisitTime(callback: Callback): void;
+    sessionGetUTMDetails(callback: Callback): void;
+
+    /* App Inbox */
+    initializeInbox(): void;
+    fetchInbox(callback?: Callback): void;
+    showInbox(styleConfig: any): void;
+    dismissInbox(): void;
+    getInboxMessageCount(callback: Callback): void;
+    getInboxMessageUnreadCount(callback: Callback): void;
+    getAllInboxMessages(callback: Callback): void;
+    getUnreadInboxMessages(callback: Callback): void;
+    getInboxMessageForId(messageId: string, callback: Callback): void;
+    deleteInboxMessageForId(messageId: string): void;
+    deleteInboxMessagesForIDs(messageIds: any): void;
+    markReadInboxMessageForId(messageId: string): void;
+    markReadInboxMessagesForIDs(messageIds: any): void;
+    pushInboxNotificationClickedEventForId(messageId: string): void;
+    pushInboxNotificationViewedEventForId(messageId: string): void;
+
+    /* Native Display */
+    getAllDisplayUnits(callback: Callback): void;
+    getDisplayUnitForId(unitID: string, callback: Callback): void;
+    pushDisplayUnitViewedEventForID(unitID: string): void;
+    pushDisplayUnitClickedEventForID(unitID: string): void;
+    pushDisplayUnitElementClickedEventForID(unitID: string, additionalProperties?: Record<string, unknown>): void;
+
+    /* Product Config & Feature Flags (deprecated natively, still routed) */
+    setDefaultsMap(productConfigMap: any): void;
+    fetch(): void;
+    fetchWithMinimumIntervalInSeconds(intervalInSecs: number): void;
+    activate(): void;
+    fetchAndActivate(): void;
+    setMinimumFetchIntervalInSeconds(intervalInSecs: number): void;
+    resetProductConfig(): void;
+    getProductConfigString(key: string, callback: Callback): void;
+    getProductConfigBoolean(key: string, callback: Callback): void;
+    getNumber(key: string, callback: Callback): void;
+    getLastFetchTimeStampInMillis(callback: Callback): void;
+    getFeatureFlag(key: string, defaultValue: boolean, callback: Callback): void;
+
+    /* InApp controls */
+    suspendInAppNotifications(): void;
+    discardInAppNotifications(dismissInAppIfVisible?: boolean): void;
+    resumeInAppNotifications(): void;
+    dismissPipInApp(): void;
+    fetchInApps(callback: Callback): void;
+    clearInAppResources(expiredOnly: boolean): void;
+
+    /* Product Experiences: Vars */
+    syncVariables(): void;
+    syncVariablesinProd(isProduction: boolean): void;
+    fetchVariables(callback: Callback): void;
+    defineVariables(variables: object): void;
+    defineFileVariable(fileVariable: string): void;
+    getVariable(name: string, callback: Callback): void;
+    getVariables(callback: Callback): void;
+    onVariablesChanged(handler: Function): void;
+    onOneTimeVariablesChanged(handler: Function): void;
+    onValueChanged(name: string, handler: Function): void;
+    onVariablesChangedAndNoDownloadsPending(handler: Function): void;
+    onceVariablesChangedAndNoDownloadsPending(handler: Function): void;
+    onFileValueChanged(name: string, handler: Function): void;
+    variants(callback: Callback): void;
+
+    /* Custom templates. The active template context lives PER ACCOUNT natively:
+       only the account whose campaign presented the template can read its arguments
+       or dismiss it. Template definitions stay app-wide. */
+
+    /** Uploads the registered templates to THIS account's dashboard (debug builds only). */
+    syncCustomTemplates(): void;
+    /** Uploads the registered templates to THIS account's dashboard. */
+    syncCustomTemplatesInProd(isProduction: boolean): void;
+    /** Notify the SDK that this account's active template was dismissed (frees its in-app queue). */
+    customTemplateSetDismissed(templateName: string): Promise<void>;
+    /** Notify the SDK that this account's active template is presented to the user. */
+    customTemplateSetPresented(templateName: string): Promise<void>;
+    /** Trigger an action argument of this account's active template. */
+    customTemplateRunAction(templateName: string, argName: string): Promise<void>;
+    /** Read a string argument of this account's active template. */
+    customTemplateGetStringArg(templateName: string, argName: string): Promise<string>;
+    /** Read a number argument of this account's active template. */
+    customTemplateGetNumberArg(templateName: string, argName: string): Promise<number>;
+    /** Read a boolean argument of this account's active template. */
+    customTemplateGetBooleanArg(templateName: string, argName: string): Promise<boolean>;
+    /** Read a file argument (a file path) of this account's active template. */
+    customTemplateGetFileArg(templateName: string, argName: string): Promise<string>;
+    /** Read an object argument of this account's active template. */
+    customTemplateGetObjectArg(templateName: string, argName: string): Promise<any>;
+    /** A string representation of this account's active template context. */
+    customTemplateContextToString(templateName: string): Promise<string>;
+
+    /* OS-level methods below exist on the handle for shape consistency only:
+       each one warns and does nothing. Call them on the top-level CleverTap object. */
+
+    /* Push permission. Real per-account calls: the OS permission is app-wide, but the
+       prompt runs through THIS account and the CleverTapPushPermissionResponseReceived
+       event fires on THIS handle's listeners. */
+
+    /** Shows the (app-wide) system push-permission dialog via this account; the response event fires on this handle. */
+    promptForPushPermission(showFallbackSettings: boolean): void;
+    /** Shows the push primer local in-app through this account's in-app engine. */
+    promptPushPrimer(localInAppConfig: any): void;
+    /** Returns the app-wide push permission state (same answer for every account). */
+    isPushPermissionGranted(callback: CallbackString): void;
+
+    /** Warns and no-ops on account handles; call registerForPush on the top-level CleverTap object. */
+    registerForPush(): void;
+    /** Not supported on account handles: warns and invokes the callback with an error; call getInitialUrl on the top-level CleverTap object. */
+    getInitialUrl(callback: Callback): void;
+    /** Warns and no-ops on account handles; call createNotificationChannel on the top-level CleverTap object. */
+    createNotificationChannel(
+      channelID: string,
+      channelName: string,
+      channelDescription: string,
+      importance: number,
+      showBadge: boolean
+    ): void;
+    /** Warns and no-ops on account handles; call createNotificationChannelWithSound on the top-level CleverTap object. */
+    createNotificationChannelWithSound(
+      channelID: string,
+      channelName: string,
+      channelDescription: string,
+      importance: number,
+      showBadge: boolean,
+      sound: string
+    ): void;
+    /** Warns and no-ops on account handles; call createNotificationChannelWithGroupId on the top-level CleverTap object. */
+    createNotificationChannelWithGroupId(
+      channelID: string,
+      channelName: string,
+      channelDescription: string,
+      importance: number,
+      groupId: string,
+      showBadge: boolean
+    ): void;
+    /** Warns and no-ops on account handles; call createNotificationChannelWithGroupIdAndSound on the top-level CleverTap object. */
+    createNotificationChannelWithGroupIdAndSound(
+      channelID: string,
+      channelName: string,
+      channelDescription: string,
+      importance: number,
+      groupId: string,
+      showBadge: boolean,
+      sound: string
+    ): void;
+    /** Warns and no-ops on account handles; call createNotificationChannelGroup on the top-level CleverTap object. */
+    createNotificationChannelGroup(groupID: string, groupName: string): void;
+    /** Warns and no-ops on account handles; call deleteNotificationChannel on the top-level CleverTap object. */
+    deleteNotificationChannel(channelID: string): void;
+    /** Warns and no-ops on account handles; call deleteNotificationChannelGroup on the top-level CleverTap object. */
+    deleteNotificationChannelGroup(groupID: string): void;
+    /** Warns and no-ops on account handles; call createNotification on the top-level CleverTap object. */
+    createNotification(extras: any): void;
+  }
+
+  /**
+   * Creates an additional CleverTap account from JavaScript and resolves with its handle.
+   * Config semantics match the native SDKs: on a fresh app launch the passed config is
+   * applied and persisted (fetch-config-and-create on every launch works; changes take
+   * effect next launch). A repeat call in the SAME app run resolves with the existing
+   * instance and the new config is not applied (native in-process behavior).
+   * Rejects with `EINVALID` when accountId/accountToken are missing or empty, when a
+   * field has the wrong type (a `null` value simply means "not set"), or when
+   * `cleverTapId` and `useCustomCleverTapId: true` are not given together.
+   */
+  export function createInstance(config: CleverTapInstanceConfig): Promise<CleverTapInstance>;
+
+  /**
+   * Returns the handle for an account. Always returns a handle (never null); calls on a
+   * handle whose account does not exist natively warn and do nothing. An invalid
+   * accountId (empty or not a string) logs an error and returns the DEFAULT account's
+   * handle, so calls and listeners stay consistent instead of silently splitting.
+   *
+   * Use getInstance for accounts created natively at app launch — accounts passed to
+   * `CleverTapRnAPI.initReactNativeIntegration(context, launchConfigs)` (Android) or
+   * `applicationDidLaunchWithOptions:launchConfigs:` (iOS). Those already exist with the
+   * config the app supplied at launch (and can receive cold-start events such as the push
+   * tap that launched the app), so do NOT pass a config again from JS. For every other
+   * account, call `createInstance(config)` as its first touch each run.
+   */
+  export function getInstance(accountId: string): CleverTapInstance;
 
   /*******************
    * Product Experiences: Vars

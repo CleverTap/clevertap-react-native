@@ -71,6 +71,20 @@ public class MainApplication extends CleverTapApplication implements ActivityLif
         return mReactNativeHost;
     }
 
+    // Launch configs: accounts listed here are created at process start, so they
+    // receive cold-start events (e.g. the push tap that launched the app). On the
+    // JS side use CleverTap.getInstance(accountId) for them — no config again from JS.
+    // Commented out because the JS createInstance demos must keep exercising the
+    // fresh-config path; uncomment (with real credentials) to try it.
+    // @Override
+    // public List<com.clevertap.react.CleverTapLaunchConfig> launchConfigs() {
+    //     com.clevertap.android.sdk.CleverTapInstanceConfig configB =
+    //             com.clevertap.android.sdk.CleverTapInstanceConfig.createInstance(
+    //                     this, "B-ACCOUNT-ID", "B-TOKEN", "in1");
+    //     return java.util.Collections.singletonList(
+    //             new com.clevertap.react.CleverTapLaunchConfig(configB));
+    // }
+
     @Override
     public void onCreate() {
         CleverTapCustomTemplates.registerCustomTemplates(this, "custom/templates.json");

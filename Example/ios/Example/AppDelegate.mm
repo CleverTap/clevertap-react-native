@@ -29,8 +29,18 @@
   [CleverTap autoIntegrate];
   [self addNotificationCategories];
 
+  // Launch configs: accounts listed here are created at launch, so they receive
+  // cold-start events (e.g. the push tap that launched the app). On the JS side
+  // use CleverTap.getInstance(accountId) for them — no config again from JS.
+  // Commented out because the JS createInstance demos must keep exercising the
+  // fresh-config path; uncomment (with real credentials) to try it:
+  // CleverTapInstanceConfig *configB = [[CleverTapInstanceConfig alloc]
+  //     initWithAccountId:@"B-ACCOUNT-ID" accountToken:@"B-TOKEN" accountRegion:@"in1"];
+  // [[CleverTapReactManager sharedInstance]
+  //     applicationDidLaunchWithOptions:launchOptions
+  //                       launchConfigs:@[[[CleverTapReactLaunchConfig alloc] initWithConfig:configB]]];
   [[CleverTapReactManager sharedInstance] applicationDidLaunchWithOptions:launchOptions];
-  
+
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 

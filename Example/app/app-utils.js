@@ -1024,3 +1024,121 @@ export const printDisplayUnit = (element) => {
         }
     }
 };
+
+/*******************
+ * Multi Instance
+ ******************/
+
+// Replace with your own second CleverTap test account to see its data on the dashboard.
+// The main (default) account from AndroidManifest.xml / Info.plist keeps working as-is.
+const SECOND_ACCOUNT_CONFIG = {
+    accountId: '46W-WWR-R85Z',
+    accountToken: 'TEST-200-064',
+    region: 'eu1',
+    logLevel: 'verbose'
+};
+
+let secondAccount = null;
+
+export const multiInstance_createInstance = async () => {
+    try {
+        secondAccount = await CleverTap.createInstance(SECOND_ACCOUNT_CONFIG);
+        showToast('Multi Instance', `created handle for ${secondAccount.accountId}`);
+        console.log('createInstance ->', secondAccount.accountId);
+        // Per-account listener: fires ONLY for account B's profile init — the main
+        // CleverTap listeners never see it (and this one never sees the main account's).
+        secondAccount.addListener(CleverTap.CleverTapProfileDidInitialize, (event) => {
+            showToast('Account B ProfileDidInitialize', JSON.stringify(event));
+            console.log('Account B CleverTapProfileDidInitialize ->', event);
+        });
+    } catch (error) {
+        showToast('Multi Instance createInstance failed', `${error}`);
+        console.log('createInstance error ->', error);
+    }
+};
+
+const requireSecondAccount = () => {
+    if (secondAccount == null) {
+        showToast('Multi Instance', 'run "createInstance for account B" first');
+    }
+    return secondAccount;
+};
+
+export const multiInstance_recordEvent = () => {
+    const handle = requireSecondAccount();
+    if (handle == null) {
+        return;
+    }
+    handle.recordEvent('Insurance Bought', { plan: 'gold', amount: 4999, autoRenew: true });
+    showToast('Multi Instance', `recorded "Insurance Bought" on ${handle.accountId}`);
+    console.log('recordEvent on', handle.accountId);
+};
+
+export const multiInstance_onUserLogin = () => {
+    const handle = requireSecondAccount();
+    if (handle == null) {
+        return;
+    }
+    handle.onUserLogin({
+        Name: 'Jane Insurance',
+        Identity: 'jane.insurance-001',
+        Email: 'jane.insurance@example.com'
+    });
+    showToast('Multi Instance', `onUserLogin on ${handle.accountId}`);
+    console.log('onUserLogin on', handle.accountId);
+};
+
+export const multiInstance_profileSet = () => {
+    const handle = requireSecondAccount();
+    if (handle == null) {
+        return;
+    }
+    handle.profileSet({ Plan: 'gold', 'Policy Count': 2, 'Auto Renew': true });
+    showToast('Multi Instance', `profileSet on ${handle.accountId}`);
+    console.log('profileSet on', handle.accountId);
+};
+
+export const multiInstance_getCleverTapID = () => {
+    const handle = requireSecondAccount();
+    if (handle == null) {
+        return;
+    }
+    handle.getCleverTapID((err, res) => {
+        showToast(`Account B CleverTapID`, `${res}`);
+        console.log('Account B getCleverTapID ->', err, res);
+    });
+};
+
+export const multiInstance_unknownAccount = () => {
+    // Edge case: an account that was never created. Must log ONE native warning and do
+    // nothing — never crash. getInstance always returns a handle (never null).
+    CleverTap.getInstance('NEVER-CREATED-ID').recordEvent('Should Be Ignored');
+    showToast('Multi Instance', 'unknown account call ignored — see native warning log');
+    console.log('recordEvent on unknown account: expect a native warning, no crash');
+};
+
+export const multiInstance_customTemplates = () => {
+    const handle = requireSecondAccount();
+    if (handle == null) {
+        return;
+    }
+    // Listen for account B's template presents ONLY (a template presented by the main
+    // account never fires this). The handler reads an argument from B's active context
+    // and dismisses it — dismissal is what unblocks B's in-app queue.
+    handle.addListener(CleverTap.CleverTapCustomTemplatePresent, async (templateName) => {
+        console.log('Account B template presented ->', templateName);
+        try {
+            const text = await handle.customTemplateGetStringArg(templateName, 'Text');
+            showToast(`Account B template: ${templateName}`, `Text arg: ${text}`);
+        } catch (error) {
+            console.log('Account B customTemplateGetStringArg error ->', error);
+        }
+        await handle.customTemplateSetPresented(templateName);
+        await handle.customTemplateSetDismissed(templateName);
+        console.log('Account B template dismissed ->', templateName);
+    });
+    // Upload the registered template definitions to ACCOUNT B's dashboard (debug
+    // builds only), so a campaign can be created there to trigger the listener above.
+    handle.syncCustomTemplates();
+    showToast('Multi Instance', `template listener added + synced templates on ${handle.accountId}`);
+};
