@@ -11,6 +11,8 @@ const EventEmitter = Platform.select({
 * @param {string} libName - Library name will be "React-Native"
 * @param {int} libVersion - The updated library version. If current version is 1.1.0 then pass as 10100  
 */
+// Must match Constants.LIBRARY_NAME (Android) and kCleverTapLibraryName (iOS) —
+// the natives re-stamp this name on every instance they wire.
 const libName = 'React-Native';
 const libVersion = 40301;
 CleverTapReact.setLibrary(libName,libVersion);
@@ -1603,6 +1605,8 @@ var CleverTap = {
     * EINVALID for an invalid config or ECREATE when the native SDK could not create it
     */
     createInstance: function (config) {
+        // result.accountId is the resolve-payload contract built by both natives
+        // (Android accountIdResult(), iOS CleverTapReact.mm) — rename everywhere or nowhere.
         return CleverTapReact.createInstance(config).then((result) => getOrMakeHandle(result.accountId));
     },
 

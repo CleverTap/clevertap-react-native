@@ -33,6 +33,17 @@ static NSDateFormatter *dateFormatter;
 /// One constant so every method says exactly the same thing to JS.
 static NSString *const kCleverTapNotInitializedError = @"CleverTap is not initialized";
 
+/// Promise rejection codes for createInstance. Part of the public JS contract —
+/// apps switch on `e.code`, so the exact strings must never drift between call
+/// sites or platforms (Android mirrors these in Constants.kt).
+/// EINVALID = the config itself is unacceptable; ECREATE = the SDK could not create.
+static NSString *const kCleverTapErrorCodeInvalidConfig = @"EINVALID";
+static NSString *const kCleverTapErrorCodeCreateFailed = @"ECREATE";
+
+/// The library name stamped on every instance for analytics attribution.
+/// Must match `libName` in src/index.js and Constants.LIBRARY_NAME on Android.
+static NSString *const kCleverTapLibraryName = @"React-Native";
+
 @interface CleverTapReact()
 // The "default slot": the instance that unaddressed top-level CleverTap calls use.
 // nil means "not resolved yet" -> falls back to [CleverTap sharedInstance].
@@ -169,7 +180,7 @@ RCT_EXPORT_MODULE();
         // call (see customSdkName above) — every account's analytics report it, not
         // just the default's. JS calls setLibrary at module import, before any
         // account can be wired, so the values are always populated by now.
-        [instance setLibrary:@"React-Native"];
+        [instance setLibrary:kCleverTapLibraryName];
         if (self.customSdkName != nil) {
             [instance setCustomSdkVersion:self.customSdkName version:self.customSdkVersion];
         }
@@ -249,7 +260,7 @@ RCT_EXPORT_METHOD(createInstance:(NSDictionary *)config
     NSString *configError = nil;
     CleverTapReactInstanceConfigRequest *request = [CleverTapReactInstanceConfigRequest parse:config error:&configError];
     if (request == nil) {
-        reject(@"EINVALID", [@"createInstance: " stringByAppendingString:configError], nil);
+        reject(kCleverTapErrorCodeInvalidConfig, [@"createInstance: " stringByAppendingString:configError], nil);
         return;
     }
     NSString *accountId = request.accountId;
@@ -327,17 +338,19 @@ RCT_EXPORT_METHOD(createInstance:(NSDictionary *)config
             ? [CleverTap instanceWithConfig:ctConfig andCleverTapID:request.cleverTapId]
             : [CleverTap instanceWithConfig:ctConfig];
     } @catch (NSException *exception) {
-        reject(@"ECREATE", [NSString stringWithFormat:@"createInstance failed for accountId %@: %@",
+        reject(kCleverTapErrorCodeCreateFailed, [NSString stringWithFormat:@"createInstance failed for accountId %@: %@",
                             accountId, exception.reason], nil);
         return;
     }
     if (instance == nil) {
-        reject(@"ECREATE", [NSString stringWithFormat:@"createInstance failed for accountId %@", accountId], nil);
+        reject(kCleverTapErrorCodeCreateFailed, [NSString stringWithFormat:@"createInstance failed for accountId %@", accountId], nil);
         return;
     }
     // Library name + wrapper version are stamped inside resolveInstance's wire-once
     // block — the single owner for every wiring path, not just createInstance.
     [self resolveInstance:accountId]; // wires delegates + library stamp exactly once
+    // "accountId" is the createInstance resolve-payload contract: JS reads
+    // result.accountId, Android builds the same shape in accountIdResult().
     resolve(@{@"accountId": accountId});
 }
 

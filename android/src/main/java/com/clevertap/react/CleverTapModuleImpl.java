@@ -1884,7 +1884,7 @@ public class CleverTapModuleImpl {
 
     @SuppressLint("RestrictedApi")
     private void initCtInstance(CleverTapAPI clevertap) {
-        clevertap.setLibrary("React-Native");
+        clevertap.setLibrary(Constants.LIBRARY_NAME);
         // Stamp the wrapper version remembered from the import-time setLibrary call
         // (see customSdkName above) — every account's analytics report it, not just
         // the default's. JS calls setLibrary at module import, before any account can
@@ -1997,7 +1997,7 @@ public class CleverTapModuleImpl {
         try {
             request = InstanceConfigRequest.parse(config);
         } catch (InstanceConfigRequest.InvalidConfigException e) {
-            promise.reject("EINVALID", "createInstance: " + e.getMessage());
+            promise.reject(Constants.ERROR_CODE_INVALID_CONFIG, "createInstance: " + e.getMessage());
             return;
         }
         final String accountId = request.getAccountId();
@@ -2008,7 +2008,7 @@ public class CleverTapModuleImpl {
                 ? CleverTapInstanceConfig.createInstance(this.context, accountId, request.getAccountToken(), request.getRegion())
                 : CleverTapInstanceConfig.createInstance(this.context, accountId, request.getAccountToken());
         if (ctConfig == null) {
-            promise.reject("ECREATE", "createInstance could not build a config for accountId " + accountId);
+            promise.reject(Constants.ERROR_CODE_CREATE_FAILED, "createInstance could not build a config for accountId " + accountId);
             return;
         }
         applyOptionalConfig(ctConfig, request);
@@ -2034,11 +2034,11 @@ public class CleverTapModuleImpl {
                         ? CleverTapAPI.instanceWithConfig(this.context, ctConfig, request.getCleverTapId())
                         : CleverTapAPI.instanceWithConfig(this.context, ctConfig);
             } catch (Throwable t) {
-                promise.reject("ECREATE", "createInstance failed for accountId " + accountId, t);
+                promise.reject(Constants.ERROR_CODE_CREATE_FAILED, "createInstance failed for accountId " + accountId, t);
                 return;
             }
             if (instance == null) {
-                promise.reject("ECREATE", "createInstance failed for accountId " + accountId);
+                promise.reject(Constants.ERROR_CODE_CREATE_FAILED, "createInstance failed for accountId " + accountId);
                 return;
             }
             resolveInstance(accountId); // wires listeners + setLibrary via initCtInstance
@@ -2060,6 +2060,9 @@ public class CleverTapModuleImpl {
 
     private WritableMap accountIdResult(String accountId) {
         WritableMap result = Arguments.createMap();
+        // "accountId" is the createInstance resolve-payload contract: JS reads
+        // result.accountId (src/index.js createInstance), iOS resolves the same
+        // shape in CleverTapReact.mm. Rename in all three places or not at all.
         result.putString("accountId", accountId);
         return result;
     }
