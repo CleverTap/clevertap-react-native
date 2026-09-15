@@ -1999,6 +1999,15 @@ public class CleverTapModuleImpl {
         } catch (InstanceConfigRequest.InvalidConfigException e) {
             promise.reject(Constants.ERROR_CODE_INVALID_CONFIG, "createInstance: " + e.getMessage());
             return;
+        } catch (Throwable t) {
+            // Belt and suspenders: every parse path is type-guarded, so nothing here
+            // SHOULD throw anything else — but we are on the NativeModules thread,
+            // where an uncaught throw is an app crash, not a rejected promise. Never
+            // let a surprise (a React Native bridge quirk, a checkNotNull) take the
+            // app down when rejecting is available.
+            promise.reject(Constants.ERROR_CODE_CREATE_FAILED,
+                    "createInstance: unexpected error reading the config", t);
+            return;
         }
         final String accountId = request.getAccountId();
 
