@@ -814,12 +814,17 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    ******************/
 
   /**
-    * @deprecated Since multi-instance support. Use `CleverTap.getInstance(accountId)` to
-    * address an existing account, or `CleverTap.createInstance({accountId, accountToken, ...})`
-    * to create one — without switching the default instance. Kept for backwards
-    * compatibility; will be removed in a future major version.
+    * Swaps the DEFAULT SLOT: from this call on, the top-level `CleverTap` object's
+    * calls AND listeners address the given account. Handles from `getInstance` /
+    * `createInstance` are never affected by a swap — each stays pinned to its own
+    * account.
     *
-    * @param accountId {string} - The ID of the account to use when switching instance.
+    * Prefer `CleverTap.getInstance(accountId)` when you want to talk to another
+    * account WITHOUT changing what the top-level object means; use this method when
+    * you deliberately want every existing top-level call site to start addressing a
+    * different account (e.g. a whole-app brand switch).
+    *
+    * @param accountId {string} - The ID of the account the default slot should point to.
     */
   export function setInstanceWithAccountId(accountId: string): void;
 
