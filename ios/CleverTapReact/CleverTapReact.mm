@@ -150,9 +150,14 @@ RCT_EXPORT_MODULE();
         // The ONE warning that covers every bridge method (same rule as Android):
         // without it a typo'd accountId silently drops every call.
         if (accountId == nil) {
-            RCTLogWarn(@"CleverTap default instance is not available — call ignored");
+            RCTLogWarn(@"CleverTap default instance is not available — call ignored. Add the default "
+                       "account to Info.plist, or use getInstance(accountId)/createInstance(config) "
+                       "to address a specific account.");
         } else {
-            RCTLogWarn(@"CleverTap instance not found for accountId: %@ — call ignored", accountId);
+            RCTLogWarn(@"CleverTap instance not found for accountId: %@ — call ignored. Create it "
+                       "first: pass it in launchConfigs to applicationDidLaunchWithOptions:launchConfigs: "
+                       "in your AppDelegate, or call CleverTap.createInstance(config) from JS "
+                       "(required once per app run, before any other call for that account).", accountId);
         }
         return nil;
     }

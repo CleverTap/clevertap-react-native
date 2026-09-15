@@ -1925,9 +1925,14 @@ public class CleverTapModuleImpl {
             // null-check and return — do not add per-method warnings, and do not
             // remove this one: without it a typo'd accountId silently drops every call.
             if (accountId == null) {
-                Log.w(TAG, "CleverTap default instance is not available — call ignored");
+                Log.w(TAG, "CleverTap default instance is not available — call ignored. Add the default "
+                        + "account to AndroidManifest.xml, or use getInstance(accountId)/createInstance(config) "
+                        + "to address a specific account.");
             } else {
-                Log.w(TAG, "CleverTap instance not found for accountId: " + accountId + " — call ignored");
+                Log.w(TAG, "CleverTap instance not found for accountId: " + accountId + " — call ignored. "
+                        + "Create it first: pass it in launchConfigs to CleverTapRnAPI.initReactNativeIntegration(...) "
+                        + "in your Application class, or call CleverTap.createInstance(config) from JS "
+                        + "(required once per app run, before any other call for that account).");
             }
             return null;
         }
@@ -1954,7 +1959,10 @@ public class CleverTapModuleImpl {
     private void warnIfNoInstanceExistsYet(String methodName) {
         if (mDefaultCleverTap == null && initedAccountIds.isEmpty()) {
             Log.w(TAG, methodName + ": no CleverTap instance exists yet in this app run — "
-                    + "the native SDK will drop this call. Call createInstance(config) first.");
+                    + "the native SDK will drop this call. Create an account first: add the default "
+                    + "account to AndroidManifest.xml, pass launchConfigs to "
+                    + "CleverTapRnAPI.initReactNativeIntegration(...) in your Application class, "
+                    + "or call CleverTap.createInstance(config) from JS before this.");
         }
     }
 
