@@ -59,11 +59,9 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -135,8 +133,11 @@ public class CleverTapModuleImpl {
 
     // Accounts whose listeners are already wired, so initCtInstance runs exactly once per
     // account. Thread-safe: touched from the native-modules thread AND the main thread
-    // (createInstance runs on main — see the note inside it).
-    private final Set<String> initedAccountIds = Collections.synchronizedSet(new HashSet<>());
+    // (createInstance runs on main — see the note inside it). ConcurrentHashMap-backed:
+    // reads never block, and iteration (should anyone add it later) cannot throw
+    // ConcurrentModificationException like a synchronizedSet would. It REJECTS null with a
+    // NullPointerException — by design; resolveInstance null-guards the key before add.
+    private final Set<String> initedAccountIds = ConcurrentHashMap.newKeySet();
 
     public CleverTapModuleImpl(ReactApplicationContext reactContext) {
         this.context = reactContext;
