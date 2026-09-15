@@ -59,6 +59,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Date;
 import java.util.HashMap;
@@ -107,7 +108,11 @@ public class CleverTapModuleImpl {
     // createInstance runs on the main thread, and the SDK fires variable callbacks on
     // its own threads — all touch this map. ConcurrentHashMap on BOTH levels; it
     // forbids null keys/values, so callers must null-guard what they put in.
-    private static final Map<String, Map<String, Object>> accountVariables = new ConcurrentHashMap<>();
+    // Declared as ConcurrentHashMap, not Map, ON PURPOSE: putIfAbsent called through the
+    // Map interface binds to Map#putIfAbsent — a default method that only exists from
+    // API 24 (NoSuchMethodError on Android 6.0 / minSdk 23). Bound through the concrete
+    // class it hits ConcurrentHashMap's own putIfAbsent, present on every API level.
+    private static final ConcurrentHashMap<String, Map<String, Object>> accountVariables = new ConcurrentHashMap<>();
 
     public static void setInitialUri(final Uri uri) {
         sLaunchUri = uri;
@@ -137,7 +142,11 @@ public class CleverTapModuleImpl {
     // reads never block, and iteration (should anyone add it later) cannot throw
     // ConcurrentModificationException like a synchronizedSet would. It REJECTS null with a
     // NullPointerException — by design; resolveInstance null-guards the key before add.
-    private final Set<String> initedAccountIds = ConcurrentHashMap.newKeySet();
+    // ⚠️ Built with newSetFromMap, NOT ConcurrentHashMap.newKeySet(): newKeySet() needs
+    // API 24 (Android 7.0) and this SDK supports minSdk 23 — on an Android 6.0 device it
+    // throws NoSuchMethodError the moment this class loads. Same wrapper, API 9-safe.
+    private final Set<String> initedAccountIds =
+            Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
     public CleverTapModuleImpl(ReactApplicationContext reactContext) {
         this.context = reactContext;
@@ -1460,7 +1469,18 @@ public class CleverTapModuleImpl {
             Log.w(TAG, "Variables unavailable: instance has no accountId");
             return new ConcurrentHashMap<>();
         }
-        return accountVariables.computeIfAbsent(accountKey, k -> new ConcurrentHashMap<>());
+        // putIfAbsent instead of computeIfAbsent: computeIfAbsent needs API 24 (Android 7.0)
+        // and this SDK supports minSdk 23 — on an Android 6.0 device it throws
+        // NoSuchMethodError on the first variables call. putIfAbsent is atomic on a
+        // ConcurrentMap and available on every supported API level; two racing threads may
+        // both build an empty map, but exactly one wins and both callers get the winner.
+        Map<String, Object> existing = accountVariables.get(accountKey);
+        if (existing != null) {
+            return existing;
+        }
+        Map<String, Object> fresh = new ConcurrentHashMap<>();
+        Map<String, Object> raced = accountVariables.putIfAbsent(accountKey, fresh);
+        return raced != null ? raced : fresh;
     }
 
     public void defineVariables(ReadableMap object, String accountId) {

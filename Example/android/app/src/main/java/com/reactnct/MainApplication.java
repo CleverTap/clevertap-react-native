@@ -81,7 +81,8 @@ public class MainApplication extends CleverTapApplication implements ActivityLif
     //     com.clevertap.android.sdk.CleverTapInstanceConfig configB =
     //             com.clevertap.android.sdk.CleverTapInstanceConfig.createInstance(
     //                     this, "B-ACCOUNT-ID", "B-TOKEN", "in1");
-    //     return List.of(new com.clevertap.react.CleverTapLaunchConfig(configB));
+    //     return java.util.Collections.singletonList(
+    //             new com.clevertap.react.CleverTapLaunchConfig(configB));
     // }
 
     @Override
