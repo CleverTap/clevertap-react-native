@@ -1,6 +1,32 @@
 Change Log
 ==========
 
+Version 4.4.0 *(October 9 2026)*
+-------------------------------------------
+**What's new**
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.8.2](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-782-september-04-2026).
+
+* **[Android and iOS Platform]**
+  * Multi-instance support — one app can now talk to several CleverTap accounts. `CleverTap.createInstance(config)` creates an additional account from JavaScript and `CleverTap.getInstance(accountId)` returns the handle of an existing one. A handle has the same methods as `CleverTap`, but every call and listener on it goes to that one account. The top-level `CleverTap` object keeps addressing the default (manifest / plist) account exactly as before. See the [Multiple CleverTap Accounts guide](docs/multiinstance.md).
+  * Launch configs — list additional accounts in your `Application` / `AppDelegate` so they are created at process start like the default account and receive push notifications and launch-time content from the first screen. Android: pass them to `CleverTapRnAPI.initReactNativeIntegration(context, launchConfigs)` or override `CleverTapApplication.launchConfigs()`. iOS: call `applicationDidLaunchWithOptions:launchConfigs:`.
+  * The `High` encryption level (all stored data, not only PII) is documented and reachable from JavaScript through the `encryptionLevel` key of `createInstance`. The default account sets it with value `2` in the existing `CLEVERTAP_ENCRYPTION_LEVEL` / `CleverTapEncryptionLevel` keys.
+
+**API changes**
+* **[Android Platform]**
+  * Adds `CleverTapRnAPI.initReactNativeIntegration(context, launchConfigs)`, the `CleverTapLaunchConfig` class and the `CleverTapApplication.launchConfigs()` override hook. Existing one-argument calls keep working.
+* **[iOS Platform]**
+  * Adds `-[CleverTapReactManager applicationDidLaunchWithOptions:launchConfigs:]` and the `CleverTapReactLaunchConfig` class.
+  * **Behavior change:** callback methods now report an error (`CleverTap is not initialized`) when the addressed account does not exist. Previously most of them never called back.
+
+* **[Android and iOS Platform]**
+  * Adds `createInstance(config)` and `getInstance(accountId)`, the account handle (`CleverTapInstance`) and the `CleverTapInstanceConfig` and `CleverTapEventSubscription` TypeScript types.
+  * `addListener` now returns a subscription object; call `subscription.remove()` to detach that one handler.
+  * `createInstance` validates its config: a missing or empty `accountId` / `accountToken`, a value of the wrong type, or `cleverTapId` without `useCustomCleverTapId: true` rejects the promise with code `EINVALID`; a native creation failure rejects with `ECREATE`.
+  * **Behavior change:** `CleverTap.removeListener(eventName)` now removes only the listeners added through `CleverTap.addListener`. Previously it removed every listener for that event name app-wide, including ones other libraries added on the raw event emitter.
+  * **Behavior change:** after `setInstanceWithAccountId('B')`, top-level listeners receive only account B's events. Previously they received the old and the new account's events merged.
+  * **Behavior change:** calling `NativeModules.CleverTapReact.*` directly is not supported and now breaks: every bridge method gained a trailing account argument, and old-architecture Android throws `got N arguments, expected N+1`. Always call through the `CleverTap` object.
+
 Version 4.3.1 *(September 3 2026)*
 -------------------------------------------
 **Bug Fixes**

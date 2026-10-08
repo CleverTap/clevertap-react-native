@@ -22,6 +22,17 @@ NOTE:  Don't forget to add the CleverTap imports at the top of the file.
 
 Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-SDK/CleverTap.h>** and **@import CleverTapReact;** instead of **#import <clevertap-react-native/CleverTapReactManager.h>** in the AppDelegate class in case if using ```use_modular_headers!``` in the podfile.
 
+3. Optional, from clevertap-react-native **v4.4.0**: if your app uses more than one CleverTap account and an extra account receives push notifications or shows in-apps, create that account at launch so it starts together with the default account. Pass its config as a launch config; on the JavaScript side use `CleverTap.getInstance(accountId)` for it. See the [Multiple CleverTap Accounts guide](./multiinstance.md#create-accounts-at-app-launch-native-launch-configs).
+```objc
+#import <CleverTap-iOS-SDK/CleverTapInstanceConfig.h>
+
+CleverTapInstanceConfig *insurance = [[CleverTapInstanceConfig alloc]
+    initWithAccountId:@"INSURANCE-ACCOUNT-ID" accountToken:@"INSURANCE-TOKEN" accountRegion:@"eu1"];
+[[CleverTapReactManager sharedInstance]
+    applicationDidLaunchWithOptions:launchOptions
+                      launchConfigs:@[[[CleverTapReactLaunchConfig alloc] initWithConfig:insurance]]];
+```
+
 [See the Example Project](/Example/ios/Example/AppDelegate.mm).
 
 ### Android
@@ -96,6 +107,25 @@ Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-
           ActivityLifecycleCallback.register(this); // Not required for v3.0.0+
           super.onCreate();
           // ...
+        }
+    }
+    ```
+
+- Optional, from clevertap-react-native **v4.4.0**: if your app uses more than one CleverTap account and an extra account receives push notifications or shows in-apps, create that account at launch so it starts together with the default account. Override `launchConfigs()` in a `CleverTapApplication` subclass, or pass the list as the second argument of `CleverTapRnAPI.initReactNativeIntegration(this, launchConfigs)`. On the JavaScript side use `CleverTap.getInstance(accountId)` for these accounts. See the [Multiple CleverTap Accounts guide](./multiinstance.md#create-accounts-at-app-launch-native-launch-configs).
+
+    ```java
+    import com.clevertap.android.sdk.CleverTapInstanceConfig;
+    import com.clevertap.react.CleverTapLaunchConfig;
+    import java.util.Collections;
+    import java.util.List;
+
+    public class MainApplication extends CleverTapApplication implements ReactApplication {
+        // ...
+        @Override
+        public List<CleverTapLaunchConfig> launchConfigs() {
+            CleverTapInstanceConfig insurance = CleverTapInstanceConfig.createInstance(
+                    this, "INSURANCE-ACCOUNT-ID", "INSURANCE-TOKEN", "eu1");
+            return Collections.singletonList(new CleverTapLaunchConfig(insurance));
         }
     }
     ```
