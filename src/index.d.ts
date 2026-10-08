@@ -14,7 +14,8 @@
    ): { remove: () => void };
 
    /**
-    * Removes all of the registered listeners for given eventName.
+    * Removes the listeners registered through CleverTap.addListener for the given eventName.
+    * Listeners added on account handles (or directly on the raw event emitter) are not touched.
     *
     * @param {string} eventName -  name of the event whose registered listeners to remove
     */

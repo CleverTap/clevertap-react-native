@@ -14,7 +14,7 @@ const EventEmitter = Platform.select({
 // Must match Constants.LIBRARY_NAME (Android) and kCleverTapLibraryName (iOS) —
 // the natives re-stamp this name on every instance they wire.
 const libName = 'React-Native';
-const libVersion = 40301;
+const libVersion = 40400;
 CleverTapReact.setLibrary(libName,libVersion);
 
 function defaultCallback(method, err, res) {
@@ -1568,10 +1568,16 @@ var CleverTap = {
     },
 
     /**
-     * Change the native instance of CleverTapAPI by using the instance for
-     * specific account. Used by Leanplum RN SDK.
+     * Swaps the DEFAULT SLOT: from this call on, the top-level CleverTap object's calls
+     * AND listeners address the given account. Handles from getInstance / createInstance
+     * are never affected by a swap — each stays pinned to its own account.
      *
-     * @param accountId The ID of the account to use when switching instance.
+     * Prefer CleverTap.getInstance(accountId) to talk to another account WITHOUT
+     * changing what the top-level object means; use this method when every existing
+     * top-level call site should deliberately start addressing a different account
+     * (e.g. a whole-app brand switch).
+     *
+     * @param accountId The ID of the account the default slot should point to.
      */
     setInstanceWithAccountId: function (accountId) {
         // Legacy "slot swap": top-level calls AND listeners follow this account from now on.
