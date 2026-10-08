@@ -48,11 +48,11 @@ android {
 
     sourceSets {
         main {
-            if (isNewArchitectureEnabled()) {
-                java.srcDirs += ['src/newarch']
-            } else {
-                java.srcDirs += ['src/oldarch']
-            }
+            def archDir = isNewArchitectureEnabled() ? 'src/newarch' : 'src/oldarch'
+            java.srcDirs += [archDir]
+            // AGP 9 built-in Kotlin only compiles kotlin.srcDirs (plus the default
+            // src/main/java); the kotlin-android plugin also reads java.srcDirs.
+            kotlin.srcDirs += [archDir]
         }
     }
 
