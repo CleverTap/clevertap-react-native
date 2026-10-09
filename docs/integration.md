@@ -22,15 +22,24 @@ NOTE:  Don't forget to add the CleverTap imports at the top of the file.
 
 Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-SDK/CleverTap.h>** and **@import CleverTapReact;** instead of **#import <clevertap-react-native/CleverTapReactManager.h>** in the AppDelegate class in case if using ```use_modular_headers!``` in the podfile.
 
-3. Optional, from clevertap-react-native **v4.4.0**: if your app uses more than one CleverTap account and an extra account receives push notifications or shows in-apps, create that account at launch so it starts together with the default account. Pass its config as a launch config; on the JavaScript side use `CleverTap.getInstance(accountId)` for it. See the [Multiple CleverTap Accounts guide](./multiinstance.md#create-accounts-at-app-launch-native-launch-configs).
+3. Optional, from clevertap-react-native **v4.4.0**: if your app uses more than one CleverTap account and an extra account receives push notifications or shows in-apps, create that account at launch so it starts together with the default account. In your `AppDelegate`, inside `application:didFinishLaunchingWithOptions:`, replace the one-argument call from step 2 with the two-argument version. On the JavaScript side use `CleverTap.getInstance(accountId)` for it. See the [Multiple CleverTap Accounts guide](./multiinstance.md#create-accounts-at-app-launch-native-launch-configs).
 ```objc
+#import <CleverTap-iOS-SDK/CleverTap.h>
 #import <CleverTap-iOS-SDK/CleverTapInstanceConfig.h>
+#import <clevertap-react-native/CleverTapReactManager.h>
 
-CleverTapInstanceConfig *insurance = [[CleverTapInstanceConfig alloc]
-    initWithAccountId:@"INSURANCE-ACCOUNT-ID" accountToken:@"INSURANCE-TOKEN" accountRegion:@"eu1"];
-[[CleverTapReactManager sharedInstance]
-    applicationDidLaunchWithOptions:launchOptions
-                      launchConfigs:@[[[CleverTapReactLaunchConfig alloc] initWithConfig:insurance]]];
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [CleverTap autoIntegrate];
+
+    CleverTapInstanceConfig *insurance = [[CleverTapInstanceConfig alloc]
+        initWithAccountId:@"INSURANCE-ACCOUNT-ID" accountToken:@"INSURANCE-TOKEN" accountRegion:@"eu1"];
+    [[CleverTapReactManager sharedInstance]
+        applicationDidLaunchWithOptions:launchOptions
+                          launchConfigs:@[[[CleverTapReactLaunchConfig alloc] initWithConfig:insurance]]];
+
+    // ... the rest of your React Native setup
+    return YES;
+}
 ```
 
 [See the Example Project](/Example/ios/Example/AppDelegate.mm).
