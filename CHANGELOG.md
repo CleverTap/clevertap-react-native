@@ -17,7 +17,7 @@ Version 4.4.0 *(October 9 2026)*
   * Adds `CleverTapRnAPI.initReactNativeIntegration(context, launchConfigs)`, the `CleverTapLaunchConfig` class and the `CleverTapApplication.launchConfigs()` override hook. Existing one-argument calls keep working.
 * **[iOS Platform]**
   * Adds `-[CleverTapReactManager applicationDidLaunchWithOptions:launchConfigs:]` and the `CleverTapReactLaunchConfig` class.
-  * **Behavior change:** callback methods now report an error (`CleverTap is not initialized`) when the addressed account does not exist. Previously most of them never called back.
+  * **Behavior change:** callback methods now report an error (`CleverTap is not initialized`) when the addressed account does not exist. Previously most of them never called back. Android already behaved this way; its error text is `CleverTap not initialized`.
 
 * **[Android and iOS Platform]**
   * Adds `createInstance(config)` and `getInstance(accountId)`, the account handle (`CleverTapInstance`) and the `CleverTapInstanceConfig` and `CleverTapEventSubscription` TypeScript types.
