@@ -23,12 +23,6 @@
 		6B102BC12CADE31500296828 /* CleverTapReactAppFunctionPresenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6B102BBE2CADE31500296828 /* CleverTapReactAppFunctionPresenter.mm */; };
 		6B587A032BC02ECD0077493E /* CleverTapReactPendingEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6B587A022BC02ECD0077493E /* CleverTapReactPendingEvent.mm */; };
 		6B587A042BC02ECD0077493E /* CleverTapReactPendingEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B587A012BC02ECD0077493E /* CleverTapReactPendingEvent.h */; };
-		6BFACE022CAD8B7800296828 /* CleverTapReactInstanceConfigRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BFACE012CAD8B7800296828 /* CleverTapReactInstanceConfigRequest.h */; };
-		6BFACE042CAD8B7800296828 /* CleverTapReactInstanceConfigRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BFACE032CAD8B7800296828 /* CleverTapReactInstanceConfigRequest.m */; };
-		6BFACE062CAD8B7800296828 /* CleverTapReactInstanceDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BFACE052CAD8B7800296828 /* CleverTapReactInstanceDelegate.h */; };
-		6BFACE082CAD8B7800296828 /* CleverTapReactInstanceDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6BFACE072CAD8B7800296828 /* CleverTapReactInstanceDelegate.mm */; };
-		6BFACE0A2CAD8B7800296828 /* CleverTapReactLaunchConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BFACE092CAD8B7800296828 /* CleverTapReactLaunchConfig.h */; };
-		6BFACE0C2CAD8B7800296828 /* CleverTapReactLaunchConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BFACE0B2CAD8B7800296828 /* CleverTapReactLaunchConfig.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -63,12 +57,6 @@
 		6B102BBE2CADE31500296828 /* CleverTapReactAppFunctionPresenter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CleverTapReactAppFunctionPresenter.mm; sourceTree = "<group>"; };
 		6B587A012BC02ECD0077493E /* CleverTapReactPendingEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CleverTapReactPendingEvent.h; sourceTree = "<group>"; };
 		6B587A022BC02ECD0077493E /* CleverTapReactPendingEvent.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CleverTapReactPendingEvent.mm; sourceTree = "<group>"; };
-		6BFACE012CAD8B7800296828 /* CleverTapReactInstanceConfigRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CleverTapReactInstanceConfigRequest.h; sourceTree = "<group>"; };
-		6BFACE032CAD8B7800296828 /* CleverTapReactInstanceConfigRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CleverTapReactInstanceConfigRequest.m; sourceTree = "<group>"; };
-		6BFACE052CAD8B7800296828 /* CleverTapReactInstanceDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CleverTapReactInstanceDelegate.h; sourceTree = "<group>"; };
-		6BFACE072CAD8B7800296828 /* CleverTapReactInstanceDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CleverTapReactInstanceDelegate.mm; sourceTree = "<group>"; };
-		6BFACE092CAD8B7800296828 /* CleverTapReactLaunchConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CleverTapReactLaunchConfig.h; sourceTree = "<group>"; };
-		6BFACE0B2CAD8B7800296828 /* CleverTapReactLaunchConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CleverTapReactLaunchConfig.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,12 +89,6 @@
 				6B102BBD2CADE31500296828 /* CleverTapReactTemplatePresenter.mm */,
 				6B102BB62CAD8BEE00296828 /* CleverTapReactAppFunctionPresenter.h */,
 				6B102BBE2CADE31500296828 /* CleverTapReactAppFunctionPresenter.mm */,
-				6BFACE012CAD8B7800296828 /* CleverTapReactInstanceConfigRequest.h */,
-				6BFACE032CAD8B7800296828 /* CleverTapReactInstanceConfigRequest.m */,
-				6BFACE052CAD8B7800296828 /* CleverTapReactInstanceDelegate.h */,
-				6BFACE072CAD8B7800296828 /* CleverTapReactInstanceDelegate.mm */,
-				6BFACE092CAD8B7800296828 /* CleverTapReactLaunchConfig.h */,
-				6BFACE0B2CAD8B7800296828 /* CleverTapReactLaunchConfig.m */,
 			);
 			path = CleverTapReact;
 			sourceTree = "<group>";
@@ -151,9 +133,6 @@
 				6B102BB82CAD8BEE00296828 /* CleverTapReactAppFunctionPresenter.h in Headers */,
 				52344FC21E4CEC3200661762 /* CleverTapReactManager.h in Headers */,
 				6B587A042BC02ECD0077493E /* CleverTapReactPendingEvent.h in Headers */,
-				6BFACE022CAD8B7800296828 /* CleverTapReactInstanceConfigRequest.h in Headers */,
-				6BFACE062CAD8B7800296828 /* CleverTapReactInstanceDelegate.h in Headers */,
-				6BFACE0A2CAD8B7800296828 /* CleverTapReactLaunchConfig.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,9 +200,6 @@
 				6B102BBF2CADE31500296828 /* CleverTapReactCustomTemplates.mm in Sources */,
 				6B587A032BC02ECD0077493E /* CleverTapReactPendingEvent.mm in Sources */,
 				6B102BC02CADE31500296828 /* CleverTapReactTemplatePresenter.mm in Sources */,
-				6BFACE042CAD8B7800296828 /* CleverTapReactInstanceConfigRequest.m in Sources */,
-				6BFACE082CAD8B7800296828 /* CleverTapReactInstanceDelegate.mm in Sources */,
-				6BFACE0C2CAD8B7800296828 /* CleverTapReactLaunchConfig.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
