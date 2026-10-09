@@ -5,7 +5,7 @@ Version 4.4.0 *(October 9 2026)*
 -------------------------------------------
 **What's new**
 * **[iOS Platform]**
-  * Supports [CleverTap iOS SDK v7.8.2](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-782-september-04-2026).
+  * Supports [CleverTap iOS SDK v7.8.2](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-782-september-4-2026).
 
 * **[Android and iOS Platform]**
   * Multi-instance support — one app can now talk to several CleverTap accounts. `CleverTap.createInstance(config)` creates an additional account from JavaScript and `CleverTap.getInstance(accountId)` returns the handle of an existing one. A handle has the same methods as `CleverTap`, but every call and listener on it goes to that one account. The top-level `CleverTap` object keeps addressing the default (manifest / plist) account exactly as before. See the [Multiple CleverTap Accounts guide](docs/multiinstance.md).
@@ -26,6 +26,12 @@ Version 4.4.0 *(October 9 2026)*
   * **Behavior change:** `CleverTap.removeListener(eventName)` now removes only the listeners added through `CleverTap.addListener`. Previously it removed every listener for that event name app-wide, including ones other libraries added on the raw event emitter.
   * **Behavior change:** after `setInstanceWithAccountId('B')`, top-level listeners receive only account B's events. Previously they received the old and the new account's events merged.
   * **Behavior change:** calling `NativeModules.CleverTapReact.*` directly is not supported and now breaks: every bridge method gained a trailing account argument, and old-architecture Android throws `got N arguments, expected N+1`. Always call through the `CleverTap` object.
+
+**Bug Fixes**
+* **[iOS Platform]**
+  * Fixes a bug where In-App campaigns triggered by custom events could not match device and app properties.
+  * Fixes a bug where discarded event names were stored in preferences and sent back to the server on every request.
+  * Fixes a bug where stored Client-Side and Server-Side In-Apps were cleared when the delivery mode was missing.
 
 Version 4.3.1 *(September 3 2026)*
 -------------------------------------------
