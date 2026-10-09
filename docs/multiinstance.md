@@ -204,30 +204,48 @@ public class MainApplication extends CleverTapApplication implements ReactApplic
 }
 ```
 
-If you call `CleverTapRnAPI.initReactNativeIntegration(this)` yourself, pass the list as the second argument:
+If your `Application` class does not extend `CleverTapApplication` and you call `CleverTapRnAPI.initReactNativeIntegration(this)` yourself in `onCreate()`, pass the list as the second argument:
 
 ```java
-CleverTapInstanceConfig insurance = CleverTapInstanceConfig.createInstance(
-        this, "INSURANCE-ACCOUNT-ID", "INSURANCE-TOKEN", "eu1");
-CleverTapRnAPI.initReactNativeIntegration(this,
-        Collections.singletonList(new CleverTapLaunchConfig(insurance)));
+public class MainApplication extends Application implements ReactApplication {
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        ActivityLifecycleCallback.register(this);
+
+        CleverTapInstanceConfig insurance = CleverTapInstanceConfig.createInstance(
+                this, "INSURANCE-ACCOUNT-ID", "INSURANCE-TOKEN", "eu1");
+        CleverTapRnAPI.initReactNativeIntegration(this,
+                Collections.singletonList(new CleverTapLaunchConfig(insurance)));
+        // ...
+    }
+}
 ```
 
 Existing calls with one argument keep working. The config object is the native `CleverTapInstanceConfig`, so every native setter is available (`setDebugLevel`, `setIdentityKeys`, `setEncryptionLevel`, ...).
 
 #### iOS
 
-In `didFinishLaunchingWithOptions:`, replace `applicationDidLaunchWithOptions:` with the two-argument version:
+In your `AppDelegate`, inside `application:didFinishLaunchingWithOptions:`, replace the one-argument `applicationDidLaunchWithOptions:` call with the two-argument version:
 
 ```objc
+#import <CleverTap-iOS-SDK/CleverTap.h>
 #import <CleverTap-iOS-SDK/CleverTapInstanceConfig.h>
 #import <clevertap-react-native/CleverTapReactManager.h>
 
-CleverTapInstanceConfig *insurance = [[CleverTapInstanceConfig alloc]
-    initWithAccountId:@"INSURANCE-ACCOUNT-ID" accountToken:@"INSURANCE-TOKEN" accountRegion:@"eu1"];
-[[CleverTapReactManager sharedInstance]
-    applicationDidLaunchWithOptions:launchOptions
-                      launchConfigs:@[[[CleverTapReactLaunchConfig alloc] initWithConfig:insurance]]];
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [CleverTap autoIntegrate];
+
+    CleverTapInstanceConfig *insurance = [[CleverTapInstanceConfig alloc]
+        initWithAccountId:@"INSURANCE-ACCOUNT-ID" accountToken:@"INSURANCE-TOKEN" accountRegion:@"eu1"];
+    [[CleverTapReactManager sharedInstance]
+        applicationDidLaunchWithOptions:launchOptions
+                          launchConfigs:@[[[CleverTapReactLaunchConfig alloc] initWithConfig:insurance]]];
+
+    // ... the rest of your React Native setup
+    return YES;
+}
 ```
 
 #### JavaScript side
