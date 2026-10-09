@@ -190,6 +190,7 @@ If your `Application` class extends `CleverTapApplication`, override `launchConf
 import com.clevertap.android.sdk.CleverTapInstanceConfig;
 import com.clevertap.react.CleverTapApplication;
 import com.clevertap.react.CleverTapLaunchConfig;
+import com.facebook.react.ReactApplication;
 import java.util.Collections;
 import java.util.List;
 
@@ -207,6 +208,14 @@ public class MainApplication extends CleverTapApplication implements ReactApplic
 If your `Application` class does not extend `CleverTapApplication` and you call `CleverTapRnAPI.initReactNativeIntegration(this)` yourself in `onCreate()`, pass the list as the second argument:
 
 ```java
+import android.app.Application;
+import com.clevertap.android.sdk.ActivityLifecycleCallback;
+import com.clevertap.android.sdk.CleverTapInstanceConfig;
+import com.clevertap.react.CleverTapLaunchConfig;
+import com.clevertap.react.CleverTapRnAPI;
+import com.facebook.react.ReactApplication;
+import java.util.Collections;
+
 public class MainApplication extends Application implements ReactApplication {
 
     @Override
