@@ -1,5 +1,11 @@
 apply plugin: 'com.android.library'
-apply plugin: 'org.jetbrains.kotlin.android'
+// AGP 9 ships built-in Kotlin support and registers the `kotlin` extension
+// itself. Applying the Kotlin plugin on top of it fails configuration with
+// "Cannot add extension with name 'kotlin'". Only apply it when nothing has
+// registered that extension yet.
+if (project.extensions.findByName('kotlin') == null) {
+    apply plugin: 'org.jetbrains.kotlin.android'
+}
 
 def isNewArchitectureEnabled() {
     return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
@@ -35,19 +41,25 @@ android {
     defaultConfig {
         minSdkVersion 23
         targetSdkVersion 36
-        versionCode 431
-        versionName "4.3.1"
+        versionCode 440
+        versionName "4.4.0"
         buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString())
     }
 
     sourceSets {
         main {
-            if (isNewArchitectureEnabled()) {
-                java.srcDirs += ['src/newarch']
-            } else {
-                java.srcDirs += ['src/oldarch']
-            }
+            def archDir = isNewArchitectureEnabled() ? 'src/newarch' : 'src/oldarch'
+            java.srcDirs += [archDir]
+            // AGP 9 built-in Kotlin only compiles kotlin.srcDirs (plus the default
+            // src/main/java); the kotlin-android plugin also reads java.srcDirs.
+            kotlin.srcDirs += [archDir]
         }
+    }
+
+    testOptions {
+        // JVM unit tests call android.util.Log through the code under test; return
+        // defaults instead of throwing "not mocked".
+        unitTests.returnDefaultValues = true
     }
 
     namespace 'com.clevertap.react'
@@ -60,4 +72,5 @@ dependencies {
     implementation 'com.facebook.react:react-native:+'
     implementation 'androidx.core:core-ktx:1.9.0'
     compileOnly 'androidx.annotation:annotation:1.2.0'
+    testImplementation 'junit:junit:4.13.2'
 }

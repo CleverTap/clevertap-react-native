@@ -1,4 +1,26 @@
 
+## Table of Contents
+
+- [Example Usage](#example-usage)
+- [User Profiles](#user-profiles)
+- [Integrate Custom Proxy Domain](#integrate-custom-proxy-domain)
+- [User Events](#user-events)
+- [Multiple CleverTap Accounts](#multiple-clevertap-accounts)
+- [Encryption of PII data](#encryption-of-pii-data)
+- [App Inbox](#app-inbox)
+- [Push primer for notification Permission](#push-primer-for-notification-permission-android-and-ios)
+- [Push Notifications](#push-notifications)
+- [Native Display](#native-display)
+- [Product Config](#product-config)
+- [Feature Flag](#feature-flag)
+- [CleverTap ID](#clevertap-id)
+- [App Personalisation](#app-personalisation)
+- [Debugging](#debugging)
+- [Attributions](#attributions)
+- [InApp Notification Controls](#inapp-notification-controls)
+
+-----------
+
 ## Example Usage
 
 #### Grab a reference  
@@ -124,22 +146,75 @@ CleverTap.recordChargedEvent({'totalValue': 20, 'category': 'books'}, [{'title':
 
 -----------
 
-## Encryption of PII data
-PII data is stored across the SDK and could be sensitive information. From CleverTap SDK v5.2.0 onwards, you can enable encryption for PII data wiz. Email, Identity, Name and Phone.
+## Multiple CleverTap Accounts
 
-Currently 2 levels of encryption are supported i.e None(0) and Medium(1). Encryption level is None by default.
-**None** - All stored data is in plaintext
-**Medium** - PII data is encrypted completely.
+*Available from CleverTap React Native SDK v4.4.0.*
+
+One app can talk to two or more CleverTap accounts. The top-level `CleverTap` object keeps addressing your default account (the one in `AndroidManifest.xml` / `Info.plist`). Every other account is a **handle**: an object with the same methods as `CleverTap`, where every call and every listener goes to that one account only.
+
+#### Create a second account from JavaScript
+
+```javascript
+const insurance = await CleverTap.createInstance({
+    accountId: 'INSURANCE-ACCOUNT-ID',
+    accountToken: 'INSURANCE-TOKEN',
+    region: 'eu1'
+});
+insurance.recordEvent('Policy Viewed', { plan: 'gold' });
+```
+
+#### Get a handle for an account that already exists
+
+```javascript
+const insurance = CleverTap.getInstance('INSURANCE-ACCOUNT-ID');
+insurance.onUserLogin({ Identity: 'jane-001', Email: 'jane@example.com' });
+```
+
+#### Listen to one account's events
+
+```javascript
+const subscription = insurance.addListener(CleverTap.CleverTapProfileDidInitialize, (event) => {
+    console.log('Insurance profile ready', event); // never fires for the default account
+});
+subscription.remove();
+```
+
+Follow the [Multiple CleverTap Accounts guide](multiinstance.md) for the full config reference, creating accounts at app launch (needed for accounts that send push notifications), the rules to follow and a troubleshooting table.
+
+-----------
+
+## Encryption of PII data
+The SDK stores data on the device: the user profile, events waiting to be sent, and so on. Some of it is sensitive, for example Email, Identity, Name and Phone. You can ask the SDK to encrypt that stored data.
+
+Three levels are supported. The level is **None** by default.
+
+| Level | Manifest / plist value | `createInstance` value | What is encrypted | Minimum native SDK |
+|---|---|---|---|---|
+| None | `0` | `'none'` | Nothing. All stored data is plain text. | |
+| Medium | `1` | `'medium'` | PII fields only: Email, Identity, Name and Phone. | CleverTap Android SDK v5.2.0 / iOS SDK v5.2.0 |
+| High | `2` | `'high'` | All data the SDK stores. | CleverTap Android SDK v7.7.0 / iOS SDK v7.4.0 (both included in this React Native SDK version) |
+
+The level is read once, when the account is created. Which setting applies depends on the account:
+
+| Account | How to set the level |
+|---|---|
+| Default account (`AndroidManifest.xml` / `Info.plist`) | The manifest / plist keys below |
+| Accounts created from JavaScript with `createInstance` | The `encryptionLevel` config key, for example `encryptionLevel: 'high'`. The manifest / plist keys do not apply to these accounts. See the [Multiple CleverTap Accounts guide](multiinstance.md). |
+
+Do not downgrade the SDK after enabling encryption; the stored data would not be readable by the older version.
 
 #### Android
-Add encryption level in the `AndroidManifest.xml` as following:
+Add the encryption level in the `AndroidManifest.xml` as follows. `0` is None, `1` is Medium and `2` is High. Any other value means None.
 ```XML
 <meta-data
     android:name="CLEVERTAP_ENCRYPTION_LEVEL"
-    android:value="1" />
+    android:value="2" />
 ```
 #### iOS
-Add the `CleverTapEncryptionLevel` String key to `info.plist` file where value 1 means Medium and 0 means None. Encryption Level will be None if any other value is provided.
+Add the `CleverTapEncryptionLevel` String key to `info.plist`. `0` is None, `1` is Medium and `2` is High. Any other value means None.
+
+#### Encryption in transit
+The SDK can also encrypt the event data it sends over the network. For the default account, add the `CLEVERTAP_ENCRYPTION_IN_TRANSIT` meta-data key with value `1` (Android) or the `CleverTapEncryptionInTransitEnabled` String key with value `1` (iOS). For accounts created from JavaScript, pass `encryptionInTransit: true` to `createInstance`.
 
 -----------
 

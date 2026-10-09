@@ -28,6 +28,18 @@ static NSString *const kCleverTapCustomFunctionPresent = @"CleverTapCustomFuncti
 static NSString *const kCleverTapCustomTemplateClose = @"CleverTapCustomTemplateClose";
 static NSString *const kXPS = @"XPS";
 
+/// Key stamped into every event body with the REAL account id of the CleverTap instance
+/// that fired it (the default account included — there is no "nil means default"
+/// convention). JS routes each event to the right account handle by this tag and strips
+/// it before user handlers run.
+static NSString *const kCleverTapAccountIdKey = @"__ctAccountId";
+
+/// Key that carries a primitive event payload inside the tagged body. Some events
+/// (custom templates) deliver a bare string to user code; a string cannot hold the
+/// account tag, so native wraps it — {__ctAccountId: id, __ctPayload: @"name"} —
+/// and the JS demux unwraps it, delivering exactly the string users always got.
+static NSString *const kCleverTapPayloadKey = @"__ctPayload";
+
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <CTTurboModuleSpec/CTTurboModuleSpec.h>
 @interface CleverTapReact: RCTEventEmitter <NativeCleverTapModuleSpec>
