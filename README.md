@@ -40,6 +40,8 @@ Find the integration steps for the CleverTap Push Templates SDK [here](./docs/io
 
 - [See the CleverTap React Native Usage Documentation](/docs/usage.md)
 
+- [See the Multiple CleverTap Accounts (Multi-Instance) guide](/docs/multiinstance.md)
+
 - [See the included Example Project](/Example/)
 
 
