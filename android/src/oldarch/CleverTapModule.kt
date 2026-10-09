@@ -43,13 +43,13 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
-    fun setLocale(locale: String?) {
-        cleverTapModuleImpl.setLocale(locale)
+    fun setLocale(locale: String?, accountId: String?) {
+        cleverTapModuleImpl.setLocale(locale, accountId)
     }
 
     @ReactMethod
-    fun activate() {
-        cleverTapModuleImpl.activate()
+    fun activate(accountId: String?) {
+        cleverTapModuleImpl.activate(accountId)
     }
 
     //Custom Push Notification
@@ -138,173 +138,173 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
 
     //Push permission methods
     @ReactMethod
-    fun promptForPushPermission(showFallbackSettings: Boolean) {
-        cleverTapModuleImpl.promptForPushPermission(showFallbackSettings)
+    fun promptForPushPermission(showFallbackSettings: Boolean, accountId: String?) {
+        cleverTapModuleImpl.promptForPushPermission(showFallbackSettings, accountId)
     }
 
     @ReactMethod
-    fun promptPushPrimer(localInAppConfig: ReadableMap?) {
-        cleverTapModuleImpl.promptPushPrimer(localInAppConfig)
+    fun promptPushPrimer(localInAppConfig: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.promptPushPrimer(localInAppConfig, accountId)
     }
 
     @ReactMethod
-    fun isPushPermissionGranted(callback: Callback?) {
-        cleverTapModuleImpl.isPushPermissionGranted(callback)
+    fun isPushPermissionGranted(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.isPushPermissionGranted(accountId, callback)
     }
 
     @ReactMethod
-    fun disablePersonalization() {
-        cleverTapModuleImpl.disablePersonalization()
+    fun disablePersonalization(accountId: String?) {
+        cleverTapModuleImpl.disablePersonalization(accountId)
     }
 
     @ReactMethod
-    fun enableDeviceNetworkInfoReporting(value: Boolean) {
-        cleverTapModuleImpl.enableDeviceNetworkInfoReporting(value)
+    fun enableDeviceNetworkInfoReporting(value: Boolean, accountId: String?) {
+        cleverTapModuleImpl.enableDeviceNetworkInfoReporting(value, accountId)
     }
 
     @ReactMethod
-    fun enablePersonalization() {
-        cleverTapModuleImpl.enablePersonalization()
+    fun enablePersonalization(accountId: String?) {
+        cleverTapModuleImpl.enablePersonalization(accountId)
     }
 
     @ReactMethod
-    fun eventGetDetail(eventName: String?, callback: Callback?) {
-        cleverTapModuleImpl.eventGetDetail(eventName, callback)
+    fun eventGetDetail(eventName: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.eventGetDetail(eventName, accountId, callback)
     }
 
     @ReactMethod
-    fun eventGetFirstTime(eventName: String?, callback: Callback?) {
-        cleverTapModuleImpl.eventGetFirstTime(eventName, callback)
+    fun eventGetFirstTime(eventName: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.eventGetFirstTime(eventName, accountId, callback)
     }
 
     @ReactMethod
-    fun eventGetLastTime(eventName: String?, callback: Callback?) {
-        cleverTapModuleImpl.eventGetLastTime(eventName, callback)
+    fun eventGetLastTime(eventName: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.eventGetLastTime(eventName, accountId, callback)
     }
 
     @ReactMethod
-    fun eventGetOccurrences(eventName: String?, callback: Callback?) {
-        cleverTapModuleImpl.eventGetOccurrences(eventName, callback)
+    fun eventGetOccurrences(eventName: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.eventGetOccurrences(eventName, accountId, callback)
     }
 
     @ReactMethod
-    fun fetch() {
-        cleverTapModuleImpl.fetch()
+    fun fetch(accountId: String?) {
+        cleverTapModuleImpl.fetch(accountId)
     }
 
     @ReactMethod
-    fun fetchAndActivate() {
-        cleverTapModuleImpl.fetchAndActivate()
+    fun fetchAndActivate(accountId: String?) {
+        cleverTapModuleImpl.fetchAndActivate(accountId)
     }
 
     @ReactMethod
-    fun fetchWithMinimumFetchIntervalInSeconds(interval: Int) {
-        cleverTapModuleImpl.fetchWithMinimumFetchIntervalInSeconds(interval)
+    fun fetchWithMinimumFetchIntervalInSeconds(interval: Int, accountId: String?) {
+        cleverTapModuleImpl.fetchWithMinimumFetchIntervalInSeconds(interval, accountId)
     }
 
     @ReactMethod
-    fun getAllDisplayUnits(callback: Callback?) {
-        cleverTapModuleImpl.getAllDisplayUnits(callback)
+    fun getAllDisplayUnits(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getAllDisplayUnits(accountId, callback)
     }
 
     @ReactMethod
-    fun getBoolean(key: String?, callback: Callback?) {
-        cleverTapModuleImpl.getBoolean(key, callback)
+    fun getBoolean(key: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getBoolean(key, accountId, callback)
     }
 
     @ReactMethod
-    fun getDisplayUnitForId(unitID: String?, callback: Callback?) {
-        cleverTapModuleImpl.getDisplayUnitForId(unitID, callback)
+    fun getDisplayUnitForId(unitID: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getDisplayUnitForId(unitID, accountId, callback)
     }
 
     @ReactMethod
-    fun getDouble(key: String?, callback: Callback?) {
-        cleverTapModuleImpl.getDouble(key, callback)
+    fun getDouble(key: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getDouble(key, accountId, callback)
     }
 
     @ReactMethod
-    fun getEventHistory(callback: Callback?) {
-        cleverTapModuleImpl.getEventHistory(callback)
+    fun getEventHistory(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getEventHistory(accountId, callback)
     }
 
     @ReactMethod
-    fun getFeatureFlag(name: String?, defaultValue: Boolean?, callback: Callback?) {
-        cleverTapModuleImpl.getFeatureFlag(name, defaultValue, callback)
+    fun getFeatureFlag(name: String?, defaultValue: Boolean?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getFeatureFlag(name, defaultValue, accountId, callback)
     }
 
     @ReactMethod
-    fun getAllInboxMessages(callback: Callback?) {
-        cleverTapModuleImpl.getAllInboxMessages(callback)
+    fun getAllInboxMessages(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getAllInboxMessages(accountId, callback)
     }
 
     @ReactMethod
-    fun getInboxMessageCount(callback: Callback?) {
-        cleverTapModuleImpl.getInboxMessageCount(callback)
+    fun getInboxMessageCount(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getInboxMessageCount(accountId, callback)
     }
 
     @ReactMethod
-    fun getInboxMessageForId(messageId: String?, callback: Callback?) {
-        cleverTapModuleImpl.getInboxMessageForId(messageId, callback)
+    fun getInboxMessageForId(messageId: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getInboxMessageForId(messageId, accountId, callback)
     }
 
     @ReactMethod
-    fun getInboxMessageUnreadCount(callback: Callback?) {
-        cleverTapModuleImpl.getInboxMessageUnreadCount(callback)
+    fun getInboxMessageUnreadCount(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getInboxMessageUnreadCount(accountId, callback)
     }
 
     @ReactMethod
-    fun deleteInboxMessageForId(messageId: String?) {
-        cleverTapModuleImpl.deleteInboxMessageForId(messageId)
+    fun deleteInboxMessageForId(messageId: String?, accountId: String?) {
+        cleverTapModuleImpl.deleteInboxMessageForId(messageId, accountId)
     }
 
     @ReactMethod
-    fun getUnreadInboxMessages(callback: Callback?) {
-        cleverTapModuleImpl.getUnreadInboxMessages(callback)
+    fun getUnreadInboxMessages(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getUnreadInboxMessages(accountId, callback)
     }
 
     @ReactMethod
-    fun initializeInbox() {
-        cleverTapModuleImpl.initializeInbox()
+    fun initializeInbox(accountId: String?) {
+        cleverTapModuleImpl.initializeInbox(accountId)
     }
 
     @ReactMethod
-    fun markReadInboxMessageForId(messageId: String?) {
-        cleverTapModuleImpl.markReadInboxMessageForId(messageId)
+    fun markReadInboxMessageForId(messageId: String?, accountId: String?) {
+        cleverTapModuleImpl.markReadInboxMessageForId(messageId, accountId)
     }
 
     @ReactMethod
-    fun markReadInboxMessagesForIDs(messageIDs: ReadableArray?) {
-        cleverTapModuleImpl.markReadInboxMessagesForIDs(messageIDs)
+    fun markReadInboxMessagesForIDs(messageIDs: ReadableArray?, accountId: String?) {
+        cleverTapModuleImpl.markReadInboxMessagesForIDs(messageIDs, accountId)
     }
 
     @ReactMethod
-    fun deleteInboxMessagesForIDs(messageIDs: ReadableArray?) {
-        cleverTapModuleImpl.deleteInboxMessagesForIDs(messageIDs)
+    fun deleteInboxMessagesForIDs(messageIDs: ReadableArray?, accountId: String?) {
+        cleverTapModuleImpl.deleteInboxMessagesForIDs(messageIDs, accountId)
     }
 
     @ReactMethod
-    fun pushInboxNotificationClickedEventForId(messageId: String?) {
-        cleverTapModuleImpl.pushInboxNotificationClickedEventForId(messageId)
+    fun pushInboxNotificationClickedEventForId(messageId: String?, accountId: String?) {
+        cleverTapModuleImpl.pushInboxNotificationClickedEventForId(messageId, accountId)
     }
 
     @ReactMethod
-    fun pushInboxNotificationViewedEventForId(messageId: String?) {
-        cleverTapModuleImpl.pushInboxNotificationViewedEventForId(messageId)
+    fun pushInboxNotificationViewedEventForId(messageId: String?, accountId: String?) {
+        cleverTapModuleImpl.pushInboxNotificationViewedEventForId(messageId, accountId)
     }
 
     @ReactMethod
-    fun fetchInbox(callback: Callback?) {
-        cleverTapModuleImpl.fetchInbox(callback)
+    fun fetchInbox(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.fetchInbox(accountId, callback)
     }
 
     @ReactMethod
-    fun showInbox(styleConfig: ReadableMap?) {
-        cleverTapModuleImpl.showInbox(styleConfig)
+    fun showInbox(styleConfig: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.showInbox(styleConfig, accountId)
     }
 
     @ReactMethod
-    fun dismissInbox() {
-        cleverTapModuleImpl.dismissInbox()
+    fun dismissInbox(accountId: String?) {
+        cleverTapModuleImpl.dismissInbox(accountId)
     }
 
     @ReactMethod
@@ -313,108 +313,108 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
-    fun getLastFetchTimeStampInMillis(callback: Callback?) {
-        cleverTapModuleImpl.getLastFetchTimeStampInMillis(callback)
+    fun getLastFetchTimeStampInMillis(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getLastFetchTimeStampInMillis(accountId, callback)
     }
 
     @ReactMethod
-    fun getString(key: String?, callback: Callback?) {
-        cleverTapModuleImpl.getString(key, callback)
+    fun getString(key: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getString(key, accountId, callback)
     }
 
     @ReactMethod
-    fun onUserLogin(profile: ReadableMap?) {
-        cleverTapModuleImpl.onUserLogin(profile)
+    fun onUserLogin(profile: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.onUserLogin(profile, accountId)
     }
 
     @ReactMethod
-    fun profileAddMultiValue(value: String?, key: String?) {
-        cleverTapModuleImpl.profileAddMultiValue(value, key)
+    fun profileAddMultiValue(value: String?, key: String?, accountId: String?) {
+        cleverTapModuleImpl.profileAddMultiValue(value, key, accountId)
     }
 
     @ReactMethod
-    fun profileAddMultiValues(values: ReadableArray?, key: String?) {
-        cleverTapModuleImpl.profileAddMultiValues(values, key)
+    fun profileAddMultiValues(values: ReadableArray?, key: String?, accountId: String?) {
+        cleverTapModuleImpl.profileAddMultiValues(values, key, accountId)
     }
 
     @ReactMethod
-    fun profileGetCleverTapAttributionIdentifier(callback: Callback?) {
-        cleverTapModuleImpl.profileGetCleverTapAttributionIdentifier(callback)
+    fun profileGetCleverTapAttributionIdentifier(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.profileGetCleverTapAttributionIdentifier(accountId, callback)
     }
 
     @ReactMethod
-    fun profileGetCleverTapID(callback: Callback?) {
-        cleverTapModuleImpl.profileGetCleverTapID(callback)
+    fun profileGetCleverTapID(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.profileGetCleverTapID(accountId, callback)
     }
 
     @ReactMethod
-    fun getCleverTapID(callback: Callback?) {
-        cleverTapModuleImpl.getCleverTapID(callback)
+    fun getCleverTapID(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getCleverTapID(accountId, callback)
     }
 
     @ReactMethod
-    fun profileGetProperty(propertyName: String?, callback: Callback?) {
-        cleverTapModuleImpl.profileGetProperty(propertyName, callback)
+    fun profileGetProperty(propertyName: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.profileGetProperty(propertyName, accountId, callback)
     }
 
     @ReactMethod
-    fun profileRemoveMultiValue(value: String?, key: String?) {
-        cleverTapModuleImpl.profileRemoveMultiValue(value, key)
+    fun profileRemoveMultiValue(value: String?, key: String?, accountId: String?) {
+        cleverTapModuleImpl.profileRemoveMultiValue(value, key, accountId)
     }
 
     @ReactMethod
-    fun profileRemoveMultiValues(values: ReadableArray?, key: String?) {
-        cleverTapModuleImpl.profileRemoveMultiValues(values, key)
+    fun profileRemoveMultiValues(values: ReadableArray?, key: String?, accountId: String?) {
+        cleverTapModuleImpl.profileRemoveMultiValues(values, key, accountId)
     }
 
     @ReactMethod
-    fun profileRemoveValueForKey(key: String?) {
-        cleverTapModuleImpl.profileRemoveValueForKey(key)
+    fun profileRemoveValueForKey(key: String?, accountId: String?) {
+        cleverTapModuleImpl.profileRemoveValueForKey(key, accountId)
     }
 
     @ReactMethod
-    fun profileSet(profile: ReadableMap?) {
-        cleverTapModuleImpl.profileSet(profile)
+    fun profileSet(profile: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.profileSet(profile, accountId)
     }
 
     @ReactMethod
-    fun profileSetMultiValues(values: ReadableArray?, key: String?) {
-        cleverTapModuleImpl.profileSetMultiValues(values, key)
+    fun profileSetMultiValues(values: ReadableArray?, key: String?, accountId: String?) {
+        cleverTapModuleImpl.profileSetMultiValues(values, key, accountId)
     }
 
     @ReactMethod
-    fun pushDisplayUnitClickedEventForID(unitID: String?) {
-        cleverTapModuleImpl.pushDisplayUnitClickedEventForID(unitID)
+    fun pushDisplayUnitClickedEventForID(unitID: String?, accountId: String?) {
+        cleverTapModuleImpl.pushDisplayUnitClickedEventForID(unitID, accountId)
     }
 
     @ReactMethod
-    fun pushDisplayUnitViewedEventForID(unitID: String?) {
-        cleverTapModuleImpl.pushDisplayUnitViewedEventForID(unitID)
+    fun pushDisplayUnitViewedEventForID(unitID: String?, accountId: String?) {
+        cleverTapModuleImpl.pushDisplayUnitViewedEventForID(unitID, accountId)
     }
 
     @ReactMethod
-    fun pushDisplayUnitElementClickedEventForID(unitID: String?, additionalProperties: ReadableMap?) {
-        cleverTapModuleImpl.pushDisplayUnitElementClickedEventForID(unitID, additionalProperties)
+    fun pushDisplayUnitElementClickedEventForID(unitID: String?, additionalProperties: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.pushDisplayUnitElementClickedEventForID(unitID, additionalProperties, accountId)
     }
 
     @ReactMethod
-    fun pushInstallReferrer(source: String?, medium: String?, campaign: String?) {
-        cleverTapModuleImpl.pushInstallReferrer(source, medium, campaign)
+    fun pushInstallReferrer(source: String?, medium: String?, campaign: String?, accountId: String?) {
+        cleverTapModuleImpl.pushInstallReferrer(source, medium, campaign, accountId)
     }
 
     @ReactMethod
-    fun recordChargedEvent(details: ReadableMap?, items: ReadableArray?) {
-        cleverTapModuleImpl.recordChargedEvent(details, items)
+    fun recordChargedEvent(details: ReadableMap?, items: ReadableArray?, accountId: String?) {
+        cleverTapModuleImpl.recordChargedEvent(details, items, accountId)
     }
 
     @ReactMethod
-    fun recordEvent(eventName: String?, props: ReadableMap?) {
-        cleverTapModuleImpl.recordEvent(eventName, props)
+    fun recordEvent(eventName: String?, props: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.recordEvent(eventName, props, accountId)
     }
 
     @ReactMethod
-    fun recordScreenView(screenName: String?) {
-        cleverTapModuleImpl.recordScreenView(screenName)
+    fun recordScreenView(screenName: String?, accountId: String?) {
+        cleverTapModuleImpl.recordScreenView(screenName, accountId)
     }
 
     // Product Config methods
@@ -424,35 +424,35 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
-    fun reset() {
-        cleverTapModuleImpl.reset()
+    fun reset(accountId: String?) {
+        cleverTapModuleImpl.reset(accountId)
     }
 
     // Feature Flag methods
     @ReactMethod
-    fun sessionGetPreviousVisitTime(callback: Callback?) {
-        cleverTapModuleImpl.sessionGetPreviousVisitTime(callback)
+    fun sessionGetPreviousVisitTime(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.sessionGetPreviousVisitTime(accountId, callback)
     }
 
     // Developer Options
     @ReactMethod
-    fun sessionGetScreenCount(callback: Callback?) {
-        cleverTapModuleImpl.sessionGetScreenCount(callback)
+    fun sessionGetScreenCount(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.sessionGetScreenCount(accountId, callback)
     }
 
     @ReactMethod
-    fun sessionGetTimeElapsed(callback: Callback?) {
-        cleverTapModuleImpl.sessionGetTimeElapsed(callback)
+    fun sessionGetTimeElapsed(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.sessionGetTimeElapsed(accountId, callback)
     }
 
     @ReactMethod
-    fun sessionGetTotalVisits(callback: Callback?) {
-        cleverTapModuleImpl.sessionGetTotalVisits(callback)
+    fun sessionGetTotalVisits(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.sessionGetTotalVisits(accountId, callback)
     }
 
     @ReactMethod
-    fun sessionGetUTMDetails(callback: Callback?) {
-        cleverTapModuleImpl.sessionGetUTMDetails(callback)
+    fun sessionGetUTMDetails(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.sessionGetUTMDetails(accountId, callback)
     }
 
     @ReactMethod
@@ -461,76 +461,87 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
-    fun setDefaultsMap(map: ReadableMap?) {
-        cleverTapModuleImpl.setDefaultsMap(map)
+    fun setDefaultsMap(map: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.setDefaultsMap(map, accountId)
     }
 
     @ReactMethod
-    fun setLocation(latitude: Double, longitude: Double) {
-        cleverTapModuleImpl.setLocation(latitude, longitude)
+    fun setLocation(latitude: Double, longitude: Double, accountId: String?) {
+        cleverTapModuleImpl.setLocation(latitude, longitude, accountId)
     }
 
     @ReactMethod
-    fun setMinimumFetchIntervalInSeconds(interval: Int) {
-        cleverTapModuleImpl.setMinimumFetchIntervalInSeconds(interval)
+    fun setMinimumFetchIntervalInSeconds(interval: Int, accountId: String?) {
+        cleverTapModuleImpl.setMinimumFetchIntervalInSeconds(interval, accountId)
     }
 
     //Sets the SDK to offline mode
     @ReactMethod
-    fun setOffline(value: Boolean) {
-        cleverTapModuleImpl.setOffline(value)
+    fun setOffline(value: Boolean, accountId: String?) {
+        cleverTapModuleImpl.setOffline(value, accountId)
     }
 
     @ReactMethod
-    fun setOptOut(userOptOut: Boolean, allowSystemEvents: Boolean?) {
-        cleverTapModuleImpl.setOptOut(userOptOut, allowSystemEvents)
+    fun setOptOut(userOptOut: Boolean, allowSystemEvents: Boolean?, accountId: String?) {
+        cleverTapModuleImpl.setOptOut(userOptOut, allowSystemEvents, accountId)
     }
 
     @ReactMethod
-    fun pushRegistrationToken(token: String?, type: ReadableMap?) {
-        cleverTapModuleImpl.pushRegistrationToken(token, type)
+    fun pushRegistrationToken(token: String?, type: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.pushRegistrationToken(token, type, accountId)
     }
 
     @ReactMethod
-    fun setFCMPushTokenAsString(token: String?) {
-        cleverTapModuleImpl.setFCMPushTokenAsString(token)
+    fun setFCMPushTokenAsString(token: String?, accountId: String?) {
+        cleverTapModuleImpl.setFCMPushTokenAsString(token, accountId)
+    }
+
+    // iOS-only method; present so JS can call it uniformly on both architectures.
+    @ReactMethod
+    fun setPushTokenAsStringWithRegion(
+        token: String?,
+        withType: String?,
+        withRegion: String?,
+        accountId: String?
+    ) {
+        return
     }
 
     // Increment/Decrement Operator
     @ReactMethod
-    fun profileIncrementValueForKey(value: Double?, key: String?) {
-        cleverTapModuleImpl.profileIncrementValueForKey(value, key)
+    fun profileIncrementValueForKey(value: Double?, key: String?, accountId: String?) {
+        cleverTapModuleImpl.profileIncrementValueForKey(value, key, accountId)
     }
 
     @ReactMethod
-    fun profileDecrementValueForKey(value: Double?, key: String?) {
-        cleverTapModuleImpl.profileDecrementValueForKey(value, key)
+    fun profileDecrementValueForKey(value: Double?, key: String?, accountId: String?) {
+        cleverTapModuleImpl.profileDecrementValueForKey(value, key, accountId)
     }
 
     // InApp Controls
     @ReactMethod
-    fun suspendInAppNotifications() {
-        cleverTapModuleImpl.suspendInAppNotifications()
+    fun suspendInAppNotifications(accountId: String?) {
+        cleverTapModuleImpl.suspendInAppNotifications(accountId)
     }
 
     @ReactMethod
-    fun discardInAppNotifications(dismissInAppIfVisible: Boolean?) {
-        cleverTapModuleImpl.discardInAppNotifications(dismissInAppIfVisible)
+    fun discardInAppNotifications(dismissInAppIfVisible: Boolean?, accountId: String?) {
+        cleverTapModuleImpl.discardInAppNotifications(dismissInAppIfVisible, accountId)
     }
 
     @ReactMethod
-    fun resumeInAppNotifications() {
-        cleverTapModuleImpl.resumeInAppNotifications()
+    fun resumeInAppNotifications(accountId: String?) {
+        cleverTapModuleImpl.resumeInAppNotifications(accountId)
     }
 
     @ReactMethod
-    fun dismissPipInApp() {
-        cleverTapModuleImpl.dismissPipInApp()
+    fun dismissPipInApp(accountId: String?) {
+        cleverTapModuleImpl.dismissPipInApp(accountId)
     }
 
     @ReactMethod
-    fun unmute() {
-        cleverTapModuleImpl.unmute()
+    fun unmute(accountId: String?) {
+        cleverTapModuleImpl.unmute(accountId)
     }
 
     @ReactMethod
@@ -539,195 +550,220 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
-    fun fetchInApps(callback: Callback?) {
-        cleverTapModuleImpl.fetchInApps(callback)
+    fun createInstance(config: ReadableMap?, promise: Promise?) {
+        cleverTapModuleImpl.createInstance(config, promise)
     }
 
     @ReactMethod
-    fun clearInAppResources(expiredOnly: Boolean) {
-        cleverTapModuleImpl.clearInAppResources(expiredOnly)
+    fun getDefaultAccountId(promise: Promise?) {
+        cleverTapModuleImpl.getDefaultAccountId(promise)
     }
 
     @ReactMethod
-    fun customTemplateSetDismissed(templateName: String?, promise: Promise?) {
-        cleverTapModuleImpl.customTemplateSetDismissed(templateName, promise)
+    fun fetchInApps(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.fetchInApps(accountId, callback)
     }
 
     @ReactMethod
-    fun customTemplateSetPresented(templateName: String?, promise: Promise?) {
-        cleverTapModuleImpl.customTemplateSetPresented(templateName, promise)
+    fun clearInAppResources(expiredOnly: Boolean, accountId: String?) {
+        cleverTapModuleImpl.clearInAppResources(expiredOnly, accountId)
+    }
+
+    // ⚠️ In every customTemplate* method the accountId comes BEFORE the Promise:
+    // the promise is the implicitly-last argument on the old-architecture bridge
+    // (same iron rule as trailing callbacks — nothing may follow it).
+    @ReactMethod
+    fun customTemplateSetDismissed(templateName: String?, accountId: String?, promise: Promise?) {
+        cleverTapModuleImpl.customTemplateSetDismissed(templateName, accountId, promise)
+    }
+
+    @ReactMethod
+    fun customTemplateSetPresented(templateName: String?, accountId: String?, promise: Promise?) {
+        cleverTapModuleImpl.customTemplateSetPresented(templateName, accountId, promise)
     }
 
     @ReactMethod
     fun customTemplateRunAction(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateRunAction(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateRunAction(templateName, argName, accountId, promise)
     }
 
     @ReactMethod
     fun customTemplateGetStringArg(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateGetStringArg(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateGetStringArg(templateName, argName, accountId, promise)
     }
 
     @ReactMethod
     fun customTemplateGetNumberArg(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateGetNumberArg(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateGetNumberArg(templateName, argName, accountId, promise)
     }
 
     @ReactMethod
     fun customTemplateGetBooleanArg(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateGetBooleanArg(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateGetBooleanArg(templateName, argName, accountId, promise)
     }
 
     @ReactMethod
     fun customTemplateGetFileArg(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateGetFileArg(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateGetFileArg(templateName, argName, accountId, promise)
     }
 
     @ReactMethod
     fun customTemplateGetObjectArg(
         templateName: String?,
         argName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateGetObjectArg(templateName, argName, promise)
+        cleverTapModuleImpl.customTemplateGetObjectArg(templateName, argName, accountId, promise)
     }
 
     @ReactMethod
     fun customTemplateContextToString(
         templateName: String?,
+        accountId: String?,
         promise: Promise?
     ) {
-        cleverTapModuleImpl.customTemplateContextToString(templateName, promise)
+        cleverTapModuleImpl.customTemplateContextToString(templateName, accountId, promise)
     }
 
     @ReactMethod
-    fun syncCustomTemplates() {
-        cleverTapModuleImpl.syncCustomTemplates()
+    fun syncCustomTemplates(accountId: String?) {
+        cleverTapModuleImpl.syncCustomTemplates(accountId)
     }
 
     @ReactMethod
-    fun syncCustomTemplatesInProd(isProduction: Boolean) {
-        cleverTapModuleImpl.syncCustomTemplates()
+    fun syncCustomTemplatesInProd(isProduction: Boolean, accountId: String?) {
+        // Android has no isProduction variant natively; route by account like the
+        // parameterless sync (the spec keeps isProduction for iOS parity).
+        cleverTapModuleImpl.syncCustomTemplates(accountId)
     }
 
     @ReactMethod
-    fun variants(callback: Callback?) {
-        cleverTapModuleImpl.variants(callback)
+    fun variants(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.variants(accountId, callback)
     }
 
     @ReactMethod
-    fun syncVariables() {
-        cleverTapModuleImpl.syncVariables()
+    fun syncVariables(accountId: String?) {
+        cleverTapModuleImpl.syncVariables(accountId)
     }
 
     @ReactMethod
-    fun syncVariablesinProd(isProduction: Boolean, callback: Callback?) {
-        cleverTapModuleImpl.syncVariablesinProd(isProduction, callback)
+    fun syncVariablesinProd(isProduction: Boolean, accountId: String?) {
+        // Same (isProduction, accountId) shape as the spec — the old-arch bridge checks the
+        // exact argument count. Android has no production/debug variant of variable sync
+        // natively, so the impl logs and no-ops (iOS honors isProduction).
+        cleverTapModuleImpl.syncVariablesinProd(isProduction, accountId)
     }
 
     @ReactMethod
-    fun defineVariables(`object`: ReadableMap) {
-        cleverTapModuleImpl.defineVariables(`object`)
+    fun defineVariables(`object`: ReadableMap, accountId: String?) {
+        cleverTapModuleImpl.defineVariables(`object`, accountId)
     }
 
     @ReactMethod
-    fun defineFileVariable(name: String) {
-        cleverTapModuleImpl.defineFileVariable(name)
+    fun defineFileVariable(name: String, accountId: String?) {
+        cleverTapModuleImpl.defineFileVariable(name, accountId)
     }
 
     @ReactMethod
-    fun fetchVariables(callback: Callback?) {
-        cleverTapModuleImpl.fetchVariables(callback)
+    fun fetchVariables(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.fetchVariables(accountId, callback)
     }
 
     @ReactMethod
-    fun getVariable(key: String?, callback: Callback?) {
-        cleverTapModuleImpl.getVariable(key, callback)
+    fun getVariable(key: String?, accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getVariable(key, accountId, callback)
     }
 
     @ReactMethod
-    fun getVariables(callback: Callback?) {
-        cleverTapModuleImpl.getVariables(callback)
+    fun getVariables(accountId: String?, callback: Callback?) {
+        cleverTapModuleImpl.getVariables(accountId, callback)
     }
 
     @ReactMethod
-    fun onVariablesChanged() {
-        cleverTapModuleImpl.onVariablesChanged()
+    fun onVariablesChanged(accountId: String?) {
+        cleverTapModuleImpl.onVariablesChanged(accountId)
     }
 
     @ReactMethod
-    fun onOneTimeVariablesChanged() {
-        cleverTapModuleImpl.onOneTimeVariablesChanged()
+    fun onOneTimeVariablesChanged(accountId: String?) {
+        cleverTapModuleImpl.onOneTimeVariablesChanged(accountId)
     }
 
     @ReactMethod
-    fun onValueChanged(name: String) {
-        cleverTapModuleImpl.onValueChanged(name)
+    fun onValueChanged(name: String, accountId: String?) {
+        cleverTapModuleImpl.onValueChanged(name, accountId)
     }
 
     @ReactMethod
-    fun onFileValueChanged(name: String) {
-        cleverTapModuleImpl.onFileValueChanged(name)
+    fun onFileValueChanged(name: String, accountId: String?) {
+        cleverTapModuleImpl.onFileValueChanged(name, accountId)
     }
 
     @ReactMethod
-    fun onVariablesChangedAndNoDownloadsPending() {
-        cleverTapModuleImpl.onVariablesChangedAndNoDownloadsPending()
+    fun onVariablesChangedAndNoDownloadsPending(accountId: String?) {
+        cleverTapModuleImpl.onVariablesChangedAndNoDownloadsPending(accountId)
     }
 
     @ReactMethod
-    fun onceVariablesChangedAndNoDownloadsPending() {
-        cleverTapModuleImpl.onceVariablesChangedAndNoDownloadsPending()
+    fun onceVariablesChangedAndNoDownloadsPending(accountId: String?) {
+        cleverTapModuleImpl.onceVariablesChangedAndNoDownloadsPending(accountId)
     }
 
     @ReactMethod
-    fun onEventListenerAdded(eventName: String) {
-        cleverTapModuleImpl.onEventListenerAdded(eventName)
+    fun onEventListenerAdded(eventName: String, accountId: String?) {
+        cleverTapModuleImpl.onEventListenerAdded(eventName, accountId)
     }
 
     @ReactMethod
-    fun getUserEventLog(eventName: String, callback: Callback) {
-        cleverTapModuleImpl.getUserEventLog(eventName, callback)
+    fun getUserEventLog(eventName: String, accountId: String?, callback: Callback) {
+        cleverTapModuleImpl.getUserEventLog(eventName, accountId, callback)
     }
 
     @ReactMethod
-    fun getUserEventLogCount(eventName: String, callback: Callback) {
-        cleverTapModuleImpl.getUserEventLogCount(eventName, callback)
+    fun getUserEventLogCount(eventName: String, accountId: String?, callback: Callback) {
+        cleverTapModuleImpl.getUserEventLogCount(eventName, accountId, callback)
     }
 
     @ReactMethod
-    fun getUserLastVisitTs(callback: Callback) {
-        cleverTapModuleImpl.getUserLastVisitTs(callback)
+    fun getUserLastVisitTs(accountId: String?, callback: Callback) {
+        cleverTapModuleImpl.getUserLastVisitTs(accountId, callback)
     }
 
     @ReactMethod
-    fun getUserAppLaunchCount(callback: Callback) {
-        cleverTapModuleImpl.getUserAppLaunchCount(callback)
+    fun getUserAppLaunchCount(accountId: String?, callback: Callback) {
+        cleverTapModuleImpl.getUserAppLaunchCount(accountId, callback)
     }
 
     @ReactMethod
-    fun getUserEventLogHistory(callback: Callback) {
-        cleverTapModuleImpl.getUserEventLogHistory(callback)
+    fun getUserEventLogHistory(accountId: String?, callback: Callback) {
+        cleverTapModuleImpl.getUserEventLogHistory(accountId, callback)
     }
 
     override fun getConstants(): Map<String, Any> {

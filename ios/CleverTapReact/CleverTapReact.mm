@@ -20,6 +20,7 @@
 #import "CleverTap+CTVar.h"
 #import "CTVar.h"
 #import "CleverTapReactPendingEvent.h"
+#import "CleverTapReactInstanceConfigRequest.h"
 #import "CTTemplateContext.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -28,14 +29,49 @@
 
 static NSDateFormatter *dateFormatter;
 
+/// The one error a callback/promise method reports when its account has no instance.
+/// One constant so every method says exactly the same thing to JS.
+static NSString *const kCleverTapNotInitializedError = @"CleverTap is not initialized";
+
+/// Promise rejection codes for createInstance. Part of the public JS contract —
+/// apps switch on `e.code`, so the exact strings must never drift between call
+/// sites or platforms (Android mirrors these in Constants.kt).
+/// EINVALID = the config itself is unacceptable; ECREATE = the SDK could not create.
+static NSString *const kCleverTapErrorCodeInvalidConfig = @"EINVALID";
+static NSString *const kCleverTapErrorCodeCreateFailed = @"ECREATE";
+
+/// The library name stamped on every instance for analytics attribution.
+/// Must match `libName` in src/index.js and Constants.LIBRARY_NAME on Android.
+static NSString *const kCleverTapLibraryName = @"React-Native";
+
 @interface CleverTapReact()
-@property CleverTap *cleverTapInstance;
-@property(nonatomic, strong) NSMutableDictionary *allVariables;
+// The "default slot": the instance that unaddressed top-level CleverTap calls use.
+// nil means "not resolved yet" -> falls back to [CleverTap sharedInstance].
+// setInstanceWithAccountId swaps this pointer (legacy behavior).
+@property(nonatomic, strong) CleverTap *defaultInstance;
+// Accounts whose delegates are already wired, so wiring happens exactly once per account.
+@property(nonatomic, strong) NSMutableSet<NSString *> *wiredAccountIds;
+// Which account's App Inbox is currently presented (this module is the inbox view's
+// delegate, so inbox tap events are stamped with this account id).
+@property(nonatomic, strong) NSString *inboxAccountId;
+// Per-account variable registries: REAL account id -> (variable name -> CTVar).
+// Without the account level, two accounts defining the same variable name would
+// overwrite each other and reads/listeners would silently serve the wrong account.
+// ⚠️ Thread safety is mandatory: the SDK invokes variable callbacks on its own
+// threads while bridge methods run on the main queue — EVERY access goes through
+// @synchronized (self.variablesByAccount).
+@property(nonatomic, strong) NSMutableDictionary<NSString *, NSMutableDictionary *> *variablesByAccount;
+// Remembered from the JS import-time setLibrary call so that EVERY instance wired
+// later (createInstance, getInstance calls, a slot swap) reports the same wrapper
+// name and version — the stamping happens in resolveInstance's wire-once block, the
+// choke point every instance passes through exactly once. Without this, secondary
+// accounts under-reported the wrapper version, and in an app with no plist account
+// the version was lost entirely. Main-queue confined like the rest of this module.
+@property(nonatomic, strong) NSString *customSdkName;
+@property(nonatomic, assign) int customSdkVersion;
 @end
 
 @implementation CleverTapReact
-
-@synthesize cleverTapInstance = _cleverTapInstance;
 
 RCT_EXPORT_MODULE();
 
@@ -89,33 +125,244 @@ RCT_EXPORT_MODULE();
 {
     self = [super init];
     if (self) {
-        self.allVariables = [NSMutableDictionary dictionary];
+        self.variablesByAccount = [NSMutableDictionary dictionary];
+        self.wiredAccountIds = [NSMutableSet set];
     }
     return self;
 }
 
-- (CleverTap *)cleverTapInstance {
-    if (_cleverTapInstance != nil) {
-        return _cleverTapInstance;
+/// Resolves the CleverTap instance for the given account id.
+///
+/// accountId == nil -> the DEFAULT SLOT (today's behavior, unchanged).
+/// accountId != nil -> the instance for that account, or nil if it does not exist.
+///
+/// Example: resolveInstance:nil returns the plist account; after
+/// setInstanceWithAccountId:@"B" it returns account B. resolveInstance:@"C"
+/// returns account C if it was created (in this run, or restored by the native
+/// SDK from a previous run) — otherwise it logs ONE warning and returns nil.
+///
+/// Regular bridge methods do not call this directly: they go through withInstance:run:
+/// or withInstance:callback:run: below, which own the "account is missing" behavior.
+/// Only the wiring paths (createInstance, setInstanceWithAccountId), the nil-tolerant
+/// readers (getDefaultAccountId, onEventListenerAdded) and the promise-based template
+/// helper resolve here themselves.
+- (CleverTap *)resolveInstance:(NSString *)accountId {
+    CleverTap *instance;
+    if (accountId == nil) {
+        if (self.defaultInstance == nil) {
+            self.defaultInstance = [CleverTap sharedInstance];
+        }
+        instance = self.defaultInstance;
+    } else {
+        instance = [CleverTap getGlobalInstance:accountId];
     }
-    return [CleverTap sharedInstance];
+
+    if (instance == nil) {
+        // The ONE warning that covers every bridge method (same rule as Android):
+        // without it a typo'd accountId silently drops every call.
+        if (accountId == nil) {
+            RCTLogWarn(@"CleverTap default instance is not available — call ignored. Add the default "
+                       "account to Info.plist, or use getInstance(accountId)/createInstance(config) "
+                       "to address a specific account.");
+        } else {
+            RCTLogWarn(@"CleverTap instance not found for accountId: %@ — call ignored. Create it "
+                       "first: pass it in launchConfigs to applicationDidLaunchWithOptions:launchConfigs: "
+                       "in your AppDelegate, or call CleverTap.createInstance(config) from JS "
+                       "(required once per app run, before any other call for that account).", accountId);
+        }
+        return nil;
+    }
+
+    NSString *key = instance.config.accountId;
+    if (key != nil && ![self.wiredAccountIds containsObject:key]) {
+        [self.wiredAccountIds addObject:key];
+        // Stamp the wrapper name/version remembered from the import-time setLibrary
+        // call (see customSdkName above) — every account's analytics report it, not
+        // just the default's. JS calls setLibrary at module import, before any
+        // account can be wired, so the values are always populated by now.
+        [instance setLibrary:kCleverTapLibraryName];
+        if (self.customSdkName != nil) {
+            [instance setCustomSdkVersion:self.customSdkName version:self.customSdkVersion];
+        }
+        [[CleverTapReactManager sharedInstance] setDelegates:instance];
+    }
+    return instance;
 }
 
-- (void)setCleverTapInstance:(CleverTap *)instance {
-    _cleverTapInstance = instance;
+/// Runs `work` with the instance for `accountId`. When that account has no instance the
+/// call is dropped (resolveInstance already logged the one warning).
+///
+/// Why a helper instead of `[[self resolveInstance:accountId] foo]` at every call site:
+/// messaging nil is a silent no-op in Objective-C, so the old shape could never crash —
+/// but the "what happens when the account is missing" rule was then spread implicitly
+/// over ~90 methods. Here it is written down once, for fire-and-forget methods (this
+/// helper) and for methods that answer through a JS callback (the overload below).
+- (void)withInstance:(NSString *)accountId run:(void (^)(CleverTap *instance))work {
+    CleverTap *instance = [self resolveInstance:accountId];
+    if (instance != nil) {
+        work(instance);
+    }
+}
+
+/// Same as above for methods that answer through a JS callback. A missing account
+/// completes the callback with an error instead of never calling it. This matters most
+/// for SDK calls that take a completion block (fetchInApps:, fetchVariables:, ...):
+/// messaging nil skips the SDK call AND its block, so the JS callback would never fire
+/// and an awaiting caller would hang forever. Android reports the same error here.
+- (void)withInstance:(NSString *)accountId
+            callback:(RCTResponseSenderBlock)callback
+                 run:(void (^)(CleverTap *instance))work {
+    CleverTap *instance = [self resolveInstance:accountId];
+    if (instance == nil) {
+        [self returnResult:nil withCallback:callback andError:kCleverTapNotInitializedError];
+        return;
+    }
+    work(instance);
 }
 
 RCT_EXPORT_METHOD(setInstanceWithAccountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap setInstanceWithAccountId]");
-    
+
     CleverTap *instance = [CleverTap getGlobalInstance:accountId];
     if (instance == nil) {
         RCTLogWarn(@"CleverTapInstance not found for accountId: %@", accountId);
         return;
     }
-    
-    [self setCleverTapInstance:instance];
-    [[CleverTapReactManager sharedInstance] setDelegates:instance];
+
+    self.defaultInstance = instance;  // swap the default slot (legacy behavior)
+    [self resolveInstance:accountId]; // ensure delegates are wired exactly once
+}
+
+// 'off' -> Off(-1), 'info' -> Info(0), 'debug'/'verbose' -> Debug(1).
+// iOS has no verbose level; Android maps 'verbose' to its real verbose level.
+static CleverTapLogLevel ctLogLevelFromString(NSString *level) {
+    if ([level isEqualToString:@"off"]) return CleverTapLogOff;
+    if ([level isEqualToString:@"debug"] || [level isEqualToString:@"verbose"]) return CleverTapLogDebug;
+    return CleverTapLogInfo;
+}
+
+// 'none' -> None(0), 'medium' -> Medium(1, PII only), 'high' -> High(2, all data).
+// (Android maps the same strings to NONE/MEDIUM/FULL_DATA.)
+static CleverTapEncryptionLevel ctEncryptionLevelFromString(NSString *level) {
+    if ([level isEqualToString:@"medium"]) return CleverTapEncryptionMedium;
+    if ([level isEqualToString:@"high"]) return CleverTapEncryptionHigh;
+    return CleverTapEncryptionNone;
+}
+
+RCT_EXPORT_METHOD(createInstance:(NSDictionary *)config
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+    RCTLogInfo(@"[CleverTap createInstance]");
+
+    // 1. Parse and validate before any native work, so every bad input rejects the promise
+    //    right here (same three steps as Android). The reading rules — null = not set,
+    //    wrong type = EINVALID naming the field — live in CleverTapReactInstanceConfigRequest.
+    NSString *configError = nil;
+    CleverTapReactInstanceConfigRequest *request = [CleverTapReactInstanceConfigRequest parse:config error:&configError];
+    if (request == nil) {
+        reject(kCleverTapErrorCodeInvalidConfig, [@"createInstance: " stringByAppendingString:configError], nil);
+        return;
+    }
+    NSString *accountId = request.accountId;
+
+    // 2. Build the SDK config. region/proxyDomain/spikyProxyDomain are READONLY on the iOS
+    //    config — they can only be set through one of the four initializers, and none of
+    //    them accepts region AND proxy together. Agreed rule: region wins, proxy settings
+    //    are ignored with a warning (Android applies both). Empty proxy strings count as
+    //    "not given", as before.
+    BOOL hasProxy = request.proxyDomain.length > 0;
+    BOOL hasSpiky = request.spikyProxyDomain.length > 0;
+    CleverTapInstanceConfig *ctConfig;
+    if (request.region != nil) {
+        if (hasProxy || hasSpiky) {
+            RCTLogWarn(@"createInstance: iOS cannot combine region with proxyDomain/spikyProxyDomain; region applied, proxy settings ignored (Android applies both)");
+        }
+        ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:request.accountToken accountRegion:request.region];
+    } else if (hasProxy && hasSpiky) {
+        ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:request.accountToken proxyDomain:request.proxyDomain spikyProxyDomain:request.spikyProxyDomain];
+    } else if (hasProxy) {
+        ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:request.accountToken proxyDomain:request.proxyDomain];
+    } else {
+        if (hasSpiky) {
+            RCTLogWarn(@"createInstance: spikyProxyDomain requires proxyDomain; ignored");
+        }
+        ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:accountId accountToken:request.accountToken];
+    }
+
+    // These ARE writable properties on the iOS config. nil = not given: the config keeps
+    // its default.
+    if (request.handshakeDomain != nil) {
+        ctConfig.handshakeDomain = request.handshakeDomain;
+    }
+    if (request.identityKeys != nil) {
+        ctConfig.identityKeys = request.identityKeys;
+    }
+    if (request.logLevel != nil) {
+        ctConfig.logLevel = ctLogLevelFromString(request.logLevel);
+    }
+    if (request.analyticsOnly != nil) {
+        ctConfig.analyticsOnly = request.analyticsOnly.boolValue;
+    }
+    if (request.enablePersonalization != nil) {
+        ctConfig.enablePersonalization = request.enablePersonalization.boolValue;
+    }
+    if (request.disableAppLaunchedEvent != nil) {
+        ctConfig.disableAppLaunchedEvent = request.disableAppLaunchedEvent.boolValue;
+    }
+    if (request.encryptionLevel != nil) {
+        ctConfig.encryptionLevel = ctEncryptionLevelFromString(request.encryptionLevel);
+    }
+    if (request.encryptionInTransit != nil) {
+        ctConfig.encryptionInTransitEnabled = request.encryptionInTransit.boolValue;
+    }
+    if (request.useCustomCleverTapId != nil) {
+        ctConfig.useCustomCleverTapId = request.useCustomCleverTapId.boolValue;
+    }
+    // iOS-only block (the "android" block is read by Android alone — each platform reads
+    // only its own nested block, so platform-targeted config needs no warnings).
+    if (request.disableIDFV != nil) {
+        ctConfig.disableIDFV = request.disableIDFV.boolValue;
+    }
+    if (request.enableFileProtection != nil) {
+        ctConfig.enableFileProtection = request.enableFileProtection.boolValue;
+    }
+
+    // 3. Instance creation can THROW, not just return nil: registered custom template
+    //    producers run inside it, and e.g. duplicate template names raise NSException
+    //    (CleverTapCustomTemplateException). An uncaught throw would crash the app
+    //    instead of rejecting the promise.
+    CleverTap *instance;
+    @try {
+        // A non-nil cleverTapId implies useCustomCleverTapId (validated by the parser).
+        instance = (request.cleverTapId != nil)
+            ? [CleverTap instanceWithConfig:ctConfig andCleverTapID:request.cleverTapId]
+            : [CleverTap instanceWithConfig:ctConfig];
+    } @catch (NSException *exception) {
+        reject(kCleverTapErrorCodeCreateFailed, [NSString stringWithFormat:@"createInstance failed for accountId %@: %@",
+                            accountId, exception.reason], nil);
+        return;
+    }
+    if (instance == nil) {
+        reject(kCleverTapErrorCodeCreateFailed, [NSString stringWithFormat:@"createInstance failed for accountId %@", accountId], nil);
+        return;
+    }
+    // Library name + wrapper version are stamped inside resolveInstance's wire-once
+    // block — the single owner for every wiring path, not just createInstance.
+    [self resolveInstance:accountId]; // wires delegates + library stamp exactly once
+    // "accountId" is the createInstance resolve-payload contract: JS reads
+    // result.accountId, Android builds the same shape in accountIdResult().
+    resolve(@{@"accountId": accountId});
+}
+
+// Resolves the account id the default slot currently points to (or null when no
+// default account exists). JS uses this once to route the top-level CleverTap
+// object's events; see the multi-instance design docs (point 5).
+RCT_EXPORT_METHOD(getDefaultAccountId:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+    RCTLogInfo(@"[CleverTap getDefaultAccountId]");
+    CleverTap *instance = [self resolveInstance:nil];
+    NSString *accountId = instance.config.accountId;
+    resolve(accountId ?: (id)[NSNull null]);
 }
 
 RCT_EXPORT_METHOD(getInitialUrl:(RCTResponseSenderBlock)callback) {
@@ -131,14 +378,20 @@ RCT_EXPORT_METHOD(getInitialUrl:(RCTResponseSenderBlock)callback) {
 RCT_EXPORT_METHOD(setLibrary:(NSString*)name andVersion:(double)version) {
     int libVersion = (int)version;
     RCTLogInfo(@"[CleverTap setLibrary:%@ andVersion:%d]", name, libVersion);
-    [[self cleverTapInstance] setLibrary:name];
-    [[self cleverTapInstance] setCustomSdkVersion:name version:libVersion];
+    self.customSdkName = name;
+    self.customSdkVersion = libVersion;
+    [self withInstance:nil run:^(CleverTap *instance) {
+        [instance setLibrary:name];
+        [instance setCustomSdkVersion:name version:libVersion];
+    }];
 }
 
-RCT_EXPORT_METHOD(setLocale:(NSString*)locale) {
+RCT_EXPORT_METHOD(setLocale:(NSString*)locale accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap setLocale:%@]", locale);
     NSLocale *userLocale = [NSLocale localeWithLocaleIdentifier:locale];
-    [[self cleverTapInstance] setLocale:userLocale];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance setLocale:userLocale];
+    }];
 }
 
 #pragma mark - Push Notifications
@@ -164,292 +417,396 @@ RCT_EXPORT_METHOD(registerForPush) {
     }
 }
 
-RCT_EXPORT_METHOD(setFCMPushTokenAsString:(NSString*)token) {
+RCT_EXPORT_METHOD(setFCMPushTokenAsString:(NSString*)token accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap setPushTokenAsString: %@]", token);
-    [[self cleverTapInstance] setPushTokenAsString:token];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance setPushTokenAsString:token];
+    }];
 }
 
-RCT_EXPORT_METHOD(pushRegistrationToken:(NSString*)token withPushType:(NSDictionary*)pushType) {
+RCT_EXPORT_METHOD(pushRegistrationToken:(NSString*)token withPushType:(NSDictionary*)pushType accountId:(NSString*)accountId) {
     NSString *type = pushType[@"type"];
     if ([type isEqualToString:@"fcm"]) {
-        [self setFCMPushTokenAsString:token];
+        [self setFCMPushTokenAsString:token accountId:accountId];
     } else {
         RCTLogInfo(@"[CleverTap pushRegistrationToken for types other than FCM is no-op in iOS]");
     }
 }
 
 // setPushTokenAsStringWithRegion is a no-op in iOS
-RCT_EXPORT_METHOD(setPushTokenAsStringWithRegion:(NSString*)token withType:(NSString *)type withRegion:(NSString *)region){
+RCT_EXPORT_METHOD(setPushTokenAsStringWithRegion:(NSString*)token withType:(NSString *)type withRegion:(NSString *)region accountId:(NSString*)accountId){
     RCTLogInfo(@"[CleverTap setPushTokenAsStringWithRegion is no-op in iOS]");
 }
 
 #pragma mark - Personalization
 
-RCT_EXPORT_METHOD(enablePersonalization) {
-    RCTLogInfo(@"[CleverTap enablePersonalization]");
-    [CleverTap enablePersonalization];
+// The SDK reads `config.enablePersonalization` on EVERY profile/event getter, per instance
+// (CleverTap.m, e.g. profileGet:, eventGetFirstTime:). Android's instance methods flip that
+// flag. The iOS SDK only offers CLASS methods, which persist a preference that is read
+// once — when the plist default config is built — so they never affected a secondary
+// account, nor even the default account within the current run. Flip the instance flag
+// directly (immediate, per account, Android parity) and keep the class-method persistence
+// for the default slot so the next launch starts exactly as it does today.
+- (void)setPersonalization:(BOOL)enabled accountId:(NSString *)accountId {
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        instance.config.enablePersonalization = enabled;
+    }];
+    if (accountId == nil) {
+        if (enabled) {
+            [CleverTap enablePersonalization];
+        } else {
+            [CleverTap disablePersonalization];
+        }
+    }
 }
 
-RCT_EXPORT_METHOD(disablePersonalization) {
+RCT_EXPORT_METHOD(enablePersonalization:(NSString*)accountId) {
+    RCTLogInfo(@"[CleverTap enablePersonalization]");
+    [self setPersonalization:YES accountId:accountId];
+}
+
+RCT_EXPORT_METHOD(disablePersonalization:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap disablePersonalization]");
-    [CleverTap disablePersonalization];
+    [self setPersonalization:NO accountId:accountId];
 }
 
 
 #pragma mark - Offline API
 
-RCT_EXPORT_METHOD(setOffline:(BOOL)enabled) {
+RCT_EXPORT_METHOD(setOffline:(BOOL)enabled accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap setOffline:  %i]", enabled);
-    [[self cleverTapInstance] setOffline:enabled];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance setOffline:enabled];
+    }];
 }
 
 
 #pragma mark - OptOut API
 
-RCT_EXPORT_METHOD(setOptOut:(BOOL)userOptOut allowSystemEvents:(BOOL)allowSystemEvents) {
+RCT_EXPORT_METHOD(setOptOut:(BOOL)userOptOut allowSystemEvents:(BOOL)allowSystemEvents accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap setOptOut and allowSystemEvents: %d, %d]", userOptOut, allowSystemEvents);
-    if (allowSystemEvents) {
-        [[self cleverTapInstance] setOptOut:userOptOut allowSystemEvents:allowSystemEvents];
-    } else {
-        [[self cleverTapInstance] setOptOut:userOptOut];
-    }
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        if (allowSystemEvents) {
+            [instance setOptOut:userOptOut allowSystemEvents:allowSystemEvents];
+        } else {
+            [instance setOptOut:userOptOut];
+        }
+    }];
 }
 
-RCT_EXPORT_METHOD(enableDeviceNetworkInfoReporting:(BOOL)enabled) {
+RCT_EXPORT_METHOD(enableDeviceNetworkInfoReporting:(BOOL)enabled accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap enableDeviceNetworkInfoReporting: %i]", enabled);
-    [[self cleverTapInstance] enableDeviceNetworkInfoReporting:enabled];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance enableDeviceNetworkInfoReporting:enabled];
+    }];
 }
 
 
 #pragma mark - Event API
 
-RCT_EXPORT_METHOD(recordScreenView:(NSString*)screenName) {
+RCT_EXPORT_METHOD(recordScreenView:(NSString*)screenName accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap recordScreenView]");
-    [[self cleverTapInstance] recordScreenView:screenName];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance recordScreenView:screenName];
+    }];
 }
 
-RCT_EXPORT_METHOD(recordEvent:(NSString*)eventName withProps:(NSDictionary*)props) {
+RCT_EXPORT_METHOD(recordEvent:(NSString*)eventName withProps:(NSDictionary*)props accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap recordEvent:withProps]");
-    [[self cleverTapInstance] recordEvent:eventName withProps:props];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance recordEvent:eventName withProps:props];
+    }];
 }
 
-RCT_EXPORT_METHOD(recordChargedEvent:(NSDictionary*)details andItems:(NSArray*)items) {
+RCT_EXPORT_METHOD(recordChargedEvent:(NSDictionary*)details andItems:(NSArray*)items accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap recordChargedEventWithDetails:andItems:]");
-    [[self cleverTapInstance] recordChargedEventWithDetails:details andItems:items];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance recordChargedEventWithDetails:details andItems:items];
+    }];
 }
 
-RCT_EXPORT_METHOD(eventGetFirstTime:(NSString*)eventName callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(eventGetFirstTime:(NSString*)eventName accountId:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap eventGetFirstTime: %@]", eventName);
-    NSTimeInterval result = [[self cleverTapInstance] eventGetFirstTime:eventName];
-    [self returnResult:@(result) withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        NSTimeInterval result = [instance eventGetFirstTime:eventName];
+        [self returnResult:@(result) withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(eventGetLastTime:(NSString*)eventName callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(eventGetLastTime:(NSString*)eventName accountId:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap eventGetLastTime: %@]", eventName);
-    NSTimeInterval result = [[self cleverTapInstance] eventGetLastTime:eventName];
-    [self returnResult:@(result) withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        NSTimeInterval result = [instance eventGetLastTime:eventName];
+        [self returnResult:@(result) withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(eventGetOccurrences:(NSString*)eventName callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(eventGetOccurrences:(NSString*)eventName accountId:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap eventGetOccurrences: %@]", eventName);
-    int result = [[self cleverTapInstance] eventGetOccurrences:eventName];
-    [self returnResult:@(result) withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        int result = [instance eventGetOccurrences:eventName];
+        [self returnResult:@(result) withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(eventGetDetail:(NSString*)eventName callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(eventGetDetail:(NSString*)eventName accountId:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap eventGetDetail: %@]", eventName);
-    CleverTapEventDetail *detail = [[self cleverTapInstance] eventGetDetail:eventName];
-    NSDictionary *result = [self _eventDetailToDict:detail];
-    [self returnResult:result withCallback:callback andError:nil];
-}
-
-RCT_EXPORT_METHOD(getEventHistory:(RCTResponseSenderBlock)callback) {
-    RCTLogInfo(@"[CleverTap getEventHistory]");
-    NSDictionary *history = [[self cleverTapInstance] userGetEventHistory];
-    NSMutableDictionary *result = [NSMutableDictionary new];
-    
-    for (NSString *eventName in [history keyEnumerator]) {
-        CleverTapEventDetail *detail = history[eventName];
-        NSDictionary * _inner = [self _eventDetailToDict:detail];
-        result[eventName] = _inner;
-    }
-    [self returnResult:result withCallback:callback andError:nil];
-}
-
-RCT_EXPORT_METHOD(getUserEventLog:(NSString*)eventName callback:(RCTResponseSenderBlock)callback) {
-    RCTLogInfo(@"[CleverTap getUserEventLog: %@]", eventName);
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        CleverTapEventDetail *detail = [[self cleverTapInstance] getUserEventLog:eventName];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        CleverTapEventDetail *detail = [instance eventGetDetail:eventName];
         NSDictionary *result = [self _eventDetailToDict:detail];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self returnResult:result withCallback:callback andError:nil];
-        });
-    });
+        [self returnResult:result withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(getUserEventLogCount:(NSString*)eventName callback:(RCTResponseSenderBlock)callback) {
-    RCTLogInfo(@"[CleverTap getUserEventLogCount: %@]", eventName);
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        int result = [[self cleverTapInstance] getUserEventLogCount:eventName];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self returnResult:@(result) withCallback:callback andError:nil];
-        });
-    });
-}
-
-RCT_EXPORT_METHOD(getUserEventLogHistory:(RCTResponseSenderBlock)callback) {
-    RCTLogInfo(@"[CleverTap getUserEventLogHistory]");
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSDictionary *history = [[self cleverTapInstance] getUserEventLogHistory];
+RCT_EXPORT_METHOD(getEventHistory:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getEventHistory]");
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        NSDictionary *history = [instance userGetEventHistory];
         NSMutableDictionary *result = [NSMutableDictionary new];
-    
+
         for (NSString *eventName in [history keyEnumerator]) {
             CleverTapEventDetail *detail = history[eventName];
             NSDictionary * _inner = [self _eventDetailToDict:detail];
             result[eventName] = _inner;
         }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self returnResult:result withCallback:callback andError:nil];
+        [self returnResult:result withCallback:callback andError:nil];
+    }];
+}
+
+// The three getUserEventLog* methods here (and getUserAppLaunchCount in the Session
+// section) read from the SDK's database, so the read runs on a background queue. The
+// instance is resolved FIRST, on the main queue (methodQueue), and captured by the
+// block: resolveInstance mutates main-confined state (defaultInstance, wiredAccountIds,
+// the manager's delegate table) and must never run on a background queue.
+RCT_EXPORT_METHOD(getUserEventLog:(NSString*)eventName accountId:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getUserEventLog: %@]", eventName);
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            CleverTapEventDetail *detail = [instance getUserEventLog:eventName];
+            NSDictionary *result = [self _eventDetailToDict:detail];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self returnResult:result withCallback:callback andError:nil];
+            });
         });
-    });
+    }];
+}
+
+RCT_EXPORT_METHOD(getUserEventLogCount:(NSString*)eventName accountId:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getUserEventLogCount: %@]", eventName);
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            int result = [instance getUserEventLogCount:eventName];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self returnResult:@(result) withCallback:callback andError:nil];
+            });
+        });
+    }];
+}
+
+RCT_EXPORT_METHOD(getUserEventLogHistory:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getUserEventLogHistory]");
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSDictionary *history = [instance getUserEventLogHistory];
+            NSMutableDictionary *result = [NSMutableDictionary new];
+
+            for (NSString *eventName in [history keyEnumerator]) {
+                CleverTapEventDetail *detail = history[eventName];
+                NSDictionary * _inner = [self _eventDetailToDict:detail];
+                result[eventName] = _inner;
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self returnResult:result withCallback:callback andError:nil];
+            });
+        });
+    }];
 }
 
 #pragma mark - Profile API
 
-RCT_EXPORT_METHOD(setLocation:(double)latitude longitude:(double)longitude) {
+RCT_EXPORT_METHOD(setLocation:(double)latitude longitude:(double)longitude accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap setLocation: %f %f]", latitude, longitude);
     CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(latitude, longitude);
-    [CleverTap setLocation:coordinate];
+    // Use the INSTANCE method, not the class method: [CleverTap setLocation:] is
+    // hardwired to [CleverTap sharedInstance] (the plist account), so it silently
+    // ignored both the accountId and a swapped default slot.
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance setLocation:coordinate];
+    }];
 }
 
-RCT_EXPORT_METHOD(profileGetCleverTapAttributionIdentifier:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(profileGetCleverTapAttributionIdentifier:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap profileGetCleverTapAttributionIdentifier]");
-    NSString *result = [[self cleverTapInstance] profileGetCleverTapAttributionIdentifier];
-    [self returnResult:result withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        NSString *result = [instance profileGetCleverTapAttributionIdentifier];
+        [self returnResult:result withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(profileGetCleverTapID:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(profileGetCleverTapID:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap profileGetCleverTapID]");
-    NSString *result = [[self cleverTapInstance] profileGetCleverTapID];
-    [self returnResult:result withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        NSString *result = [instance profileGetCleverTapID];
+        [self returnResult:result withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(getCleverTapID:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getCleverTapID:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getCleverTapID]");
-    NSString *result = [[self cleverTapInstance] profileGetCleverTapID];
-    [self returnResult:result withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        NSString *result = [instance profileGetCleverTapID];
+        [self returnResult:result withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(onUserLogin:(NSDictionary*)profile) {
+RCT_EXPORT_METHOD(onUserLogin:(NSDictionary*)profile accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap onUserLogin: %@]", profile);
     NSDictionary *_profile = [self formatProfile:profile];
-    [[self cleverTapInstance] onUserLogin:_profile];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance onUserLogin:_profile];
+    }];
 }
 
-RCT_EXPORT_METHOD(profileSet:(NSDictionary*)profile) {
+RCT_EXPORT_METHOD(profileSet:(NSDictionary*)profile accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap profileSet: %@]", profile);
     NSDictionary *_profile = [self formatProfile:profile];
-    [[self cleverTapInstance] profilePush:_profile];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance profilePush:_profile];
+    }];
 }
 
-RCT_EXPORT_METHOD(profileGetProperty:(NSString*)propertyName callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(profileGetProperty:(NSString*)propertyName accountId:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap profileGetProperty: %@]", propertyName);
-    id result = [[self cleverTapInstance] profileGet:propertyName];
-    [self returnResult:result withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        id result = [instance profileGet:propertyName];
+        [self returnResult:result withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(profileRemoveValueForKey:(NSString*)key) {
+RCT_EXPORT_METHOD(profileRemoveValueForKey:(NSString*)key accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap profileRemoveValueForKey: %@]", key);
-    [[self cleverTapInstance] profileRemoveValueForKey:key];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance profileRemoveValueForKey:key];
+    }];
 }
 
-RCT_EXPORT_METHOD(profileSetMultiValues:(NSArray<NSString*>*)values forKey:(NSString*)key) {
+RCT_EXPORT_METHOD(profileSetMultiValues:(NSArray<NSString*>*)values forKey:(NSString*)key accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap profileSetMultiValues: %@ forKey: %@]", values, key);
-    [[self cleverTapInstance] profileSetMultiValues:values forKey:key];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance profileSetMultiValues:values forKey:key];
+    }];
 }
 
-RCT_EXPORT_METHOD(profileAddMultiValue:(NSString*)value forKey:(NSString*)key) {
+RCT_EXPORT_METHOD(profileAddMultiValue:(NSString*)value forKey:(NSString*)key accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap profileAddMultiValue: %@ forKey: %@]", value, key);
-    [[self cleverTapInstance] profileAddMultiValue:value forKey:key];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance profileAddMultiValue:value forKey:key];
+    }];
 }
 
-RCT_EXPORT_METHOD(profileAddMultiValues:(NSArray<NSString*>*)values forKey:(NSString*)key) {
+RCT_EXPORT_METHOD(profileAddMultiValues:(NSArray<NSString*>*)values forKey:(NSString*)key accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap profileAddMultiValues: %@ forKey: %@]", values, key);
-    [[self cleverTapInstance] profileAddMultiValues:values forKey:key];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance profileAddMultiValues:values forKey:key];
+    }];
 }
 
-RCT_EXPORT_METHOD(profileRemoveMultiValue:(NSString*)value forKey:(NSString*)key) {
+RCT_EXPORT_METHOD(profileRemoveMultiValue:(NSString*)value forKey:(NSString*)key accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap profileRemoveMultiValue: %@ forKey: %@]", value, key);
-    [[self cleverTapInstance] profileRemoveMultiValue:value forKey:key];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance profileRemoveMultiValue:value forKey:key];
+    }];
 }
 
-RCT_EXPORT_METHOD(profileRemoveMultiValues:(NSArray<NSString*>*)values forKey:(NSString*)key) {
+RCT_EXPORT_METHOD(profileRemoveMultiValues:(NSArray<NSString*>*)values forKey:(NSString*)key accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap profileRemoveMultiValues: %@ forKey: %@]", values, key);
-    [[self cleverTapInstance] profileRemoveMultiValues:values forKey:key];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance profileRemoveMultiValues:values forKey:key];
+    }];
 }
 
-RCT_EXPORT_METHOD(profileIncrementValueForKey:(NSNumber* _Nonnull)value forKey:(NSString* _Nonnull)key) {
+RCT_EXPORT_METHOD(profileIncrementValueForKey:(NSNumber* _Nonnull)value forKey:(NSString* _Nonnull)key accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap profileIncrementValueBy: %@ forKey: %@]", value, key);
-    [[self cleverTapInstance] profileIncrementValueBy:value forKey:key];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance profileIncrementValueBy:value forKey:key];
+    }];
 }
 
-RCT_EXPORT_METHOD(profileDecrementValueForKey:(NSNumber* _Nonnull)value forKey:(NSString* _Nonnull)key) {
+RCT_EXPORT_METHOD(profileDecrementValueForKey:(NSNumber* _Nonnull)value forKey:(NSString* _Nonnull)key accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap profileDecrementValueBy: %@ forKey: %@]", value, key);
-    [[self cleverTapInstance] profileDecrementValueBy:value forKey:key];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance profileDecrementValueBy:value forKey:key];
+    }];
 }
 
 #pragma mark - Session API
 
-RCT_EXPORT_METHOD(pushInstallReferrer:(NSString*)source medium:(NSString*)medium campaign:(NSString*)campaign) {
+RCT_EXPORT_METHOD(pushInstallReferrer:(NSString*)source medium:(NSString*)medium campaign:(NSString*)campaign accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap pushInstallReferrer source: %@ medium: %@ campaign: %@]", source, medium, campaign);
-    [[self cleverTapInstance] pushInstallReferrerSource:source medium:medium campaign:campaign];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance pushInstallReferrerSource:source medium:medium campaign:campaign];
+    }];
 }
 
-RCT_EXPORT_METHOD(sessionGetTimeElapsed:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(sessionGetTimeElapsed:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap sessionGetTimeElapsed]");
-    NSTimeInterval result = [[self cleverTapInstance] sessionGetTimeElapsed];
-    [self returnResult:@(result) withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        NSTimeInterval result = [instance sessionGetTimeElapsed];
+        [self returnResult:@(result) withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(sessionGetTotalVisits:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(sessionGetTotalVisits:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap sessionGetTotalVisits]");
-    int result = [[self cleverTapInstance] userGetTotalVisits];
-    [self returnResult:@(result) withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        int result = [instance userGetTotalVisits];
+        [self returnResult:@(result) withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(sessionGetScreenCount:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(sessionGetScreenCount:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap sessionGetScreenCount]");
-    int result = [[self cleverTapInstance] userGetScreenCount];
-    [self returnResult:@(result) withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        int result = [instance userGetScreenCount];
+        [self returnResult:@(result) withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(sessionGetPreviousVisitTime:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(sessionGetPreviousVisitTime:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap sessionGetPreviousVisitTime]");
-    NSTimeInterval result = [[self cleverTapInstance] userGetPreviousVisitTime];
-    [self returnResult:@(result) withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        NSTimeInterval result = [instance userGetPreviousVisitTime];
+        [self returnResult:@(result) withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(sessionGetUTMDetails:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(sessionGetUTMDetails:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap sessionGetUTMDetails]");
-    CleverTapUTMDetail *detail = [[self cleverTapInstance] sessionGetUTMDetails];
-    NSDictionary *result = [self _utmDetailToDict:detail];
-    [self returnResult:result withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        CleverTapUTMDetail *detail = [instance sessionGetUTMDetails];
+        NSDictionary *result = [self _utmDetailToDict:detail];
+        [self returnResult:result withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(getUserLastVisitTs:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getUserLastVisitTs:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getUserLastVisitTs]");
-    NSTimeInterval result = [[self cleverTapInstance] getUserLastVisitTs];
-    [self returnResult:@(result) withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        NSTimeInterval result = [instance getUserLastVisitTs];
+        [self returnResult:@(result) withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(getUserAppLaunchCount:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getUserAppLaunchCount:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getUserAppLaunchCount]");
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        int result = [[self cleverTapInstance] getUserAppLaunchCount];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self returnResult:@(result) withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            int result = [instance getUserAppLaunchCount];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self returnResult:@(result) withCallback:callback andError:nil];
+            });
         });
-    });
+    }];
 }
 
 #pragma mark - no-op Android O methods
@@ -593,19 +950,19 @@ RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
     return _profile;
 }
 
-- (CTVar *)createVarForName:(NSString *)name andValue:(id)value {
+- (CTVar *)createVarForName:(NSString *)name andValue:(id)value usingInstance:(CleverTap *)instance {
 
     if ([value isKindOfClass:[NSString class]]) {
-        return [[self cleverTapInstance]defineVar:name withString:value];
+        return [instance defineVar:name withString:value];
     }
     if ([value isKindOfClass:[NSDictionary class]]) {
-        return [[self cleverTapInstance]defineVar:name withDictionary:value];
+        return [instance defineVar:name withDictionary:value];
     }
     if ([value isKindOfClass:[NSNumber class]]) {
         if ([self isBoolNumber:value]) {
-            return [[self cleverTapInstance]defineVar:name withBool:value];
+            return [instance defineVar:name withBool:value];
         }
-        return [[self cleverTapInstance]defineVar:name withNumber:value];
+        return [instance defineVar:name withNumber:value];
     }
     return nil;
 }
@@ -616,9 +973,44 @@ RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
     return (numID == boolID);
 }
 
-- (NSMutableDictionary *)getVariableValues {
+/// Returns the variable registry belonging to the given instance's account, creating
+/// it on first use. An instance without an account id gets an isolated empty registry
+/// so callers safely no-op.
+- (NSMutableDictionary *)variablesForInstance:(CleverTap *)instance {
+    NSString *accountKey = instance.config.accountId;
+    if (accountKey == nil) {
+        RCTLogWarn(@"[CleverTap variables unavailable: instance has no accountId]");
+        return [NSMutableDictionary dictionary];
+    }
+    @synchronized (self.variablesByAccount) {
+        NSMutableDictionary *accountVars = self.variablesByAccount[accountKey];
+        if (accountVars == nil) {
+            accountVars = [NSMutableDictionary dictionary];
+            self.variablesByAccount[accountKey] = accountVars;
+        }
+        return accountVars;
+    }
+}
+
+- (CTVar *)varForName:(NSString *)name usingInstance:(CleverTap *)instance {
+    NSMutableDictionary *accountVars = [self variablesForInstance:instance];
+    @synchronized (self.variablesByAccount) {
+        return accountVars[name];
+    }
+}
+
+- (NSMutableDictionary *)getVariableValuesForInstance:(CleverTap *)instance {
+    // Snapshot the registry under the lock, then read the CTVar values OUTSIDE it.
+    // Never call into SDK objects (var.value) while holding our lock: if the SDK
+    // ever synchronizes that getter internally, reading it under our lock could
+    // form a lock-order inversion with SDK threads that call back into us.
+    NSDictionary *snapshot;
+    NSMutableDictionary *accountVars = [self variablesForInstance:instance];
+    @synchronized (self.variablesByAccount) {
+        snapshot = [accountVars copy];
+    }
     NSMutableDictionary *varValues = [NSMutableDictionary dictionary];
-    [self.allVariables enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, CTVar*  _Nonnull var, BOOL * _Nonnull stop) {
+    [snapshot enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, CTVar*  _Nonnull var, BOOL * _Nonnull stop) {
         varValues[key] = var.value;
     }];
     return varValues;
@@ -626,111 +1018,145 @@ RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
 
 #pragma mark - App Inbox
 
-RCT_EXPORT_METHOD(getInboxMessageCount:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getInboxMessageCount:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap inboxMessageCount]");
-    int result = (int)[[self cleverTapInstance] getInboxMessageCount];
-    [self returnResult:@(result) withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        int result = (int)[instance getInboxMessageCount];
+        [self returnResult:@(result) withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(getInboxMessageUnreadCount:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getInboxMessageUnreadCount:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap inboxMessageUnreadCount]");
-    int result = (int)[[self cleverTapInstance] getInboxMessageUnreadCount];
-    [self returnResult:@(result) withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        int result = (int)[instance getInboxMessageUnreadCount];
+        [self returnResult:@(result) withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(getAllInboxMessages:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getAllInboxMessages:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getAllInboxMessages]");
-    NSArray<CleverTapInboxMessage *> *messageList = [[self cleverTapInstance] getAllInboxMessages];
-    NSMutableArray *allMessages = [NSMutableArray new];
-    for (CleverTapInboxMessage *message in messageList) {
-        [allMessages addObject:message.json];
-    }
-    NSArray *result = [allMessages mutableCopy];
-    [self returnResult:result withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        NSArray<CleverTapInboxMessage *> *messageList = [instance getAllInboxMessages];
+        NSMutableArray *allMessages = [NSMutableArray new];
+        for (CleverTapInboxMessage *message in messageList) {
+            [allMessages addObject:message.json];
+        }
+        NSArray *result = [allMessages mutableCopy];
+        [self returnResult:result withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(getUnreadInboxMessages:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getUnreadInboxMessages:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getUnreadInboxMessages]");
-    NSArray<CleverTapInboxMessage *> *messageList = [[self cleverTapInstance] getUnreadInboxMessages];
-    NSMutableArray *unreadMessages = [NSMutableArray new];
-    for (CleverTapInboxMessage *message in messageList) {
-        [unreadMessages addObject:message.json];
-    }
-    NSArray *result = [unreadMessages mutableCopy];
-    [self returnResult:result withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        NSArray<CleverTapInboxMessage *> *messageList = [instance getUnreadInboxMessages];
+        NSMutableArray *unreadMessages = [NSMutableArray new];
+        for (CleverTapInboxMessage *message in messageList) {
+            [unreadMessages addObject:message.json];
+        }
+        NSArray *result = [unreadMessages mutableCopy];
+        [self returnResult:result withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(getInboxMessageForId:(NSString*)messageId callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getInboxMessageForId:(NSString*)messageId accountId:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getInboxMessageForId]");
-    CleverTapInboxMessage * message = [[self cleverTapInstance] getInboxMessageForId:messageId];
-    NSDictionary *result = message.json;
-    [self returnResult:result withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        CleverTapInboxMessage * message = [instance getInboxMessageForId:messageId];
+        NSDictionary *result = message.json;
+        [self returnResult:result withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(pushInboxNotificationViewedEventForId:(NSString*)messageId) {
+RCT_EXPORT_METHOD(pushInboxNotificationViewedEventForId:(NSString*)messageId accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap pushInboxNotificationViewedEventForId]");
-    [[self cleverTapInstance] recordInboxNotificationViewedEventForID:messageId];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance recordInboxNotificationViewedEventForID:messageId];
+    }];
 }
 
-RCT_EXPORT_METHOD(pushInboxNotificationClickedEventForId:(NSString*)messageId) {
+RCT_EXPORT_METHOD(pushInboxNotificationClickedEventForId:(NSString*)messageId accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap pushInboxNotificationClickedEventForId]");
-    [[self cleverTapInstance] recordInboxNotificationClickedEventForID:messageId];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance recordInboxNotificationClickedEventForID:messageId];
+    }];
 }
 
-RCT_EXPORT_METHOD(markReadInboxMessageForId:(NSString*)messageId) {
+RCT_EXPORT_METHOD(markReadInboxMessageForId:(NSString*)messageId accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap markReadInboxMessageForId]");
-    [[self cleverTapInstance] markReadInboxMessageForID:messageId];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance markReadInboxMessageForID:messageId];
+    }];
 }
 
-RCT_EXPORT_METHOD(deleteInboxMessageForId:(NSString*)messageId) {
+RCT_EXPORT_METHOD(deleteInboxMessageForId:(NSString*)messageId accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap deleteInboxMessageForId]");
-    [[self cleverTapInstance] deleteInboxMessageForID:messageId];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance deleteInboxMessageForID:messageId];
+    }];
 }
 
-RCT_EXPORT_METHOD(markReadInboxMessagesForIDs:(NSArray*)messageIds) {
+RCT_EXPORT_METHOD(markReadInboxMessagesForIDs:(NSArray*)messageIds accountId:(NSString*)accountId) {
     if (!messageIds) return;
     RCTLogInfo(@"[CleverTap markReadInboxMessagesForIDs]");
-    [[self cleverTapInstance] markReadInboxMessagesForIDs:messageIds];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance markReadInboxMessagesForIDs:messageIds];
+    }];
 }
 
-RCT_EXPORT_METHOD(deleteInboxMessagesForIDs:(NSArray*)messageIds) {
+RCT_EXPORT_METHOD(deleteInboxMessagesForIDs:(NSArray*)messageIds accountId:(NSString*)accountId) {
     if (!messageIds) return;
     RCTLogInfo(@"[CleverTap deleteInboxMessagesForIDs]");
-    [[self cleverTapInstance] deleteInboxMessagesForIDs:messageIds];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance deleteInboxMessagesForIDs:messageIds];
+    }];
 }
 
-RCT_EXPORT_METHOD(dismissInbox) {
+RCT_EXPORT_METHOD(dismissInbox:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap dismissAppInbox]");
-    [[self cleverTapInstance] dismissAppInbox];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance dismissAppInbox];
+    }];
 }
 
-RCT_EXPORT_METHOD(fetchInbox:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(fetchInbox:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap fetchInbox]");
-    if (callback == NULL) {
-        [[self cleverTapInstance] fetchInboxWithCallback:nil];
-    } else {
-        [[self cleverTapInstance] fetchInboxWithCallback:^(BOOL success) {
-            [self returnResult:@(success) withCallback:callback andError:nil];
-        }];
-    }
-}
-
-RCT_EXPORT_METHOD(initializeInbox) {
-    RCTLogInfo(@"[CleverTap Inbox Initialize]");
-    [[self cleverTapInstance] initializeInboxWithCallback:^(BOOL success) {
-        if (success) {
-            RCTLogInfo(@"[Inbox initialized]");
-            NSMutableDictionary *body = [NSMutableDictionary new];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxDidInitialize object:nil userInfo:body];
-            [[self cleverTapInstance] registerInboxUpdatedBlock:^{
-                RCTLogInfo(@"[Inbox updated]");
-                [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessagesDidUpdate object:nil userInfo:body];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        if (callback == NULL) {
+            [instance fetchInboxWithCallback:nil];
+        } else {
+            [instance fetchInboxWithCallback:^(BOOL success) {
+                [self returnResult:@(success) withCallback:callback andError:nil];
             }];
         }
     }];
 }
 
-RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
+RCT_EXPORT_METHOD(initializeInbox:(NSString*)accountId) {
+    RCTLogInfo(@"[CleverTap Inbox Initialize]");
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        // Stamp the inbox events with the REAL account id so JS routes them to the right
+        // handle (Android's inbox events arrive tagged via the listener proxy — same rule).
+        NSString *accountKey = instance.config.accountId;
+        [instance initializeInboxWithCallback:^(BOOL success) {
+            if (success) {
+                RCTLogInfo(@"[Inbox initialized]");
+                NSMutableDictionary *body = [NSMutableDictionary new];
+                if (accountKey != nil) {
+                    body[kCleverTapAccountIdKey] = accountKey;
+                }
+                [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxDidInitialize object:nil userInfo:body];
+                [instance registerInboxUpdatedBlock:^{
+                    RCTLogInfo(@"[Inbox updated]");
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessagesDidUpdate object:nil userInfo:body];
+                }];
+            }
+        }];
+    }];
+}
+
+RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap Show Inbox]");
     UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
     UIViewController *mainViewController = keyWindow.rootViewController;
@@ -739,11 +1165,16 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
         return;
     }
     
-    CleverTapInboxViewController *inboxController = [[self cleverTapInstance] newInboxViewControllerWithConfig:[self _dictToInboxStyleConfig:styleConfig? styleConfig : nil] andDelegate:(id <CleverTapInboxViewControllerDelegate>)self];
-    if (inboxController) {
-        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:inboxController];
-        [mainViewController presentViewController:navigationController animated:YES completion:nil];
-    }
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        CleverTapInboxViewController *inboxController = [instance newInboxViewControllerWithConfig:[self _dictToInboxStyleConfig:styleConfig? styleConfig : nil] andDelegate:(id <CleverTapInboxViewControllerDelegate>)self];
+        if (inboxController) {
+            // Remember whose inbox is on screen: this module receives the inbox tap
+            // delegate callbacks and stamps their events with this account id.
+            self.inboxAccountId = instance.config.accountId;
+            UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:inboxController];
+            [mainViewController presentViewController:navigationController animated:YES completion:nil];
+        }
+    }];
 }
 
 - (CleverTapInboxStyleConfig*)_dictToInboxStyleConfig: (NSDictionary *)dict {
@@ -820,6 +1251,9 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
     if (customExtras != nil) {
         body = [NSMutableDictionary dictionaryWithDictionary:customExtras];
     }
+    if (self.inboxAccountId != nil) {
+        body[kCleverTapAccountIdKey] = self.inboxAccountId;
+    }
     [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessageButtonTapped object:nil userInfo:body];
 }
 
@@ -832,6 +1266,9 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
     }
     body[@"contentPageIndex"] = @(index);
     body[@"buttonIndex"] = @(buttonIndex);
+    if (self.inboxAccountId != nil) {
+        body[kCleverTapAccountIdKey] = self.inboxAccountId;
+    }
 
     [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapInboxMessageTapped object:nil userInfo:body];
 }
@@ -839,149 +1276,197 @@ RCT_EXPORT_METHOD(showInbox:(NSDictionary*)styleConfig) {
 
 #pragma mark - Display Units
 
-RCT_EXPORT_METHOD(getAllDisplayUnits:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getAllDisplayUnits:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getAllDisplayUnits]");
-    NSArray <CleverTapDisplayUnit*> *units = [[self cleverTapInstance] getAllDisplayUnits];
-    NSMutableArray *displayUnits = [NSMutableArray new];
-    for (CleverTapDisplayUnit *unit in units) {
-        [displayUnits addObject:unit.json];
-    }
-    NSArray *result = [displayUnits mutableCopy];
-    [self returnResult:result withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        NSArray <CleverTapDisplayUnit*> *units = [instance getAllDisplayUnits];
+        NSMutableArray *displayUnits = [NSMutableArray new];
+        for (CleverTapDisplayUnit *unit in units) {
+            [displayUnits addObject:unit.json];
+        }
+        NSArray *result = [displayUnits mutableCopy];
+        [self returnResult:result withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(getDisplayUnitForId:(NSString*)unitId callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getDisplayUnitForId:(NSString*)unitId accountId:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getDisplayUnitForId]");
-    CleverTapDisplayUnit * displayUnit = [[self cleverTapInstance] getDisplayUnitForID:unitId];
-    NSDictionary *result = displayUnit.json;
-    [self returnResult:result withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        CleverTapDisplayUnit * displayUnit = [instance getDisplayUnitForID:unitId];
+        NSDictionary *result = displayUnit.json;
+        [self returnResult:result withCallback:callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(pushDisplayUnitViewedEventForID:(NSString*)unitId) {
+RCT_EXPORT_METHOD(pushDisplayUnitViewedEventForID:(NSString*)unitId accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap pushDisplayUnitViewedEventForID]");
-    [[self cleverTapInstance] recordDisplayUnitViewedEventForID:unitId];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance recordDisplayUnitViewedEventForID:unitId];
+    }];
 }
 
-RCT_EXPORT_METHOD(pushDisplayUnitClickedEventForID:(NSString*)unitId) {
+RCT_EXPORT_METHOD(pushDisplayUnitClickedEventForID:(NSString*)unitId accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap pushDisplayUnitClickedEventForID]");
-    [[self cleverTapInstance] recordDisplayUnitClickedEventForID:unitId];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance recordDisplayUnitClickedEventForID:unitId];
+    }];
 }
 
-RCT_EXPORT_METHOD(pushDisplayUnitElementClickedEventForID:(NSString*)unitId withAdditionalProperties:(NSDictionary*)additionalProperties) {
+RCT_EXPORT_METHOD(pushDisplayUnitElementClickedEventForID:(NSString*)unitId withAdditionalProperties:(NSDictionary*)additionalProperties accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap pushDisplayUnitElementClickedEventForID]");
-    [[self cleverTapInstance] recordDisplayUnitElementClickedEventForID:unitId additionalProperties:additionalProperties];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance recordDisplayUnitElementClickedEventForID:unitId additionalProperties:additionalProperties];
+    }];
 }
 
 
 # pragma mark - Feature Flag
 
-RCT_EXPORT_METHOD(getFeatureFlag:(NSString*)flag withdefaultValue:(BOOL)defaultValue callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getFeatureFlag:(NSString*)flag withdefaultValue:(BOOL)defaultValue accountId:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap getFeatureFlag]");
-    BOOL result = [[[self cleverTapInstance] featureFlags] get:flag withDefaultValue:defaultValue];
-    [self returnResult:@(result) withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        BOOL result = [[instance featureFlags] get:flag withDefaultValue:defaultValue];
+        [self returnResult:@(result) withCallback:callback andError:nil];
+    }];
 }
 
 
 #pragma mark - Product Config
 
-RCT_EXPORT_METHOD(setDefaultsMap:(NSDictionary*)jsonDict) {
+RCT_EXPORT_METHOD(setDefaultsMap:(NSDictionary*)jsonDict accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap setDefaultsMap]");
-    [[[self cleverTapInstance] productConfig] setDefaults:jsonDict];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [[instance productConfig] setDefaults:jsonDict];
+    }];
 }
 
-RCT_EXPORT_METHOD(fetch) {
+RCT_EXPORT_METHOD(fetch:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap ProductConfig Fetch]");
-    [[[self cleverTapInstance] productConfig] fetch];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [[instance productConfig] fetch];
+    }];
 }
 
-RCT_EXPORT_METHOD(fetchWithMinimumFetchIntervalInSeconds:(double)time) {
+RCT_EXPORT_METHOD(fetchWithMinimumFetchIntervalInSeconds:(double)time accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap ProductConfig Fetch with minimum Interval]");
-    [[[self cleverTapInstance] productConfig] fetchWithMinimumInterval: time];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [[instance productConfig] fetchWithMinimumInterval: time];
+    }];
 }
 
-RCT_EXPORT_METHOD(activate) {
+RCT_EXPORT_METHOD(activate:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap ProductConfig Activate]");
-    [[[self cleverTapInstance] productConfig] activate];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [[instance productConfig] activate];
+    }];
 }
 
-RCT_EXPORT_METHOD(fetchAndActivate) {
+RCT_EXPORT_METHOD(fetchAndActivate:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap ProductConfig Fetch and Activate]");
-    [[[self cleverTapInstance] productConfig] fetchAndActivate];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [[instance productConfig] fetchAndActivate];
+    }];
 }
 
-RCT_EXPORT_METHOD(setMinimumFetchIntervalInSeconds:(double)time) {
+RCT_EXPORT_METHOD(setMinimumFetchIntervalInSeconds:(double)time accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap ProductConfig Minimum Time Interval Setup]");
-    [[[self cleverTapInstance] productConfig] setMinimumFetchInterval: time];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [[instance productConfig] setMinimumFetchInterval: time];
+    }];
 }
 
-RCT_EXPORT_METHOD(getLastFetchTimeStampInMillis:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getLastFetchTimeStampInMillis:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap Last Fetch Config time]");
-    NSTimeInterval result = [[[[self cleverTapInstance] productConfig] getLastFetchTimeStamp] timeIntervalSince1970] * 1000;
-    [self returnResult: @(result) withCallback: callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        NSTimeInterval result = [[[instance productConfig] getLastFetchTimeStamp] timeIntervalSince1970] * 1000;
+        [self returnResult: @(result) withCallback: callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(getString:(NSString*)key callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getString:(NSString*)key accountId:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap fetch String value for Key]");
-    NSString *result = [[[self cleverTapInstance] productConfig] get:key].stringValue;
-    [self returnResult: result withCallback: callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        NSString *result = [[instance productConfig] get:key].stringValue;
+        [self returnResult: result withCallback: callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(getBoolean:(NSString*)key callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getBoolean:(NSString*)key accountId:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap fetch Bool value for Key]");
-    BOOL result = [[[self cleverTapInstance] productConfig] get:key].boolValue;
-    [self returnResult: @(result) withCallback: callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        BOOL result = [[instance productConfig] get:key].boolValue;
+        [self returnResult: @(result) withCallback: callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(getDouble:(NSString*)key callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getDouble:(NSString*)key accountId:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap fetch Double value for Key]");
-    long result = [[[self cleverTapInstance] productConfig] get:key].numberValue.doubleValue;
-    [self returnResult: @(result) withCallback: callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        long result = [[instance productConfig] get:key].numberValue.doubleValue;
+        [self returnResult: @(result) withCallback: callback andError:nil];
+    }];
 }
 
-RCT_EXPORT_METHOD(reset) {
+RCT_EXPORT_METHOD(reset:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap ProductConfig Reset]");
-    [[[self cleverTapInstance] productConfig] reset];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [[instance productConfig] reset];
+    }];
 }
 
 #pragma mark - InApp Notification Controls
 
-RCT_EXPORT_METHOD(suspendInAppNotifications) {
+RCT_EXPORT_METHOD(suspendInAppNotifications:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap suspendInAppNotifications");
-    [[self cleverTapInstance] suspendInAppNotifications];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance suspendInAppNotifications];
+    }];
 }
 
-RCT_EXPORT_METHOD(discardInAppNotifications:(BOOL)dismissInAppIfVisible) {
+RCT_EXPORT_METHOD(discardInAppNotifications:(BOOL)dismissInAppIfVisible accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap discardInAppNotifications: %d]", dismissInAppIfVisible);
-    [[self cleverTapInstance] discardInAppNotifications:dismissInAppIfVisible];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance discardInAppNotifications:dismissInAppIfVisible];
+    }];
 }
 
-RCT_EXPORT_METHOD(resumeInAppNotifications) {
+RCT_EXPORT_METHOD(resumeInAppNotifications:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap resumeInAppNotifications");
-    [[self cleverTapInstance] resumeInAppNotifications];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance resumeInAppNotifications];
+    }];
 }
 
-RCT_EXPORT_METHOD(dismissPipInApp) {
+RCT_EXPORT_METHOD(dismissPipInApp:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap dismissPipInApp]");
-    [[self cleverTapInstance] dismissPipInApp];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance dismissPipInApp];
+    }];
 }
 
-RCT_EXPORT_METHOD(unmute) {
+RCT_EXPORT_METHOD(unmute:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap unmute]");
-    [[self cleverTapInstance] unmute];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance unmute];
+    }];
 }
 
 #pragma mark - InApp Controls
 
-RCT_EXPORT_METHOD(fetchInApps:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(fetchInApps:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
     RCTLogInfo(@"[CleverTap fetchInApps]");
-    [[self cleverTapInstance] fetchInApps:^(BOOL success) {
-        [self returnResult:@(success) withCallback:callback andError:nil];
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        [instance fetchInApps:^(BOOL success) {
+            [self returnResult:@(success) withCallback:callback andError:nil];
+        }];
     }];
 }
 
-RCT_EXPORT_METHOD(clearInAppResources:(BOOL)expiredOnly) {
+RCT_EXPORT_METHOD(clearInAppResources:(BOOL)expiredOnly accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap clearInAppResources");
-    [[self cleverTapInstance] clearInAppResources: expiredOnly];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance clearInAppResources: expiredOnly];
+    }];
 }
 
 #pragma mark - Push Permission
@@ -1071,241 +1556,335 @@ RCT_EXPORT_METHOD(clearInAppResources:(BOOL)expiredOnly) {
     return inAppBuilder;
 }
 
-RCT_EXPORT_METHOD(promptForPushPermission:(BOOL)showFallbackSettings){
+// Push permission methods. Routed by accountId like every other native INSTANCE
+// method: the OS permission itself is app-wide, but the prompt runs through the
+// resolved account, and the permission RESPONSE is delivered only to the PROMPTING
+// instance's delegate — so the CleverTapPushPermissionResponseReceived event reaches
+// the handle that asked.
+RCT_EXPORT_METHOD(promptForPushPermission:(BOOL)showFallbackSettings accountId:(NSString *)accountId){
     RCTLogInfo(@"[CleverTap promptForPushPermission: %i]", showFallbackSettings);
-    [[self cleverTapInstance] promptForPushPermission:showFallbackSettings];
-}
-
-RCT_EXPORT_METHOD(promptPushPrimer:(NSDictionary *_Nonnull)json){
-    RCTLogInfo(@"[CleverTap promptPushPrimer]");
-    CTLocalInApp *localInAppBuilder = [self _localInAppConfigFromReadableMap:json];
-    [[self cleverTapInstance] promptPushPrimer:localInAppBuilder.getLocalInAppSettings];
-}
-
-RCT_EXPORT_METHOD(isPushPermissionGranted:(RCTResponseSenderBlock)callback){
-    if (@available(iOS 10.0, *)) {
-        [[self cleverTapInstance] getNotificationPermissionStatusWithCompletionHandler:^(UNAuthorizationStatus status) {
-                BOOL result = (status == UNAuthorizationStatusAuthorized);
-                RCTLogInfo(@"[CleverTap isPushPermissionGranted: %i]", result);
-                [self returnResult:@(result) withCallback:callback andError:nil];
-            }];
-    } else {
-        // Fallback on earlier versions
-        RCTLogInfo(@"Push Notification is available from iOS v10.0 or later");
-    }
-}
-
-#pragma mark - Product Experiences: Vars
-
-RCT_EXPORT_METHOD(syncVariables) {
-    RCTLogInfo(@"[CleverTap syncVariables]");
-    [[self cleverTapInstance]syncVariables];
-}
-
-RCT_EXPORT_METHOD(syncVariablesinProd:(BOOL)isProduction) {
-    RCTLogInfo(@"[CleverTap syncVariables:isProduction]");
-    [[self cleverTapInstance]syncVariables:isProduction];
-}
-
-RCT_EXPORT_METHOD(getVariable:(NSString * _Nonnull)name callback:(RCTResponseSenderBlock)callback) {
-    RCTLogInfo(@"[CleverTap getVariable:name]");
-    CTVar *var = self.allVariables[name];
-    [self returnResult:var.value withCallback:callback andError:nil];
-}
-
-RCT_EXPORT_METHOD(getVariables:(RCTResponseSenderBlock)callback) {
-    RCTLogInfo(@"[CleverTap getVariables]");
-
-    NSMutableDictionary *varValues = [self getVariableValues];
-    [self returnResult:varValues withCallback:callback andError:nil];
-}
-
-RCT_EXPORT_METHOD(variants:(RCTResponseSenderBlock)callback) {
-    RCTLogInfo(@"[CleverTap variants]");
-
-    NSArray<NSDictionary<NSString*,id>*> *variants = [[self cleverTapInstance]variants];
-    [self returnResult:variants withCallback:callback andError:nil];
-}
-
-RCT_EXPORT_METHOD(fetchVariables:(RCTResponseSenderBlock)callback) {
-    RCTLogInfo(@"[CleverTap fetchVariables]");
-    [[self cleverTapInstance]fetchVariables:^(BOOL success) {
-        [self returnResult:@(success) withCallback:callback andError:nil];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance promptForPushPermission:showFallbackSettings];
     }];
 }
 
-RCT_EXPORT_METHOD(defineVariables:(NSDictionary*)variables) {
-    RCTLogInfo(@"[CleverTap defineVariables]");
+RCT_EXPORT_METHOD(promptPushPrimer:(NSDictionary *_Nonnull)json accountId:(NSString *)accountId){
+    RCTLogInfo(@"[CleverTap promptPushPrimer]");
+    CTLocalInApp *localInAppBuilder = [self _localInAppConfigFromReadableMap:json];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance promptPushPrimer:localInAppBuilder.getLocalInAppSettings];
+    }];
+}
 
-    if (!variables) return;
-
-    [variables enumerateKeysAndObjectsUsingBlock:^(NSString*  _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
-        CTVar *var = [self createVarForName:key andValue:value];
-
-        if (var) {
-            self.allVariables[key] = var;
+RCT_EXPORT_METHOD(isPushPermissionGranted:(NSString *)accountId callback:(RCTResponseSenderBlock)callback){
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        if (@available(iOS 10.0, *)) {
+            [instance getNotificationPermissionStatusWithCompletionHandler:^(UNAuthorizationStatus status) {
+                    BOOL result = (status == UNAuthorizationStatusAuthorized);
+                    RCTLogInfo(@"[CleverTap isPushPermissionGranted: %i]", result);
+                    [self returnResult:@(result) withCallback:callback andError:nil];
+                }];
+        } else {
+            // Same rule as above: never leave the callback un-invoked.
+            RCTLogInfo(@"Push Notification is available from iOS v10.0 or later");
+            [self returnResult:nil withCallback:callback andError:@"Push permission status requires iOS 10.0 or later"];
         }
     }];
 }
 
-RCT_EXPORT_METHOD(defineFileVariable:(NSString*)fileVariable) {
+#pragma mark - Product Experiences: Vars
+
+RCT_EXPORT_METHOD(syncVariables:(NSString*)accountId) {
+    RCTLogInfo(@"[CleverTap syncVariables]");
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance syncVariables];
+    }];
+}
+
+RCT_EXPORT_METHOD(syncVariablesinProd:(BOOL)isProduction accountId:(NSString*)accountId) {
+    RCTLogInfo(@"[CleverTap syncVariables:isProduction]");
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance syncVariables:isProduction];
+    }];
+}
+
+RCT_EXPORT_METHOD(getVariable:(NSString * _Nonnull)name accountId:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getVariable:name]");
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        CTVar *var = [self varForName:name usingInstance:instance];
+        [self returnResult:var.value withCallback:callback andError:nil];
+    }];
+}
+
+RCT_EXPORT_METHOD(getVariables:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap getVariables]");
+
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        NSMutableDictionary *varValues = [self getVariableValuesForInstance:instance];
+        [self returnResult:varValues withCallback:callback andError:nil];
+    }];
+}
+
+RCT_EXPORT_METHOD(variants:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap variants]");
+
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        NSArray<NSDictionary<NSString*,id>*> *variants = [instance variants];
+        [self returnResult:variants withCallback:callback andError:nil];
+    }];
+}
+
+RCT_EXPORT_METHOD(fetchVariables:(NSString*)accountId callback:(RCTResponseSenderBlock)callback) {
+    RCTLogInfo(@"[CleverTap fetchVariables]");
+    [self withInstance:accountId callback:callback run:^(CleverTap *instance) {
+        [instance fetchVariables:^(BOOL success) {
+            [self returnResult:@(success) withCallback:callback andError:nil];
+        }];
+    }];
+}
+
+RCT_EXPORT_METHOD(defineVariables:(NSDictionary*)variables accountId:(NSString*)accountId) {
+    RCTLogInfo(@"[CleverTap defineVariables]");
+
+    if (!variables) return;
+
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        NSMutableDictionary *accountVars = [self variablesForInstance:instance];
+        [variables enumerateKeysAndObjectsUsingBlock:^(NSString*  _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
+            CTVar *var = [self createVarForName:key andValue:value usingInstance:instance];
+
+            if (var) {
+                @synchronized (self.variablesByAccount) {
+                    accountVars[key] = var;
+                }
+            }
+        }];
+    }];
+}
+
+RCT_EXPORT_METHOD(defineFileVariable:(NSString*)fileVariable accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap defineFileVariable]");
     if (!fileVariable) return;
-    CTVar *fileVar = [[self cleverTapInstance] defineFileVar:fileVariable];
-    if (fileVar) {
-        self.allVariables[fileVariable] = fileVar;
-    }
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        CTVar *fileVar = [instance defineFileVar:fileVariable];
+        if (fileVar) {
+            NSMutableDictionary *accountVars = [self variablesForInstance:instance];
+            @synchronized (self.variablesByAccount) {
+                accountVars[fileVariable] = fileVar;
+            }
+        }
+    }];
 }
 
-RCT_EXPORT_METHOD(onVariablesChanged) {
+RCT_EXPORT_METHOD(onVariablesChanged:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap onVariablesChanged]");
-    [[self cleverTapInstance]onVariablesChanged:^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnVariablesChanged object:nil userInfo:[self getVariableValues]];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        NSString *accountKey = instance.config.accountId;
+        [instance onVariablesChanged:^{
+            NSMutableDictionary *body = [self getVariableValuesForInstance:instance];
+            if (accountKey != nil) {
+                body[kCleverTapAccountIdKey] = accountKey;
+            }
+            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnVariablesChanged object:nil userInfo:body];
+        }];
     }];
 }
 
-RCT_EXPORT_METHOD(onOneTimeVariablesChanged) {
+RCT_EXPORT_METHOD(onOneTimeVariablesChanged:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap onOneTimeVariablesChanged]");
-    [[self cleverTapInstance] onceVariablesChanged:^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnOneTimeVariablesChanged object:nil userInfo:[self getVariableValues]];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        NSString *accountKey = instance.config.accountId;
+        [instance onceVariablesChanged:^{
+            NSMutableDictionary *body = [self getVariableValuesForInstance:instance];
+            if (accountKey != nil) {
+                body[kCleverTapAccountIdKey] = accountKey;
+            }
+            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnOneTimeVariablesChanged object:nil userInfo:body];
+        }];
     }];
 }
 
-RCT_EXPORT_METHOD(onValueChanged:(NSString*)name) {
+RCT_EXPORT_METHOD(onValueChanged:(NSString*)name accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap onValueChanged]");
-    CTVar *var = self.allVariables[name];
-    if (var) {
-        [var onValueChanged:^{
-            NSDictionary *varResult = @{
-                var.name: var.value
-            };
-            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnValueChanged object:nil userInfo:varResult];
-        }];
-    }
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        NSString *accountKey = instance.config.accountId;
+        CTVar *var = [self varForName:name usingInstance:instance];
+        if (var) {
+            [var onValueChanged:^{
+                NSMutableDictionary *varResult = [@{
+                    var.name: var.value
+                } mutableCopy];
+                if (accountKey != nil) {
+                    varResult[kCleverTapAccountIdKey] = accountKey;
+                }
+                [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnValueChanged object:nil userInfo:varResult];
+            }];
+        }
+    }];
 }
 
-RCT_EXPORT_METHOD(onVariablesChangedAndNoDownloadsPending) {
+RCT_EXPORT_METHOD(onVariablesChangedAndNoDownloadsPending:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap onVariablesChangedAndNoDownloadsPending]");
-    [[self cleverTapInstance]onVariablesChangedAndNoDownloadsPending:^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnVariablesChangedAndNoDownloadsPending object:nil userInfo:[self getVariableValues]];
-    }];
-}
-
-RCT_EXPORT_METHOD(onceVariablesChangedAndNoDownloadsPending) {
-    RCTLogInfo(@"[CleverTap onceVariablesChangedAndNoDownloadsPending]");
-    [[self cleverTapInstance] onceVariablesChangedAndNoDownloadsPending:^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnceVariablesChangedAndNoDownloadsPending object:nil userInfo:[self getVariableValues]];
-    }];
-}
-
-RCT_EXPORT_METHOD(onFileValueChanged:(NSString*)name) {
-    RCTLogInfo(@"[CleverTap onFileChanged]");
-    CTVar *var = self.allVariables[name];
-    if (var) {
-        [var onFileIsReady:^{
-            NSDictionary *varFileResult = @{
-                var.name: var.value
-            };
-            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnFileValueChanged object:nil userInfo:varFileResult];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        NSString *accountKey = instance.config.accountId;
+        [instance onVariablesChangedAndNoDownloadsPending:^{
+            NSMutableDictionary *body = [self getVariableValuesForInstance:instance];
+            if (accountKey != nil) {
+                body[kCleverTapAccountIdKey] = accountKey;
+            }
+            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnVariablesChangedAndNoDownloadsPending object:nil userInfo:body];
         }];
-    }
+    }];
+}
+
+RCT_EXPORT_METHOD(onceVariablesChangedAndNoDownloadsPending:(NSString*)accountId) {
+    RCTLogInfo(@"[CleverTap onceVariablesChangedAndNoDownloadsPending]");
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        NSString *accountKey = instance.config.accountId;
+        [instance onceVariablesChangedAndNoDownloadsPending:^{
+            NSMutableDictionary *body = [self getVariableValuesForInstance:instance];
+            if (accountKey != nil) {
+                body[kCleverTapAccountIdKey] = accountKey;
+            }
+            [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnceVariablesChangedAndNoDownloadsPending object:nil userInfo:body];
+        }];
+    }];
+}
+
+RCT_EXPORT_METHOD(onFileValueChanged:(NSString*)name accountId:(NSString*)accountId) {
+    RCTLogInfo(@"[CleverTap onFileChanged]");
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        NSString *accountKey = instance.config.accountId;
+        CTVar *var = [self varForName:name usingInstance:instance];
+        if (var) {
+            [var onFileIsReady:^{
+                NSMutableDictionary *varFileResult = [@{
+                    var.name: var.value
+                } mutableCopy];
+                if (accountKey != nil) {
+                    varFileResult[kCleverTapAccountIdKey] = accountKey;
+                }
+                [[NSNotificationCenter defaultCenter] postNotificationName:kCleverTapOnFileValueChanged object:nil userInfo:varFileResult];
+            }];
+        }
+    }];
 }
 
 # pragma mark - Custom Code Templates
 
-RCT_EXPORT_METHOD(syncCustomTemplates) {
+RCT_EXPORT_METHOD(syncCustomTemplates:(NSString *)accountId) {
     RCTLogInfo(@"[CleverTap syncCustomTemplates]");
-    [[self cleverTapInstance] syncCustomTemplates];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance syncCustomTemplates];
+    }];
 }
 
-RCT_EXPORT_METHOD(syncCustomTemplatesInProd:(BOOL)isProduction) {
+RCT_EXPORT_METHOD(syncCustomTemplatesInProd:(BOOL)isProduction accountId:(NSString *)accountId) {
     RCTLogInfo(@"[CleverTap syncCustomTemplates:isProduction]");
-    [[self cleverTapInstance] syncCustomTemplates:isProduction];
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance syncCustomTemplates:isProduction];
+    }];
 }
 
-RCT_EXPORT_METHOD(customTemplateGetBooleanArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+// ⚠️ In every customTemplate* method the accountId comes BEFORE resolve/reject:
+// the promise pair is the implicitly-last argument pattern of the bridge (same
+// iron rule as trailing callbacks — nothing may follow it).
+
+RCT_EXPORT_METHOD(customTemplateGetBooleanArg:(NSString *)templateName argName:(NSString *)argName accountId:(NSString *)accountId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         NSNumber *number = [context numberNamed:argName];
         return number ? number : [NSNull null];
     }];
 }
 
-RCT_EXPORT_METHOD(customTemplateGetFileArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+RCT_EXPORT_METHOD(customTemplateGetFileArg:(NSString *)templateName argName:(NSString *)argName accountId:(NSString *)accountId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         NSString *filePath = [context fileNamed:argName];
         return filePath ? filePath : [NSNull null];
     }];
 }
 
-RCT_EXPORT_METHOD(customTemplateGetNumberArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+RCT_EXPORT_METHOD(customTemplateGetNumberArg:(NSString *)templateName argName:(NSString *)argName accountId:(NSString *)accountId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         NSNumber *number = [context numberNamed:argName];
         return number ? number : [NSNull null];
     }];
 }
 
-RCT_EXPORT_METHOD(customTemplateGetObjectArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+RCT_EXPORT_METHOD(customTemplateGetObjectArg:(NSString *)templateName argName:(NSString *)argName accountId:(NSString *)accountId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         NSDictionary *dictionary = [context dictionaryNamed:argName];
         return dictionary ? dictionary : [NSNull null];
     }];
 }
 
-RCT_EXPORT_METHOD(customTemplateGetStringArg:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+RCT_EXPORT_METHOD(customTemplateGetStringArg:(NSString *)templateName argName:(NSString *)argName accountId:(NSString *)accountId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         NSString *str = [context stringNamed:argName];
         return str ? str : [NSNull null];
     }];
 }
 
-RCT_EXPORT_METHOD(customTemplateRunAction:(NSString *)templateName argName:(NSString *)argName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+RCT_EXPORT_METHOD(customTemplateRunAction:(NSString *)templateName argName:(NSString *)argName accountId:(NSString *)accountId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         [context triggerActionNamed:argName];
         return nil;
     }];
 }
 
-RCT_EXPORT_METHOD(customTemplateSetDismissed:(NSString *)templateName resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+RCT_EXPORT_METHOD(customTemplateSetDismissed:(NSString *)templateName
+                         accountId:(NSString *)accountId
+                           resolve:(RCTPromiseResolveBlock)resolve
+                            reject:(RCTPromiseRejectBlock)reject) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         [context dismissed];
         return nil;
     }];
 }
 
 RCT_EXPORT_METHOD(customTemplateSetPresented:(NSString *)templateName
+                         accountId:(NSString *)accountId
                            resolve:(RCTPromiseResolveBlock)resolve
                             reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         [context presented];
         return nil;
     }];
 }
 
 RCT_EXPORT_METHOD(customTemplateContextToString:(NSString *)templateName
+                         accountId:(NSString *)accountId
                            resolve:(RCTPromiseResolveBlock)resolve
                             reject:(RCTPromiseRejectBlock)reject) {
-    [self resolveWithTemplateContext:templateName resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
+    [self resolveWithTemplateContext:templateName accountId:accountId resolve:resolve reject:reject block:^id(CTTemplateContext *context) {
         return [context debugDescription];
     }];
 }
 
+// Active template contexts live PER INSTANCE in the native SDK — asking the wrong
+// account always answers "not currently being presented", so the account must be
+// resolved here, not hardcoded to the default slot.
 - (void)resolveWithTemplateContext:(NSString *)templateName
+                         accountId:(NSString *)accountId
                            resolve:(RCTPromiseResolveBlock)resolve
                             reject:(RCTPromiseRejectBlock)reject
                              block: (id (^)(CTTemplateContext *context))blockName {
-    if (![self cleverTapInstance]) {
-        reject(@"CustomTemplateError", @"CleverTap is not initialized", nil);
+    // Promise-based, so the missing-account answer is a reject (not the callback
+    // helper's error callback) — same error text, delivered the promise way.
+    CleverTap *instance = [self resolveInstance:accountId];
+    if (instance == nil) {
+        reject(@"CustomTemplateError", kCleverTapNotInitializedError, nil);
         return;
     }
-    
-    CTTemplateContext *context  = [[self cleverTapInstance] activeContextForTemplate:templateName];
+
+    CTTemplateContext *context  = [instance activeContextForTemplate:templateName];
     if (!context) {
         reject(@"CustomTemplateError",
                [NSString stringWithFormat:@"Custom template: %@ is not currently being presented", templateName],
                nil);
         return;
     }
-    
+
     resolve(blockName(context));
 }
 
@@ -1338,46 +1917,106 @@ static NSMutableSet<NSString *> *observableEvents = [NSMutableSet setWithObjects
 /// See ``startObserving`` for details.
 const int PENDING_EVENTS_TIME_OUT = 5;
 
-/// Called when a observer/listener is added for the event.
-/// Post the pending events for the event name.
+/// Builds the key used in ``observedEvents``. The queue is ACCOUNT-AWARE: each account
+/// observes an event separately ("accountId::eventName"). Bodies with no account tag are
+/// global and use the bare event name as their key.
+static NSString *observedEventKey(NSString *name, NSString *accountId) {
+    return accountId != nil ? [NSString stringWithFormat:@"%@::%@", accountId, name] : name;
+}
+
+/// Reads the account tag from an event body (nil for untagged/global bodies).
+static NSString *accountTagOfBody(id body) {
+    if ([body isKindOfClass:[NSDictionary class]]) {
+        return ((NSDictionary *)body)[kCleverTapAccountIdKey];
+    }
+    return nil;
+}
+
+/// Called when an observer/listener is added for the event.
+/// Marks the event observed for the listener's account and posts ONLY that account's
+/// pending events (plus untagged/global ones). Other accounts' pending events stay queued
+/// until their own listeners attach — posting everything here would silently drop them,
+/// because their listeners are not attached yet to receive the delivery.
 ///
 /// @param name The name of the observed event.
-RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name) {
+/// @param accountId The account the listener belongs to; nil means the default slot.
+RCT_EXPORT_METHOD(onEventListenerAdded:(NSString*)name accountId:(NSString*)accountId) {
+    NSString *accountKey = accountId ?: [self resolveInstance:nil].config.accountId;
+    RCTLogInfo(@"[CleverTap onEventListenerAdded: %@ accountId=%@ resolved account=%@]", name, accountId, accountKey);
+    [observedEvents addObject:observedEventKey(name, accountKey)];
+    // Untagged (global) bodies go live once ANY listener observes the event:
     [observedEvents addObject:name];
-    NSArray *pendingEventsForName = pendingEvents[name];
+
+    NSMutableArray<CleverTapReactPendingEvent *> *pendingEventsForName = pendingEvents[name];
     if (pendingEventsForName) {
         RCTLogInfo(@"[CleverTap: Posting pending events for event: %@]", name);
+        NSMutableArray<CleverTapReactPendingEvent *> *remaining = [NSMutableArray array];
         for (CleverTapReactPendingEvent *event in pendingEventsForName) {
-            RCTLogInfo(@"[CleverTap: posting pending event: %@ with body: %@]", event.name, event.body);
-            [[NSNotificationCenter defaultCenter] postNotificationName:event.name object:nil userInfo:event.body];
+            NSString *tag = accountTagOfBody(event.body);
+            if (tag == nil || (accountKey != nil && [tag isEqualToString:accountKey])) {
+                RCTLogInfo(@"[CleverTap: posting pending event: %@ with body: %@]", event.name, event.body);
+                [[NSNotificationCenter defaultCenter] postNotificationName:event.name object:nil userInfo:event.body];
+            } else {
+                [remaining addObject:event];
+            }
         }
+        // Replayed events are removed so a second listener cannot receive duplicates.
+        pendingEvents[name] = remaining;
     }
 }
 
 /// Send event when ReactNative has started observing events.
 /// This happens when the first observer/listener is added in ReactNative.
-/// If events are sent before that, the events are queued.
+/// If events are sent before that, the events are queued PER ACCOUNT: a body is queued
+/// until a listener for ITS account observes the event (see ``onEventListenerAdded``).
 /// Events expected to be queued are specified in ``observableEvents``.
-/// If ReactNative has started observing and the event is observed, see ``observedEvents``, the events are emitted directly.
+///
+/// ⚠️ THREAD SAFETY: the queue state (``pendingEvents``, ``observedEvents``,
+/// ``observableEvents``, ``isObserving``) is MAIN-CONFINED. Its other mutators —
+/// ``onEventListenerAdded`` and ``startObserving`` (methodQueue is main) and the
+/// ``clearPendingEvents`` timeout (dispatch_after on main) — already run on main, but
+/// SDK callbacks arrive elsewhere: profileDidInitialize is dispatched on a GLOBAL
+/// BACKGROUND queue (verified at CleverTap-iOS-SDK 7.8.1, CleverTap.m) and the
+/// push-tap delegate runs on its caller's thread. Mutating these NSMutable
+/// collections cross-thread can corrupt them or drop a pending event, so off-main
+/// callers hop to main here. An async hop (not a lock) on purpose: delivery is
+/// already asynchronous, ordering per account is preserved (main is serial), and no
+/// lock means no new main-thread blocking to reason about.
 ///
 /// @param name The event name.
 /// @param body The event body parameters.
 + (void)sendEventOnObserving:(NSString *)name body:(id)body {
+    if (![NSThread isMainThread]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self sendEventOnObservingMain:name body:body];
+        });
+        return;
+    }
+    [self sendEventOnObservingMain:name body:body];
+}
+
+/// Main-thread half of ``sendEventOnObserving`` — the ONLY reader/writer of the
+/// pending-events state besides the (already main) listener/observer callbacks.
++ (void)sendEventOnObservingMain:(NSString *)name body:(id)body {
     if (!isObserving && ![observableEvents containsObject:name]) {
         RCTLogWarn(@"[CleverTap: %@ is sent before observing and is not part of the observable events]", name);
         [observableEvents addObject:name];
     }
-    
-    if ([observableEvents containsObject:name] && ![observedEvents containsObject:name]) {
+
+    NSString *tag = accountTagOfBody(body);
+    if ([observableEvents containsObject:name]
+        && ![observedEvents containsObject:observedEventKey(name, tag)]) {
         if (!pendingEvents[name]) {
             pendingEvents[name] = [NSMutableArray array];
         }
-        
+
+        RCTLogInfo(@"[CleverTap: queueing %@ for account %@ (not observed yet)]", name, tag);
         CleverTapReactPendingEvent *event = [[CleverTapReactPendingEvent alloc] initWithName:name body:body];
         [pendingEvents[name] addObject:event];
         return;
     }
-    
+
+    RCTLogInfo(@"[CleverTap: posting %@ for account %@]", name, tag);
     [[NSNotificationCenter defaultCenter] postNotificationName:name object:nil userInfo:body];
 }
 

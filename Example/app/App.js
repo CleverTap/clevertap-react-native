@@ -179,6 +179,18 @@ export default class App extends Component {
       ],
     },
     {
+      categoryName: 'Multi Instance',
+      subCategory: [
+        { action: Actions.MULTI_INSTANCE_CREATE, name: 'createInstance for account B (+ listener)' },
+        { action: Actions.MULTI_INSTANCE_RECORD_EVENT, name: 'recordEvent on account B' },
+        { action: Actions.MULTI_INSTANCE_USER_LOGIN, name: 'onUserLogin on account B' },
+        { action: Actions.MULTI_INSTANCE_PROFILE_SET, name: 'profileSet on account B' },
+        { action: Actions.MULTI_INSTANCE_CLEVERTAP_ID, name: 'getCleverTapID of account B' },
+        { action: Actions.MULTI_INSTANCE_UNKNOWN_ACCOUNT, name: 'call on unknown account (warns, no crash)' },
+        { action: Actions.MULTI_INSTANCE_CUSTOM_TEMPLATES, name: 'custom templates on account B (listen + sync)' },
+      ],
+    },
+    {
       categoryName: 'Location ',
       subCategory: [
         { action: Actions.USER_LOCATION, name: 'setLocation' },
@@ -969,6 +981,27 @@ export default class App extends Component {
         break;
       case Actions.SYNC_CUSTOM_TEMPLATES_PROD:
         CleverTap.syncCustomTemplatesInProd(true);
+        break;
+      case Actions.MULTI_INSTANCE_CREATE:
+        AppUtils.multiInstance_createInstance();
+        break;
+      case Actions.MULTI_INSTANCE_RECORD_EVENT:
+        AppUtils.multiInstance_recordEvent();
+        break;
+      case Actions.MULTI_INSTANCE_USER_LOGIN:
+        AppUtils.multiInstance_onUserLogin();
+        break;
+      case Actions.MULTI_INSTANCE_PROFILE_SET:
+        AppUtils.multiInstance_profileSet();
+        break;
+      case Actions.MULTI_INSTANCE_CLEVERTAP_ID:
+        AppUtils.multiInstance_getCleverTapID();
+        break;
+      case Actions.MULTI_INSTANCE_UNKNOWN_ACCOUNT:
+        AppUtils.multiInstance_unknownAccount();
+        break;
+      case Actions.MULTI_INSTANCE_CUSTOM_TEMPLATES:
+        AppUtils.multiInstance_customTemplates();
         break;
       default:
         console.warn('Action not recognized:', item.action);
