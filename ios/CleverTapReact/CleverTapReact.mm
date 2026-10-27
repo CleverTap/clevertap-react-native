@@ -1319,6 +1319,20 @@ RCT_EXPORT_METHOD(pushDisplayUnitElementClickedEventForID:(NSString*)unitId with
     }];
 }
 
+RCT_EXPORT_METHOD(pushDisplayUnitElementViewedEventForID:(NSString*)unitId withAdditionalProperties:(NSDictionary*)additionalProperties accountId:(NSString*)accountId) {
+    RCTLogInfo(@"[CleverTap pushDisplayUnitElementViewedEventForID]");
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance recordDisplayUnitElementViewedEventForID:unitId additionalProperties:additionalProperties];
+    }];
+}
+
+RCT_EXPORT_METHOD(fetchNativeDisplayMeta:(NSString*)accountId) {
+    RCTLogInfo(@"[CleverTap fetchNativeDisplayMeta]");
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance fetchNativeDisplayMeta];
+    }];
+}
+
 
 # pragma mark - Feature Flag
 

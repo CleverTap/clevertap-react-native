@@ -1,6 +1,33 @@
 Change Log
 ==========
 
+Version 4.5.0 *(October 27 2026)*
+-------------------------------------------
+**What's new**
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v8.5.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-850-october-15-2026).
+  * Native Display Frequency Caps — a Native Display campaign is held back once your app has reported its impressions with `pushDisplayUnitViewedEventForID`, supporting session, daily, per-day / per-week and lifetime caps. Call `pushDisplayUnitViewedEventForID` once per real impression, not on every bind or scroll.
+  * Native Display split-click and view attribution — per-element and per-slide (carousel) clicks and views are attributed.
+  * Live Updates — CleverTap-driven, continuously refreshed notifications (for example live scores or delivery progress) delivered as regular FCM pushes. Native-side customization APIs are not yet exposed to JavaScript.
+  * Fixes App Inbox video not playing when switching tabs, App-Launch In-Apps with recommendations showing twice, and In-App / Native Display day and week frequency caps resetting one period late.
+  * The App-Launch In-App can now wait up to 3 seconds for personalized content before showing.
+
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.9.0](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-790-october-15-2026).
+  * Native Display Frequency Caps — Native Display campaigns honour dashboard frequency caps; a campaign is held back once your app has reported its impressions with `pushDisplayUnitViewedEventForID`. Call it once per real impression, not from reused list or collection cells.
+  * Native Display split-click and view attribution — per-element and per-slide (carousel) clicks and views are attributed.
+  * Live Activities (iOS 17.2+) — CleverTap-driven Live Activities via Push-to-Start. The native APIs are Swift-only and are not exposed to JavaScript.
+  * Recommendations in In-Apps and Native Display — personalized In-Apps show once on app launch, and Native Display units from a recommendations response are merged into existing units by unit ID instead of replacing them.
+  * Fixes event name and property validation warnings being replayed on later calls.
+
+**API changes**
+* **[Android Platform]**
+  * Adds `pushDisplayUnitElementViewedEventForID(unitID, additionalProperties)` — records a view of a single slide or element of a Native Display unit.
+  * Adds `fetchNativeDisplayMeta()` — requests fresh Native Display frequency-cap rules mid-session.
+* **[iOS Platform]**
+  * Adds `pushDisplayUnitElementViewedEventForID(unitID, additionalProperties)` — records a view of a single slide or element of a Native Display unit.
+  * Adds `fetchNativeDisplayMeta()` — requests fresh Native Display frequency-cap rules mid-session.
+
 Version 4.4.0 *(October 9 2026)*
 -------------------------------------------
 **What's new**

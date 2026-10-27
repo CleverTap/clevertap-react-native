@@ -398,6 +398,8 @@ export default class App extends Component {
         { action: Actions.DISPLAY_UNIT_ID, name: 'getUnitID' },
         { action: Actions.ALL_DISPLAY_UNITS, name: 'getAllDisplayUnits' },
         { action: Actions.PUSH_DISPLAY_UNIT_ELEMENT_CLICKED, name: 'pushDisplayUnitElementClickedEventForID' },
+        { action: Actions.PUSH_DISPLAY_UNIT_ELEMENT_VIEWED, name: 'pushDisplayUnitElementViewedEventForID' },
+        { action: Actions.FETCH_NATIVE_DISPLAY_META, name: 'fetchNativeDisplayMeta' },
       ],
     },
     {
@@ -637,6 +639,12 @@ export default class App extends Component {
         break;
       case Actions.PUSH_DISPLAY_UNIT_ELEMENT_CLICKED:
         AppUtils.pushDisplayUnitElementClickedEvent();
+        break;
+      case Actions.PUSH_DISPLAY_UNIT_ELEMENT_VIEWED:
+        AppUtils.pushDisplayUnitElementViewedEvent();
+        break;
+      case Actions.FETCH_NATIVE_DISPLAY_META:
+        AppUtils.fetchNativeDisplayMeta();
         break;
       case Actions.PRODUCT_CONFIG_FETCH:
         AppUtils.fetch();

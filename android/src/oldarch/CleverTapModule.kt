@@ -398,6 +398,16 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
     }
 
     @ReactMethod
+    fun pushDisplayUnitElementViewedEventForID(unitID: String?, additionalProperties: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.pushDisplayUnitElementViewedEventForID(unitID, additionalProperties, accountId)
+    }
+
+    @ReactMethod
+    fun fetchNativeDisplayMeta(accountId: String?) {
+        cleverTapModuleImpl.fetchNativeDisplayMeta(accountId)
+    }
+
+    @ReactMethod
     fun pushInstallReferrer(source: String?, medium: String?, campaign: String?, accountId: String?) {
         cleverTapModuleImpl.pushInstallReferrer(source, medium, campaign, accountId)
     }

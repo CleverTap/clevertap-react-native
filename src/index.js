@@ -14,7 +14,7 @@ const EventEmitter = Platform.select({
 // Must match Constants.LIBRARY_NAME (Android) and kCleverTapLibraryName (iOS) —
 // the natives re-stamp this name on every instance they wire.
 const libName = 'React-Native';
-const libVersion = 40400;
+const libVersion = 40500;
 CleverTapReact.setLibrary(libName,libVersion);
 
 function defaultCallback(method, err, res) {
@@ -428,6 +428,10 @@ function createHandle(accountId) {
             CleverTapReact.pushDisplayUnitClickedEventForID(unitID, toAccountArg(accountId)),
         pushDisplayUnitElementClickedEventForID: (unitID, additionalProperties) =>
             CleverTapReact.pushDisplayUnitElementClickedEventForID(unitID, additionalProperties, toAccountArg(accountId)),
+        pushDisplayUnitElementViewedEventForID: (unitID, additionalProperties) =>
+            CleverTapReact.pushDisplayUnitElementViewedEventForID(unitID, additionalProperties, toAccountArg(accountId)),
+        fetchNativeDisplayMeta: () =>
+            CleverTapReact.fetchNativeDisplayMeta(toAccountArg(accountId)),
 
         // --- Product Config & Feature Flags (deprecated natively, still routed) ---
         setDefaultsMap: (productConfigMap) =>
@@ -1379,6 +1383,22 @@ var CleverTap = {
      */
     pushDisplayUnitElementClickedEventForID: function (unitID, additionalProperties) {
         CleverTapReact.pushDisplayUnitElementClickedEventForID(unitID, additionalProperties, DEFAULT_ACCOUNT);
+    },
+
+    /**
+     * Records an element-level view event for a specific slide or element within a Display Unit
+     * @param {string} unitID - unique id of the display unit
+     * @param {object} additionalProperties - optional per-view context (e.g. element id, custom KVs)
+     */
+    pushDisplayUnitElementViewedEventForID: function (unitID, additionalProperties) {
+        CleverTapReact.pushDisplayUnitElementViewedEventForID(unitID, additionalProperties, DEFAULT_ACCOUNT);
+    },
+
+    /**
+     * Requests fresh Native Display frequency-cap rules mid-session
+     */
+    fetchNativeDisplayMeta: function () {
+        CleverTapReact.fetchNativeDisplayMeta(DEFAULT_ACCOUNT);
     },
 
 

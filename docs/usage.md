@@ -454,6 +454,31 @@ CleverTap.pushDisplayUnitElementClickedEventForID('unit-12345', {
 });
 ```
 
+#### Push Display Unit Element Viewed Event
+
+*Available from CleverTap React Native SDK v4.5.0.*
+
+Records a view event for a single slide or element (for example one card of a carousel) within a Native Display Unit. Call it once for each real impression of that element. `additionalProperties` is merged with the unit's cached attribution fields for finer-grained view analytics.
+
+```javascript
+CleverTap.pushDisplayUnitElementViewedEventForID('unit-12345', {
+    wzrk_element_id: 'slide-2',
+    slide_index: 2,
+    is_carousel: true,
+    screen: 'home'
+});
+```
+
+#### Fetch Native Display Meta
+
+*Available from CleverTap React Native SDK v4.5.0.*
+
+Requests fresh Native Display frequency-cap rules from CleverTap during the current session, so campaigns are shown or held back according to the latest caps without waiting for the next app launch.
+
+```javascript
+CleverTap.fetchNativeDisplayMeta();
+```
+
 -----------
 
 ## Product Config 
