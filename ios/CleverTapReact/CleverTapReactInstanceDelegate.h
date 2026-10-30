@@ -1,4 +1,14 @@
 #import <Foundation/Foundation.h>
+#if __has_include(<CleverTapSDK/CleverTap.h>)
+#import <CleverTapSDK/CleverTap.h>
+#import <CleverTapSDK/CleverTapSyncDelegate.h>
+#import <CleverTapSDK/CleverTapInAppNotificationDelegate.h>
+#import <CleverTapSDK/CleverTap+DisplayUnit.h>
+#import <CleverTapSDK/CleverTap+FeatureFlags.h>
+#import <CleverTapSDK/CleverTap+ProductConfig.h>
+#import <CleverTapSDK/CleverTapPushNotificationDelegate.h>
+#import <CleverTapSDK/CleverTap+PushPermission.h>
+#else
 #import "CleverTap.h"
 #import "CleverTapSyncDelegate.h"
 #import "CleverTapInAppNotificationDelegate.h"
@@ -7,6 +17,7 @@
 #import "CleverTap+ProductConfig.h"
 #import "CleverTapPushNotificationDelegate.h"
 #import "CleverTap+PushPermission.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

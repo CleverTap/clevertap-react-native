@@ -6,6 +6,22 @@
 
 #import <React/RCTLog.h>
 
+#if __has_include(<CleverTapSDK/CleverTap.h>)
+#import <CleverTapSDK/CleverTap.h>
+#import <CleverTapSDK/CleverTap+Inbox.h>
+#import <CleverTapSDK/CleverTapEventDetail.h>
+#import <CleverTapSDK/CleverTapUTMDetail.h>
+#import <CleverTapSDK/CleverTap+DisplayUnit.h>
+#import <CleverTapSDK/CleverTap+FeatureFlags.h>
+#import <CleverTapSDK/CleverTap+ProductConfig.h>
+#import <CleverTapSDK/CleverTap+InAppNotifications.h>
+#import <CleverTapSDK/CleverTapInstanceConfig.h>
+#import <CleverTapSDK/CTLocalInApp.h>
+#import <CleverTapSDK/CleverTap+PushPermission.h>
+#import <CleverTapSDK/CleverTap+CTVar.h>
+#import <CleverTapSDK/CTVar.h>
+#import <CleverTapSDK/CTTemplateContext.h>
+#else
 #import "CleverTap.h"
 #import "CleverTap+Inbox.h"
 #import "CleverTapEventDetail.h"
@@ -16,12 +32,13 @@
 #import "CleverTap+InAppNotifications.h"
 #import "CleverTapInstanceConfig.h"
 #import "CTLocalInApp.h"
-#import "Clevertap+PushPermission.h"
+#import "CleverTap+PushPermission.h"
 #import "CleverTap+CTVar.h"
 #import "CTVar.h"
+#import "CTTemplateContext.h"
+#endif
 #import "CleverTapReactPendingEvent.h"
 #import "CleverTapReactInstanceConfigRequest.h"
-#import "CTTemplateContext.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <CTTurboModuleSpec/CTTurboModuleSpec.h>
@@ -424,7 +441,10 @@ RCT_EXPORT_METHOD(setFCMPushTokenAsString:(NSString*)token accountId:(NSString*)
     }];
 }
 
-RCT_EXPORT_METHOD(pushRegistrationToken:(NSString*)token withPushType:(NSDictionary*)pushType accountId:(NSString*)accountId) {
+// Selector labels must match the codegen'd spec, or the New Architecture sends an
+// unrecognized selector. The JS method name is the first selector part, so the
+// Old Architecture is unaffected by the labels.
+RCT_EXPORT_METHOD(pushRegistrationToken:(NSString*)token pushType:(NSDictionary*)pushType accountId:(NSString*)accountId) {
     NSString *type = pushType[@"type"];
     if ([type isEqualToString:@"fcm"]) {
         [self setFCMPushTokenAsString:token accountId:accountId];
@@ -483,6 +503,10 @@ RCT_EXPORT_METHOD(setOffline:(BOOL)enabled accountId:(NSString*)accountId) {
 
 #pragma mark - OptOut API
 
+// allowSystemEvents stays BOOL although the spec types it `boolean | null` (NSNumber). Changing it
+// to NSNumber does not help: the Old Architecture rejects null for both NSNumber and BOOL in debug
+// builds, and a nullable NSNumber conflicts with the nonnull spec parameter that newer codegen
+// emits. With BOOL the New Architecture receives null as NO.
 RCT_EXPORT_METHOD(setOptOut:(BOOL)userOptOut allowSystemEvents:(BOOL)allowSystemEvents accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap setOptOut and allowSystemEvents: %d, %d]", userOptOut, allowSystemEvents);
     [self withInstance:accountId run:^(CleverTap *instance) {
@@ -811,19 +835,19 @@ RCT_EXPORT_METHOD(getUserAppLaunchCount:(NSString*)accountId callback:(RCTRespon
 
 #pragma mark - no-op Android O methods
 
-RCT_EXPORT_METHOD(createNotificationChannel:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(NSInteger)importance withShowBadge:(BOOL)showBadge){
+RCT_EXPORT_METHOD(createNotificationChannel:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(double)importance withShowBadge:(BOOL)showBadge){
     RCTLogInfo(@"[CleverTap createNotificationChannel is no-op in iOS]");
 }
 
-RCT_EXPORT_METHOD(createNotificationChannelWithSound:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(NSInteger)importance withShowBadge:(BOOL)showBadge withSound:(NSString*)sound){
+RCT_EXPORT_METHOD(createNotificationChannelWithSound:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(double)importance withShowBadge:(BOOL)showBadge withSound:(NSString*)sound){
     RCTLogInfo(@"[CleverTap createNotificationChannelWithSound is no-op in iOS]");
 }
 
-RCT_EXPORT_METHOD(createNotificationChannelWithGroupId:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(NSInteger)importance withGroupId:(NSString*)groupId withShowBadge:(BOOL)showBadge){
+RCT_EXPORT_METHOD(createNotificationChannelWithGroupId:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(double)importance withGroupId:(NSString*)groupId withShowBadge:(BOOL)showBadge){
     RCTLogInfo(@"[CleverTap createNotificationChannelWithGroupId is no-op in iOS]");
 }
 
-RCT_EXPORT_METHOD(createNotificationChannelWithGroupIdAndSound:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(NSInteger)importance withGroupId:(NSString*)groupId withShowBadge:(BOOL)showBadge withSound:(NSString*)sound){
+RCT_EXPORT_METHOD(createNotificationChannelWithGroupIdAndSound:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(double)importance withGroupId:(NSString*)groupId withShowBadge:(BOOL)showBadge withSound:(NSString*)sound){
     RCTLogInfo(@"[CleverTap createNotificationChannelWithGroupIdAndSound is no-op in iOS]");
 }
 
@@ -1312,7 +1336,8 @@ RCT_EXPORT_METHOD(pushDisplayUnitClickedEventForID:(NSString*)unitId accountId:(
     }];
 }
 
-RCT_EXPORT_METHOD(pushDisplayUnitElementClickedEventForID:(NSString*)unitId withAdditionalProperties:(NSDictionary*)additionalProperties accountId:(NSString*)accountId) {
+// Labels match the codegen'd spec (see pushRegistrationToken).
+RCT_EXPORT_METHOD(pushDisplayUnitElementClickedEventForID:(NSString*)unitId additionalProperties:(NSDictionary*)additionalProperties accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap pushDisplayUnitElementClickedEventForID]");
     [self withInstance:accountId run:^(CleverTap *instance) {
         [instance recordDisplayUnitElementClickedEventForID:unitId additionalProperties:additionalProperties];
@@ -1423,6 +1448,7 @@ RCT_EXPORT_METHOD(suspendInAppNotifications:(NSString*)accountId) {
     }];
 }
 
+// BOOL rather than the spec's NSNumber, for the same reason as setOptOut's allowSystemEvents.
 RCT_EXPORT_METHOD(discardInAppNotifications:(BOOL)dismissInAppIfVisible accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap discardInAppNotifications: %d]", dismissInAppIfVisible);
     [self withInstance:accountId run:^(CleverTap *instance) {

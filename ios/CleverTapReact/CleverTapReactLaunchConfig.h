@@ -1,5 +1,9 @@
 #import <Foundation/Foundation.h>
+#if __has_include(<CleverTapSDK/CleverTap.h>)
+#import <CleverTapSDK/CleverTapInstanceConfig.h>
+#else
 #import "CleverTapInstanceConfig.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
