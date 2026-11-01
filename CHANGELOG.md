@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 4.4.1 *(October 21 2026)*
+-------------------------------------------
+**Fixes**
+* **[iOS Platform]**
+  * Fixed a crash on the New Architecture when reporting a Display Unit element click. The native method for `pushDisplayUnitElementClickedEventForID` used the selector label `withAdditionalProperties:`, which did not match the TurboModule spec parameter name `additionalProperties`. On the New Architecture the mismatch raised an `unrecognized selector` exception.
+
 Version 4.4.0 *(October 9 2026)*
 -------------------------------------------
 **What's new**

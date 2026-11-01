@@ -424,7 +424,7 @@ RCT_EXPORT_METHOD(setFCMPushTokenAsString:(NSString*)token accountId:(NSString*)
     }];
 }
 
-RCT_EXPORT_METHOD(pushRegistrationToken:(NSString*)token withPushType:(NSDictionary*)pushType accountId:(NSString*)accountId) {
+RCT_EXPORT_METHOD(pushRegistrationToken:(NSString*)token pushType:(NSDictionary*)pushType accountId:(NSString*)accountId) {
     NSString *type = pushType[@"type"];
     if ([type isEqualToString:@"fcm"]) {
         [self setFCMPushTokenAsString:token accountId:accountId];
@@ -1312,7 +1312,7 @@ RCT_EXPORT_METHOD(pushDisplayUnitClickedEventForID:(NSString*)unitId accountId:(
     }];
 }
 
-RCT_EXPORT_METHOD(pushDisplayUnitElementClickedEventForID:(NSString*)unitId withAdditionalProperties:(NSDictionary*)additionalProperties accountId:(NSString*)accountId) {
+RCT_EXPORT_METHOD(pushDisplayUnitElementClickedEventForID:(NSString*)unitId additionalProperties:(NSDictionary*)additionalProperties accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap pushDisplayUnitElementClickedEventForID]");
     [self withInstance:accountId run:^(CleverTap *instance) {
         [instance recordDisplayUnitElementClickedEventForID:unitId additionalProperties:additionalProperties];
