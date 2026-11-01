@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 4.5.0 *(October 27 2026)*
+Version 4.5.0 *(November 2 2026)*
 -------------------------------------------
 **What's new**
 * **[Android Platform]**
@@ -27,6 +27,11 @@ Version 4.5.0 *(October 27 2026)*
 * **[iOS Platform]**
   * Adds `pushDisplayUnitElementViewedEventForID(unitID, additionalProperties)` — records a view of a single slide or element of a Native Display unit.
   * Adds `fetchNativeDisplayMeta()` — requests fresh Native Display frequency-cap rules mid-session.
+
+**Bug Fixes**
+* **[iOS Platform]**
+  * Fixed a crash on the New Architecture when reporting a Display Unit element click. The native method for `pushDisplayUnitElementClickedEventForID` used the selector label `withAdditionalProperties:`, which did not match the TurboModule spec parameter name `additionalProperties`. On the New Architecture the mismatch raised an `unrecognized selector` exception.
+  * Fixed a crash on the New Architecture when registering a push token through `pushRegistrationToken`. The native method used the selector label `withPushType:`, which did not match the TurboModule spec parameter name `pushType`.
 
 Version 4.4.0 *(October 9 2026)*
 -------------------------------------------
