@@ -424,7 +424,7 @@ RCT_EXPORT_METHOD(setFCMPushTokenAsString:(NSString*)token accountId:(NSString*)
     }];
 }
 
-RCT_EXPORT_METHOD(pushRegistrationToken:(NSString*)token withPushType:(NSDictionary*)pushType accountId:(NSString*)accountId) {
+RCT_EXPORT_METHOD(pushRegistrationToken:(NSString*)token pushType:(NSDictionary*)pushType accountId:(NSString*)accountId) {
     NSString *type = pushType[@"type"];
     if ([type isEqualToString:@"fcm"]) {
         [self setFCMPushTokenAsString:token accountId:accountId];
