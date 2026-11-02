@@ -1018,6 +1018,27 @@ public class CleverTapModuleImpl {
         cleverTap.pushDisplayUnitElementClickedEventForID(unitID, props);
     }
 
+    public void pushDisplayUnitElementViewedEventForID(String unitID, ReadableMap additionalProperties, String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
+        if (cleverTap == null) {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
+            return;
+        }
+        HashMap<String, Object> props = additionalProperties != null
+            ? eventPropsFromReadableMap(additionalProperties, Object.class)
+            : new HashMap<>();
+        cleverTap.pushDisplayUnitElementViewedEventForID(unitID, props);
+    }
+
+    public void fetchNativeDisplayMeta(String accountId) {
+        CleverTapAPI cleverTap = resolveInstance(accountId);
+        if (cleverTap != null) {
+            cleverTap.fetchNativeDisplayMeta();
+        } else {
+            Log.e(TAG, ErrorMessages.CLEVERTAP_NOT_INITIALIZED);
+        }
+    }
+
     public void pushInstallReferrer(String source, String medium, String campaign, String accountId) {
         CleverTapAPI clevertap = resolveInstance(accountId);
         if (clevertap == null) {

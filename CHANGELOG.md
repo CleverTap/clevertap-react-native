@@ -1,6 +1,35 @@
 Change Log
 ==========
 
+Version 4.5.0 *(November 2 2026)*
+-------------------------------------------
+**What's new**
+
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v8.5.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-850-october-15-2026).
+  * Supports Live Updates - a single ongoing notification that is refreshed in place over the course of a campaign. These arrive as standard push notifications and are rendered by the native SDK, so there is no JavaScript API to call. Setup and any custom rendering are done on the Android side of your app.
+  * The App-Launch In-App can now wait up to 3 seconds for personalized content before showing.
+  * Fixes App Inbox video not playing when switching tabs, App-Launch In-Apps with recommendations showing twice, and In-App / Native Display day and week frequency caps resetting one period late.
+
+* **[iOS Platform]**
+  * Supports [CleverTap iOS SDK v7.9.0](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-790-october-15-2026).
+  * Adds support for In-App campaigns personalized with recommendations, so only one In-App is shown on app launch. Native Display units from a recommendations response are now merged by unit ID instead of replacing the existing set.
+  * Fixes event name and property validation warnings being replayed on later calls.
+
+* **[Android and iOS Platform]**
+  * Adds Native Display frequency caps. Call pushDisplayUnitViewedEvent once per real impression, as it now counts toward the caps.
+  * Native Display split-click and view attribution - per-element and per-slide (carousel) clicks and views are attributed.
+
+**API changes**
+* **[Android and iOS Platform]**
+  * Adds `pushDisplayUnitElementViewedEventForID(unitID, additionalProperties)` - records a view of a single slide or element of a Native Display unit.
+  * Adds `fetchNativeDisplayMeta()` - requests fresh Native Display frequency-cap rules mid-session.
+
+**Bug Fixes**
+* **[iOS Platform]**
+  * Fixed a crash on the New Architecture when reporting a Display Unit element click. The native method for `pushDisplayUnitElementClickedEventForID` used the selector label `withAdditionalProperties:`, which did not match the TurboModule spec parameter name `additionalProperties`. On the New Architecture the mismatch raised an `unrecognized selector` exception.
+  * Fixed a crash on the New Architecture when registering a push token through `pushRegistrationToken`. The native method used the selector label `withPushType:`, which did not match the TurboModule spec parameter name `pushType`.
+
 Version 4.4.0 *(October 9 2026)*
 -------------------------------------------
 **What's new**
