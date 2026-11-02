@@ -276,6 +276,12 @@ export interface Spec extends TurboModule {
     additionalProperties: Object | null,
     accountId: string | null
   ): void;
+  pushDisplayUnitElementViewedEventForID(
+    unitId: string,
+    additionalProperties: Object | null,
+    accountId: string | null
+  ): void;
+  fetchNativeDisplayMeta(accountId: string | null): void;
   getFeatureFlag(
     flag: string,
     withdefaultValue: boolean,

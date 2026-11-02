@@ -624,6 +624,19 @@ export const pushDisplayUnitElementClickedEvent = () => {
     showToast('pushDisplayUnitElementClickedEventForID called');
 };
 
+export const pushDisplayUnitElementViewedEvent = () => {
+    const props = { wzrk_element_id: 'slide-2', slide_index: 2, is_carousel: true };
+    CleverTap.pushDisplayUnitElementViewedEventForID('unit-12345', props);
+    console.log(`pushDisplayUnitElementViewedEventForID(unit-12345, ${JSON.stringify(props)})`);
+    showToast('pushDisplayUnitElementViewedEventForID called');
+};
+
+export const fetchNativeDisplayMeta = () => {
+    CleverTap.fetchNativeDisplayMeta();
+    console.log('fetchNativeDisplayMeta called');
+    showToast('fetchNativeDisplayMeta called');
+};
+
 // Product Config
 export const productConfig = () => {
     showToast('Product Configuration set to default');

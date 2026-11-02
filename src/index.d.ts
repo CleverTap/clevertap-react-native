@@ -627,6 +627,18 @@ export function isPushPermissionGranted(callback: CallbackString): void;
    */
   export function pushDisplayUnitElementClickedEventForID(unitID: string, additionalProperties?: Record<string, unknown>): void;
 
+  /**
+   * Records an element-level view event for a specific slide or element within a Display Unit.
+   * @param unitID - unique id of the display unit
+   * @param additionalProperties - optional per-view context (e.g. element id, custom KVs)
+   */
+  export function pushDisplayUnitElementViewedEventForID(unitID: string, additionalProperties?: Record<string, unknown>): void;
+
+  /**
+   * Requests fresh Native Display frequency-cap rules mid-session.
+   */
+  export function fetchNativeDisplayMeta(): void;
+
   /*******************
    * Product Configs
    ******************/
@@ -996,6 +1008,8 @@ export function isPushPermissionGranted(callback: CallbackString): void;
     pushDisplayUnitViewedEventForID(unitID: string): void;
     pushDisplayUnitClickedEventForID(unitID: string): void;
     pushDisplayUnitElementClickedEventForID(unitID: string, additionalProperties?: Record<string, unknown>): void;
+    pushDisplayUnitElementViewedEventForID(unitID: string, additionalProperties?: Record<string, unknown>): void;
+    fetchNativeDisplayMeta(): void;
 
     /* Product Config & Feature Flags (deprecated natively, still routed) */
     setDefaultsMap(productConfigMap: any): void;
