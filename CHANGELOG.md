@@ -16,7 +16,7 @@ Version 4.5.0 *(November 2 2026)*
   * Fixes event name and property validation warnings being replayed on later calls.
 
 * **[Android and iOS Platform]**
-  * Adds Native Display frequency caps. Call pushDisplayUnitViewedEvent once per real impression, as it now counts toward the caps.
+  * Adds Native Display frequency caps. Call pushDisplayUnitViewedEventForID once per real impression, as it now counts toward the caps.
   * Native Display split-click and view attribution - per-element and per-slide (carousel) clicks and views are attributed.
 
 **API changes**
