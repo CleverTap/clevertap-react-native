@@ -4,7 +4,6 @@ Change Log
 Version 4.5.0 *(November 2 2026)*
 -------------------------------------------
 **What's new**
-
 * **[Android Platform]**
   * Supports [CleverTap Android SDK v8.5.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-850-october-15-2026).
   * Supports Live Updates - a single ongoing notification that is refreshed in place over the course of a campaign. These arrive as standard push notifications and are rendered by the native SDK, so there is no JavaScript API to call. Setup and any custom rendering are done on the Android side of your app.

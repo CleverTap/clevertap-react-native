@@ -1319,7 +1319,7 @@ RCT_EXPORT_METHOD(pushDisplayUnitElementClickedEventForID:(NSString*)unitId addi
     }];
 }
 
-RCT_EXPORT_METHOD(pushDisplayUnitElementViewedEventForID:(NSString*)unitId withAdditionalProperties:(NSDictionary*)additionalProperties accountId:(NSString*)accountId) {
+RCT_EXPORT_METHOD(pushDisplayUnitElementViewedEventForID:(NSString*)unitId additionalProperties:(NSDictionary*)additionalProperties accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap pushDisplayUnitElementViewedEventForID]");
     [self withInstance:accountId run:^(CleverTap *instance) {
         [instance recordDisplayUnitElementViewedEventForID:unitId additionalProperties:additionalProperties];
