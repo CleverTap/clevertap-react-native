@@ -29,6 +29,17 @@
   ## Steps for iOS ##
   
 
+### CocoaPods source (required to keep receiving updates)
+
+CleverTap's iOS SDK is delivered through CocoaPods. CocoaPods trunk becomes read-only on December 2, 2026. After that date new CleverTap versions are published to CleverTap's own CocoaPods specs repo instead of trunk. Add both `source` lines to the top of your app's `ios/Podfile` so CocoaPods can keep resolving CleverTap:
+
+```ruby
+source 'https://github.com/CleverTap/podspecs.git'
+source 'https://cdn.cocoapods.org/'
+```
+
+Keep the `cdn.cocoapods.org` line. It is still needed so other pods (for example SDWebImage) resolve. Both lines are required: once a Podfile declares any `source`, CocoaPods stops using the default CDN automatically. Existing installs keep working with no change. After editing the Podfile, run `pod install` from your `ios` directory.
+
 ### iOS with podspec
 - Add `pod 'clevertap-react-native', :path => '../node_modules/clevertap-react-native'` as a dependency in your ios/Podfile.
 
