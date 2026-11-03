@@ -441,9 +441,6 @@ RCT_EXPORT_METHOD(setFCMPushTokenAsString:(NSString*)token accountId:(NSString*)
     }];
 }
 
-// Selector labels must match the codegen'd spec, or the New Architecture sends an
-// unrecognized selector. The JS method name is the first selector part, so the
-// Old Architecture is unaffected by the labels.
 RCT_EXPORT_METHOD(pushRegistrationToken:(NSString*)token pushType:(NSDictionary*)pushType accountId:(NSString*)accountId) {
     NSString *type = pushType[@"type"];
     if ([type isEqualToString:@"fcm"]) {
@@ -1336,11 +1333,24 @@ RCT_EXPORT_METHOD(pushDisplayUnitClickedEventForID:(NSString*)unitId accountId:(
     }];
 }
 
-// Labels match the codegen'd spec (see pushRegistrationToken).
 RCT_EXPORT_METHOD(pushDisplayUnitElementClickedEventForID:(NSString*)unitId additionalProperties:(NSDictionary*)additionalProperties accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap pushDisplayUnitElementClickedEventForID]");
     [self withInstance:accountId run:^(CleverTap *instance) {
         [instance recordDisplayUnitElementClickedEventForID:unitId additionalProperties:additionalProperties];
+    }];
+}
+
+RCT_EXPORT_METHOD(pushDisplayUnitElementViewedEventForID:(NSString*)unitId additionalProperties:(NSDictionary*)additionalProperties accountId:(NSString*)accountId) {
+    RCTLogInfo(@"[CleverTap pushDisplayUnitElementViewedEventForID]");
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance recordDisplayUnitElementViewedEventForID:unitId additionalProperties:additionalProperties];
+    }];
+}
+
+RCT_EXPORT_METHOD(fetchNativeDisplayMeta:(NSString*)accountId) {
+    RCTLogInfo(@"[CleverTap fetchNativeDisplayMeta]");
+    [self withInstance:accountId run:^(CleverTap *instance) {
+        [instance fetchNativeDisplayMeta];
     }];
 }
 

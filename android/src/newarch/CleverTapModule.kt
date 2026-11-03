@@ -337,6 +337,14 @@ class CleverTapModule(reactContext: ReactApplicationContext?) :
         cleverTapModuleImpl.pushDisplayUnitElementClickedEventForID(unitID, additionalProperties, accountId)
     }
 
+    override fun pushDisplayUnitElementViewedEventForID(unitID: String?, additionalProperties: ReadableMap?, accountId: String?) {
+        cleverTapModuleImpl.pushDisplayUnitElementViewedEventForID(unitID, additionalProperties, accountId)
+    }
+
+    override fun fetchNativeDisplayMeta(accountId: String?) {
+        cleverTapModuleImpl.fetchNativeDisplayMeta(accountId)
+    }
+
     override fun pushInstallReferrer(source: String?, medium: String?, campaign: String?, accountId: String?) {
         cleverTapModuleImpl.pushInstallReferrer(source, medium, campaign, accountId)
     }
