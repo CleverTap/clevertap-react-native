@@ -12,6 +12,7 @@ Version 4.5.0 *(November 2 2026)*
 
 * **[iOS Platform]**
   * Supports [CleverTap iOS SDK v7.9.0](https://github.com/CleverTap/clevertap-ios-sdk/blob/master/CHANGELOG.md#version-790-october-15-2026).
+  * Documents the CocoaPods `source` line to add to your `ios/Podfile` ahead of CocoaPods trunk becoming read-only on December 2, 2026. Existing installs are unaffected. See the [iOS install instructions](docs/install.md#cocoapods-source-required-to-keep-receiving-updates).
   * Adds support for In-App campaigns personalized with recommendations, so only one In-App is shown on app launch. Native Display units from a recommendations response are now merged by unit ID instead of replacing the existing set.
   * Fixes event name and property validation warnings being replayed on later calls.
 
