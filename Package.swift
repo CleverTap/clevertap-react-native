@@ -24,7 +24,7 @@ let package = Package(
     dependencies: [
         .package(name: "ReactNative", path: "../../../../xcframeworks"),
         .package(name: "React-GeneratedCode", path: "../../../ios"),
-        .package(url: "https://github.com/CleverTap/clevertap-ios-sdk.git", exact: "7.8.2"),
+        .package(url: "https://github.com/CleverTap/clevertap-ios-sdk.git", exact: "7.9.0"),
     ],
     targets: [
         .target(
