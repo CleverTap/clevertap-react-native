@@ -8,7 +8,8 @@
 //   ../../../../xcframeworks -> <app>/build/xcframeworks   (ReactNative package)
 //   ../../../ios             -> <app>/build/generated/ios  (React-GeneratedCode, codegen output)
 //
-// The product name must match `spm.name` in react-native.config.js.
+// The product name must match `swiftpmConfig.name` in package.json (read by React Native 0.88 and later)
+// and `spm.name` in react-native.config.js (read by React Native 0.87).
 // Keep the clevertap-ios-sdk version in sync with the CleverTap-iOS-SDK pin in the podspec.
 
 import PackageDescription

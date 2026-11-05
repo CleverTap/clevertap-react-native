@@ -45,3 +45,6 @@ android/app/src/main/assets/custom/*
 
 # Xcode SwiftPM workspace data, created when Package.swift is opened in Xcode
 .swiftpm/
+/Package.resolved
+# SwiftPM build and index output, created by swift build or an editor's Swift indexer
+/.build/
