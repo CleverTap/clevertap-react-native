@@ -1,7 +1,11 @@
 #import "CleverTapReactManager.h"
 #import "CleverTapReact.h"
 #import "CleverTapReactInstanceDelegate.h"
+#if __has_include(<CleverTapSDK/CleverTap.h>)
+#import <CleverTapSDK/CleverTapInstanceConfig.h>
+#else
 #import "CleverTapInstanceConfig.h"
+#endif
 
 #import <UIKit/UIKit.h>
 #import <React/RCTLog.h>

@@ -10,8 +10,13 @@
 #import "CleverTapReactCustomTemplates.h"
 #import "CleverTapReactTemplatePresenter.h"
 #import "CleverTapReactAppFunctionPresenter.h"
+#if __has_include(<CleverTapSDK/CleverTap.h>)
+#import <CleverTapSDK/CTJsonTemplateProducer.h>
+#import <CleverTapSDK/CTCustomTemplatesManager.h>
+#else
 #import "CTJsonTemplateProducer.h"
 #import "CTCustomTemplatesManager.h"
+#endif
 
 /// A `CTTemplateProducer` bound to one JSON definition. The SDK calls
 /// `defineTemplates:` once per CleverTap instance — the default AND every secondary
