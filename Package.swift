@@ -16,8 +16,8 @@ import PackageDescription
 
 let package = Package(
     name: "CleverTapReact",
-    // React Native's generated ReactAppHeaders product requires iOS 15, so SPM consumers
-    // need iOS 15. CocoaPods consumers keep the podspec's deployment target.
+    // iOS 15, required by both React Native's generated ReactAppHeaders product and
+    // CleverTap-iOS-SDK 7.9.1. Matches s.platform in the podspec.
     platforms: [.iOS(.v15)],
     products: [
         .library(name: "CleverTapReact", targets: ["CleverTapReact"]),
@@ -25,7 +25,7 @@ let package = Package(
     dependencies: [
         .package(name: "ReactNative", path: "../../../../xcframeworks"),
         .package(name: "React-GeneratedCode", path: "../../../ios"),
-        .package(url: "https://github.com/CleverTap/clevertap-ios-sdk.git", exact: "7.9.0"),
+        .package(url: "https://github.com/CleverTap/clevertap-ios-sdk.git", exact: "7.9.1"),
     ],
     targets: [
         .target(

@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
 
   s.requires_arc   = true
   s.module_name    = 'CleverTapReact' 
-  s.platform       = :ios, '9.0'
+  s.platform       = :ios, '15.0'
 
   s.preserve_paths = 'LICENSE.md', 'README.md', 'package.json', 'index.js'
   s.source_files   = 'ios/CleverTapReact/*.{h,m,mm}'
@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
     s.dependency 'React-Core'
   end
 
-  s.dependency 'CleverTap-iOS-SDK', '7.9.0'
+  s.dependency 'CleverTap-iOS-SDK', '7.9.1'
 
   if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then
     s.pod_target_xcconfig = {

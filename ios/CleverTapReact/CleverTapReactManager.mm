@@ -76,11 +76,20 @@
 
 - (void)applicationDidLaunchWithOptions:(NSDictionary *)options {
     NSDictionary *notification = [options valueForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-    if (notification){
-        if (notification[@"wzrk_dl"]) {
-            self.launchDeepLink = notification[@"wzrk_dl"];
-            RCTLogInfo(@"CleverTapReact: setting launch deeplink: %@", self.launchDeepLink);
-        }
+    id deepLink = notification[@"wzrk_dl"];
+    if ([deepLink isKindOfClass:[NSString class]] && [deepLink length] > 0) {
+        self.launchDeepLink = deepLink;
+        RCTLogInfo(@"CleverTapReact: setting launch deeplink: %@", self.launchDeepLink);
+    }
+}
+
+- (void)sceneWillConnectWithOptions:(UISceneConnectionOptions *)connectionOptions {
+    // Scene-based apps get the launching push here instead of in the launch options.
+    NSDictionary *userInfo = connectionOptions.notificationResponse.notification.request.content.userInfo;
+    id deepLink = userInfo[@"wzrk_dl"];
+    if ([deepLink isKindOfClass:[NSString class]] && [deepLink length] > 0) {
+        self.launchDeepLink = deepLink;
+        RCTLogInfo(@"CleverTapReact: setting launch deeplink from scene: %@", self.launchDeepLink);
     }
 }
 

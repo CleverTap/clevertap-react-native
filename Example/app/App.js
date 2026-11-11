@@ -45,7 +45,8 @@ export default class App extends Component {
       }
     }).catch((err) => console.error('launch url error', err));
 
-    // Check CleverTap deep link
+    // Check CleverTap deep link. On iOS apps with a SceneDelegate this needs
+    // [CleverTapReactManager sceneWillConnectWithOptions:] (see SceneDelegate.mm).
     CleverTap.getInitialUrl((err, url) => {
       if (url) {
         AppUtils._handleOpenUrl({ url }, 'CleverTap');

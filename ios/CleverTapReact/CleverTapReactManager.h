@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #if __has_include(<CleverTapSDK/CleverTap.h>)
 #import <CleverTapSDK/CleverTap.h>
 #else
@@ -27,6 +28,14 @@
  */
 - (void)applicationDidLaunchWithOptions:(NSDictionary *)options
                           launchConfigs:(NSArray<CleverTapReactLaunchConfig *> *)launchConfigs;
+
+/**
+ * For scene-based apps. A push that launches the app arrives in the scene's connection
+ * options, not the launch options. Call this from scene:willConnectToSession:options:
+ * so getInitialUrl returns the push's deep link.
+ */
+- (void)sceneWillConnectWithOptions:(UISceneConnectionOptions *)connectionOptions
+    NS_SWIFT_NAME(sceneWillConnect(options:));
 
 - (void)setDelegates:(CleverTap *)cleverTapInstance;
 
