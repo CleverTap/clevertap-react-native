@@ -500,10 +500,9 @@ RCT_EXPORT_METHOD(setOffline:(BOOL)enabled accountId:(NSString*)accountId) {
 
 #pragma mark - OptOut API
 
-// allowSystemEvents stays BOOL although the spec types it `boolean | null` (NSNumber). Changing it
-// to NSNumber does not help: the Old Architecture rejects null for both NSNumber and BOOL in debug
-// builds, and a nullable NSNumber conflicts with the nonnull spec parameter that newer codegen
-// emits. With BOOL the New Architecture receives null as NO.
+// allowSystemEvents stays BOOL even though the spec allows null. NSNumber doesn't help:
+// the Old Architecture rejects null either way, and newer codegen expects nonnull. On the
+// New Architecture, null arrives as NO.
 RCT_EXPORT_METHOD(setOptOut:(BOOL)userOptOut allowSystemEvents:(BOOL)allowSystemEvents accountId:(NSString*)accountId) {
     RCTLogInfo(@"[CleverTap setOptOut and allowSystemEvents: %d, %d]", userOptOut, allowSystemEvents);
     [self withInstance:accountId run:^(CleverTap *instance) {

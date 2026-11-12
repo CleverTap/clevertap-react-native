@@ -10,10 +10,8 @@
 // app process, not one scene.
 static BOOL sReactContentDidAppear = NO;
 
-// UIScene lifecycle, required for apps built with the iOS 27 SDK (Xcode 27) or later.
-// React Native 0.74's RCTAppDelegate still builds the React root view in
-// application:didFinishLaunchingWithOptions:, so this scene delegate moves that
-// root view controller into a window that belongs to the scene.
+// Required for apps built with Xcode 27 or later. RN 0.74 creates the root view in the
+// app delegate, so this moves it into the scene's window.
 @implementation SceneDelegate {
   // Links that launched the app, held until JS can receive them.
   NSArray<UIOpenURLContext *> *_pendingURLContexts;
@@ -39,10 +37,8 @@ static BOOL sReactContentDidAppear = NO;
   appDelegate.window = self.window;
   [self.window makeKeyAndVisible];
 
-  // Deep links and universal links that launched the app. Under the UIScene lifecycle
-  // they are not in the launch options, so Linking.getInitialURL() returns null for them.
-  // They are sent as Linking 'url' events instead, which only reach JS once it listens.
-  // On a cold start JS has not loaded yet, so hold them until React's first render.
+  // Links that launched the app. With scenes, Linking.getInitialURL() doesn't see them,
+  // so send them as 'url' events once React has rendered and JS is listening.
   _pendingURLContexts = connectionOptions.URLContexts.allObjects;
   _pendingUserActivity = connectionOptions.userActivities.anyObject;
   if (sReactContentDidAppear) {
