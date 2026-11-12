@@ -1,6 +1,12 @@
 #import <Foundation/Foundation.h>
 #import <React/RCTEventEmitter.h>
 
+// Under SwiftPM this header is the module umbrella (it shares the module's name), so it
+// re-exports the headers host apps use from Swift via `import CleverTapReact`.
+#import "CleverTapReactManager.h"
+#import "CleverTapReactLaunchConfig.h"
+#import "CleverTapReactCustomTemplates.h"
+
 static NSString *const kCleverTapProfileDidInitialize = @"CleverTapProfileDidInitialize";
 static NSString *const kCleverTapProfileSync = @"CleverTapProfileSync";
 static NSString *const kCleverTapInAppNotificationDismissed = @"CleverTapInAppNotificationDismissed";

@@ -9,6 +9,8 @@
     "android",
     "ios",
     "*.podspec",
+    "Package.swift",
+    "react-native.config.js",
     "docs",
     "CHANGELOG.md",
     "!android/build",
@@ -22,8 +24,12 @@
     "!**/__tests__",
     "!**/xcuserdata",
     "!**/*.xcworkspace",
+    "!Package.resolved",
     "!**/.*"
   ],
+  "swiftpmConfig": {
+    "name": "CleverTapReact"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "./node_modules/.bin/eslint index.js */**.js",
