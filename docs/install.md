@@ -43,6 +43,12 @@ end
 
 - Run `pod install` from your ios directory.
 
+The CocoaPods trunk becomes read-only on December 2, 2026. CleverTap publishes newer `CleverTap-iOS-SDK` versions to its own spec repo, so add both sources at the top of your Podfile to keep receiving updates. Existing installs are unaffected.
+```ruby
+source 'https://github.com/CleverTap/podspecs.git'
+source 'https://cdn.cocoapods.org/'
+```
+
 ### iOS without podspec
 - Add `pod 'CleverTap-iOS-SDK'` as a dependency in your ios/Podfile.
 - `cd ios; pod install --repo-update`
@@ -51,6 +57,45 @@ end
 ### Troubleshooting  
 
 If you're on RN 0.60 or your project configuration doesn't allow to add `use_frameworks!` in the podfile, alternatively, you can add `use_modular_headers!` to enable the stricter search paths and module map generation for all of your pods, or you can add `:modular_headers => true` to a single pod declaration to enable for only that pod.
+
+### iOS with Swift Package Manager (experimental)
+
+Requires React Native 0.87+ and iOS 15+. The package ships a `Package.swift`, so React Native's SPM autolinking picks it up. CocoaPods keeps working as before.
+
+1. `npm install --save clevertap-react-native`
+2. Run `npx react-native spm add --deintegrate` to move a CocoaPods app to SPM, or `npx react-native spm` for a new one.
+3. On React Native CLI 20.x (shipped with RN 0.87 and 0.88), keep an `ios/Podfile`, even with an empty target. Without it the "Sync SPM Autolinking" phase fails with `CLI config did not provide project.ios.sourceDir`.
+4. After `--deintegrate`, delete any leftover React Native lines from the Podfile.
+5. Open `YourApp.xcodeproj`, not the `.xcworkspace`.
+
+To stop `run-ios` from running `pod install`, add to `react-native.config.js`:
+```js
+module.exports = { project: { ios: { automaticPodsInstallation: false } } };
+```
+
+In a Swift `AppDelegate`:
+```swift
+import CleverTapSDK
+import CleverTapReact
+
+// in application(_:didFinishLaunchingWithOptions:)
+CleverTap.autoIntegrate()
+CleverTapReactManager.sharedInstance().applicationDidLaunch(options: launchOptions)
+```
+
+In an Objective-C `AppDelegate.mm`, use `#import`. `@import CleverTapReact;` does not work in `.mm` files.
+```objc
+#import <CleverTapSDK/CleverTap.h>
+#import "CleverTapReactManager.h"
+
+// in application:didFinishLaunchingWithOptions:
+[CleverTap autoIntegrate];
+[[CleverTapReactManager sharedInstance] applicationDidLaunchWithOptions:launchOptions];
+```
+
+For push extensions, see [iOS push templates with Swift Package Manager](iospushtemplates.md#swift-package-manager).
+
+If the build fails with `does not contain a binary artifact`, run `npx react-native spm update`.
 
 
 ## Steps for Android ##

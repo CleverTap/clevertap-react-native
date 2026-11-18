@@ -6,6 +6,22 @@
 
 #import <React/RCTLog.h>
 
+#if __has_include(<CleverTapSDK/CleverTap.h>)
+#import <CleverTapSDK/CleverTap.h>
+#import <CleverTapSDK/CleverTap+Inbox.h>
+#import <CleverTapSDK/CleverTapEventDetail.h>
+#import <CleverTapSDK/CleverTapUTMDetail.h>
+#import <CleverTapSDK/CleverTap+DisplayUnit.h>
+#import <CleverTapSDK/CleverTap+FeatureFlags.h>
+#import <CleverTapSDK/CleverTap+ProductConfig.h>
+#import <CleverTapSDK/CleverTap+InAppNotifications.h>
+#import <CleverTapSDK/CleverTapInstanceConfig.h>
+#import <CleverTapSDK/CTLocalInApp.h>
+#import <CleverTapSDK/CleverTap+PushPermission.h>
+#import <CleverTapSDK/CleverTap+CTVar.h>
+#import <CleverTapSDK/CTVar.h>
+#import <CleverTapSDK/CTTemplateContext.h>
+#else
 #import "CleverTap.h"
 #import "CleverTap+Inbox.h"
 #import "CleverTapEventDetail.h"
@@ -16,12 +32,13 @@
 #import "CleverTap+InAppNotifications.h"
 #import "CleverTapInstanceConfig.h"
 #import "CTLocalInApp.h"
-#import "Clevertap+PushPermission.h"
+#import "CleverTap+PushPermission.h"
 #import "CleverTap+CTVar.h"
 #import "CTVar.h"
+#import "CTTemplateContext.h"
+#endif
 #import "CleverTapReactPendingEvent.h"
 #import "CleverTapReactInstanceConfigRequest.h"
-#import "CTTemplateContext.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <CTTurboModuleSpec/CTTurboModuleSpec.h>
@@ -483,7 +500,8 @@ RCT_EXPORT_METHOD(setOffline:(BOOL)enabled accountId:(NSString*)accountId) {
 
 #pragma mark - OptOut API
 
-RCT_EXPORT_METHOD(setOptOut:(BOOL)userOptOut allowSystemEvents:(BOOL)allowSystemEvents accountId:(NSString*)accountId) {
+RCT_EXPORT_METHOD(setOptOut:(BOOL)userOptOut allowSystemEvents:(NSNumber *)allowSystemEventsValue accountId:(NSString*)accountId) {
+    BOOL allowSystemEvents = [allowSystemEventsValue isKindOfClass:[NSNumber class]] && [allowSystemEventsValue boolValue];
     RCTLogInfo(@"[CleverTap setOptOut and allowSystemEvents: %d, %d]", userOptOut, allowSystemEvents);
     [self withInstance:accountId run:^(CleverTap *instance) {
         if (allowSystemEvents) {
@@ -811,19 +829,19 @@ RCT_EXPORT_METHOD(getUserAppLaunchCount:(NSString*)accountId callback:(RCTRespon
 
 #pragma mark - no-op Android O methods
 
-RCT_EXPORT_METHOD(createNotificationChannel:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(NSInteger)importance withShowBadge:(BOOL)showBadge){
+RCT_EXPORT_METHOD(createNotificationChannel:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(double)importance withShowBadge:(BOOL)showBadge){
     RCTLogInfo(@"[CleverTap createNotificationChannel is no-op in iOS]");
 }
 
-RCT_EXPORT_METHOD(createNotificationChannelWithSound:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(NSInteger)importance withShowBadge:(BOOL)showBadge withSound:(NSString*)sound){
+RCT_EXPORT_METHOD(createNotificationChannelWithSound:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(double)importance withShowBadge:(BOOL)showBadge withSound:(NSString*)sound){
     RCTLogInfo(@"[CleverTap createNotificationChannelWithSound is no-op in iOS]");
 }
 
-RCT_EXPORT_METHOD(createNotificationChannelWithGroupId:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(NSInteger)importance withGroupId:(NSString*)groupId withShowBadge:(BOOL)showBadge){
+RCT_EXPORT_METHOD(createNotificationChannelWithGroupId:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(double)importance withGroupId:(NSString*)groupId withShowBadge:(BOOL)showBadge){
     RCTLogInfo(@"[CleverTap createNotificationChannelWithGroupId is no-op in iOS]");
 }
 
-RCT_EXPORT_METHOD(createNotificationChannelWithGroupIdAndSound:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(NSInteger)importance withGroupId:(NSString*)groupId withShowBadge:(BOOL)showBadge withSound:(NSString*)sound){
+RCT_EXPORT_METHOD(createNotificationChannelWithGroupIdAndSound:(NSString*)channelId withChannelName:(NSString*)channelName withChannelDescription:(NSString*)channelDescription withImportance:(double)importance withGroupId:(NSString*)groupId withShowBadge:(BOOL)showBadge withSound:(NSString*)sound){
     RCTLogInfo(@"[CleverTap createNotificationChannelWithGroupIdAndSound is no-op in iOS]");
 }
 
@@ -1437,7 +1455,8 @@ RCT_EXPORT_METHOD(suspendInAppNotifications:(NSString*)accountId) {
     }];
 }
 
-RCT_EXPORT_METHOD(discardInAppNotifications:(BOOL)dismissInAppIfVisible accountId:(NSString*)accountId) {
+RCT_EXPORT_METHOD(discardInAppNotifications:(NSNumber *)dismissInAppIfVisibleValue accountId:(NSString*)accountId) {
+    BOOL dismissInAppIfVisible = [dismissInAppIfVisibleValue isKindOfClass:[NSNumber class]] && [dismissInAppIfVisibleValue boolValue];
     RCTLogInfo(@"[CleverTap discardInAppNotifications: %d]", dismissInAppIfVisible);
     [self withInstance:accountId run:^(CleverTap *instance) {
         [instance discardInAppNotifications:dismissInAppIfVisible];
