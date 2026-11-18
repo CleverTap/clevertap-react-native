@@ -1,6 +1,18 @@
 Change Log
 ==========
 
+Version 4.5.1 *(November 18 2026)*
+-------------------------------------------
+**What's new**
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v8.6.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-860-november-10-2026).
+  * Send Test previews (In-App, App Inbox, Display Unit) are now shown only when the preview push actually reached the SDK. Apps that render push notifications themselves must keep calling `pushNotificationViewedEvent(extras)` after showing the notification.
+  * A very large queue of waiting In-Apps is now dropped instead of crashing the app with an `OutOfMemoryError`.
+  * Fixes a crash when showing a full-screen custom HTML In-App with a very large payload, and re-shows a full-screen In-App if the app was killed while it was on screen.
+  * Fixes a startup crash in minified release builds made with AGP 9.
+  * Fixes SSL pinning (`CLEVERTAP_SSL_PINNING`) silently falling back to normal HTTPS. If you use pinning with a custom proxy or handshake domain, make sure its certificate chains to an Amazon Trust Services root.
+  * Adds WorkManager 2.9.1 to 2.10.2 compatibility.
+
 Version 4.5.0 *(November 2 2026)*
 -------------------------------------------
 **What's new**

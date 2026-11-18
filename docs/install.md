@@ -86,7 +86,7 @@ dependencies {
 
 
     //clevertap
-    implementation 'com.clevertap.android:clevertap-android-sdk:8.5.0'
+    implementation 'com.clevertap.android:clevertap-android-sdk:8.6.0'
 
 
     // other libs

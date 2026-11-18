@@ -14,7 +14,7 @@ const EventEmitter = Platform.select({
 // Must match Constants.LIBRARY_NAME (Android) and kCleverTapLibraryName (iOS) —
 // the natives re-stamp this name on every instance they wire.
 const libName = 'React-Native';
-const libVersion = 40500;
+const libVersion = 40501;
 CleverTapReact.setLibrary(libName,libVersion);
 
 function defaultCallback(method, err, res) {
