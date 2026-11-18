@@ -1,6 +1,21 @@
 Change Log
 ==========
 
+Version 4.6.0 *(November 19 2026)*
+-------------------------------------------
+**What's new**
+* **[Android Platform]**
+  * Supports [CleverTap Android SDK v8.6.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-860-november-10-2026).
+  * Send Test previews (In-App, App Inbox, Native Display) now open only from the preview push itself. If your app renders push notifications on the Android side, keep calling `pushNotificationViewedEvent(extras)` after showing them.
+  * A full-screen In-App is shown again if Android killed the app while it was on screen, as long as it has not expired. It is not counted as viewed twice.
+
+* **[iOS Platform]**
+  * Adds experimental Swift Package Manager support for React Native 0.87 and later (`npx react-native spm`). CocoaPods keeps working as before. See [iOS with Swift Package Manager](docs/install.md#ios-with-swift-package-manager-experimental).
+
+**Bug Fixes**
+* **[iOS Platform]**
+  * Fixes `setOptOut(userOptOut, true)` ignoring `allowSystemEvents` and `discardInAppNotifications(dismissInAppIfVisible)` receiving a wrong value on the New Architecture. Affected versions 3.8.0 to 4.5.0.
+
 Version 4.5.0 *(November 2 2026)*
 -------------------------------------------
 **What's new**

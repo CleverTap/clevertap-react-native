@@ -6,6 +6,7 @@ CleverTap Push Templates SDK helps you engage with your users using fancy push n
 
 - [Notification Service](#notification-service)
 - [Notification Content](#notification-content)
+- [Swift Package Manager](#swift-package-manager)
 - [Dashboard Usage](#dashboard-usage)
 - [Template Types](#template-types)
 - [Template Keys](#template-keys)
@@ -49,13 +50,18 @@ end
 target 'NotificationService' do
   pod "CleverTap-iOS-SDK", :modular_headers => true
   pod "CTNotificationService", :modular_headers => true
+  pod "SDWebImage", :modular_headers => true
 end
 ```
 - Add CleverTap Account Id and Token in target `Info.plist` file as updated [here](https://github.com/CleverTap/clevertap-react-native/tree/master/Example/ios/Example/NotificationService/Info.plist)
-- Update your `NotificationService.m` file as:
+- Update your `NotificationService.m` as below. The `__has_include` check picks the right header for CocoaPods, `use_frameworks!` or SPM:
 ```
 #import "NotificationService.h"
+#if __has_include(<CleverTapSDK/CleverTap.h>)
+#import <CleverTapSDK/CleverTap.h>
+#else
 #import <CleverTap-iOS-SDK/CleverTap.h>
+#endif
 
 @implementation NotificationService
 
@@ -103,6 +109,7 @@ class NotificationService: CTNotificationServiceExtension {
 target 'NotificationService' do
   pod "CleverTap-iOS-SDK", :modular_headers => true
   pod "CTNotificationService", :modular_headers => true
+  pod "SDWebImage", :modular_headers => true
 end
 ```
 - Add CleverTap Account Id and Token in target `Info.plist` file as updated [here](https://github.com/CleverTap/clevertap-react-native/tree/master/Example/ios/Example/NotificationService/Info.plist)
@@ -274,6 +281,43 @@ UNNotificationCategory *cat = [UNNotificationCategory categoryWithIdentifier:@"C
 
 ### Out of the box
 
+
+# Swift Package Manager
+
+[(Back to top)](#table-of-contents)
+
+For apps using React Native's SPM support (`npx react-native spm`, RN 0.87+).
+
+## Add the extensions with Swift Package Manager (recommended)
+
+**Notification Service:** in Xcode, File -> Add Package Dependencies:
+- `https://github.com/CleverTap/CTNotificationService.git` -> `CTNotificationService` product.
+- For push impressions, `https://github.com/CleverTap/clevertap-ios-sdk.git` -> `CleverTapSDK` product, at the same version as `clevertap-ios-sdk` in your `Package.resolved`.
+- Code is the same as [Push Impression using Swift language target](#push-impression-using-swift-language-target). In Objective-C, use `#import <CleverTapSDK/CleverTap.h>`.
+
+**Notification Content:**
+- `https://github.com/CleverTap/CTNotificationContent.git` -> `CTNotificationContent` product.
+- Embed it: target -> Build Phases -> + -> New Copy Files Phase, Destination Frameworks, add `CTNotificationContent.framework`, tick Code Sign On Copy. Otherwise the extension crashes with `Library not loaded: @rpath/CTNotificationContent.framework`.
+
+## Keep CocoaPods for the extensions
+
+```
+platform :ios, '15.1'
+use_frameworks! :linkage => :static
+
+target 'NotificationService' do
+  pod "CleverTap-iOS-SDK"
+  pod "CTNotificationService"
+end
+
+# Required by CocoaPods. Leave empty, the app gets CleverTap from SPM.
+target 'YOUR_APP_TARGET' do
+end
+```
+- Use `:linkage => :static`, not `:modular_headers => true`, or the build fails with `redefinition of module 'Swift'`.
+- Keep the pod version the same as `clevertap-ios-sdk` in `Package.resolved`.
+- Don't add `CleverTap-iOS-SDK` to the app target.
+- After `spm add --deintegrate`, delete leftover React Native lines from the Podfile, or `pod install` fails with `Invalid Podfile file`.
 
 # Dashboard Usage
 
