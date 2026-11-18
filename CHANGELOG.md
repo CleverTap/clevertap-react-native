@@ -6,8 +6,6 @@ Version 4.6.0 *(November 19 2026)*
 **What's new**
 * **[Android Platform]**
   * Supports [CleverTap Android SDK v8.6.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md#version-860-november-10-2026).
-  * Send Test previews (In-App, App Inbox, Native Display) now open only from the preview push itself. If your app renders push notifications on the Android side, keep calling `pushNotificationViewedEvent(extras)` after showing them.
-  * A full-screen In-App is shown again if Android killed the app while it was on screen, as long as it has not expired. It is not counted as viewed twice.
 
 * **[iOS Platform]**
   * Adds experimental Swift Package Manager support for React Native 0.87 and later (`npx react-native spm`). CocoaPods keeps working as before. See [iOS with Swift Package Manager](docs/install.md#ios-with-swift-package-manager-experimental).
@@ -15,6 +13,14 @@ Version 4.6.0 *(November 19 2026)*
 **Bug Fixes**
 * **[iOS Platform]**
   * Fixes `setOptOut(userOptOut, true)` ignoring `allowSystemEvents` and `discardInAppNotifications(dismissInAppIfVisible)` receiving a wrong value on the New Architecture. Affected versions 3.8.0 to 4.5.0.
+  
+* **[Android Platform]**  
+  * Send Test previews (In-App, App Inbox, Display Unit) are now shown only when the preview push actually reached the SDK. Apps that render push notifications themselves must keep calling `pushNotificationViewedEvent(extras)` after showing the notification.
+  * A very large queue of waiting In-Apps is now dropped instead of crashing the app with an `OutOfMemoryError`.
+  * Fixes a crash when showing a full-screen custom HTML In-App with a very large payload, and re-shows a full-screen In-App if the app was killed while it was on screen.
+  * Fixes a startup crash in minified release builds made with AGP 9.
+  * Fixes SSL pinning (`CLEVERTAP_SSL_PINNING`) silently falling back to normal HTTPS. If you use pinning with a custom proxy or handshake domain, make sure its certificate chains to an Amazon Trust Services root.
+  * Adds WorkManager 2.9.1 to 2.10.2 compatibility.
 
 Version 4.5.0 *(November 2 2026)*
 -------------------------------------------
