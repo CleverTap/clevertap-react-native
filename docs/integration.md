@@ -14,19 +14,36 @@ Clevertap supports the [ReactNative New Architecture](https://reactnative.dev/do
 [CleverTap autoIntegrate]; // integrate CleverTap SDK using the autoIntegrate option
 [[CleverTapReactManager sharedInstance] applicationDidLaunchWithOptions:launchOptions];
 ```
-NOTE:  Don't forget to add the CleverTap imports at the top of the file.
+NOTE:  Don't forget to add the CleverTap imports at the top of the file. The `__has_include` checks pick the right header for CocoaPods or SPM:
 ```objc
+#if __has_include(<CleverTapSDK/CleverTap.h>)
+#import <CleverTapSDK/CleverTap.h>
+#else
 #import <CleverTap-iOS-SDK/CleverTap.h>
+#endif
+#if __has_include(<clevertap-react-native/CleverTapReactManager.h>)
 #import <clevertap-react-native/CleverTapReactManager.h>
+#else
+#import "CleverTapReactManager.h"
+#endif
 ```
 
 Note: Need to use **@import CleverTapSDK;** instead of **#import <CleverTap-iOS-SDK/CleverTap.h>** and **@import CleverTapReact;** instead of **#import <clevertap-react-native/CleverTapReactManager.h>** in the AppDelegate class in case if using ```use_modular_headers!``` in the podfile.
 
 3. Optional, from clevertap-react-native **v4.4.0**: if your app uses more than one CleverTap account and an extra account receives push notifications or shows in-apps, create that account at launch so it starts together with the default account. In your `AppDelegate`, inside `application:didFinishLaunchingWithOptions:`, replace the one-argument call from step 2 with the two-argument version. On the JavaScript side use `CleverTap.getInstance(accountId)` for it. See the [Multiple CleverTap Accounts guide](./multiinstance.md#create-accounts-at-app-launch-native-launch-configs).
 ```objc
+#if __has_include(<CleverTapSDK/CleverTap.h>)
+#import <CleverTapSDK/CleverTap.h>
+#import <CleverTapSDK/CleverTapInstanceConfig.h>
+#else
 #import <CleverTap-iOS-SDK/CleverTap.h>
 #import <CleverTap-iOS-SDK/CleverTapInstanceConfig.h>
+#endif
+#if __has_include(<clevertap-react-native/CleverTapReactManager.h>)
 #import <clevertap-react-native/CleverTapReactManager.h>
+#else
+#import "CleverTapReactManager.h"
+#endif
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [CleverTap autoIntegrate];

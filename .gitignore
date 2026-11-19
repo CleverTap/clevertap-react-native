@@ -42,3 +42,9 @@ android/app/src/main/assets/custom/*
 
 # Ignore all link-assets-manifest.json files
 **/link-assets-manifest.json
+
+# Xcode SwiftPM workspace data, created when Package.swift is opened in Xcode
+.swiftpm/
+/Package.resolved
+# SwiftPM build and index output, created by swift build or an editor's Swift indexer
+/.build/

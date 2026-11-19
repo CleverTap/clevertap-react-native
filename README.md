@@ -21,6 +21,8 @@ To get started, sign up [here](https://clevertap.com/live-product-demo/).
 2. Follow the [install instructions](./docs/install.md)
 3. Follow the [integration instructions](./docs/integration.md)
 
+> **iOS note:** CocoaPods trunk becomes read-only on December 2, 2026. To keep receiving CleverTap updates, add a CocoaPods `source` line to your app's `ios/Podfile`. See the [iOS install instructions](./docs/install.md#cocoapods-source-required-to-keep-receiving-updates) for the exact lines. Existing installs are unaffected.
+
 ## 📚 Additional Resources
 - [CleverTap iOS SDK Integration guide](https://developer.clevertap.com/docs/ios)
 - [CleverTap Android SDK Integration guide](https://developer.clevertap.com/docs/android)

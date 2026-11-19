@@ -161,6 +161,19 @@ public class MainApplication extends Application {
 ### For iOS
 Call `[CleverTapReactCustomTemplates registerCustomTemplates]` in your `AppDelegate.didFinishLaunchingWithOptions` before calling `[CleverTap autoIntegrate]`:
 ```objc
+#if __has_include(<CleverTapSDK/CleverTap.h>)
+#import <CleverTapSDK/CleverTap.h>
+#else
+#import <CleverTap-iOS-SDK/CleverTap.h>
+#endif
+#if __has_include(<clevertap-react-native/CleverTapReactManager.h>)
+#import <clevertap-react-native/CleverTapReactManager.h>
+#import <clevertap-react-native/CleverTapReactCustomTemplates.h>
+#else
+#import "CleverTapReactManager.h"
+#import "CleverTapReactCustomTemplates.h"
+#endif
+
 @implementation AppDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   [CleverTapReactCustomTemplates registerCustomTemplates:@"templates", nil];
