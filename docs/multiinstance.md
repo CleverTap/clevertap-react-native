@@ -239,9 +239,18 @@ Existing calls with one argument keep working. The config object is the native `
 In your `AppDelegate`, inside `application:didFinishLaunchingWithOptions:`, replace the one-argument `applicationDidLaunchWithOptions:` call with the two-argument version:
 
 ```objc
+#if __has_include(<CleverTapSDK/CleverTap.h>)
+#import <CleverTapSDK/CleverTap.h>
+#import <CleverTapSDK/CleverTapInstanceConfig.h>
+#else
 #import <CleverTap-iOS-SDK/CleverTap.h>
 #import <CleverTap-iOS-SDK/CleverTapInstanceConfig.h>
+#endif
+#if __has_include(<clevertap-react-native/CleverTapReactManager.h>)
 #import <clevertap-react-native/CleverTapReactManager.h>
+#else
+#import "CleverTapReactManager.h"
+#endif
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [CleverTap autoIntegrate];

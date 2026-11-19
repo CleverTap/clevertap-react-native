@@ -54,12 +54,6 @@ end
 
 - Run `pod install` from your ios directory.
 
-The CocoaPods trunk becomes read-only on December 2, 2026. CleverTap publishes newer `CleverTap-iOS-SDK` versions to its own spec repo, so add both sources at the top of your Podfile to keep receiving updates. Existing installs are unaffected.
-```ruby
-source 'https://github.com/CleverTap/podspecs.git'
-source 'https://cdn.cocoapods.org/'
-```
-
 ### iOS without podspec
 - Add `pod 'CleverTap-iOS-SDK'` as a dependency in your ios/Podfile.
 - `cd ios; pod install --repo-update`
