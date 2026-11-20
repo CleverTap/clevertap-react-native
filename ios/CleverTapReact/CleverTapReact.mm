@@ -978,7 +978,7 @@ RCT_EXPORT_METHOD(setDebugLevel:(double)level) {
     }
     if ([value isKindOfClass:[NSNumber class]]) {
         if ([self isBoolNumber:value]) {
-            return [instance defineVar:name withBool:value];
+            return [instance defineVar:name withBool:[value boolValue]];
         }
         return [instance defineVar:name withNumber:value];
     }
