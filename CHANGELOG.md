@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 4.6.0 *(November 19 2026)*
+Version 4.6.0 *(November 20 2026)*
 -------------------------------------------
 **What's new**
 * **[Android Platform]**
