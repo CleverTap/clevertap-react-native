@@ -91,7 +91,11 @@ CleverTapReactManager.sharedInstance().applicationDidLaunch(options: launchOptio
 In an Objective-C `AppDelegate.mm`, use `#import`. `@import CleverTapReact;` does not work in `.mm` files.
 ```objc
 #import <CleverTapSDK/CleverTap.h>
+#if __has_include(<CleverTapReact/CleverTapReactManager.h>)
+#import <CleverTapReact/CleverTapReactManager.h>
+#else
 #import "CleverTapReactManager.h"
+#endif
 
 // in application:didFinishLaunchingWithOptions:
 [CleverTap autoIntegrate];

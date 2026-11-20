@@ -20,7 +20,7 @@ Version 4.6.0 *(November 19 2026)*
 * **[Android Platform]**  
   * Fixes a crash when showing a full-screen custom HTML In-App with a very large payload, and re-shows a full-screen In-App if the app was killed while it was on screen.
   * Fixes a startup crash in minified release builds made with AGP 9.
-  * Fixes SSL pinning (`CLEVERTAP_SSL_PINNING`) silently falling back to normal HTTPS. If you use pinning with a custom proxy or handshake domain, make sure its certificate chains to an Amazon Trust Services root.
+  * Fixes SSL pinning (`CLEVERTAP_SSL_PINNING`) silently falling back to normal HTTPS because the bundled certificate could not be loaded. If you use pinning with a custom proxy or handshake domain, make sure its certificate chains to an Amazon Trust Services root. If pinning cannot be set up on a device, the SDK still uses normal HTTPS and logs an error (unless the CleverTap debug level is off).
   * Adds WorkManager 2.9.1 to 2.10.2 compatibility.
 
 Version 4.5.0 *(November 2 2026)*
