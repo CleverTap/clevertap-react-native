@@ -297,7 +297,7 @@ For apps using React Native's SPM support (`npx react-native spm`, RN 0.87+).
 
 **Notification Content:**
 - `https://github.com/CleverTap/CTNotificationContent.git` -> `CTNotificationContent` product.
-- Embed it: target -> Build Phases -> + -> New Copy Files Phase, Destination Frameworks, add `CTNotificationContent.framework`, tick Code Sign On Copy. Otherwise the extension crashes with `Library not loaded: @rpath/CTNotificationContent.framework`.
+- Embed it in the containing app: app target -> Build Phases -> + -> New Copy Files Phase, Destination Frameworks, add `CTNotificationContent.framework`, tick Code Sign On Copy. Do not embed it in the extension target. Otherwise the extension crashes with `Library not loaded: @rpath/CTNotificationContent.framework`.
 
 ## Keep CocoaPods for the extensions
 
